@@ -1,0 +1,11 @@
+{
+  "syntheticOnly": true,
+  "productionContentCopied": false,
+  "formalAuthoringClaim": false,
+  "route": "/r2-a/apps/korean/courses/korean/korean-basic/korean-beginner/hangul-introduction",
+  "targetUnlock": "immediate",
+  "courseLessonCount": 3,
+  "siblingsUnlock": "prerequisite_passed",
+  "lockedSiblingHasPublishedAgentChain": true,
+  "productionWrites": 0
+}

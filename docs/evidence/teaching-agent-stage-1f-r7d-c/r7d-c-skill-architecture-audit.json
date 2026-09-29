@@ -1,0 +1,333 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED",
+  "sources": [
+    {
+      "path": "src/features/agent-core/contracts/skill.ts",
+      "symbols": "SkillDefinition; SkillRegistry",
+      "sha256": "ced5b0e807abd88b978c9c134044a6b6630981c2233569601eb1cf3800ca437d"
+    },
+    {
+      "path": "src/features/agent-core/skills/registry.ts",
+      "symbols": "createSkillRegistry; productionSkillRegistry",
+      "sha256": "73e0ef6210555dd9425c293f5eeb363ee8be65294f8e89c6d4a2c45f96f9563a"
+    },
+    {
+      "path": "src/features/agent-core/permissions/tool-policy.ts",
+      "symbols": "resolveAllowedToolDefinitions",
+      "sha256": "e4701265f1a320c54d9e74a1db56e385fb5633391dce8962e35a33308efed55c"
+    },
+    {
+      "path": "src/features/agent-core/tools/executor.ts",
+      "symbols": "executeAllowedTool",
+      "sha256": "cb7866cc3fafc5aeafeb7655caaba0b2e7ab90048cc12910831cbe7b76ea12e3"
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "symbols": "AgentProfile.artifacts",
+      "sha256": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae"
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "symbols": "strict trace details",
+      "sha256": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5"
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "symbols": "artifact and trace persistence schemas",
+      "sha256": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332"
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "symbols": "exact profile/Skill/Tool refs",
+      "sha256": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5"
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/kim-persona.ts",
+      "symbols": "presentation-only Persona",
+      "sha256": "57e7998a9fe2f74b23e1f96d3a96e87492d115456570a7b6fa94c019041070f7"
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "symbols": "createStudentAiTeacherSkillRegistry; selectStudentExplainSkill",
+      "sha256": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c"
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+      "symbols": "requiredContext; evidenceRequirements",
+      "sha256": "0740aff8da0bf2942036571ff4d68010f89f15f742926ba7627bbd5c8b53a9d8"
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/procedure.ts",
+      "symbols": "mandatory lesson evidence; no grading",
+      "sha256": "39639dda46e1d8d3dc98df927834737c41bc41e8c649a892b0e5016d840fb4a4"
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+      "symbols": "checkExplainEvidence",
+      "sha256": "04a381b085ddc2d81f764b77973e8cc0bb1bf6fd7963a14fd33dd759fad86660"
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts",
+      "symbols": "validateExplainOutput; semantic limitation",
+      "sha256": "32057dd08c8f4a9a4fb9b726652c217a2fb662307106c732dfc18a0e3763bf02"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "symbols": "request-local registry",
+      "sha256": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5"
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "symbols": "exact permission mapping",
+      "sha256": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf"
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+      "symbols": "private Receipt ledger; sole executor writer",
+      "sha256": "d2dad4ce92e51d628602160d7dd840cee7135bb25782ab2ecbbbc39a71b7a889"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "symbols": "Explain-specific admission; auto/none choice; failure/completion",
+      "sha256": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "symbols": "evidence/output gate; segmentRef",
+      "sha256": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "symbols": "exact pinned artifacts; requiredEvidenceToolRef",
+      "sha256": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "symbols": "studentPlanningContext",
+      "sha256": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "symbols": "verified selection and coordinator composition",
+      "sha256": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b"
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "symbols": "WeakMap-issued Student binding",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e"
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "symbols": "scope and verified selection contract",
+      "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351"
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "symbols": "no execution snapshot reader",
+      "sha256": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae"
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "symbols": "authenticated client; no admin fallback",
+      "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "symbols": "read-only Tool registration",
+      "sha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "symbols": "strict empty input and bounded facts",
+      "sha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8"
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "symbols": "opaque issuer; freshness; storage authority",
+      "sha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e"
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "symbols": "safe facts projection",
+      "sha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "symbols": "validated same-snapshot read",
+      "sha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "symbols": "draft target schema",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "symbols": "v2 receipt storage enum",
+      "sha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "symbols": "published session resolver; chapter-one issue path",
+      "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/activity-binding.server.ts",
+      "symbols": "legacy capsule binding; not new canonical bridge",
+      "sha256": "b95ebbdd484703488f0038f10ee63e2e6417c76fb5b355159ebf5ae6082bbeed"
+    },
+    {
+      "path": "supabase/migrations/202609140001_agent_runtime_completion_evidence.sql",
+      "symbols": "persisted completion gate",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b"
+    },
+    {
+      "path": "supabase/migrations/202609140002_agent_run_cancel_request.sql",
+      "symbols": "cancellation wrapper preserves evidence gate",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62"
+    }
+  ],
+  "existingSkill": {
+    "ref": {
+      "name": "explain-pinned-korean-segment",
+      "version": "1.0.0"
+    },
+    "intent": "explain_segment",
+    "outputContract": {
+      "name": "student-explanation",
+      "version": "1.0.0"
+    },
+    "requiredContext": [
+      "authenticated_student",
+      "student_scope",
+      "verified_selection",
+      "published_content",
+      "source_revision",
+      "locale"
+    ],
+    "allowedTools": [
+      {
+        "name": "get_current_lesson_context",
+        "version": "1.0.0"
+      },
+      {
+        "name": "get_current_teaching_state",
+        "version": "1.0.0"
+      }
+    ],
+    "evidenceRequirements": {
+      "mandatory": [
+        {
+          "name": "get_current_lesson_context",
+          "version": "1.0.0"
+        }
+      ],
+      "optional": [
+        {
+          "name": "get_current_teaching_state",
+          "version": "1.0.0"
+        }
+      ]
+    }
+  },
+  "architecture": {
+    "coreSkillFields": [
+      "name",
+      "version",
+      "status",
+      "description",
+      "allowedTools",
+      "procedure",
+      "outputContract"
+    ],
+    "teachingExtensionFields": [
+      "intent",
+      "requiredContext",
+      "evidenceRequirements",
+      "locales"
+    ],
+    "globalProductionSkillRegistry": "EMPTY",
+    "studentSkillRegistry": "Explain only",
+    "studentToolRegistry": "request-local lesson + state only",
+    "coordinator": "Explain-specific; not generic Skill dispatch",
+    "newToolProductionRegistration": "ABSENT",
+    "otherExecutionStatusSkill": "NOT FOUND in audited teaching-agent Skill definitions"
+  },
+  "newSkillProposal": {
+    "ref": {
+      "name": "summarize-current-lesson-execution",
+      "version": "1.0.0"
+    },
+    "intent": "summarize_execution",
+    "outputContract": {
+      "name": "student-execution-summary",
+      "version": "1.0.0"
+    },
+    "allowedTools": [
+      {
+        "name": "get_current_lesson_execution_facts",
+        "version": "1.0.0"
+      }
+    ],
+    "evidenceRequirements": {
+      "mandatory": [
+        {
+          "name": "get_current_lesson_execution_facts",
+          "version": "1.0.0"
+        }
+      ],
+      "optional": []
+    },
+    "requiredContext": [
+      "authenticated_student",
+      "student_scope",
+      "verified_execution_binding",
+      "published_content",
+      "source_revision",
+      "locale"
+    ],
+    "procedure": [
+      "Revalidate server-issued subject/tenant/lesson/version/Activity binding.",
+      "Expose only approved Tool intersection; select durable Tool with strict empty input.",
+      "Require fresh successful private execution receipt and validated same-snapshot facts.",
+      "Server-project bounded execution summary; do not infer current position.",
+      "Reject unsupported claims, missing evidence or read errors; do not mutate learning state."
+    ],
+    "status": "PROPOSED; unregistered"
+  },
+  "concepts": {
+    "Skill": "procedure, required context, allowed tools, evidence requirements, output contract",
+    "Tool": "controlled capability; not API or Domain Port",
+    "DomainPort": "bounded server domain interface",
+    "TeachingScript": "pedagogical content, not Skill",
+    "RuntimeFacts": "durable domain authority, not Agent memory",
+    "Persona": "presentation; not permission"
+  },
+  "observedGaps": [
+    "Explain-only selector/coordinator/pinning/private ledger.",
+    "Student policy lacks teaching.execution.self.read mapping.",
+    "VerifiedStudentBinding does not carry authoritative Activity/execution snapshot.",
+    "Native durable binding currently requires draft chapter/version; receipt storage lacks production provenance.",
+    "Persisted completion gate requires segmentRef and one requiredEvidenceToolRef; strict trace omits Activity/storage fields."
+  ],
+  "legacyFallback": {
+    "result": "ABSENT in current teaching-agent/agent-core path",
+    "search": [
+      "productionTeacherAgentAdapter",
+      "learning-agent/respond",
+      "PGRST202",
+      "fallback"
+    ],
+    "qualification": "Other legacy runtime adapters exist in repository; do not reuse chapter-one capsule/session issue path as canonical fallback."
+  },
+  "historicalFoundation": "R7D-B2 COMPLETE retained; no current DB Tool re-execution"
+}

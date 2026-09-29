@@ -1,0 +1,94 @@
+{
+  "digestAlgorithm": "SHA256 UTF8 JSON of payload only, sorted keys recursively, compact separators, ASCII escaped (Python json.dumps defaults)",
+  "metadataDigest": "3f6b85395bba89c87b1478da7a62c94f7f17a25e63a09057f1509e3276152aa0",
+  "payload": {
+    "stage": "1F-R4A",
+    "schemaVersion": 1,
+    "status": "LOCKED",
+    "migrationTechnicalPlan": "LOCKED",
+    "productionMigrationAuthorization": "NOT AUTHORIZED / BLOCKED",
+    "stage1G": "NOT READY",
+    "baselineManifestSha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+    "baselineCutoverVersion": "202609130003",
+    "baselineSqlDigest": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "preCutoverLedgerDigest": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+    "preCutoverLedgerCount": 449,
+    "postBaselineMigrations": [
+      {
+        "filename": "202609140000_agent_core_foundation.sql",
+        "name": "agent_core_foundation",
+        "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+        "version": "202609140000"
+      },
+      {
+        "filename": "202609140001_agent_runtime_completion_evidence.sql",
+        "name": "agent_runtime_completion_evidence",
+        "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+        "version": "202609140001"
+      },
+      {
+        "filename": "202609140002_agent_run_cancel_request.sql",
+        "name": "agent_run_cancel_request",
+        "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+        "version": "202609140002"
+      },
+      {
+        "filename": "202609140003_teaching_operations_reissue.sql",
+        "name": "teaching_operations_reissue",
+        "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+        "version": "202609140003"
+      },
+      {
+        "filename": "202609140004_completion_policy_management_reissue.sql",
+        "name": "completion_policy_management_reissue",
+        "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+        "version": "202609140004"
+      },
+      {
+        "filename": "202609140005_student_teaching_content_isolation.sql",
+        "name": "student_teaching_content_isolation",
+        "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+        "version": "202609140005"
+      },
+      {
+        "filename": "202609140006_agent_run_reconciliation.sql",
+        "name": "agent_run_reconciliation",
+        "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+        "version": "202609140006"
+      },
+      {
+        "filename": "202609140007_teaching_content_skeleton.sql",
+        "name": "teaching_content_skeleton",
+        "sha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4",
+        "version": "202609140007"
+      }
+    ],
+    "postBaselineMigrationVersions": [
+      "202609140000",
+      "202609140001",
+      "202609140002",
+      "202609140003",
+      "202609140004",
+      "202609140005",
+      "202609140006",
+      "202609140007"
+    ],
+    "migrationInventoryDigest": "4735e8bb64b2619160eb1ad665e6a12f6a5c282f001a684b306f21d3b261a605",
+    "migrationInventoryDigestDefinition": "SHA256 UTF8 sorted-key compact JSON ordered array of filename/version/sha256; name checked separately against filename",
+    "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+    "applicationSourceDigest": "48b8e7b979b0a158635c82e31e9e0f948742e0e5a0f2ca5e5bab553ec458708c",
+    "applicationArtifactDigest": "b088781734cd2191c9027b208da70f04d8931b095afaf8a5bd2efe97a777185b",
+    "applicationArchiveSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+    "applicationBuildId": "6IhDHN8Dm1nCewiCEZnV5",
+    "reconcilerVersion": "deadline-terminal-v1",
+    "reconcilerMigrationVersion": "202609140006",
+    "rlsMigrationVersion": "202609140005",
+    "authoringMigrationVersion": "202609140007",
+    "validationInputs": {
+      "scripts/build-supabase-app-baseline.py": "b89db7f1bf05c98ac9dba6551b303c1e75da150d74c4124a9812abc7522e33ee",
+      "scripts/supabase_baseline_lib.py": "75e88f293ee12abe8f65758c3df6f7923c5a291b7e3d57cc20b470180ce9851f",
+      "scripts/teaching-agent-r3d/author-browser.mjs": "f7da32ef98a0a187a7621cee2d1278140baa854dc358ded732bd0a0e6f49e39a",
+      "tests/teaching-agent-release-metadata.test.mjs": "a6015078e5db42088dc535a6451a78b505227320845f3799a361af0799a3a906"
+    }
+  }
+}

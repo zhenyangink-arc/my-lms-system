@@ -1,0 +1,1251 @@
+{
+  "matrix": [
+    {
+      "actor": "A1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "ascriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "bscriptVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "atextbook",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "digital_textbooks",
+      "columns": "*",
+      "scope": "btextbook",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "B node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_nodes",
+      "columns": "id,configuration",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_sessions",
+      "columns": "*",
+      "scope": "a2Session",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_sessions",
+      "columns": "*",
+      "scope": "bSession",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "courses",
+      "columns": "*",
+      "scope": "bcourse",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "lessons",
+      "columns": "*",
+      "scope": "blesson",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "gmodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "gscriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "gmodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "gscriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "B1",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "gmodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "gscriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "TA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "gmodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "gscriptVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "AA",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A2",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "EX",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "IN",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "A1",
+      "table": "learning_agent_sessions",
+      "columns": "id",
+      "scope": "ownSession",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "PO",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 1,
+      "error": null,
+      "privateLeak": true
+    },
+    {
+      "actor": "PO",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "adraftNode",
+      "rows": 1,
+      "error": null,
+      "privateLeak": true
+    },
+    {
+      "actor": "PO",
+      "table": "learning_agent_script_versions",
+      "columns": "*",
+      "scope": "adraftVersion",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "PO",
+      "table": "digital_textbook_modules",
+      "columns": "*",
+      "scope": "amodule",
+      "rows": 1,
+      "error": null,
+      "privateLeak": false
+    },
+    {
+      "actor": "anon",
+      "table": "student_learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": "42501",
+      "privateLeak": false
+    },
+    {
+      "actor": "anon",
+      "table": "learning_agent_script_nodes",
+      "columns": "*",
+      "scope": "A node",
+      "rows": 0,
+      "error": null,
+      "privateLeak": false
+    }
+  ],
+  "errors": [],
+  "writes": 0,
+  "configurationNotAViewColumn": true,
+  "rawSentinelsPreserved": true,
+  "status": "PASS"
+}

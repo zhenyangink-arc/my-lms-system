@@ -1,0 +1,54 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "legacyArtifactSchema": 1,
+  "newArtifactSchema": 2,
+  "mandatoryPolicy": "Validate entire typed mandatory set with exact versions; never mandatory[0] only",
+  "typedEvidence": [
+    "lesson_context (segmentRef)",
+    "durable_execution_facts (dedicated activityRef + provenance)"
+  ],
+  "activityAsSegment": "REJECTED",
+  "gateOrder": [
+    "fresh authorized receipt",
+    "all mandatory evidence",
+    "server-bounded output",
+    "matching server trace and output digest",
+    "persisted policy validation",
+    "existing fenced/CAS transition"
+  ],
+  "sqlPolicy": "Original v1 Explain branch retained; v2 typed evidence/trace/output checks, latest failed Tool invalidates old success",
+  "v2NullHandling": "Preserves required null currentTeachingNode; legacy trace null stripping unchanged",
+  "invariants": [
+    "existing cancellation wrapper",
+    "existing CAS/fencing base",
+    "no new state/store/table",
+    "no model-generated success/provenance"
+  ],
+  "tests": {
+    "pass": 58,
+    "fail": 0
+  },
+  "schemaReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json"
+}

@@ -1,0 +1,44 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED AUDIT AND DESIGN; durable Run completion NOT implemented",
+  "existing": {
+    "server": "createStudentRunCompletionGuard revalidates private Explain evidence, validates output, emits evidence.checked/output.checked",
+    "coordinator": "final validated output precedes checkpoint transition to completed",
+    "failure": "REQUIRED_EVIDENCE_MISSING or SKILL_OUTPUT_INVALID; terminal failed, cancellation cancelled",
+    "database": "transition_agent_run_v1 cancellation wrapper calls private evidence gate; tool.completed exact requiredEvidenceToolRef, revision/segmentRef match, evidence/output details match, state_version/fence guarded"
+  },
+  "currentLimitations": [
+    "Definition artifacts schemaVersion1 pins one requiredEvidenceToolRef.",
+    "Trace strict allowlist excludes durable storage/activity/scope receipt metadata.",
+    "SQL mandates segmentRef, which is sentence provenance and cannot stand for Activity.",
+    "Existing coordinator and final text envelope are Explain-specific."
+  ],
+  "proposedGate": [
+    "Validate run/skill/authority/current context and mandatory receipt at finalization.",
+    "Refuse completed for missing, stale, mismatched or unsuccessful durable evidence.",
+    "Validate server-derived safe Skill output and unchanged current-position unavailability.",
+    "Emit bounded exact-version private receipt references through existing trace, not model refs.",
+    "Persisted versioned completion policy validates required receipt set for same Run/Skill/call/context and freshness, then existing fenced CAS."
+  ],
+  "failurePolicy": {
+    "missingCall": "Reuse at most one corrective planning opportunity within existing budget in future coordinator; no execution this turn.",
+    "requiredToolError": "not_found_or_not_visible/stale/unavailable/READ_UNAVAILABLE => fail closed; no implicit retry or new-plan fallback after domain failure",
+    "expiredAtFinal": "Reject completed; do not reuse old cached evidence",
+    "needUser": "Only a future separately authorized Run after context correction; user claim never substitutes evidence",
+    "states": "Use failed/cancelled from existing state machine; do not invent persisted NEEDS_TOOL/BLOCKED states."
+  },
+  "persistenceDecision": {
+    "requiredBeforeProduction": "Versioned extension of existing artifact/trace/transition contracts and corresponding SQL migration; no new evidence or progress tables.",
+    "currentMigration": "NONE",
+    "currentDBInspection": "NOT PERFORMED; audited checked-in migration source, not fresh installed function definitions",
+    "preserve": "Explain v1 policy meaning and historical run artifacts unchanged; no fake segmentRef; no migration installation implied by C2 package."
+  }
+}

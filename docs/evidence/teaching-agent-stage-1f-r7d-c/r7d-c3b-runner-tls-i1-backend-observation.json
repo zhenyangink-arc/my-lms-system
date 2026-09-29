@@ -1,0 +1,60 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1",
+  "recordedAt": "2026-09-20T05:16:20.467266+00:00",
+  "mode": "IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "PASS",
+  "semantics": "BACKEND_OBSERVATION_ONLY",
+  "typedValues": [
+    true,
+    false,
+    "unavailable"
+  ],
+  "falsePolicy": "RECORD_AND_CONTINUE_ONLY_WITH_VALID_ACTUAL_CLIENT_PROOF_AND_ACTIVE_RISK_AUTHORIZATION",
+  "nullPolicy": "Successful null is unavailable; never converted to true/false",
+  "sqlErrorPolicy": "STOP_AND_ROLLBACK",
+  "backendTrueCannotReplaceClientProof": true,
+  "captureReceiptVersion": "readonly-baseline-capture/2",
+  "captureOrder": [
+    "LEDGER",
+    "TARGET_PREGATE",
+    "TARGET_DEFINITION",
+    "PROTECTED_CATALOG"
+  ],
+  "fullCatalogAndSnapshotConsistency": "PRESERVED",
+  "queryFamilySha256": {
+    "ledger": "efca7d87df98ec2916a32f2a163496bc5c162ff14b34ff48c8e1f74684b1888d",
+    "targetPreGate": "49c11f238341f1be966d71b06563fe3e21cdd0fc658d2f841d5c10d97b5f79ad",
+    "targetDefinition": "9000d911cd48b385403639dc50a1e084feade968970a2bc76095c407765dbbc3",
+    "protectedCatalog": "39710497209d055003b9201aee72f180ee467ca2f5aa224d3450035d66e0cf40",
+    "backendObservation": "f41a4830ba8fe2eb92ef247dacaba209df8ba60d22e8f9b3e2040fe816e345ed"
+  },
+  "historicalP1DTlsFailure": "PRESERVED_NOT_REOBSERVED",
+  "tests": [
+    "TLS-D4-20",
+    "TLS-D4-21",
+    "TLS-D4-22"
+  ]
+}

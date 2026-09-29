@@ -1,0 +1,10 @@
+{
+  "status": "PARTIAL",
+  "newEvidenceSafety": "PASS",
+  "rawResourceUuidOrJwtDetected": false,
+  "secretRowsRead": 0,
+  "privateAnswerValuesExported": 0,
+  "privateDefinitionDigestExported": 0,
+  "publicManifestDomClientNetworkRuntimeFacts": "NOT EXECUTED — no current-DB runtime launched",
+  "notAProductionLeakagePass": true
+}

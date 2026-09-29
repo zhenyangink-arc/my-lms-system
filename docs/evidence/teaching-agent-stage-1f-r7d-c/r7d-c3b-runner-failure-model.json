@@ -1,0 +1,134 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "contract": "exact-single-result/1",
+  "states": [
+    {
+      "state": "PRECHECK_FAILED",
+      "commitState": "NOT_DISPATCHED",
+      "action": "No DB mutation; keep read-only failure receipt; correct/separately review baseline before new authorization."
+    },
+    {
+      "state": "TARGET_IDENTITY_MISMATCH",
+      "commitState": "NOT_DISPATCHED",
+      "action": "Refuse connection/apply target; never try another profile."
+    },
+    {
+      "state": "APPROVAL_MISSING",
+      "commitState": "NOT_DISPATCHED",
+      "action": "No apply connection; no auto-generated approval."
+    },
+    {
+      "state": "BACKUP_FAILED",
+      "commitState": "NOT_DISPATCHED",
+      "action": "No current mutation; keep failed backup receipt, clean only owned disposable restore resources."
+    },
+    {
+      "state": "CONCURRENT_APPLY_REJECTED",
+      "commitState": "NOT_COMMITTED",
+      "action": "No body dispatch, release session; no waiting retry loop."
+    },
+    {
+      "state": "MIGRATION_FAILED_ROLLED_BACK",
+      "commitState": "ROLLBACK_CONFIRMED",
+      "action": "Require server rollback acknowledgement plus independent old ledger/catalog verification; otherwise UNKNOWN."
+    },
+    {
+      "state": "LEDGER_FAILED_ROLLED_BACK",
+      "commitState": "ROLLBACK_CONFIRMED",
+      "action": "Body and ledger insert roll back together; require same proof, no repair insert."
+    },
+    {
+      "state": "PRECOMMIT_POSTCHECK_FAILED_ROLLED_BACK",
+      "commitState": "ROLLBACK_CONFIRMED",
+      "action": "Postchecks inside transaction prevent commit; independent old-state check."
+    },
+    {
+      "state": "POSTCHECK_FAILED_COMMITTED_FORWARD_FIX_REQUIRED",
+      "commitState": "COMMITTED_CONFIRMED",
+      "action": "Stop; preserve committed schema and ledger; no GRANT/down migration/delete."
+    },
+    {
+      "state": "VERIFY_FAILED",
+      "commitState": "COMMIT_STATE_PRESERVED",
+      "action": "Separate verification failure; never relabel it as rollback or retry."
+    },
+    {
+      "state": "COMMIT_UNKNOWN",
+      "commitState": "UNKNOWN",
+      "action": "Timeout/disconnect/missing ACK/write-journal failure: no retry. Independent read-only evidence after connection recovery; manual resolution and fresh authorization required."
+    },
+    {
+      "state": "ALREADY_INSTALLED",
+      "commitState": "NOT_DISPATCHED",
+      "action": "Apply rejected even if checksum matches. Explicit verify-only may report current exact state; no silent apply success."
+    },
+    {
+      "state": "COMPLETE",
+      "commitState": "COMMITTED_AND_VERIFIED",
+      "action": "One exact migration complete; next migration NEVER automatically permitted."
+    }
+  ],
+  "receiptFields": [
+    "receiptVersion",
+    "attemptId",
+    "planId",
+    "planSha256",
+    "migrationVersion",
+    "migrationRawSha256",
+    "bodySha256",
+    "enginePackageSha256",
+    "targetProfile",
+    "nonSecretIdentityHashes",
+    "operatorAuthorizationSha256",
+    "startedAt",
+    "finishedAt",
+    "phase",
+    "dispatched",
+    "commitState",
+    "serverAckNonce",
+    "ledgerBeforeDigest",
+    "ledgerAfterDigest",
+    "backupManifestRefSha",
+    "postconditionSummary",
+    "nextMigrationAllowed=false",
+    "previousReceiptSha256"
+  ],
+  "receipts": [
+    "preflight",
+    "backupRef",
+    "dispatchJournal",
+    "transactionResult",
+    "ledgerResult",
+    "postconditions",
+    "endState"
+  ],
+  "storage": "Fixed protected receipt root build/r7dc3b-exact-migration-ops/receipts, dirs0700/files0600, exclusive create and file+directory fsync before dispatch. Public docs receive redacted summaries only. No path supplied by model/plan/CLI.",
+  "journal": "One operator authorization/plan attempt is consumed before dispatch; process restart or failed fsync cannot auto-replay. Ledger itself is a second duplicate guard; no new DB evidence table.",
+  "appendOnly": "Never rewrite UNKNOWN or historical FAIL to PASS. Verification is a new linked receipt.",
+  "operatorBoundary": "JSON reference+hash is traceable attestation, not a cryptographic human signature or automatic approval."
+}

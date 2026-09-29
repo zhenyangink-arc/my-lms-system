@@ -1,0 +1,211 @@
+{
+  "overall": "GO",
+  "gates": [
+    {
+      "id": "G-R6C-1",
+      "name": "R6B Draft Ready",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-2",
+      "name": "Authenticated Platform Owner",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-3",
+      "name": "Target Context Exact",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-4",
+      "name": "Node Schema Audited",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-5",
+      "name": "Eight-Node Plan Locked",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-6",
+      "name": "Write Authorization",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-7",
+      "name": "Node1",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-8",
+      "name": "Node2",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-9",
+      "name": "Node3",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-10",
+      "name": "Node4",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-11",
+      "name": "Node5",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-12",
+      "name": "Node6",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-13",
+      "name": "Node7",
+      "status": "PASS",
+      "note": "DRAFT_TEXT_ONLY; automatic correctness DEFERRED, explicitly accepted"
+    },
+    {
+      "id": "G-R6C-14",
+      "name": "Node8",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-15",
+      "name": "Node Count Eight",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-16",
+      "name": "Node Order",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-17",
+      "name": "Node Types Valid",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-18",
+      "name": "Teaching Content Exact",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-19",
+      "name": "Practice Content",
+      "status": "PASS",
+      "note": "DRAFT_TEXT_ONLY; automatic correctness DEFERRED, explicitly accepted"
+    },
+    {
+      "id": "G-R6C-20",
+      "name": "No Duplicate Nodes",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-21",
+      "name": "Script Version Still Draft",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-22",
+      "name": "No Publish",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-23",
+      "name": "No Runtime Execution",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-24",
+      "name": "R6A Canonical Content Unchanged",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-25",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-26",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-27",
+      "name": "Agent Rows Zero",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-28",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-29",
+      "name": "Pins Zero",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-30",
+      "name": "Definition Publication Zero",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-31",
+      "name": "Auth Writes Zero",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-32",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-33",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "id": "G-R6C-34",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "note": ""
+    }
+  ],
+  "stage1G": "NOT READY",
+  "nextStageNotStarted": "R6D"
+}

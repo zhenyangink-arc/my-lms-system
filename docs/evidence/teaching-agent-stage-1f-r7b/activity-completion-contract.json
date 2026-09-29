@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "contract": "activity-completion/1",
+  "statuses": [
+    "COMPLETED",
+    "INCOMPLETE",
+    "UNKNOWN"
+  ],
+  "authority": "FIXTURE_ONLY",
+  "bindings": [
+    "sessionId",
+    "snapshotId",
+    "snapshotDigest",
+    "stepId",
+    "sourceBlockId",
+    "mediaRevision",
+    "cueId",
+    "blockId",
+    "activityRef",
+    "requestId",
+    "generation"
+  ],
+  "evidence": [
+    "attemptNumber",
+    "completedAt",
+    "source",
+    "stateRevision",
+    "stateDigest",
+    "observedAt"
+  ],
+  "contentRevisionEqualsStudentRevision": false,
+  "activityResultOkMeansCompleted": false,
+  "correctMeansStepCompleted": false,
+  "atomicRpcContract": "NOT USED"
+}

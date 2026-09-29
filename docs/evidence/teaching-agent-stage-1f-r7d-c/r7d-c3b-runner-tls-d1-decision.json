@@ -1,0 +1,89 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "overall": "READY_FOR_TLS_CONTRACT_FIX_APPROVAL",
+  "currentBlocker": "BLOCKED_CAPTURE_TLS_REQUIRED",
+  "actualConnectionEndpointType": "TCP_HOSTNAME",
+  "endpointServiceType": "REMOTE_SUPAVISOR_SESSION_POOLER",
+  "actualConnectionChain": "Runner -> pinned Docker psql/libpq -> verify-full TCP -> Supavisor session pooler -> separate upstream -> PostgreSQL",
+  "configuredSslmode": "verify-full",
+  "sslmodeConsumer": "Container psql/libpq using fixed service uply",
+  "tlsObservedByPgStatSsl": "FALSE historically; P1D gate rejected; no fresh DB observation this turn",
+  "whyFalse": "The SQL backend is attached to the pooler upstream connection, whose SSL flag is historically false. It does not observe the client-to-pooler TLS session. P1D coalesce(false) alone does not distinguish false from missing/null row.",
+  "tlsTerminationPoint": "Managed pooler service boundary; provider-internal implementation not observed",
+  "proxy": "Supavisor shared session pooler",
+  "unixSocket": "NO for runner client hop; provider upstream transport UNKNOWN",
+  "tailscale": "Present locally; not evidence of DB-route encryption",
+  "productionProfileEffective": "YES for endpoint/config; backend trust remains unapproved",
+  "historicalProductionConnectionSamePath": "YES for pinned endpoint/project identity and client security contract",
+  "primaryClassification": "PG_STAT_SSL_GATE_NOT_OBSERVING_INTENDED_TLS_HOP",
+  "excludedClassifications": {
+    "UNIX_SOCKET_TRUST_BOUNDARY": "Current host is a remote DNS hostname, no socket override.",
+    "WRONG_CONNECTION_PROFILE_OR_OVERRIDE": "Service/profile host/project locks match; no PG/image/hosts override found.",
+    "DIRECT_TCP_TLS_CONFIGURATION_MISMATCH": "Endpoint is explicitly the managed session pooler, not direct Postgres.",
+    "TRUSTED_TLS_TERMINATOR_OR_PROXY": "Not selected because backend trust has not been independently approved."
+  },
+  "nextApproval": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-tls-contract-reconciliation.json",
+  "nextApprovalScope": "CONTRACT_RECONCILIATION_DESIGN_ONLY; no code/config edits, credentials or DB connection",
+  "productionProbeRequiredForPrimaryDiagnosis": false,
+  "tlsGateChangeAuthorized": false,
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "evidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-source-audit.json",
+      "sha256": "1bcec310ee8540d96e201b42a07ab3394feff3af4c187ba7def09912d7972cf7"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-connection-config.json",
+      "sha256": "b1ac906dc75b46a68cd799faafa9d2586ef9b769d82ecc90d41aeb38b360ae5c"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-topology.json",
+      "sha256": "fffe330bbcb7fa1d1dd219877afa7a7bb0252e63a7731eeaed18f4ea814599b0"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-local-listeners.json",
+      "sha256": "469ee7bd6009d0f0edb817ee8b6326ab70a4c4c228fa94b4452c446f513562f4"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-container-path.json",
+      "sha256": "d9050428c4ca93cd240c651891734ba3341e27af111b676286ee15c795c658f5"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-historical-evidence.json",
+      "sha256": "1851b0d623115c8133e0f9e05c495b02132f52200a141a7483716a64b567dcf1"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-security-contract.json",
+      "sha256": "688baca2449becfb769f4c19c0acdff0f9cf0dc0fda36d7d537b3ed1fb6e80b7"
+    }
+  ]
+}

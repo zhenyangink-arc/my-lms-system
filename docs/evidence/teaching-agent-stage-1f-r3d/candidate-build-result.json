@@ -1,0 +1,14 @@
+{
+  "exit": 0,
+  "seconds": 96.28,
+  "productionDeploy": false,
+  "publicConfigMatchesProduction": true,
+  "sourceChanged": false,
+  "liveProviderRequests": 0,
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "artifactFiles": 1377,
+  "artifactDigest": "b088781734cd2191c9027b208da70f04d8931b095afaf8a5bd2efe97a777185b",
+  "candidateDecision": "R3D engineering candidate only; NOT Production Ready",
+  "archiveDigest": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "privateBuildCopyRemoved": true
+}

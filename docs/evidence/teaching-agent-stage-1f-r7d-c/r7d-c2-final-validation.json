@@ -1,0 +1,27 @@
+{
+  "jsonParse": "PASS",
+  "productSourceLock": "9 EXACT",
+  "existingProtectedChanges": [
+    "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+    "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts"
+  ],
+  "existingTestChanges": 0,
+  "packageChanges": 0,
+  "migrationChanges": 0,
+  "newFilesOutsideApprovedProducts": 0,
+  "dbReads": 0,
+  "dbWrites": 0,
+  "AgentRuns": 0,
+  "Provider": 0,
+  "productHashes": {
+    "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts": "6f13ea423870793901b82acd1a83f89a44faac255a24eae7115ae7e000c156c1",
+    "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts": "93139887b671af606c2e9c2f99efe9f290b86943444a8c9b8e1766216053be4f",
+    "src/features/teaching-agent/server/skills/teaching-skill-contract.ts": "d3275eb7dce08bca624cfa6acebcbab5fccd8329b8327dd3242239feed9c3588",
+    "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts": "9ba9214edd5162bcfa3f12f3abbbccfd02eeb924c7ad918fa16f42df1dbd75bb",
+    "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts": "b19e126e5b2f9bf460ec7b83f9a8d73e2639212200a94a456ddda691fb575940",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts": "fbe01e6df5f7b6827c7b8ed95708fafde189c2c2cb838cea75f988221a90eefe",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "build": "cWgvIjdoChxT4NjdbwIJW",
+  "sourceHashes": {
+    "src/features/development-execution/server/provisioning.service.ts": "1ae76d4cf31d5e0cd57559dc1122e70aa98fd81e8922bc2e30045bf19821c055",
+    "src/features/development-execution/server/provisioning-composition.server.ts": "118032c91af681ba13ccd8d52709ae23471bc6efbf78378d7380517e9188c083",
+    "src/features/development-execution/server/provisioning.actions.ts": "81f7a09368949be1b14ce5ff8a787a74a3ff61c4b69ef75e6ad3e4dc71a7c363",
+    "src/features/development-execution/server/provisioning-journal.server.ts": "4996f6c2ba58a88ebe21c5c709f5081e58916a9338265475d1431e4914f3a21c",
+    "src/features/development-execution/server/provisioning-contract.ts": "179430f5d6ca8357d4c76e2b7998efd8fd5df9a3e8d8fc423afd2a3bd9570a7c",
+    "src/features/development-execution/server/provisioning-readback.server.ts": "6951f0cbde04bd5f40e330dba94b2a57071833f2b0fa150c9a79a1a7caa944f8",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts": "fc11bc041ddfec9e348e11a12450c3a20f85eb0d5438c914410db8687b8d325a"
+  },
+  "productionActionExposed": false,
+  "productionIssuerLoaded": false,
+  "deploy": 0,
+  "newDependencies": 0,
+  "logHash": "0c0216563090d17314b5b264f9bf1c4815a029e237f57b806c750029fe7434ed"
+}

@@ -1,0 +1,78 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "status": "DRAFT_BLOCKED_READONLY_ENTRYPOINT_ARCHITECTURE_DECISION",
+  "approved": false,
+  "executionAuthorized": false,
+  "normalFutureAgentTransportKnownScope": [
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "change": "Extend strict intent literal to exactly explain_segment | summarize_execution; preserve all existing origin/auth/size/cancellation/admission semantics."
+    }
+  ],
+  "normalActivationKnownProductCount": 1,
+  "unchangedBoundaries": [
+    {
+      "path": "/tmp/uply-r7dc3a-production-candidate/src/features/teaching-agent/server/transport/production.ts",
+      "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "bytes": 1903
+    },
+    {
+      "path": "/tmp/uply-r7dc3a-production-candidate/src/features/teaching-agent/server/transport/rollout-policy.ts",
+      "sha256": "afc063f8ae03094a95885b29980733023b9903e46e9613069c389202ecbfd5af",
+      "bytes": 2805
+    },
+    {
+      "path": "/tmp/uply-r7dc3a-production-candidate/src/features/teaching-agent/server/transport/transport-config.ts",
+      "sha256": "5c8a2f8c8dd00d0f3d2e62dbb26722497034cfad83e03020c49ad46670bda47e",
+      "bytes": 299
+    },
+    {
+      "path": "/tmp/uply-r7dc3a-production-candidate/src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "bytes": 2085
+    },
+    {
+      "path": "/tmp/uply-r7dc3a-production-candidate/src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "bytes": 6684
+    }
+  ],
+  "featureAllowlistPlan": "Default OFF/empty. Future independent activation approval must pin exact QA subject+tenant+course through existing three-list intersection. Persona/model cannot supply identity or widen permission.",
+  "negativeTests": [
+    "OFF denies",
+    "empty/wrong tenant/course/user allowlist denies",
+    "unauthenticated/Owner/B2/nonstudent denied",
+    "strict unknown identity fields rejected",
+    "cross-tenant and wrong lesson denied",
+    "Explain unchanged",
+    "Summary routes only to Skill1.1/Tool1.1",
+    "unknown intent rejected",
+    "failed/stale Tool evidence never completes",
+    "no Provider/Agent activity before separate authorization"
+  ],
+  "notSufficientForReadonlyAcceptance": true,
+  "blocker": "Existing normal POST inevitably admits persisted Agent Run and invokes Provider. A zero-Run/zero-Provider read-only entrypoint requires a separate architecture contract; scope is NOT falsely claimed to be this one file.",
+  "readonlyImplementationScope": "NOT_LOCKED",
+  "noTemporaryAdminBackdoor": true,
+  "productChanges": 0,
+  "activation": 0
+}

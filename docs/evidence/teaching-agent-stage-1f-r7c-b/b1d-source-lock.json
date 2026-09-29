@@ -1,0 +1,36 @@
+{
+  "changedProductFiles": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "testFiles": [
+    "tests/teaching-agent-r7cb-authoring.test.mjs",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+    "tests/fixtures/teaching-agent-r7cb/preflight-harness.mjs",
+    "tests/teaching-agent-r7cb-owner-preflight.test.mjs"
+  ],
+  "files": [
+    {
+      "path": "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "sha256": "4d2c1cd058f5fa2ba5b58ceae60c4fa2d8442a7a3508996fd2b0ec9432b5f3f3"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring.test.mjs",
+      "sha256": "c818835042a330cf066f5fe88a6df1f6947abdf5148ad6aa8571294cd0fe51e1"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+      "sha256": "5ac6a7cfa1a42fc82862519203f9f352370c7875bc256ebd588c1bdec4615a13"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7cb/preflight-harness.mjs",
+      "sha256": "487f9f8e06342d25ffa0724dca3c532e2cf576f79428d3d8cb8f1559c05060d4"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-owner-preflight.test.mjs",
+      "sha256": "68213631d9d73ed98a385ebb5d664079c12c04567482216d7e1d433e777e95ad"
+    }
+  ],
+  "migrationSha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c",
+  "currentBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "deploy": 0
+}

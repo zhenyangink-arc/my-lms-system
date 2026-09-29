@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "contract": "native-execution/1",
+  "action": "show_activity",
+  "storage": "MOCK / FIXTURE ONLY",
+  "sourceBlockId": "test-video",
+  "targetBlockId": "test-activity",
+  "triggerType": "time",
+  "triggerTime": 5,
+  "mandatory": true,
+  "pauseSource": true,
+  "resumePolicy": "after_authoritative_activity_completion",
+  "dbTableCreated": false,
+  "arbitraryDomControl": false
+}

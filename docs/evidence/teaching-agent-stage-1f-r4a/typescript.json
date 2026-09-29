@@ -1,0 +1,12 @@
+{
+  "command": [
+    "node_modules/.bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false"
+  ],
+  "exit": 0,
+  "durationSeconds": 44.554,
+  "stdout": "",
+  "stderr": ""
+}

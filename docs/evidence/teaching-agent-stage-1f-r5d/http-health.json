@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/login",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": false,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/platform/dashboard",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/platform/apps/korean/courses",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/platform/dashboard/admin",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": true,
+      "authenticated": false
+    },
+    {
+      "method": "HEAD",
+      "path": "/images/hangul/pronunciation-side-profile.png",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": false,
+      "authenticated": false
+    },
+    {
+      "method": "HEAD",
+      "path": "/pwa/icon-192.png",
+      "status": 200,
+      "redirectCategory": "NONE",
+      "streamedRedirectObserved": false,
+      "authenticated": false
+    }
+  ],
+  "compiledRoutes": {
+    "/[space]/dashboard/admin/apps/[appSlug]/textbooks/page": true,
+    "/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/page": true,
+    "/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page": true
+  },
+  "limitation": "Basic unauthenticated response only; HTTP 200 or streamed login redirect is not authenticated business verification",
+  "cookiesSent": false,
+  "responseBodiesSaved": false
+}

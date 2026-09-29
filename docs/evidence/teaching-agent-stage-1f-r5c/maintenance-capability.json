@@ -1,0 +1,80 @@
+{
+  "status": "SUFFICIENT",
+  "expiry": "VALID",
+  "catalog": {
+    "loginRole": "postgres",
+    "effectiveRole": "postgres",
+    "credentialExpiryValid": true,
+    "roleCanLogin": true,
+    "databaseCreate": true,
+    "ledgerInsert": true,
+    "schemaCreate": [
+      {
+        "schema": "private",
+        "allowed": true
+      },
+      {
+        "schema": "public",
+        "allowed": true
+      },
+      {
+        "schema": "supabase_migrations",
+        "allowed": true
+      }
+    ],
+    "targetTableOwnership": [
+      {
+        "table": "ai_token_usage",
+        "canActAsOwner": true
+      },
+      {
+        "table": "curriculum_plan_template_items",
+        "canActAsOwner": true
+      },
+      {
+        "table": "curriculum_plan_templates",
+        "canActAsOwner": true
+      },
+      {
+        "table": "digital_textbook_chapters",
+        "canActAsOwner": true
+      },
+      {
+        "table": "digital_textbook_modules",
+        "canActAsOwner": true
+      },
+      {
+        "table": "digital_textbook_versions",
+        "canActAsOwner": true
+      },
+      {
+        "table": "digital_textbooks",
+        "canActAsOwner": true
+      },
+      {
+        "table": "institution_curriculum_plan_students",
+        "canActAsOwner": true
+      },
+      {
+        "table": "institution_curriculum_plans",
+        "canActAsOwner": true
+      },
+      {
+        "table": "learning_agent_lessons",
+        "canActAsOwner": true
+      },
+      {
+        "table": "learning_agent_script_nodes",
+        "canActAsOwner": true
+      },
+      {
+        "table": "learning_agent_script_versions",
+        "canActAsOwner": true
+      }
+    ],
+    "canOwnAsPostgres": true,
+    "requiredGrantRoles": true
+  },
+  "tls": "verify-full",
+  "readOnly": true
+}

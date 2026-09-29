@@ -1,0 +1,5 @@
+{
+  "algorithm": "SHA256 of sorted relative file path + per-file SHA256, newline-delimited; excludes .next/cache",
+  "files": 1376,
+  "digest": "fde297cf0bfb26908dc375d7a309071d8bc0bda2bbf3eff199c6d51e8a02b096"
+}

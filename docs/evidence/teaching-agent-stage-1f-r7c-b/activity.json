@@ -1,0 +1,14 @@
+{
+  "status": "NOT CREATED",
+  "count": 0,
+  "alias": "hangul-introduction-vowel-recognition",
+  "domainType": "single_choice",
+  "runtimeRenderer": "multiple_choice",
+  "publicPrompt": "哪个是元音？",
+  "options": [
+    "ㄱ",
+    "ㅏ",
+    "ㄴ"
+  ],
+  "secondQuestion": "DEFERRED"
+}

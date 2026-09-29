@@ -1,0 +1,192 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1-R2",
+  "recordedAt": "2026-09-20T05:38:30.870607+00:00",
+  "mode": "DESIGN_AUDIT_APPROVAL_PROPOSAL_ONLY",
+  "scope": "R7D-C3B_ONLY",
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "testsRerun": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "controlledPreflightV4": "NOT_GENERATED",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "READY_FOR_HISTORICAL_EVIDENCE_LOSS_ACCEPTANCE",
+  "loss": {
+    "incidentCode": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+    "classification": "HISTORICAL_VALIDATION_LOG_BYTES_LOST",
+    "lostPath": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+    "expectedOriginalSha": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+    "currentOverwrittenSha": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+    "originalBytesStatus": "ORIGINAL_BYTES_LOST",
+    "originalBytesAvailable": false,
+    "restored": false,
+    "reconstructed": false,
+    "byteExactRecovery": false,
+    "acceptedLoss": false
+  },
+  "evidenceMap": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r2-evidence-map.json",
+    "sha256": "dada36feef876eb957fdd416fc096a04cbffac521f7141194c0b9e277d61f049"
+  },
+  "incidentArtifact": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+    "sha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51"
+  },
+  "recoveryFailedArtifact": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-history-recovery-failed.json",
+    "sha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72"
+  },
+  "assessments": {
+    "A": {
+      "status": "PROVEN",
+      "claim": "P1C-I2 recorded READY_FOR_CONTROLLED_PRODUCTION_READONLY_CAPTURE_V3_APPROVAL",
+      "basis": "Surviving result exact-hash bound by historical v3 and subordinate artifact hashes verified.",
+      "limit": "Recorded review readiness, not executed production capture or permission."
+    },
+    "B": {
+      "status": "PARTIALLY_PROVEN",
+      "claim": "P1C-I2 98 required PASS, 172 regression PASS, zero safety-critical skips",
+      "parts": {
+        "98RequiredTests": "PROVEN_BY_SURVIVING_STRUCTURED_AND_RAW_RUNNER_OUTPUT",
+        "172RegressionRecorded": "PROVEN_AS_HISTORICAL_STRUCTURED_RECORD",
+        "172RegressionRawIndependentlyReverifiable": "PARTIALLY_PROVEN_17_R5B_PRESENT_155_NODE_ORIGINAL_LOST",
+        "safetyCriticalSkips0": "PROVEN_AS_RECORDED"
+      },
+      "limit": "Correlated structured reports preserve the result but cannot revalidate the missing original Node output."
+    },
+    "C": {
+      "status": "PARTIALLY_PROVEN",
+      "claim": "Source/package hashes were not silently rewritten later",
+      "basis": "Historical lock artifacts match cross-references; recorded pre-edit hashes bridge forward implementation; current lock and package match; preserved baseline differs only in approved nine paths and single known log.",
+      "limit": "A set of local snapshots does not establish continuous tamper-proof custody or absence of transient changes; approved forward source changes did occur."
+    },
+    "D": {
+      "status": "PROVEN",
+      "claim": "TLS-I1 134/134 and 172 regression use separately retained current outputs, not the lost raw log as sole authority",
+      "basis": "Case maps, exact current log hashes and passing summaries match; locked test source invokes Node and isolated R5B subprocesses and writes runner-tls-i1-validation.",
+      "limit": "Owned validation evidence, not production execution proof; no tests rerun in R2."
+    }
+  },
+  "decision": "Prepare a narrow unapproved forward loss-acceptance proposal; keep release blocked pending explicit acceptance.",
+  "rationale": {
+    "search": "R1 covered the authorized accessible Git/object/reflog/workspace/archive/backup/temp/editor/snapshot sources, found no exact bytes, and documented exclusions. No new recovery lead or factual error in that report was found. Repeating broad searches is not the default; a newly discovered authentic copy remains eligible only after exact SHA verification.",
+    "noFabrication": "A new test log or reconstructed timing/PID output is not the original. Expected SHA and overwritten bytes remain unchanged.",
+    "forwardAcceptance": "Retained readiness/test/source evidence and independent current-run outputs support review of a one-file historical reproducibility gap. They do not restore that gap. Only a later explicit user acceptance can permit scoped progression.",
+    "history": "All prior incident, P1C-I2, v3 and recovery records remain intact. The proposed exception is additive and cannot relabel LOST as RESTORED.",
+    "policy": "Acceptance expires at C3B completion and is not a permanent audit policy. All future evidence retains strict immutability requirements."
+  },
+  "residualRisk": "The exact original P1C-I2 Node regression output cannot be independently re-read or checked, including its original per-case output, PID and timing bytes. Historical aggregate PASS is preserved in correlated structured records and runner wrapper output; full original raw-log reproducibility is lost.",
+  "classificationExcludes": [
+    "SOURCE_CODE_LOSS",
+    "MIGRATION_LOSS",
+    "DATABASE_STATE_LOSS",
+    "PRODUCTION_DATA_LOSS",
+    "TEST_FAILURE",
+    "SECURITY_CONTROL_FAILURE"
+  ],
+  "classificationCaveat": "The known event is an evidence-preservation failure. These exclusions classify the documented loss; they are not a new blanket proof of production data or security.",
+  "preconditions": [
+    {
+      "id": "EXACT_SINGLE_LOSS",
+      "required": "Exactly one remaining historical overwrite; exact path and both specified SHAs only",
+      "observed": "PASS"
+    },
+    {
+      "id": "R5B_ORIGINAL",
+      "required": "Historical R5B log SHA 480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "observed": "PASS"
+    },
+    {
+      "id": "IMPLEMENTATION",
+      "required": "TLS-I1 implementation PASS_OWNED_VALIDATION",
+      "observed": "PASS"
+    },
+    {
+      "id": "CURRENT_TESTS",
+      "required": "134/134 executed PASS, zero failure/skip, surviving bound logs",
+      "observed": "PASS"
+    },
+    {
+      "id": "CURRENT_REGRESSION",
+      "required": "172 PASS, zero failure/skip, surviving bound current logs",
+      "observed": "PASS"
+    },
+    {
+      "id": "SOURCE_LOCKS",
+      "required": "All current source and unchanged-boundary locks plus package digest match",
+      "observed": "PASS"
+    },
+    {
+      "id": "CANDIDATE",
+      "required": "All three candidate archives match locked hashes",
+      "observed": "PASS"
+    },
+    {
+      "id": "MIGRATIONS",
+      "required": "000/001/002 exact locked hashes match",
+      "observed": "PASS"
+    },
+    {
+      "id": "OUTPUT_DESTINATION",
+      "required": "Current test source targets runner-tls-i1-validation; no old historical directory reference",
+      "observed": "PASS"
+    },
+    {
+      "id": "INCIDENT_RETAINED",
+      "required": "Incident and recovery-failed artifacts remain byte-identical; mismatch remains disclosed",
+      "observed": "PASS"
+    },
+    {
+      "id": "HISTORICAL_CHAIN",
+      "required": "Retained P1C-I2/v3 and supporting output hash references match, excluding ONLY exact declared lost log",
+      "observed": "PASS"
+    },
+    {
+      "id": "EXPLICIT_ACCEPTANCE",
+      "required": "Future explicit user approval of exact lossAcceptanceId and artifact raw SHA, recorded in a new forward acceptance record",
+      "observed": "PENDING_NOT_AUTHORIZED"
+    },
+    {
+      "id": "STAGE_OPEN",
+      "required": "At future acceptance/proposal generation, C3B release not completed and acceptance not revoked; any closure/revocation blocks further use",
+      "observed": "FUTURE_RECHECK_REQUIRED"
+    }
+  ],
+  "futureEvidencePolicy": {
+    "state": "STRICT_IMMUTABLE_RETAINED",
+    "requirements": [
+      "Every future validation stage uses a new output directory; never reuse a finalized historical directory",
+      "Retain original bytes and hashes; exclusive create where appropriate",
+      "Fail closed on unexpected source/evidence mutation; no automatic new baseline",
+      "This exception cannot authorize any other loss, overwrite, hash mismatch, release, project or future incident"
+    ],
+    "implementationLimit": "Current regression helper uses write_text in runner-tls-i1-validation. Corrected routing protects P1C-I2 but is not a general immutable-output enforcement mechanism. Do not rerun into that finalized directory; a future incompatible path requirement needs separately scoped work. No code changes made here."
+  },
+  "acceptanceApproved": false,
+  "acceptedLoss": false,
+  "futureV4Generated": false,
+  "C3BRelease": "BLOCKED_PENDING_EXPLICIT_LOSS_ACCEPTANCE",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY"
+}

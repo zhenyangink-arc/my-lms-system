@@ -1,0 +1,161 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1A",
+  "recordedAt": "2026-09-19T06:11:06.177033+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "Stage1G": "NOT_READY",
+  "status": "PASS",
+  "tests": [
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_01_missing_auth_before_credentials",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_02_explicit_draft_authority",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_03_cannot_authorize_install",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_04_strict_schema",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_05_static_hashes",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_06_raw_file_recheck",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_07_freshness",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_08_fixed_identity_tls",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_09_no_mutation_or_tools",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_10_fixture_separation",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_11_cli_arbitrary_inputs",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_12_production_auth_without_credentials",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_13_ledger_first_mock",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_14_modes_reject_bad_session",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_25_production_tls_before_ledger",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_26_runtime_guards_preserved",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_15_owned_baseline_rollback",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_16_cli_owned_adapter",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_17_readonly_mutation_probe",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_18_count_mismatch_early_stop",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_19_duplicates_early_stop",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_20_statement_digest_and_pinned_recapture",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_21_wrong_function_body",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_22_wrong_owner_definer_path",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_23_wrong_acl",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_24_wrong_versions_same_count",
+      "result": "PASS"
+    },
+    {
+      "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+      "result": "PASS"
+    }
+  ],
+  "safetyCriticalSkips": 0,
+  "coverage": [
+    "missing capture authorization rejected before credentials",
+    "strict fields/version/scope/types",
+    "DRAFT install modes still reject",
+    "READY/install authority cannot become capture authority",
+    "wrong draft/raw/body/package hashes",
+    "changed draft file",
+    "wrong target/TLS/profile/image",
+    "expired/future/oversized authorization window",
+    "no mutation/dump/restore/seal capability",
+    "arbitrary CLI SQL/path/profile rejected",
+    "fixture production separation",
+    "actual READ ONLY mutation rejection",
+    "ledger count/duplicate/versions mismatch before protected family",
+    "pinned same-count source prefix mismatch",
+    "wrong body/owner/definer/search path/ACL without writes",
+    "raw statements/body excluded from receipts",
+    "private receipt modes/exclusive no-overwrite"
+  ]
+}

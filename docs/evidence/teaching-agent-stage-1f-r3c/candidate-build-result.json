@@ -1,0 +1,12 @@
+{
+  "exit": 0,
+  "seconds": 94.04,
+  "instrumented": false,
+  "publicConfigMatchesProduction": true,
+  "productionDeploy": false,
+  "liveProviderCalls": 0,
+  "buildId": "ZBmA1Ivlh5dcbVGaUyNqS",
+  "artifactDigest": "751bd64f8ac98b7519a1eb3c8ea3d38383321528ee6d6605d120077c3633b325",
+  "artifactFiles": 1376,
+  "archiveDigest": "5e3ded3a12a956be835d02d21d2d4fb7c95c9af3c081e51c22bcf7606c4ae30d"
+}

@@ -1,0 +1,77 @@
+diff --git a/supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql b/supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql
+new file mode 100644
+--- /dev/null
++++ b/supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql
+@@ -0,0 +1,19 @@
++-- Permanent publication-policy rejection is not a serialization failure.
++-- PostgREST 14 retries 40001; PT409 returns the same refusal without retrying.
++-- Preserve the fence predicate, lock ordering, privileges and all stored data.
++begin;
++
++create or replace function runtime_publish_private.check_authoring_statement()
++returns trigger language plpgsql security definer set search_path='' as $$
++declare f runtime_publish_private.dependency_fences%rowtype;
++begin
++ for f in select d.* from runtime_publish_private.dependency_fences d
++  where not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id) order by d.snapshot_id loop
++  if runtime_publish_private.capture(f.scope) is distinct from runtime_publish_private.semantic_capture(f.capture) then
++   raise exception 'PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW' using errcode='PT409';
++  end if;
++ end loop;
++ return null;
++end $$;
++
++commit;
+diff --git a/tests/runtime-authoring-nonretryable.test.mjs b/tests/runtime-authoring-nonretryable.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/tests/runtime-authoring-nonretryable.test.mjs
+@@ -0,0 +1,48 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {readFile} from 'node:fs/promises';
++import {publishedChapterFixture,publishedOverrides} from './fixtures/published-chapter-one.mjs';
++import {serverModule} from './fixtures/runtime-4a2.server.mjs';
++import {literal as q,processResult} from './fixtures/recording-v2-postgres.mjs';
++import {source} from './fixtures/runtime-4a.mjs';
++
++const file='supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql';
++test('minimal correction preserves the entire policy function except SQLSTATE',async()=>{
++ const old=await readFile('supabase/migrations/202609100004_runtime_single_version_authoring.sql','utf8');
++ const next=await readFile(file,'utf8');
++ const body=s=>s.match(/function runtime_publish_private\.check_authoring_statement\(\)[\s\S]*?as \$\$([\s\S]*?)\$\$/i)[1];
++ assert.equal(body(next),body(old).replace("errcode='40001'","errcode='PT409'"));
++ assert(!/\b(?:drop|delete|update|insert|grant|revoke|alter)\b/i.test(next.replace(/^--.*$/gm,'')));
++});
++test('real published fence rolls back forbidden edits; PostgREST 14.5 responds once with HTTP409', {timeout:240000},async()=>{
++ let f,restId;
++ try{
++  f=await publishedChapterFixture();
++  const call=(await serverModule('src/features/digital-textbook/workbench/service.server.ts',publishedOverrides)).chapterWorkbenchOperation;
++  const check=await call({operation:'check'});assert(check.ok);
++  assert((await call({operation:'publish',expected:check.check.expected,digest:check.check.digest})).ok);
++  const readAcl=()=>f.db.query("select json_build_object('owner',proowner,'acl',proacl,'definer',prosecdef,'config',proconfig) from pg_proc where oid='runtime_publish_private.check_authoring_statement()'::regprocedure");
++  const acl=await readAcl();await f.db.query(await readFile(file,'utf8'));assert.equal(await readAcl(),acl);
++  await f.db.query(await readFile(file,'utf8'));assert.equal(await readAcl(),acl,'forward migration can be rebuilt without privilege drift');
++  const version=source.teachingVersions[0].id;
++  const before=await f.db.query('select count(*) from public.learning_agent_script_versions');
++  const rejected=await f.db.raw(`\\set VERBOSITY verbose\ndelete from public.learning_agent_script_versions where id=${q(version)};`);
++  assert.notEqual(rejected.code,0);assert.match(rejected.stderr,/PT409/);assert.match(rejected.stderr,/PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW/);
++  assert.equal(await f.db.query('select count(*) from public.learning_agent_script_versions'),before);
++  await f.db.query('update public.digital_textbooks set status=status');
++  const start=await processResult('docker',['run','--detach','--rm','--network',`container:${f.db.id}`,'-e','PGRST_DB_URI=postgres://postgres@127.0.0.1:5432/postgres','-e','PGRST_DB_ANON_ROLE=service_role','-e','PGRST_DB_SCHEMAS=public','-e','PGRST_LOG_LEVEL=info','public.ecr.aws/supabase/postgrest:v14.5']);
++  assert.equal(start.code,0,start.stderr);restId=start.stdout;
++  const request=path=>processResult('docker',['exec','-i',f.db.id,'nc','-w','5','127.0.0.1','3000'],`DELETE ${path} HTTP/1.1\r\nHost: isolated\r\nConnection: close\r\n\r\n`);
++  // Health check via a nonexistent path cannot mutate any data.
++  let healthy=false;for(let i=0;i<60;i++){const r=await request('/nonexistent_isolated_probe');if(r.stdout.includes('HTTP/1.1')){healthy=true;break;}await new Promise(r=>setTimeout(r,100));}
++  assert(healthy,'PostgREST startup');
++  const response=await request(`/learning_agent_script_versions?id=eq.${version}`);
++  assert.match(response.stdout,/HTTP\/1.1 409 /);assert.match(response.stdout,/"code":"PT409"/);
++  assert.equal(await f.db.query('select count(*) from public.learning_agent_script_versions'),before);
++  const looping=await f.db.query("select count(*) from pg_stat_activity where application_name like 'PostgREST%' and state='active' and query like '%DELETE FROM%'");assert.equal(looping,'0');
++  const logs=await processResult('docker',['logs',restId]);assert.equal((logs.stdout+logs.stderr).split('\n').filter(l=>l.includes('DELETE /learning_agent_script_versions')&&l.includes(' 409 ')).length,1,logs.stdout+logs.stderr);
++  const loaded=await f.loader.loadPublishedRuntimeSnapshot();assert.equal(loaded.bundle.manifest.steps.length,8);assert.equal(loaded.bundle.manifest.activityRefs.length,19);
++  assert((await call({operation:'begin'})).ok,'authorized editing workflow remains available');
++  await f.db.query(`update public.learning_agent_script_versions set title='{"zh-CN":"isolated authorized edit"}' where id=${q(version)}`);
++ }finally{if(restId)await processResult('docker',['stop','--time','2',restId]);await f?.dispose();}
++});

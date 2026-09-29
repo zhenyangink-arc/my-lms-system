@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "beforeSha256": "e41835a00f02b1b4bc60aea94837b6d06f8fdca8da3af7aa2e430398790411fd",
+  "afterSha256": "f7da32ef98a0a187a7621cee2d1278140baa854dc358ded732bd0a0e6f49e39a",
+  "identifierOnlyRename": {
+    "from": "module",
+    "to": "moduleRow",
+    "occurrences": 3
+  },
+  "normalizedSourceByteIdentical": true,
+  "parseDiagnostics": 0,
+  "importsResolved": 5,
+  "noEslintSuppression": true,
+  "productionCalls": 0,
+  "liveProviderRequests": 0
+}

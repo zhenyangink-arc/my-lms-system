@@ -1,0 +1,120 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "NOT_PROVEN",
+  "directHost": null,
+  "directPort": null,
+  "connectionType": "NOT_DISCOVERED",
+  "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+  "projectTextFilesSearched": 1702,
+  "directEndpointHits": [],
+  "safeSourcesChecked": [
+    "project docs/scripts/supabase text config and history",
+    "approved ops pg_service.conf",
+    "known runtime transport fields only",
+    "supabase/.temp/pooler-url",
+    "supabase/.temp/linked-project.json",
+    "supabase/.temp/project-ref"
+  ],
+  "observations": {
+    "serviceType": "REMOTE_SUPAVISOR_SESSION_POOLER",
+    "servicePort": 5432,
+    "runtimeType": "HTTPS_SUPABASE_API_ONLY_NO_DATABASE_URL",
+    "cliPoolerMetadata": {
+      "host": "aws-1-ap-northeast-2.pooler.supabase.com",
+      "port": 5432,
+      "database": "/postgres",
+      "usernameFormat": "PROJECT_SUFFIX",
+      "secretNotReturned": true
+    },
+    "linkedProjectMetadata": "Project reference only; no direct host or address family."
+  },
+  "browser": {
+    "tool": "existing Codex Chrome profile",
+    "requestedURL": "https://supabase.com/dashboard",
+    "resultURL": "https://supabase.com/dashboard/sign-in?returnTo=%2Forg",
+    "result": "LOGIN_REQUIRED_STOPPED",
+    "loginAttempted": false,
+    "projectPageRead": false,
+    "cookieTokenRead": false,
+    "connectionURIRead": false,
+    "screenshotSaved": false
+  },
+  "hostnameGuessed": false,
+  "DNSLookup": false,
+  "IPv4Addon": "UNKNOWN",
+  "missingEvidence": [
+    {
+      "id": "B1",
+      "exactFactNeeded": "Exact direct hostname, port, DIRECT label, project binding and address-family/add-on state.",
+      "whoCanSupply": "Authenticated project operator",
+      "likelyLocation": "Dashboard Connect safe field export; existing trusted provider export",
+      "evidenceClass": "PROJECT_CONFIGURATION",
+      "futureProbeNeeded": "NO: supply safe metadata first; do not synthesize hostname."
+    },
+    {
+      "id": "B2",
+      "exactFactNeeded": "Applicable direct server CA identity and verify-full hostname contract for that exact endpoint.",
+      "whoCanSupply": "Project operator / Supabase",
+      "likelyLocation": "Database SSL settings and authoritative CA metadata",
+      "evidenceClass": "PROJECT_CONFIG_AND_PUBLIC_DOCUMENTATION",
+      "futureProbeNeeded": "OPTIONAL_FUTURE_TLS_HANDSHAKE_AFTER_ENDPOINT_AND_CA_ARE_LOCKED"
+    },
+    {
+      "id": "B3",
+      "exactFactNeeded": "Usable host and host-network Docker route to the confirmed direct endpoint; this host currently lacks public IPv6 address/default route. If IPv4 direct exists, its applicability must be established.",
+      "whoCanSupply": "Network operator / project operator",
+      "likelyLocation": "Network configuration and existing IPv4 add-on evidence",
+      "evidenceClass": "LOCAL_AND_PROJECT_CONFIGURATION",
+      "futureProbeNeeded": "YES_LATER_SEPARATE_DNS_TCP_TLS_PROBE; no network changes or probes now."
+    },
+    {
+      "id": "B4",
+      "exactFactNeeded": "Existing maintenance database-password identity is applicable to direct postgres login; pooler username is not reusable literally.",
+      "whoCanSupply": "Credential owner / Supabase support",
+      "likelyLocation": "Non-secret credential provenance attestation and direct role mapping",
+      "evidenceClass": "OPERATOR_OR_PROVIDER_ATTESTATION",
+      "futureProbeNeeded": "IF_NOT_RESOLVED_BY_ATTESTATION: separately approved READONLY_IDENTITY_PROBE after network proof; no passwords shared."
+    },
+    {
+      "id": "B5",
+      "exactFactNeeded": "Project connection limits and reserved maintenance headroom/timeouts for migration and two-connection exported-snapshot workflow.",
+      "whoCanSupply": "Project operator / Supabase support",
+      "likelyLocation": "Compute/connection settings or safe project metrics export",
+      "evidenceClass": "PROJECT_CONFIGURATION",
+      "futureProbeNeeded": "MAY_REQUIRE_SEPARATE_READONLY_OBSERVATION; general documentation cannot supply a project limit."
+    }
+  ]
+}

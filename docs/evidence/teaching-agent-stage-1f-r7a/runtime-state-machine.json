@@ -1,0 +1,96 @@
+{
+  "status": "PROPOSAL ONLY",
+  "owner": "Existing LessonRuntime / StepController generation; bounded extension to existing teacher presentation orchestration",
+  "states": [
+    "ready",
+    "playing",
+    "cue_pending",
+    "awaiting_activity",
+    "checking_completion",
+    "resume_ready",
+    "paused_by_user",
+    "completed",
+    "error"
+  ],
+  "transitions": [
+    [
+      "ready",
+      "authorized explicit play",
+      "playing"
+    ],
+    [
+      "playing",
+      "cross next uncompleted blocking cue; reserve cue before async work",
+      "cue_pending"
+    ],
+    [
+      "cue_pending",
+      "pause confirmed; target mounted with same generation",
+      "awaiting_activity"
+    ],
+    [
+      "awaiting_activity",
+      "official Activity result; server readback",
+      "checking_completion"
+    ],
+    [
+      "checking_completion",
+      "authoritative completion matches session/snapshot/activity/revision",
+      "resume_ready"
+    ],
+    [
+      "checking_completion",
+      "incorrect/incomplete or unknown",
+      "awaiting_activity"
+    ],
+    [
+      "resume_ready",
+      "same media lease and resume allowed; play succeeds",
+      "playing"
+    ],
+    [
+      "resume_ready",
+      "user paused or autoplay blocked",
+      "paused_by_user"
+    ],
+    [
+      "playing",
+      "media ended",
+      "paused_by_user"
+    ],
+    [
+      "playing",
+      "domain confirms lesson completion",
+      "completed"
+    ],
+    [
+      "any",
+      "scope/generation invalid, stale callback or failed operation",
+      "error"
+    ]
+  ],
+  "completionReceiptProposal": {
+    "fields": [
+      "opaque runtime session",
+      "snapshot digest",
+      "activity ref",
+      "attempt operation ref",
+      "authoritative revision",
+      "completion status",
+      "preview flag"
+    ],
+    "notSufficient": [
+      "HTTP200",
+      "ok=true",
+      "client correct",
+      "DOM hidden",
+      "video ended",
+      "onResult alone"
+    ],
+    "idempotency": "Existing attempts need reliable operation key/reconciliation contract for retry/unknown handling. No automatic resubmit after uncertain response.",
+    "qualification": "Existing server.activityProgress for bound Activity based on persisted qualifying attempt. Do not use parent nodeCompleted as Activity completion; first question can complete before both questions complete the parent.",
+    "revisionGap": "Source revision is not student progress revision; add explicit readback evidence/version semantics to existing projection contract."
+  },
+  "runtimeVsAgent": "Agent may propose explanation/presentation; it does not drive state transitions for grading/lesson progression. Runtime resolves allowed business action against domain authority.",
+  "mvpIsolation": "Same controller/services in development fixture; simulated server result explicitly marked fixture. Server grader/RPC integration verified in isolated tests before claiming production durable completion."
+}

@@ -11,6 +11,9 @@ const text=p=>readFile(`supabase/migrations/${p}`,'utf8');
 // Only SQL/auth/byte transports are substituted. Publisher, capture projection,
 // immutable repository, published Loader and durable resolver are real modules.
 export const publishedOverrides={};
+// Keep the real frozen scene resolver and authorization; replace only external
+// object bytes in this isolated publication fixture (no real R2 credentials).
+publishedOverrides['./scene-image-storage.server']='export async function readSceneImage(key,signal){signal.throwIfAborted();if(!key)throw Error("SCENE_KEY_REQUIRED");return new Response(Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=","base64"),{headers:{"content-type":"image/png"}});}';
 for(const p of ['../auth','../../../lib/auth','@/lib/auth'])publishedOverrides[p]='export async function requireActiveUser(){return globalThis.__publishedChapter.auth;} export async function getAuthContext(){return globalThis.__publishedChapter.auth;} export function isActiveProfileStatus(s){return s==="active";}';
 for(const p of ['../supabase/admin','../../../lib/supabase/admin','@/lib/supabase/admin'])publishedOverrides[p]='export function createAdminClient(){return globalThis.__publishedChapter.admin;}';
 publishedOverrides['next/server']='export class NextResponse extends Response{static json(x,o){return Response.json(x,o);}}';

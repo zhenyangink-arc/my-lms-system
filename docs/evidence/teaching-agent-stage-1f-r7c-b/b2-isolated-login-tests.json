@@ -1,0 +1,102 @@
+{
+  "status": "PASS FOR ACTIVE BAN \u2014 ISSUANCE IS NOT DISABLED",
+  "authVersion": "v2.197.0",
+  "ownedIsolated": true,
+  "applicationTriggers": "Current definitions, active unchanged",
+  "initialActorSessions": 0,
+  "initialActorRefreshTokens": 0,
+  "tests": [
+    {
+      "case": "password grant: banned enforcement before password validation",
+      "http": 400,
+      "code": "user_banned",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "public magic-link issuance (may issue unusable token)",
+      "http": 200,
+      "code": null,
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "verify valid magic-link hash while banned",
+      "http": 403,
+      "code": "user_banned",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "verify valid email OTP while banned",
+      "http": 403,
+      "code": "user_banned",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "public OTP issuance (may issue unusable token)",
+      "http": 429,
+      "code": "over_email_send_rate_limit",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "refresh without any issued refresh grant",
+      "http": 400,
+      "code": "validation_failed",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "PKCE without a valid auth-code grant",
+      "http": 404,
+      "code": "flow_state_not_found",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "signed bearer without an issued session is rejected for banned actor",
+      "http": 403,
+      "code": "user_banned",
+      "usableSession": false,
+      "pass": true
+    },
+    {
+      "case": "SMS OTP disabled provider",
+      "http": 422,
+      "code": "otp_disabled",
+      "usableSession": false,
+      "pass": true
+    }
+  ],
+  "finalCounts": {
+    "sessions": 0,
+    "refreshTokens": 0,
+    "bannedActors": 1,
+    "authAudit": 0,
+    "identities": 1,
+    "profiles": 1
+  },
+  "scopeLimits": [
+    "No previously issued valid refresh grant exists; random-refresh and zero-grant invariant tested, not a login-then-ban scenario",
+    "Browser-origin requests exercise enabled auth API; no separate application browser login UI was run",
+    "Admin magic-link challenge generated only in isolated environment and never exported",
+    "Hosted SMTP credentials/signing keys not cloned; local mail sink and isolated signing secret used"
+  ],
+  "currentDbWrites": 0,
+  "additionalTests": [
+    {
+      "case": "email OTP issuance after rate window",
+      "http": 200,
+      "code": null,
+      "usableSession": false
+    },
+    {
+      "case": "legacy-format nonexistent refresh grant",
+      "http": 400,
+      "code": "refresh_token_not_found",
+      "usableSession": false
+    }
+  ]
+}

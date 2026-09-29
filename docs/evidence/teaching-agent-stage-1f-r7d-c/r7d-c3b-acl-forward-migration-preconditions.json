@@ -1,0 +1,87 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "result": "PASS_IN_ISOLATED_DATABASES",
+  "expected": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": true,
+    "noOtherOverloadAffected": true
+  },
+  "observedHistorical": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+  "historicalEnvironmentFixture": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+  "fixtureSemantics": "VERIFIED HISTORICAL PRECONDITION, not proof of original grant event",
+  "fullBootstrapProof": {
+    "baselineSha": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "historicalLedgerMetadata": 449,
+    "incrementals": 9,
+    "projectedCounts": [
+      458,
+      459,
+      460,
+      461
+    ],
+    "bodySha": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "baselineAcl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+    "finalAcl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "platform": "SCHEMA_ONLY_STAND_INS_NOT_AUTH_E2E",
+    "fullApplicationBaseline": true,
+    "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f"
+  },
+  "currentDBFreshVerificationPerformed": false
+}

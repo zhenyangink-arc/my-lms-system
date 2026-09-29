@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "public": [
+    "Activity alias",
+    "public revision digest",
+    "prompt",
+    "options",
+    "instruction",
+    "safe manifest bindings"
+  ],
+  "private": [
+    "Activity/parent raw IDs",
+    "answer key",
+    "definition digest",
+    "student response envelope",
+    "trusted scope"
+  ],
+  "projection": "publicNativeActivity whitelist + existing LessonManifestV1 validation",
+  "fullNode7AuthoringBodyProjected": false,
+  "test": "R7C binding and browser suites"
+}

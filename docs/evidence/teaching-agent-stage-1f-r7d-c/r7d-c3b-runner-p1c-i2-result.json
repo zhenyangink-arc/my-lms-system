@@ -1,0 +1,120 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I2",
+  "recordedAt": "2026-09-20T01:30:36.775608+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "implementationAddedFiles": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3": "DISABLED_RETAINED",
+  "status": "READY_FOR_CONTROLLED_PRODUCTION_READONLY_CAPTURE_V3_APPROVAL",
+  "blockingFixes": {
+    "FUNCTION_GATE_ORDER": "PASS",
+    "V3_APPROVAL_REFERENCE": "PASS"
+  },
+  "scope": {
+    "operationalModified": 2,
+    "testModified": 2,
+    "addedImplementationFiles": 0
+  },
+  "observedQueryOrder": [
+    "LEDGER",
+    "TARGET_PREGATE",
+    "TARGET_DEFINITION",
+    "PROTECTED_CATALOG"
+  ],
+  "historicalRunnerTests": {
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0
+  },
+  "existingCaptureTests": {
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0
+  },
+  "queryOrderTests": {
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0
+  },
+  "totalRequired": {
+    "executed": 98,
+    "passed": 98,
+    "failed": 0,
+    "skipped": 0
+  },
+  "regression": {
+    "passed": 172,
+    "failed": 0,
+    "skipped": 0
+  },
+  "safetyCriticalSkips": 0,
+  "unchangedBoundaries": "ALL MATCH",
+  "candidateArtifactHashes": "ALL MATCH",
+  "newOperationalPackageSha256": "65af9de2a1ffaef90cab6d5ca7865079fd77b003654d6db8a137f7544b3ffe11",
+  "controlledPreflightV3Approval": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "approvalPath": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+  "approved": false,
+  "executionAuthorized": false,
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "evidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "sha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "sha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "sha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "sha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "sha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "sha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "sha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "sha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68"
+    }
+  ],
+  "nextAction": "STOP. Separate explicit approval required for production read-only capture; no current DB action authorized by generated proposal."
+}

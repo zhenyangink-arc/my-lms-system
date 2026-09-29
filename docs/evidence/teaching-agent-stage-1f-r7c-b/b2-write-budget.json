@@ -1,0 +1,93 @@
+{
+  "provisioning": {
+    "auth.identities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.users": {
+      "INSERT": 1,
+      "UPDATE": 5,
+      "DELETE": 0
+    },
+    "public.learning_grading_comments": {
+      "INSERT": 4,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.profiles": {
+      "INSERT": 1,
+      "UPDATE": 3,
+      "DELETE": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_memberships": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_student_apps": {
+      "INSERT": 5,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenants": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.audit_log_entries": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.sessions": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.refresh_tokens": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.account_management_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.user_permission_grants": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_provisioned_accounts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_attempts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "totalRowEvents": 23,
+  "extraWrites": "STOP; regenerate approval scope before any change",
+  "attemptScope": "NOT IMPLEMENTED; budget0",
+  "cleanup": "No automatic compensating delete. Preserve confirmed partial state after UNKNOWN; require explicit review. Existing test-data cleanup policy remains separately authorized."
+}

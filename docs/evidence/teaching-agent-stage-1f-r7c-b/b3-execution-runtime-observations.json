@@ -1,0 +1,52 @@
+{
+  "source": "Existing Owner Chrome / LessonRuntime / NativeMediaController read-only observations",
+  "beforeCue": {
+    "phase": "READY",
+    "videoMounted": true,
+    "position": 0
+  },
+  "cue": {
+    "observedPosition": 5.07743,
+    "paused": true,
+    "activityRenderer": "existing multiple_choice",
+    "prompt": "哪个是元音？"
+  },
+  "wrong": {
+    "at": "2026-09-17T13:38:12.952Z",
+    "phase": "AWAITING_ACTIVITY",
+    "paused": true,
+    "position": 5.07743
+  },
+  "correct": {
+    "at": "2026-09-17T13:39:30.152Z",
+    "phase": "PLAYING",
+    "paused": false,
+    "position": 17.97336
+  },
+  "restart": {
+    "at": "2026-09-17T13:40:04.961Z",
+    "phase": "RESUME_READY",
+    "paused": true,
+    "position": 0,
+    "questionRemounted": false
+  },
+  "afterShutdown": {
+    "at": "2026-09-17T13:43:42.505Z",
+    "phase": "RESUME_READY",
+    "restored": true,
+    "completion": "COMPLETED",
+    "generation": 0,
+    "userPaused": false,
+    "stateEvidence": {
+      "source": "activity-domain",
+      "storage": "CURRENT_DEVELOPMENT_DB",
+      "kind": "durable-attempt-sequence",
+      "attemptSequence": 2,
+      "stateDigest": "59af26f06d205226fbabc9d26227bf9e8da3757c835cf3accd42f753b02f2dad",
+      "observedAt": "2026-09-17T13:41:23.271Z",
+      "latestAttemptAt": "2026-09-17T13:39:16.72588+00:00",
+      "progressUpdatedAt": "2026-09-17T13:39:16.72588+00:00"
+    }
+  },
+  "factsEvidenceBoundary": "Existing controller snapshot inspected read-only. Formal facts-port projection covered by 82-test fixture regression; production Lesson Tool not bound."
+}

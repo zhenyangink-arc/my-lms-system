@@ -1,9 +1,9 @@
 import 'server-only';
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { readChapterOneLegacySource } from '../smart-textbook-legacy-adapter/reader.server';
-import { readChapterOneServiceEvidence } from '../smart-textbook-legacy-adapter/service-reader.server';
-import type { PublicationScope } from './artifact.server';
+import { readChapterOneLegacySource } from '../smart-textbook-legacy-adapter/reader.server.ts';
+import { readChapterOneServiceEvidence } from '../smart-textbook-legacy-adapter/service-reader.server.ts';
+import type { PublicationScope } from './artifact.server.ts';
 
 export const dependencyTables = ['digital_textbooks','digital_textbook_versions','digital_textbook_chapters','digital_textbook_modules','digital_textbook_nodes','digital_textbook_activities','digital_textbook_activity_secrets','digital_textbook_media_assets','digital_textbook_listening_tracks','learning_agent_lessons','learning_agent_profiles','learning_agent_profile_secrets','learning_agent_script_versions','learning_agent_script_nodes','learning_agent_node_interaction_secrets','learning_agent_script_audio_assets','chapter_tests'] as const;
 // A private DB capture, never a Block props escape hatch or browser DTO.
@@ -39,4 +39,12 @@ export async function captureChapterOnePublication(admin:SupabaseClient,actor:st
   const r=await admin.rpc('capture_runtime_publication_v1',{p_actor:actor,p_scope:scope});
   if(r.error)throw Error('PUBLICATION_CAPTURE_UNAVAILABLE');
   return projectPublicationCapture(r.data);
+}
+
+/** Native projection uses the same single SQL capture, never the legacy readers. */
+export async function captureNativePublication(admin:SupabaseClient,actor:string,scope:PublicationScope){
+  const r=await admin.rpc('capture_runtime_publication_v1',{p_actor:actor,p_scope:scope});
+  if(r.error)throw Error('PUBLICATION_CAPTURE_UNAVAILABLE');
+  const { projectNativePublicationCapture }=await import('./native-publication.server.ts');
+  return projectNativePublicationCapture(r.data,scope);
 }

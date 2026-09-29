@@ -1,0 +1,9 @@
+{
+  "status": "N/A",
+  "canonicalRowsCreated": 0,
+  "testActorsCreated": 0,
+  "attemptsCreated": 0,
+  "progressRowsCreated": 0,
+  "deletions": 0,
+  "decision": "No test data created; no cleanup. Future retention/precise cleanup policy must be approved with test write scope."
+}

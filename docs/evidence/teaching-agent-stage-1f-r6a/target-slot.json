@@ -1,0 +1,30 @@
+{
+  "status": "EXACT",
+  "alias": "hangul-introduction",
+  "target": [
+    {
+      "lessonHash": "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092",
+      "courseHash": "daf73c5033c923bc4c2754596634f6c30f051b2ee0c8574c069ca6a41f64174b",
+      "courseTitle": "韩语初级",
+      "lessonTitle": "预备课：韩文字母入门",
+      "lessonSlug": "hangul-introduction",
+      "courseSlug": "korean-beginner",
+      "appSlug": "korean",
+      "contentScope": "platform",
+      "courseScope": "platform",
+      "tenantMatches": true,
+      "publishedCatalogSlot": true,
+      "unlockMode": "immediate",
+      "updatedAt": "2026-07-10T04:22:05.262194+00:00"
+    }
+  ],
+  "profile": [
+    {
+      "idHash": "880a3c837b835647cac8de9167f70625b9c0e88f848d072d94a418cbc1492148",
+      "code": "uply-korean-teacher",
+      "subject": "korean",
+      "feature": "korean_course",
+      "status": "published"
+    }
+  ]
+}

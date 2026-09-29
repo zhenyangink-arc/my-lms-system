@@ -1,0 +1,306 @@
+{
+  "overall": "CONDITIONAL",
+  "executionStatus": "DURABLE BINDING LIMITATION",
+  "gates": [
+    {
+      "id": "G-R7C-1",
+      "name": "R7B Conditional Input Accepted",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-2",
+      "name": "R6F Freeze Verified",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-3",
+      "name": "Activity Domain Audited",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-4",
+      "name": "Write Authorization",
+      "status": "PARTIAL",
+      "reason": "Approved product and isolated DB scope; one initial isolated negative-control Activity UPDATE exceeded enumerated write types, recorded in db-write-boundary.json and removed from final tests."
+    },
+    {
+      "id": "G-R7C-5",
+      "name": "Official Activity Binding",
+      "status": "PARTIAL",
+      "reason": "Existing-schema binding verified in isolated DB; official current-DB canonical creation not performed."
+    },
+    {
+      "id": "G-R7C-6",
+      "name": "Existing Activity System Reused",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-7",
+      "name": "Existing Progress System Reused",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-8",
+      "name": "No New Activity Schema",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-9",
+      "name": "No New Progress Schema",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-10",
+      "name": "Public Prompt Safe",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-11",
+      "name": "Private Answer Isolated",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-12",
+      "name": "Existing Grader Reused",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-13",
+      "name": "Durable Correct Attempt",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-14",
+      "name": "Durable Wrong Attempt",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-15",
+      "name": "Durable Progress",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-16",
+      "name": "Completion Authority Durable",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-17",
+      "name": "Independent Readback",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-18",
+      "name": "COMPLETED Receipt",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-19",
+      "name": "INCOMPLETE Receipt",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-20",
+      "name": "UNKNOWN Receipt",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-21",
+      "name": "Lost Response Safe",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-22",
+      "name": "No Blind Retry",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-23",
+      "name": "Idempotency",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-24",
+      "name": "Restart Completed Restores",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-25",
+      "name": "Restart Waiting Restores",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-26",
+      "name": "Correct Completion Resumes",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-27",
+      "name": "Wrong Answer Holds",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-28",
+      "name": "UNKNOWN Holds",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-29",
+      "name": "Runtime Facts Durable Evidence",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-30",
+      "name": "Runtime Facts No Answer Leak",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-31",
+      "name": "R7B Cue Dedupe Regression",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-32",
+      "name": "R7B Seek Regression",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-33",
+      "name": "R7B Refresh Regression",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-34",
+      "name": "R7B Stale Generation Regression",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-35",
+      "name": "Native Video Regression",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-36",
+      "name": "Mock Cue Still Fixture Only",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-37",
+      "name": "Frozen Script Unchanged",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-38",
+      "name": "Script Version Unchanged",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-39",
+      "name": "Node Writes Zero",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-40",
+      "name": "No Publish",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-41",
+      "name": "No Agent Run",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-42",
+      "name": "No Provider",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-43",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-44",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-45",
+      "name": "No Migration Unless Separately Approved",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-46",
+      "name": "No Legacy Fallback",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-47",
+      "name": "New Lint Errors Zero",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-48",
+      "name": "Build Pass",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-49",
+      "name": "Tests Pass",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    },
+    {
+      "id": "G-R7C-50",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "reason": "PASS in the approved isolated-test/current-DB-read-only scope; not a production student E2E claim."
+    }
+  ]
+}

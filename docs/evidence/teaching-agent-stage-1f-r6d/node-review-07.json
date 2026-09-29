@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 7,
+  "title": "一起试一试",
+  "formalType": "instruction",
+  "purpose": "练习元音辨认和已教组合，给予鼓励。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "FULL",
+  "issue": "题1 B.ㅏ、题2 A.가均唯一正确，所有选项来自前文；两个干扰项均同维度且合理。难度适合预备课，不能据两题推断掌握全部字母。韩语反馈自然敬语；题2可选增强具体性。文本答案公开/两组反馈并存是已批准的作者草稿，不是本次自动判分缺陷。",
+  "classification": "OPTIONAL",
+  "issueIds": [
+    "O2"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "O2",
+      "classification": "OPTIONAL",
+      "proposedText": "题1反馈：\n잘했어요.\n자음과 모음을 잘 구분했어요.\n\n题2反馈：\n잘했어요.\nㄱ과 ㅏ를 모으면 “가”가 돼요."
+    }
+  ],
+  "reviewStatus": "PASS",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=7",
+  "renderedReference": "ui-render-validation.json / order=7",
+  "nodeWrites": 0
+}

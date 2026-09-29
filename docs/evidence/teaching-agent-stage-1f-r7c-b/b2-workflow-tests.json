@@ -1,0 +1,31 @@
+{
+  "unitAndBoundaryTests": 39,
+  "passed": 39,
+  "failed": 0,
+  "unitLogHash": "93e41de385960636e0f2c606b91365b479ff04830ab5d96d5345c314d0ce1c03",
+  "isolatedWorkflow": "PASS",
+  "sideEffects": "MATCH",
+  "sameCreateTransactionInitialBan": "PASS",
+  "passwordMagicOtpRefresh": "PASS",
+  "zeroSessionRefresh": "PASS",
+  "freshProcessExistingReadback": "PASS; no writes",
+  "currentCanonicalSqlRead": "PASS; READ ONLY",
+  "noAutomaticRetry": "PASS incl. actual installed Supabase SDK 502 responses",
+  "typeScript": "PASS",
+  "scopedLint": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "currentDbMutations": 0,
+  "scopeActivation": "NOT IMPLEMENTED",
+  "limitations": [
+    "Fresh current Auth version/config/provider/trigger hash parity with isolated evidence",
+    "Current canonical binding1/1/1 and R6F freeze MATCH",
+    "Actor alias/email and tenant alias absent; partial state STOP",
+    "Owner guard valid before admin construction",
+    "Private durable journal directory owned0700 and no prior claim",
+    "Provisioning authorization expiration at most30min; ban horizon >expiry+24h",
+    "Existing trusted DB transport identity independently pinned; no browser-supplied config or IDs",
+    "Approved controlled server composition only; production route does not import/register this action"
+  ]
+}

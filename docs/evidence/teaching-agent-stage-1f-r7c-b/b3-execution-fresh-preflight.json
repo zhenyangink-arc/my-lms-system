@@ -1,0 +1,36 @@
+{
+  "sourceHashes": "35 MATCH",
+  "activityContract": {
+    "count": 1,
+    "maxAttempts": 3,
+    "countsCompletion": true,
+    "chapterTestNull": true
+  },
+  "status": "PASS",
+  "at": "2026-09-17T13:23:34.545733+00:00",
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "freeze": "MATCH",
+  "B1": "COMPLETE",
+  "B2": "COMPLETE",
+  "actor": "UNCHANGED/BANNED/INACTIVE/SUSPENDED/NON-DEFAULT",
+  "tenant": "UNCHANGED",
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "attempt": 0,
+  "nodeProgress": 0,
+  "pageProgress": 0,
+  "ledger": 458,
+  "rpcHash": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+  "nodeProgressTriggers": "MATCH",
+  "scope": "DISABLED",
+  "executionApproval": "ABSENT / NOT ACTIVE",
+  "currentDbAttemptWrites": 0,
+  "currentDbProgressWrites": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY"
+}

@@ -1,0 +1,63 @@
+{
+  "knownGood": {
+    "path": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "exists": true,
+    "buildId": "LuAZe2VMY32YjOo1WvtrC",
+    "buildIdMatchesR3": true,
+    "nextPackageVersion": "16.2.10",
+    "nodeModulesSymlink": false,
+    "nodeModulesResolved": "/home/yangzhen/releases/uply-first-enable-20260910/source/node_modules",
+    "requiredServerFilesExists": true,
+    "releaseDirectoryWritableInCurrentSandbox": false,
+    "rollbackExecutionAuthorized": false,
+    "fullHistoricalBinaryDigestAvailable": false
+  },
+  "r3dCandidate": {
+    "path": "/tmp/uply-r3d-release-candidate/candidate-build.tar.gz",
+    "exists": true,
+    "bytes": 18760388,
+    "sha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+    "archiveHashMatchesR4A": true,
+    "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+    "deployed": false
+  },
+  "currentSourceFilesChecked": 1306,
+  "changedFrozenSourceFiles": [],
+  "migrationChecks": [
+    {
+      "filename": "202609140000_agent_core_foundation.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "matches": true
+    },
+    {
+      "filename": "202609140007_teaching_content_skeleton.sql",
+      "matches": true
+    }
+  ],
+  "releaseMetadataDigestMatches": true,
+  "fullDependenciesSealed": false,
+  "startedOrReplacedRelease": false
+}

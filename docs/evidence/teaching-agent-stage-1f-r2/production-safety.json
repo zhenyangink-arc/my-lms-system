@@ -1,0 +1,18 @@
+{
+  "snapshotsEqual": true,
+  "migrationCounts": [
+    449,
+    449,
+    449
+  ],
+  "ledgerDigest": "fee71bc1bdc2437ee3ef39902e5c5f560c76a51ce7f6ba2d853bc5c9a72f556c",
+  "otherMetadata": {
+    "agentTables": 0
+  },
+  "productionWrites": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionFlag": "NOT ENABLED",
+  "postInterruptionRecheckEqual": true,
+  "postInterruptionLedgerCount": 449,
+  "postInterruptionAgentTables": 0
+}

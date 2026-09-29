@@ -1,0 +1,323 @@
+{
+  "approval": "B3 — Current DB durable scenario CONTRACT / WRITE BUDGET",
+  "status": "READY FOR USER REVIEW; EXECUTION CONDITIONAL ON SEPARATE IMPLEMENTATION/DEPLOY GATES",
+  "executionReady": false,
+  "userApprovalGranted": false,
+  "actor": "existing stable B2 actor (safe hash in B2 readback; no new identity)",
+  "tenant": "existing dedicated B2 tenant",
+  "target": {
+    "lesson": "韩文字母入门 / 第0章 / 课前导航",
+    "alias": "hangul-introduction-vowel-recognition",
+    "type": "single_choice",
+    "version": "1 DRAFT / frozen"
+  },
+  "baseline": {
+    "activityCount": 1,
+    "maxAttempts": 3,
+    "countsTowardCompletion": true,
+    "type": "single_choice",
+    "chapterTestIsNull": true,
+    "chapterNodeCount": 1,
+    "attemptCount": 0,
+    "nodeProgressCount": 0,
+    "activityPageProgressCount": 0
+  },
+  "phases": [
+    {
+      "id": "A",
+      "action": "READ ONLY baseline: banned actor safety, all-version attempts0/target node/page progress0, freeze/B1/schema/RPC/trigger/source locks match",
+      "dbWrites": 0
+    },
+    {
+      "id": "B",
+      "action": "Owner-authorized private dev scope activation, TTL<=15min, exclusive scenario lease; no DB business rows",
+      "dbWrites": 0
+    },
+    {
+      "id": "C",
+      "action": "existing Runtime single incorrect submission via server grader/repository/RPC",
+      "effects": {
+        "digital_textbook_attempts": {
+          "INSERT": 1,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "digital_textbook_node_progress": {
+          "INSERT": 1,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "digital_textbook_activity_page_progress": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "course_ebook_progress": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "other_lesson_progress_or_aggregates": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "audit_tables": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "auth_tables": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "tenants_profiles_memberships": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "frozen_content": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "canonical_activity_and_secret": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        }
+      }
+    },
+    {
+      "id": "D",
+      "action": "new READ ONLY connection; INCOMPLETE, wrong holds",
+      "dbWrites": 0
+    },
+    {
+      "id": "E",
+      "action": "one explicit correct submission; optionally suppress committed response to test readback, no automatic retry",
+      "effects": {
+        "digital_textbook_attempts": {
+          "INSERT": 1,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "digital_textbook_node_progress": {
+          "INSERT": 0,
+          "UPDATE": 1,
+          "DELETE": 0
+        },
+        "digital_textbook_activity_page_progress": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "course_ebook_progress": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "other_lesson_progress_or_aggregates": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "audit_tables": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "auth_tables": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "tenants_profiles_memberships": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "frozen_content": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        },
+        "canonical_activity_and_secret": {
+          "INSERT": 0,
+          "UPDATE": 0,
+          "DELETE": 0
+        }
+      }
+    },
+    {
+      "id": "F",
+      "action": "new READ ONLY connection; COMPLETED; Runtime resumes if user pause permits",
+      "dbWrites": 0
+    },
+    {
+      "id": "G",
+      "action": "restart ONLY owned controlled child composition with mutation disabled; readback COMPLETED; no submit",
+      "dbWrites": 0
+    },
+    {
+      "id": "H",
+      "action": "DISABLE scope; retain precise test evidence; no cleanup",
+      "dbWrites": 0
+    }
+  ],
+  "wrongSubmissionWrites": {
+    "digital_textbook_attempts": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_node_progress": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "course_ebook_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "other_lesson_progress_or_aggregates": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "audit_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "tenants_profiles_memberships": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "frozen_content": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "canonical_activity_and_secret": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "correctSubmissionWrites": {
+    "digital_textbook_attempts": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 1,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "course_ebook_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "other_lesson_progress_or_aggregates": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "audit_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "tenants_profiles_memberships": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "frozen_content": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "canonical_activity_and_secret": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "totalBudget": {
+    "INSERT": 3,
+    "UPDATE": 1,
+    "DELETE": 0
+  },
+  "finalAttempts": 2,
+  "finalNodeProgressRows": 1,
+  "finalNodeProgress": {
+    "status": "completed",
+    "completion_percent": 100,
+    "mastery_score": 100,
+    "attempt_count": 2
+  },
+  "finalActivityPageProgressRows": 0,
+  "finalOtherAggregateRowsCreated": 0,
+  "sessions": 0,
+  "actorRefreshTokens": 0,
+  "scope": "ACTIVE only for approved scenario; DISABLED before and after",
+  "forbiddenWrites": {
+    "frozenContent": 0,
+    "canonicalActivity": 0,
+    "auth": 0,
+    "tenantProfileMembership": 0,
+    "Agent": 0,
+    "Provider": 0,
+    "Publish": 0,
+    "Pins": 0
+  },
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "currentDBExecution": "NOT RUN",
+  "implementationPrerequisites": [
+    "Implement/verify fixed dev-only scope issuer and transactional per-mutation safety/budget guard; current reference is design-only",
+    "Explicit current-development-db receipt evidence storage discriminant; do not relabel isolated evidence",
+    "Strengthen one-target completion/progress consistency checks",
+    "Controlled Runtime composition mounts same LessonRuntime/public DTO with canonical Activity, no synthetic-only source",
+    "Lock source hashes/build/process artifact; separately approve B3A-Deploy if installing code or environment composition. No implicit deployment approval from scenario budget."
+  ],
+  "cleanup": "NONE; retain evidence; separate exact approval for future cleanup",
+  "currentDbLoginProbes": 0,
+  "R7D": "NOT READY",
+  "Stage1G": "NOT READY",
+  "latestAuthorization": {
+    "scenarioContract": "APPROVED BY USER",
+    "writeBudgetContract": "3 INSERT / 1 UPDATE / 0 DELETE",
+    "currentDbExecution": "NOT APPROVED",
+    "scopeActivation": "NOT APPROVED",
+    "deployment": "NOT APPROVED",
+    "prerequisitePackage": "approval-b3a-deploy.json"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "returnCode": 1,
+  "runnerResult": {
+    "state": "PRECHECK_FAILED",
+    "code": "DIRECTORY_MODE",
+    "nextMigrationAllowed": false
+  },
+  "stdoutSha256": "c886165f06275ae2b935a5304264cf44e5ef6d91ba97b622614a17ee0248a11e",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrBytes": 0,
+  "endedAt": "2026-09-20T06:01:58.292401+00:00",
+  "captureAttempts": 1,
+  "retryPerformed": false
+}

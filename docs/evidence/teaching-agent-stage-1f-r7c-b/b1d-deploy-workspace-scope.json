@@ -1,0 +1,21 @@
+{
+  "stage": "R7C-B1D Deploy",
+  "productSourceEditsThisTurn": 0,
+  "deployedProductFile": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "sourceSha256": "4d2c1cd058f5fa2ba5b58ceae60c4fa2d8442a7a3508996fd2b0ec9432b5f3f3",
+  "candidateArchiveSha256": "2e5f143ad34b0c664e866a89a4adaf545fdb4d7fe54b737990a2c6798c540c47",
+  "candidateSourceSha256": "15b032f346a93327c6692546ad3f9c47c3ba8d5cb9e32e722d9d6a56d6d08d77",
+  "candidateUnchanged": true,
+  "liveSourceDelta": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "liveArtifactDelta": ".next",
+  "otherProductPublicPackageDependencyWrites": 0,
+  "migrationFilesChanged": 0,
+  "report": "docs/teaching-agent-stage-1f-r7c-b-canonical-activity-binding.md",
+  "evidenceDirectory": "docs/evidence/teaching-agent-stage-1f-r7c-b",
+  "temporaryOperationsHelpers": "/tmp only; private operation copy and rollback in approved operations directory",
+  "historicalDirtyWorkspace": "Preserved; no git commit/reset/cleanup"
+}

@@ -1,0 +1,78 @@
+{
+  "status": "MATCH",
+  "expectedTotals": {
+    "insert": 15,
+    "update": 8,
+    "delete": 0
+  },
+  "observedTotals": {
+    "insert": 15,
+    "update": 8,
+    "delete": 0
+  },
+  "perTable": {
+    "auth.users": {
+      "insert": 1,
+      "update": 5,
+      "delete": 0
+    },
+    "auth.identities": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.profiles": {
+      "insert": 1,
+      "update": 3,
+      "delete": 0
+    },
+    "public.tenants": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_memberships": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_student_apps": {
+      "insert": 5,
+      "update": 0,
+      "delete": 0
+    },
+    "public.learning_grading_comments": {
+      "insert": 4,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "netRowDelta": {
+    "auth.users": 1,
+    "auth.identities": 1,
+    "public.profiles": 1,
+    "public.tenants": 1,
+    "public.tenant_memberships": 1,
+    "public.tenant_membership_audit_logs": 1,
+    "public.learning_grading_comments": 4,
+    "public.tenant_student_apps": 5,
+    "auth.audit_log_entries": 0,
+    "public.account_management_audit_logs": 0,
+    "public.tenant_provisioned_accounts": 0,
+    "auth.sessions": 0,
+    "auth.refresh_tokens": 0,
+    "public.digital_textbook_attempts": 0,
+    "public.digital_textbook_node_progress": 0,
+    "public.digital_textbook_activity_page_progress": 0
+  },
+  "absentZeroWriteTable": "public.user_permission_grants",
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "preProvisionGlobalRefreshDelta": 1,
+  "evidenceLimit": "Database table event counters and net row readback match the locked single operation; no claim of WAL or per-request audit."
+}

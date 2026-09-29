@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-09-15T06:12:36.647423+00:00",
+  "existingBase": "/home/yangzhen/backups/uply-first-enable-20260910",
+  "availableBytes": 633665249280,
+  "availableInodes": 59704684,
+  "databaseBytes": 58125459,
+  "proposedMinimumDatabaseBudgetBytes": 174376377,
+  "budgetFormula": "DB size + 1x temporary overhead + 1x safety margin; planning estimate, not dump upper bound",
+  "proposedOperationalReserveBytes": 1073741824,
+  "dfHuman": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme0n1p2  937G  299G  591G  34% /\n",
+  "dfInodes": "Filesystem       Inodes   IUsed    IFree IUse% Mounted on\n/dev/nvme0n1p2 62447616 2742932 59704684    5% /\n",
+  "proposedDestination": "/home/yangzhen/backups/uply/<approved-UTC-timestamp>/",
+  "destinationCreated": false,
+  "offHost": "NOT CONFIRMED",
+  "sameHostBackupIsOffHost": false
+}

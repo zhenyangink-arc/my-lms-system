@@ -1,0 +1,20 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "providerScope": "Task operations",
+  "pins": 0,
+  "definitionPublication": 0,
+  "authWrites": 0,
+  "publishWrites": 0,
+  "nodeAuthoring": 0,
+  "runtimeExecution": 0
+}

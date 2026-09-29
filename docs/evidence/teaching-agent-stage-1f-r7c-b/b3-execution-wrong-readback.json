@@ -1,0 +1,42 @@
+{
+  "phase": "wrong",
+  "at": "2026-09-17T13:37:51.790727+00:00",
+  "source": "CURRENT_DEVELOPMENT_DB",
+  "connection": "NEW INDEPENDENT READ ONLY",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "freeze": "MATCH",
+  "actorSafety": "PASS",
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "journal": {
+    "directory": true,
+    "approval": true,
+    "scenario": true,
+    "dispatch0": true,
+    "dispatch1": false,
+    "disabled": false
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "correct": false,
+      "score": 0.0,
+      "createdAt": "2026-09-17T13:37:44.048635+00:00",
+      "requestHash": "6f54e9cba9bf217a57d46aa881f508536ce317850d9a5d0bb44712c4580b5a1e"
+    }
+  ],
+  "progress": [
+    {
+      "status": "in_progress",
+      "completionPercent": 0,
+      "masteryScore": 0,
+      "attemptCount": 1,
+      "xmin": "2431358"
+    }
+  ],
+  "pageProgress": 0
+}

@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "originalArtifact": true,
+  "buildId": "T45ZN3yOYh5w194F5gq8o",
+  "artifactDigest": "fef96b47e2a3d8829b6d487e7984c4ae7f990db53e9bb4f5da074606b53f1263",
+  "postOff": 404,
+  "clientChunks": 325,
+  "operatorCapabilityInClient": false,
+  "externalNetwork": "DENIED",
+  "productionDeploy": false,
+  "ownedSmokeDirectoryRemoved": true
+}

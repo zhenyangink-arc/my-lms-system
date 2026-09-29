@@ -1,0 +1,3608 @@
+{
+  "startEqualsFinal": true,
+  "start": {
+    "migrations": [
+      {
+        "version": "202607130000",
+        "name": "profiles_auth_baseline"
+      },
+      {
+        "version": "202607130010",
+        "name": "course_catalog_baseline"
+      },
+      {
+        "version": "202607130020",
+        "name": "lesson_content_baseline"
+      },
+      {
+        "version": "202607130025",
+        "name": "platform_core_course_catalog_baseline"
+      },
+      {
+        "version": "202607130030",
+        "name": "lesson_activity_baseline"
+      },
+      {
+        "version": "202607130040",
+        "name": "auto_enable_rls_baseline"
+      },
+      {
+        "version": "202607140001",
+        "name": "student_planning_workspace"
+      },
+      {
+        "version": "202607140002",
+        "name": "registration_and_management_audit"
+      },
+      {
+        "version": "202607140003",
+        "name": "korean_university_library"
+      },
+      {
+        "version": "202607140004",
+        "name": "expand_korean_university_catalog"
+      },
+      {
+        "version": "202607150001",
+        "name": "student_profile_details"
+      },
+      {
+        "version": "202607150002",
+        "name": "profile_completion_date"
+      },
+      {
+        "version": "202607150003",
+        "name": "school_management_and_membership"
+      },
+      {
+        "version": "202607150004",
+        "name": "account_management_upgrade"
+      },
+      {
+        "version": "202607150005",
+        "name": "application_document_review_workflow"
+      },
+      {
+        "version": "202607150006",
+        "name": "repair_legacy_application_document_statuses"
+      },
+      {
+        "version": "202607150007",
+        "name": "application_document_resubmission"
+      },
+      {
+        "version": "202607150008",
+        "name": "visa_preparation_management"
+      },
+      {
+        "version": "202607150009",
+        "name": "owner_account_deletion"
+      },
+      {
+        "version": "202607150010",
+        "name": "restrict_visa_student_delete"
+      },
+      {
+        "version": "202607150011",
+        "name": "protect_profile_self_service_fields"
+      },
+      {
+        "version": "202607150012",
+        "name": "fix_current_role_keyword_collision"
+      },
+      {
+        "version": "202607150013",
+        "name": "visa_type_degree_levels"
+      },
+      {
+        "version": "202607160001",
+        "name": "announcements_and_permissions"
+      },
+      {
+        "version": "202607170001",
+        "name": "learning_assignments_and_exams"
+      },
+      {
+        "version": "202607170002",
+        "name": "conversation_practice_management"
+      },
+      {
+        "version": "202607170003",
+        "name": "split_announcement_reader_and_management"
+      },
+      {
+        "version": "202607170004",
+        "name": "help_center_and_support_tickets"
+      },
+      {
+        "version": "202607170005",
+        "name": "grade_center_management"
+      },
+      {
+        "version": "202607170006",
+        "name": "tighten_student_grade_visibility"
+      },
+      {
+        "version": "202607170007",
+        "name": "learning_records_management"
+      },
+      {
+        "version": "202607170008",
+        "name": "resource_library_management"
+      },
+      {
+        "version": "202607180001",
+        "name": "university_application_deadlines"
+      },
+      {
+        "version": "202607180002",
+        "name": "target_application_document_checklists"
+      },
+      {
+        "version": "202607180003",
+        "name": "admin_delete_student_service_cards"
+      },
+      {
+        "version": "202607180004",
+        "name": "fix_university_deadline_function_volatility"
+      },
+      {
+        "version": "202607180005",
+        "name": "owner_delete_own_service_cards"
+      },
+      {
+        "version": "202607180006",
+        "name": "university_application_document_requirements"
+      },
+      {
+        "version": "202607180007",
+        "name": "university_document_requirement_notes"
+      },
+      {
+        "version": "202607180008",
+        "name": "university_document_requirements_by_stage"
+      },
+      {
+        "version": "202607180009",
+        "name": "enforce_application_document_stage_match"
+      },
+      {
+        "version": "202607180010",
+        "name": "simplify_application_document_checklist"
+      },
+      {
+        "version": "202607180011",
+        "name": "add_not_needed_document_status"
+      },
+      {
+        "version": "202607180012",
+        "name": "sync_document_due_date_from_target"
+      },
+      {
+        "version": "202607180013",
+        "name": "application_documents_submission_lock"
+      },
+      {
+        "version": "202607180014",
+        "name": "admin_item_controls"
+      },
+      {
+        "version": "202607180015",
+        "name": "lock_prevents_document_delete"
+      },
+      {
+        "version": "202607180016",
+        "name": "admin_note_and_lock_edit"
+      },
+      {
+        "version": "202607180017",
+        "name": "admin_lock_target_documents"
+      },
+      {
+        "version": "202607180018",
+        "name": "lock_university_target_admin_only_unlock"
+      },
+      {
+        "version": "202607190001",
+        "name": "courier_shipping_info"
+      },
+      {
+        "version": "202607190002",
+        "name": "application_stage_timeline"
+      },
+      {
+        "version": "202607190003",
+        "name": "expand_application_stages"
+      },
+      {
+        "version": "202607190004",
+        "name": "courier_requires_stage_2"
+      },
+      {
+        "version": "202607190005",
+        "name": "auto_initialize_visa_workspace"
+      },
+      {
+        "version": "202607190006",
+        "name": "visa_workspace_requires_stage_9"
+      },
+      {
+        "version": "202607190007",
+        "name": "visa_case_source_target"
+      },
+      {
+        "version": "202607190008",
+        "name": "university_visa_application_requirements"
+      },
+      {
+        "version": "202607190009",
+        "name": "archive_visa_requirement_protection"
+      },
+      {
+        "version": "202607190010",
+        "name": "active_visa_task_write_policies"
+      },
+      {
+        "version": "202607190011",
+        "name": "visa_application_channels"
+      },
+      {
+        "version": "202607190012",
+        "name": "fix_visa_channel_role_check"
+      },
+      {
+        "version": "202607190013",
+        "name": "require_channel_before_stage_nine"
+      },
+      {
+        "version": "202607190014",
+        "name": "lock_student_visa_application_channel"
+      },
+      {
+        "version": "202607190015",
+        "name": "lock_student_visa_type_and_entry_date"
+      },
+      {
+        "version": "202607190016",
+        "name": "add_admin_preparing_visa_stage"
+      },
+      {
+        "version": "202607190017",
+        "name": "courier_no_stage_gate"
+      },
+      {
+        "version": "202607190018",
+        "name": "courier_requires_stage_3"
+      },
+      {
+        "version": "202607190019",
+        "name": "courier_requires_stage_2"
+      },
+      {
+        "version": "202607190020",
+        "name": "visa_case_residence_province_city"
+      },
+      {
+        "version": "202607190021",
+        "name": "visa_case_entry_and_airports"
+      },
+      {
+        "version": "202607190022",
+        "name": "visa_case_accommodation_status"
+      },
+      {
+        "version": "202607190023",
+        "name": "visa_case_airport_pickup_service"
+      },
+      {
+        "version": "202607200001",
+        "name": "ai_token_usage"
+      },
+      {
+        "version": "202607200002",
+        "name": "multi_tenant_foundation"
+      },
+      {
+        "version": "202607200003",
+        "name": "tenant_accounts_and_lifecycle"
+      },
+      {
+        "version": "202607200004",
+        "name": "tenant_disable_and_delete_semantics"
+      },
+      {
+        "version": "202607200005",
+        "name": "remove_confirmed_legacy_tenants"
+      },
+      {
+        "version": "202607200006",
+        "name": "platform_deputy_tenant_operator"
+      },
+      {
+        "version": "202607200007",
+        "name": "keep_platform_operators_out_of_tenant_members"
+      },
+      {
+        "version": "202607200008",
+        "name": "tenant_admin_global_role"
+      },
+      {
+        "version": "202607200009",
+        "name": "global_identity_roles"
+      },
+      {
+        "version": "202607200010",
+        "name": "account_permission_helpers_baseline"
+      },
+      {
+        "version": "202607200011",
+        "name": "is_owner_account_baseline"
+      },
+      {
+        "version": "202607210001",
+        "name": "tenant_id_on_business_tables"
+      },
+      {
+        "version": "202607210002",
+        "name": "tenant_scoped_rls"
+      },
+      {
+        "version": "202607210003",
+        "name": "tenant_scoped_rpcs_and_lifecycle"
+      },
+      {
+        "version": "202607210004",
+        "name": "split_platform_and_tenant_super_admin"
+      },
+      {
+        "version": "202607210005",
+        "name": "static_tenant_permanent_deletion"
+      },
+      {
+        "version": "202607210006",
+        "name": "platform_owner_full_admin"
+      },
+      {
+        "version": "202607210007",
+        "name": "platform_owner_tenant_bypass"
+      },
+      {
+        "version": "202607210008",
+        "name": "remove_puffy_bootstrap_tenant"
+      },
+      {
+        "version": "202607210009",
+        "name": "block_platform_student_activity"
+      },
+      {
+        "version": "202607210010",
+        "name": "fix_managed_account_creation_audit"
+      },
+      {
+        "version": "202607210011",
+        "name": "revert_managed_account_creation_audit_fix"
+      },
+      {
+        "version": "202607210012",
+        "name": "allow_platform_tenant_hard_delete_memberships"
+      },
+      {
+        "version": "202607210013",
+        "name": "fix_tenant_manager_auth_creation_audit"
+      },
+      {
+        "version": "202607210014",
+        "name": "revert_tenant_manager_auth_creation_audit_fix"
+      },
+      {
+        "version": "202607210015",
+        "name": "fix_tenant_manager_profile_audit_order"
+      },
+      {
+        "version": "202607210016",
+        "name": "fix_platform_catalog_requirement_sync"
+      },
+      {
+        "version": "202607210017",
+        "name": "restrict_requirement_sync_to_platform_catalog_managers"
+      },
+      {
+        "version": "202607210018",
+        "name": "fix_target_lock_tenant_admin_detection"
+      },
+      {
+        "version": "202607210019",
+        "name": "fix_document_item_tenant_admin_detection"
+      },
+      {
+        "version": "202607260001",
+        "name": "korean_chapter_test_attempts"
+      },
+      {
+        "version": "202607260002",
+        "name": "course_test_question_bank"
+      },
+      {
+        "version": "202607260003",
+        "name": "secure_course_test_scoring"
+      },
+      {
+        "version": "202607260004",
+        "name": "platform_standard_question_bank"
+      },
+      {
+        "version": "202607270001",
+        "name": "expand_korean_standard_question_bank"
+      },
+      {
+        "version": "202607270002",
+        "name": "standard_assessment_papers"
+      },
+      {
+        "version": "202607270003",
+        "name": "disable_tenant_single_question_assignment"
+      },
+      {
+        "version": "202607270004",
+        "name": "chapter_test_random_selection"
+      },
+      {
+        "version": "202607270005",
+        "name": "course_test_lesson_channel"
+      },
+      {
+        "version": "202607270006",
+        "name": "normalize_hangul_chapter_test_duration"
+      },
+      {
+        "version": "202607270007",
+        "name": "align_korean_beginner_lesson_titles"
+      },
+      {
+        "version": "202607270008",
+        "name": "vip2_korean_learning_permissions"
+      },
+      {
+        "version": "202607270009",
+        "name": "enforce_vip2_assignment_conversation_boundaries"
+      },
+      {
+        "version": "202607300001",
+        "name": "overwrite_course_test_attempts"
+      },
+      {
+        "version": "202607300002",
+        "name": "course_question_reviews"
+      },
+      {
+        "version": "202607300003",
+        "name": "course_ebook_progress"
+      },
+      {
+        "version": "202607300004",
+        "name": "course_ebook_effective_reading"
+      },
+      {
+        "version": "202607300005",
+        "name": "platform_account_roles"
+      },
+      {
+        "version": "202607310001",
+        "name": "grade_items_course_link"
+      },
+      {
+        "version": "202607310002",
+        "name": "chapter_homework_plans"
+      },
+      {
+        "version": "202607310003",
+        "name": "chapter_homework_skill_content"
+      },
+      {
+        "version": "202607310004",
+        "name": "chapter_homework_questions"
+      },
+      {
+        "version": "202607310005",
+        "name": "sync_chapter_titles"
+      },
+      {
+        "version": "202607310006",
+        "name": "prune_chapter_test_difficulties"
+      },
+      {
+        "version": "202607310007",
+        "name": "language_question_banks"
+      },
+      {
+        "version": "202607310008",
+        "name": "language_question_bank_manager_policies"
+      },
+      {
+        "version": "202607310009",
+        "name": "korean_answer_key_validation"
+      },
+      {
+        "version": "202607310010",
+        "name": "ebook_question_bank_sections"
+      },
+      {
+        "version": "202607310011",
+        "name": "balance_chapter_test_ebook_coverage"
+      },
+      {
+        "version": "202607310012",
+        "name": "unique_chapter_vocabulary_prompts"
+      },
+      {
+        "version": "202607310013",
+        "name": "smart_digital_textbook_chapter_one"
+      },
+      {
+        "version": "202607310014",
+        "name": "smart_digital_textbook_private_audio"
+      },
+      {
+        "version": "202607310015",
+        "name": "platform_course_inspector_role"
+      },
+      {
+        "version": "202608010001",
+        "name": "student_course_category_learning_plans"
+      },
+      {
+        "version": "202608010002",
+        "name": "course_catalog_workspace"
+      },
+      {
+        "version": "202608020001",
+        "name": "unified_grade_reviews"
+      },
+      {
+        "version": "202608020002",
+        "name": "platform_grade_overview"
+      },
+      {
+        "version": "202608020003",
+        "name": "platform_learning_record_overview"
+      },
+      {
+        "version": "202608020004",
+        "name": "platform_managed_resource_library"
+      },
+      {
+        "version": "202608020005",
+        "name": "library_resources_by_course"
+      },
+      {
+        "version": "202608020006",
+        "name": "library_resources_by_lesson"
+      },
+      {
+        "version": "202608020007",
+        "name": "complete_platform_lesson_catalog"
+      },
+      {
+        "version": "202608020008",
+        "name": "restrict_university_management_to_platform"
+      },
+      {
+        "version": "202608020009",
+        "name": "add_visa_applicable_scopes"
+      },
+      {
+        "version": "202608020010",
+        "name": "document_review_workflow"
+      },
+      {
+        "version": "202608020011",
+        "name": "visa_management_oversight"
+      },
+      {
+        "version": "202608020012",
+        "name": "secure_visa_card_deletion"
+      },
+      {
+        "version": "202608020013",
+        "name": "platform_visa_case_audit"
+      },
+      {
+        "version": "202608020014",
+        "name": "announcement_visibility_and_reads"
+      },
+      {
+        "version": "202608020015",
+        "name": "help_center_roles_and_oversight"
+      },
+      {
+        "version": "202608020016",
+        "name": "unified_permission_center"
+      },
+      {
+        "version": "202608030001",
+        "name": "student_course_category_favorites"
+      },
+      {
+        "version": "202608040001",
+        "name": "reserve_platform_tenant_slug"
+      },
+      {
+        "version": "202608050001",
+        "name": "tenant_student_learning_record_overview"
+      },
+      {
+        "version": "202608050002",
+        "name": "dynamic_chapter_test_slug_check"
+      },
+      {
+        "version": "202608050003",
+        "name": "chapter_test_lesson_completion"
+      },
+      {
+        "version": "202608050004",
+        "name": "document_checklist_respects_target_lock"
+      },
+      {
+        "version": "202608050005",
+        "name": "university_comparison_permission_whitelist"
+      },
+      {
+        "version": "202608050006",
+        "name": "ai_token_usage_quota_index"
+      },
+      {
+        "version": "202608050007",
+        "name": "submit_course_test_sequence_guard"
+      },
+      {
+        "version": "202608050008",
+        "name": "grade_review_request_lock"
+      },
+      {
+        "version": "202608050009",
+        "name": "record_ebook_progress_rpc"
+      },
+      {
+        "version": "202608050010",
+        "name": "assignment_submit_checks_starts_at"
+      },
+      {
+        "version": "202608050011",
+        "name": "university_assessment_dedup"
+      },
+      {
+        "version": "202608050012",
+        "name": "comparison_limit_ignores_unpublished"
+      },
+      {
+        "version": "202608060001",
+        "name": "is_admin_shim"
+      },
+      {
+        "version": "202608060002",
+        "name": "account_deletion_data_snapshot"
+      },
+      {
+        "version": "202608060003",
+        "name": "active_account_platform_roles"
+      },
+      {
+        "version": "202608060004",
+        "name": "course_content_audit_log_tenant_scope"
+      },
+      {
+        "version": "202608060005",
+        "name": "visa_auto_sync_system_exemption"
+      },
+      {
+        "version": "202608060006",
+        "name": "test_and_ebook_progress_tier_check"
+      },
+      {
+        "version": "202608060007",
+        "name": "course_favorites_plans_tenant_isolation"
+      },
+      {
+        "version": "202608060008",
+        "name": "profile_audit_tracks_global_role"
+      },
+      {
+        "version": "202608060009",
+        "name": "cleanup_stale_super_admin_role"
+      },
+      {
+        "version": "202608060010",
+        "name": "digital_textbook_unpublished_content_filter"
+      },
+      {
+        "version": "202608060011",
+        "name": "storage_policy_cleanup"
+      },
+      {
+        "version": "202608060012",
+        "name": "growth_toolbox_items"
+      },
+      {
+        "version": "202608060013",
+        "name": "growth_toolbox_related_course"
+      },
+      {
+        "version": "202608060014",
+        "name": "growth_toolbox_vocabulary"
+      },
+      {
+        "version": "202608060015",
+        "name": "growth_toolbox_grammar"
+      },
+      {
+        "version": "202608060016",
+        "name": "growth_toolbox_grammar_v2"
+      },
+      {
+        "version": "202608060017",
+        "name": "ebook_progress_reading_seconds"
+      },
+      {
+        "version": "202608070001",
+        "name": "student_teacher_assignments"
+      },
+      {
+        "version": "202608070002",
+        "name": "staff_profile_hired_at"
+      },
+      {
+        "version": "202608070003",
+        "name": "staff_profiles"
+      },
+      {
+        "version": "202608070004",
+        "name": "teacher_teaching_data_access"
+      },
+      {
+        "version": "202608070005",
+        "name": "teacher_lesson_progress_access"
+      },
+      {
+        "version": "202608070006",
+        "name": "teacher_learning_record_write"
+      },
+      {
+        "version": "202608070007",
+        "name": "live_class_sessions"
+      },
+      {
+        "version": "202608070008",
+        "name": "live_class_events"
+      },
+      {
+        "version": "202608070009",
+        "name": "realtime_channel_auth"
+      },
+      {
+        "version": "202608070010",
+        "name": "group_class_members"
+      },
+      {
+        "version": "202608070011",
+        "name": "fix_live_class_rls_recursion"
+      },
+      {
+        "version": "202608070012",
+        "name": "drop_session_student_not_null"
+      },
+      {
+        "version": "202608070013",
+        "name": "tighten_live_class_helper_functions"
+      },
+      {
+        "version": "202608080001",
+        "name": "student_assigned_teachers_rpc"
+      },
+      {
+        "version": "202608080002",
+        "name": "learning_time_log"
+      },
+      {
+        "version": "202608080003",
+        "name": "toolbox_study_time"
+      },
+      {
+        "version": "202608080004",
+        "name": "home_tree_visibility"
+      },
+      {
+        "version": "202608080005",
+        "name": "fix_platform_audit_tenant"
+      },
+      {
+        "version": "202608080006",
+        "name": "course_tree_views"
+      },
+      {
+        "version": "202608080007",
+        "name": "drop_show_on_home_tree"
+      },
+      {
+        "version": "202608080008",
+        "name": "tighten_live_class_data_model"
+      },
+      {
+        "version": "202608080009",
+        "name": "tighten_live_class_rls_privileges"
+      },
+      {
+        "version": "202608080010",
+        "name": "unique_active_live_classes"
+      },
+      {
+        "version": "202608080011",
+        "name": "live_class_sfu_voice"
+      },
+      {
+        "version": "202608090001",
+        "name": "fix_tenant_visa_requirement_sync"
+      },
+      {
+        "version": "202608140001",
+        "name": "chapter_test_requires_ebook_completion"
+      },
+      {
+        "version": "202608140002",
+        "name": "reset_corrupt_ebook_reading_time"
+      },
+      {
+        "version": "202608150001",
+        "name": "ebook_completion_uses_active_time"
+      },
+      {
+        "version": "202608150002",
+        "name": "idempotent_ebook_reading_segments"
+      },
+      {
+        "version": "202608150003",
+        "name": "student_grade_skill_profiles"
+      },
+      {
+        "version": "202608150004",
+        "name": "toolbox_practice_ability"
+      },
+      {
+        "version": "202608150005",
+        "name": "student_application_domains"
+      },
+      {
+        "version": "202608150006",
+        "name": "tenant_scoped_ebook_progress"
+      },
+      {
+        "version": "202608150007",
+        "name": "korean_chapter_test_app_guard"
+      },
+      {
+        "version": "202608150008",
+        "name": "admin_application_access"
+      },
+      {
+        "version": "202608150009",
+        "name": "recover_korean_catalog_prerequisites"
+      },
+      {
+        "version": "202608160001",
+        "name": "application_domain_hardening"
+      },
+      {
+        "version": "202608160002",
+        "name": "application_access_trigger_fix"
+      },
+      {
+        "version": "202608160003",
+        "name": "application_access_audit_trigger_fix"
+      },
+      {
+        "version": "202608160004",
+        "name": "explicit_app_ownership_trigger_fix"
+      },
+      {
+        "version": "202608160005",
+        "name": "route_namespace_and_privilege_hardening"
+      },
+      {
+        "version": "202608160006",
+        "name": "client_privilege_baseline"
+      },
+      {
+        "version": "202608160007",
+        "name": "view_privilege_baseline"
+      },
+      {
+        "version": "202608160008",
+        "name": "legacy_rpc_privilege_cleanup"
+      },
+      {
+        "version": "202608160009",
+        "name": "student_admin_contract_alignment"
+      },
+      {
+        "version": "202608160010",
+        "name": "library_application_scope"
+      },
+      {
+        "version": "202608160011",
+        "name": "application_workspace_permission_alignment"
+      },
+      {
+        "version": "202608160012",
+        "name": "expand_korean_course_catalog"
+      },
+      {
+        "version": "202608160013",
+        "name": "chapter_aligned_skill_practice"
+      },
+      {
+        "version": "202608160014",
+        "name": "toolbox_submission_app_scope"
+      },
+      {
+        "version": "202608160015",
+        "name": "toolbox_course_catalog_alignment"
+      },
+      {
+        "version": "202608160016",
+        "name": "student_learning_activity_events"
+      },
+      {
+        "version": "202608170001",
+        "name": "fix_ebook_progress_accumulation"
+      },
+      {
+        "version": "202608170002",
+        "name": "platform_conversation_practice_management"
+      },
+      {
+        "version": "202608170003",
+        "name": "tenant_admin_dashboard_aggregates"
+      },
+      {
+        "version": "202608170004",
+        "name": "platform_management_app_overview"
+      },
+      {
+        "version": "202608170005",
+        "name": "platform_management_app_overview_invoker_fix"
+      },
+      {
+        "version": "202608170006",
+        "name": "platform_lesson_activity_app_scope"
+      },
+      {
+        "version": "202608180001",
+        "name": "korean_level_one_course_overview"
+      },
+      {
+        "version": "202608180002",
+        "name": "keep_korean_level_one_intro_chapters_unlocked"
+      },
+      {
+        "version": "202608180003",
+        "name": "unlock_korean_level_one_after_overview"
+      },
+      {
+        "version": "202608180004",
+        "name": "prevent_smart_textbook_decorative_labels"
+      },
+      {
+        "version": "202608180005",
+        "name": "chapter_one_golden_smart_textbook"
+      },
+      {
+        "version": "202608180006",
+        "name": "chapter_one_submission_security"
+      },
+      {
+        "version": "202608180007",
+        "name": "chapter_two_golden_smart_textbook"
+      },
+      {
+        "version": "202608180008",
+        "name": "open_activity_unscored_mastery"
+      },
+      {
+        "version": "202608180009",
+        "name": "chapter_three_golden_smart_textbook"
+      },
+      {
+        "version": "202608180010",
+        "name": "chapter_four_golden_smart_textbook"
+      },
+      {
+        "version": "202608180011",
+        "name": "chapter_five_golden_smart_textbook"
+      },
+      {
+        "version": "202608180012",
+        "name": "chapter_six_golden_smart_textbook"
+      },
+      {
+        "version": "202608180013",
+        "name": "chapter_seven_golden_smart_textbook"
+      },
+      {
+        "version": "202608180014",
+        "name": "chapter_eight_golden_smart_textbook"
+      },
+      {
+        "version": "202608180015",
+        "name": "chapter_nine_golden_smart_textbook"
+      },
+      {
+        "version": "202608180016",
+        "name": "chapter_ten_golden_smart_textbook"
+      },
+      {
+        "version": "202608180017",
+        "name": "chapter_eleven_golden_smart_textbook"
+      },
+      {
+        "version": "202608180018",
+        "name": "chapter_twelve_golden_smart_textbook"
+      },
+      {
+        "version": "202608180019",
+        "name": "chapter_thirteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180020",
+        "name": "chapter_fourteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180021",
+        "name": "chapter_fifteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180022",
+        "name": "chapter_sixteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180023",
+        "name": "speaking_recording_evidence"
+      },
+      {
+        "version": "202608180024",
+        "name": "add_chapter_one_korean_transcriptions"
+      },
+      {
+        "version": "202608180025",
+        "name": "add_chapters_two_to_sixteen_korean_transcriptions"
+      },
+      {
+        "version": "202608180026",
+        "name": "add_chapter_one_second_grammar_round"
+      },
+      {
+        "version": "202608180027",
+        "name": "restore_objective_activity_recording"
+      },
+      {
+        "version": "202608180028",
+        "name": "expand_chapter_one_vocabulary_practice"
+      },
+      {
+        "version": "202608180029",
+        "name": "expand_chapter_one_grammar_practice"
+      },
+      {
+        "version": "202608180030",
+        "name": "merge_chapter_one_grammar_rounds"
+      },
+      {
+        "version": "202608180031",
+        "name": "expand_chapters_two_to_sixteen_practice"
+      },
+      {
+        "version": "202608180032",
+        "name": "platform_owner_publish_textbook_chapter"
+      },
+      {
+        "version": "202608180033",
+        "name": "lock_down_textbook_chapter_publish_rpc"
+      },
+      {
+        "version": "202608180034",
+        "name": "six_skill_chapter_homework"
+      },
+      {
+        "version": "202608180035",
+        "name": "assignment_speaking_recordings"
+      },
+      {
+        "version": "202608180036",
+        "name": "assignment_chapter_completion_unlock"
+      },
+      {
+        "version": "202608190000",
+        "name": "bootstrap_assessment_seed_sources"
+      },
+      {
+        "version": "202608190001",
+        "name": "homework_v11_grading_and_integrity"
+      },
+      {
+        "version": "202608190002",
+        "name": "rebuild_homework_listening_from_canonical_activity"
+      },
+      {
+        "version": "202608190003",
+        "name": "force_homework_listening_backfill"
+      },
+      {
+        "version": "202608190004",
+        "name": "fix_listening_backfill_trigger_order"
+      },
+      {
+        "version": "202608190005",
+        "name": "assignment_learning_loop"
+      },
+      {
+        "version": "202608190006",
+        "name": "platform_assessment_release_governance"
+      },
+      {
+        "version": "202608190007",
+        "name": "seed_korean_chapter_one_pilot_papers"
+      },
+      {
+        "version": "202608190008",
+        "name": "seed_korean_chapters_two_to_sixteen_paper_drafts"
+      },
+      {
+        "version": "202608190009",
+        "name": "batch_release_assessment_papers"
+      },
+      {
+        "version": "202608190010",
+        "name": "assignment_exam_delivery_settings"
+      },
+      {
+        "version": "202608190011",
+        "name": "assignment_submission_state_machine"
+      },
+      {
+        "version": "202608190012",
+        "name": "assignment_exam_authoritative_timing"
+      },
+      {
+        "version": "202608190013",
+        "name": "assignment_rubric_grading_and_release"
+      },
+      {
+        "version": "202608190014",
+        "name": "seed_korean_level_one_stage_exam_drafts"
+      },
+      {
+        "version": "202608190015",
+        "name": "chapter_practice_content"
+      },
+      {
+        "version": "202608190016",
+        "name": "student_practice_progress_and_review_items"
+      },
+      {
+        "version": "202608190017",
+        "name": "unified_student_review_center"
+      },
+      {
+        "version": "202608190018",
+        "name": "student_weekly_learning_plans"
+      },
+      {
+        "version": "202608190019",
+        "name": "teacher_learning_recommendations"
+      },
+      {
+        "version": "202608190020",
+        "name": "student_learning_task_preferences"
+      },
+      {
+        "version": "202608190021",
+        "name": "teacher_class_today_snapshot"
+      },
+      {
+        "version": "202608190022",
+        "name": "institution_platform_learning_overview"
+      },
+      {
+        "version": "202608190023",
+        "name": "seed_korean_level_one_midterm_v1_draft"
+      },
+      {
+        "version": "202608190024",
+        "name": "complete_korean_level_one_midterm_v1_draft"
+      },
+      {
+        "version": "202608200001",
+        "name": "assignment_grade_release_rls"
+      },
+      {
+        "version": "202608200002",
+        "name": "seed_korean_level_one_final_v1_draft"
+      },
+      {
+        "version": "202608200003",
+        "name": "course_completion_policies_and_evaluations"
+      },
+      {
+        "version": "202608200004",
+        "name": "single_student_completion_evaluator"
+      },
+      {
+        "version": "202608200005",
+        "name": "completion_refresh_orchestration"
+      },
+      {
+        "version": "202608200006",
+        "name": "course_completion_certificates"
+      },
+      {
+        "version": "202608200007",
+        "name": "completion_retake_connections"
+      },
+      {
+        "version": "202608200008",
+        "name": "course_completion_statistics"
+      },
+      {
+        "version": "202608210001",
+        "name": "publish_chapter_one_mission_scene"
+      },
+      {
+        "version": "202608210002",
+        "name": "add_chapter_one_orientation_dialogue_groups"
+      },
+      {
+        "version": "202608210003",
+        "name": "correct_chapter_one_orientation_dialogue_groups_target"
+      },
+      {
+        "version": "202608210004",
+        "name": "expand_chapter_one_orientation_diagnostics"
+      },
+      {
+        "version": "202608220001",
+        "name": "publish_chapter_one_vocabulary_scene"
+      },
+      {
+        "version": "202608220002",
+        "name": "publish_chapter_one_vocabulary_scene_wide"
+      },
+      {
+        "version": "202608220003",
+        "name": "publish_chapter_one_vocabulary_scene_panorama"
+      },
+      {
+        "version": "202608220004",
+        "name": "position_chapter_one_vocabulary_hotspots"
+      },
+      {
+        "version": "202608220005",
+        "name": "correct_chapter_one_vocabulary_hotspots"
+      },
+      {
+        "version": "202608220006",
+        "name": "publish_chapter_one_vocabulary_scene_lossless"
+      },
+      {
+        "version": "202608220007",
+        "name": "publish_chapter_one_vocabulary_scene_2x"
+      },
+      {
+        "version": "202608220008",
+        "name": "publish_chapter_one_steps_three_to_eight_scenes"
+      },
+      {
+        "version": "202608220009",
+        "name": "correct_chapter_one_task_scene_aspect_ratio"
+      },
+      {
+        "version": "202608220010",
+        "name": "remove_chapter_one_grammar_focus_gate"
+      },
+      {
+        "version": "202608220011",
+        "name": "add_chapter_one_grammar_choice_and_judgment"
+      },
+      {
+        "version": "202608220012",
+        "name": "keep_grammar_punctuation_in_prompts"
+      },
+      {
+        "version": "202608220013",
+        "name": "expand_chapter_one_pattern_cards"
+      },
+      {
+        "version": "202608220014",
+        "name": "add_chapter_one_pattern_choice_groups"
+      },
+      {
+        "version": "202608230001",
+        "name": "redesign_chapter_one_pattern_choice_content"
+      },
+      {
+        "version": "202608230002",
+        "name": "add_conversation_scenes_to_pattern_choices"
+      },
+      {
+        "version": "202608230003",
+        "name": "convert_pattern_choices_to_guided_conversation"
+      },
+      {
+        "version": "202608230004",
+        "name": "add_guided_conversation_audio_manifest"
+      },
+      {
+        "version": "202608230005",
+        "name": "add_chapter_one_pattern_composition"
+      },
+      {
+        "version": "202608230006",
+        "name": "expand_pattern_composition_to_two_way_dialogue"
+      },
+      {
+        "version": "202608230007",
+        "name": "present_pattern_order_as_expression_path"
+      },
+      {
+        "version": "202608230008",
+        "name": "redesign_chapter_one_dialogue_pages"
+      },
+      {
+        "version": "202608230009",
+        "name": "apply_chapter_one_dialogue_pages_to_smart_textbook"
+      },
+      {
+        "version": "202608230010",
+        "name": "add_chapter_one_dialogue_roleplay"
+      },
+      {
+        "version": "202608230011",
+        "name": "require_chapter_one_dialogue_roleplay"
+      },
+      {
+        "version": "202608230012",
+        "name": "recalculate_dialogue_progress_after_roleplay_requirement"
+      },
+      {
+        "version": "202608240001",
+        "name": "design_chapter_one_listen_speak_flow"
+      },
+      {
+        "version": "202608240002",
+        "name": "expand_chapter_one_listening_diagnostics"
+      },
+      {
+        "version": "202608240003",
+        "name": "finalize_chapter_one_listening_master"
+      },
+      {
+        "version": "202608240004",
+        "name": "publish_chapter_one_temporary_listening_audio"
+      },
+      {
+        "version": "202608240005",
+        "name": "persist_digital_textbook_page_progress"
+      },
+      {
+        "version": "202608240006",
+        "name": "split_chapter_one_listening_into_two_tracks"
+      },
+      {
+        "version": "202608240007",
+        "name": "balance_chapter_one_listening_answers"
+      },
+      {
+        "version": "202608240008",
+        "name": "add_two_track_repeat_materials"
+      },
+      {
+        "version": "202608240009",
+        "name": "design_independent_speaking_output"
+      },
+      {
+        "version": "202608240010",
+        "name": "require_independent_speaking_for_listen_speak_progress"
+      },
+      {
+        "version": "202608240011",
+        "name": "publish_chapters_two_to_sixteen_listening_audio"
+      },
+      {
+        "version": "202608240012",
+        "name": "publish_chapter_two_primary_scene"
+      },
+      {
+        "version": "202608240013",
+        "name": "publish_chapters_three_to_sixteen_primary_scenes"
+      },
+      {
+        "version": "202608240014",
+        "name": "publish_chapter_two_module_scenes"
+      },
+      {
+        "version": "202608240015",
+        "name": "publish_chapter_three_module_scenes"
+      },
+      {
+        "version": "202608240016",
+        "name": "publish_chapter_four_module_scenes"
+      },
+      {
+        "version": "202608240017",
+        "name": "publish_chapter_five_module_scenes"
+      },
+      {
+        "version": "202608240018",
+        "name": "publish_chapter_six_module_scenes"
+      },
+      {
+        "version": "202608240019",
+        "name": "publish_chapter_seven_module_scenes"
+      },
+      {
+        "version": "202608240020",
+        "name": "publish_chapter_eight_module_scenes"
+      },
+      {
+        "version": "202608240021",
+        "name": "publish_chapter_nine_module_scenes"
+      },
+      {
+        "version": "202608240022",
+        "name": "publish_chapter_ten_module_scenes"
+      },
+      {
+        "version": "202608240023",
+        "name": "publish_chapter_eleven_module_scenes"
+      },
+      {
+        "version": "202608240024",
+        "name": "publish_chapter_twelve_module_scenes"
+      },
+      {
+        "version": "202608240025",
+        "name": "publish_chapter_thirteen_module_scenes"
+      },
+      {
+        "version": "202608240026",
+        "name": "publish_chapter_fourteen_module_scenes"
+      },
+      {
+        "version": "202608240027",
+        "name": "publish_chapter_fifteen_module_scenes"
+      },
+      {
+        "version": "202608240028",
+        "name": "publish_chapter_sixteen_module_scenes"
+      },
+      {
+        "version": "202608240029",
+        "name": "remove_broken_legacy_ebook_progress_rpc"
+      },
+      {
+        "version": "202608240030",
+        "name": "persist_guided_repeat_progress"
+      },
+      {
+        "version": "202608260001",
+        "name": "teaching_agent_phase_one"
+      },
+      {
+        "version": "202608260002",
+        "name": "multi_subject_learning_agent_runtime"
+      },
+      {
+        "version": "202608260003",
+        "name": "split_ai_usage_by_provider"
+      },
+      {
+        "version": "202608260004",
+        "name": "learning_agent_model_switch_audit"
+      },
+      {
+        "version": "202608260005",
+        "name": "uply_guide_agent"
+      },
+      {
+        "version": "202608260006",
+        "name": "learning_agent_script_studio"
+      },
+      {
+        "version": "202608260007",
+        "name": "chapter_one_orientation_teaching_displays"
+      },
+      {
+        "version": "202608260008",
+        "name": "learning_agent_student_task_events"
+      },
+      {
+        "version": "202608270001",
+        "name": "link_orientation_scene_visual_cue"
+      },
+      {
+        "version": "202608270002",
+        "name": "add_visual_cue_duration"
+      },
+      {
+        "version": "202608270003",
+        "name": "learning_agent_node_interactions"
+      },
+      {
+        "version": "202608270004",
+        "name": "publish_korean_course_cover_series"
+      },
+      {
+        "version": "202608270005",
+        "name": "number_beginner_lesson_covers"
+      },
+      {
+        "version": "202608270006",
+        "name": "correct_beginner_lesson_cover_numbers"
+      },
+      {
+        "version": "202608280001",
+        "name": "defer_chapter_one_orientation_answer"
+      },
+      {
+        "version": "202608280002",
+        "name": "rename_korean_agent_to_teacher_kim"
+      },
+      {
+        "version": "202608280003",
+        "name": "show_teacher_kim_in_chapter_one_teaching_area"
+      },
+      {
+        "version": "202608280004",
+        "name": "update_teacher_kim_display_name"
+      },
+      {
+        "version": "202608280005",
+        "name": "remove_learning_agent_display_body"
+      },
+      {
+        "version": "202608280006",
+        "name": "add_learning_agent_script_audio_assets"
+      },
+      {
+        "version": "202608280007",
+        "name": "default_teacher_kim_for_all_script_nodes"
+      },
+      {
+        "version": "202608290001",
+        "name": "harden_learning_agent_script_flow"
+      },
+      {
+        "version": "202608310001",
+        "name": "inherit_learning_agent_script_audio"
+      },
+      {
+        "version": "202609010001",
+        "name": "add_character_style_templates"
+      },
+      {
+        "version": "202609010002",
+        "name": "add_blackboard_layout_templates"
+      },
+      {
+        "version": "202609010003",
+        "name": "add_smart_textbook_learning_target_registry"
+      },
+      {
+        "version": "202609010004",
+        "name": "add_generic_module_learning_target_registry"
+      },
+      {
+        "version": "202609010005",
+        "name": "add_teaching_area_toggle_learning_targets"
+      },
+      {
+        "version": "202609010006",
+        "name": "split_teaching_area_toggle_learning_target"
+      },
+      {
+        "version": "202609020001",
+        "name": "add_split_character_style_template_coordinates"
+      },
+      {
+        "version": "202609020002",
+        "name": "add_narrow_character_style_template_coordinates"
+      },
+      {
+        "version": "202609020003",
+        "name": "add_narrow_character_scale"
+      },
+      {
+        "version": "202609040001",
+        "name": "add_profile_motto_and_tags"
+      },
+      {
+        "version": "202609040002",
+        "name": "agent_operations_center"
+      },
+      {
+        "version": "202609040003",
+        "name": "point_agent_rule_to_korean_level_one"
+      },
+      {
+        "version": "202609040004",
+        "name": "harden_agent_operations"
+      },
+      {
+        "version": "202609040005",
+        "name": "agent_rule_versions_per_rule"
+      },
+      {
+        "version": "202609040006",
+        "name": "touch_guide_agent_session_on_message"
+      },
+      {
+        "version": "202609050001",
+        "name": "curriculum_learning_plan_workflow"
+      },
+      {
+        "version": "202609050002",
+        "name": "curriculum_plan_tenant_integrity"
+      },
+      {
+        "version": "202609050003",
+        "name": "curriculum_plan_access_hardening"
+      },
+      {
+        "version": "202609050004",
+        "name": "curriculum_plan_atomic_publish"
+      },
+      {
+        "version": "202609050005",
+        "name": "curriculum_plan_lesson_source_integrity"
+      },
+      {
+        "version": "202609050006",
+        "name": "curriculum_plan_progress_visibility"
+      },
+      {
+        "version": "202609050007",
+        "name": "korean_level_three_to_six_placeholders"
+      },
+      {
+        "version": "202609050008",
+        "name": "korean_level_one_lesson_numbering"
+      },
+      {
+        "version": "202609050009",
+        "name": "korean_intermediate_advanced_lesson_numbering"
+      },
+      {
+        "version": "202609050010",
+        "name": "remove_curriculum_plan_test_data"
+      },
+      {
+        "version": "202609050011",
+        "name": "curriculum_plan_chapter_source_support"
+      },
+      {
+        "version": "202609050012",
+        "name": "curriculum_plan_chapter_source_type_check"
+      },
+      {
+        "version": "202609050013",
+        "name": "remove_chapter_batch_test_data"
+      },
+      {
+        "version": "202609050014",
+        "name": "remove_retire_test_data"
+      },
+      {
+        "version": "202609050015",
+        "name": "remove_cancel_test_data"
+      },
+      {
+        "version": "202609050016",
+        "name": "curriculum_plan_chapter_test_source_support"
+      },
+      {
+        "version": "202609050017",
+        "name": "remove_chapter_test_binding_test_data"
+      },
+      {
+        "version": "202609050018",
+        "name": "remove_student_view_demo_data"
+      },
+      {
+        "version": "202609060001",
+        "name": "align_korean_beginner_lesson_sort_order"
+      },
+      {
+        "version": "202609060002",
+        "name": "enforce_lesson_progress_consistency"
+      },
+      {
+        "version": "202609070001",
+        "name": "teaching_script_atomic_video"
+      },
+      {
+        "version": "202609080001",
+        "name": "chapter_practice_bindings"
+      },
+      {
+        "version": "202609080002",
+        "name": "chapter_practice_explicit_function_grants"
+      },
+      {
+        "version": "202609080003",
+        "name": "teaching_script_source_reviews"
+      },
+      {
+        "version": "202609080006",
+        "name": "platform_application_settings"
+      },
+      {
+        "version": "202609080007",
+        "name": "conversation_platform_manager_guard"
+      },
+      {
+        "version": "202609080008",
+        "name": "institution_learning_followups"
+      },
+      {
+        "version": "202609090001",
+        "name": "recording_evidence_atomic_v2"
+      },
+      {
+        "version": "202609090002",
+        "name": "recording_domain_coordination"
+      },
+      {
+        "version": "202609100001",
+        "name": "runtime_publish_foundation"
+      },
+      {
+        "version": "202609100002",
+        "name": "runtime_publication_dependency_fence"
+      },
+      {
+        "version": "202609100003",
+        "name": "runtime_admission_control"
+      },
+      {
+        "version": "202609100004",
+        "name": "runtime_single_version_authoring"
+      },
+      {
+        "version": "202609100005",
+        "name": "chapter_publish_semantic_compatibility"
+      },
+      {
+        "version": "202609110001",
+        "name": "allow_evidence_graded_roleplay_publication"
+      },
+      {
+        "version": "202609110002",
+        "name": "restore_single_version_publish_wrapper"
+      },
+      {
+        "version": "202609130001",
+        "name": "textbook_grammar_authoring"
+      },
+      {
+        "version": "202609130002",
+        "name": "textbook_grammar_practice_binding"
+      },
+      {
+        "version": "202609130003",
+        "name": "runtime_authoring_nonretryable_error"
+      }
+    ],
+    "agentTables": 0
+  },
+  "final": {
+    "migrations": [
+      {
+        "version": "202607130000",
+        "name": "profiles_auth_baseline"
+      },
+      {
+        "version": "202607130010",
+        "name": "course_catalog_baseline"
+      },
+      {
+        "version": "202607130020",
+        "name": "lesson_content_baseline"
+      },
+      {
+        "version": "202607130025",
+        "name": "platform_core_course_catalog_baseline"
+      },
+      {
+        "version": "202607130030",
+        "name": "lesson_activity_baseline"
+      },
+      {
+        "version": "202607130040",
+        "name": "auto_enable_rls_baseline"
+      },
+      {
+        "version": "202607140001",
+        "name": "student_planning_workspace"
+      },
+      {
+        "version": "202607140002",
+        "name": "registration_and_management_audit"
+      },
+      {
+        "version": "202607140003",
+        "name": "korean_university_library"
+      },
+      {
+        "version": "202607140004",
+        "name": "expand_korean_university_catalog"
+      },
+      {
+        "version": "202607150001",
+        "name": "student_profile_details"
+      },
+      {
+        "version": "202607150002",
+        "name": "profile_completion_date"
+      },
+      {
+        "version": "202607150003",
+        "name": "school_management_and_membership"
+      },
+      {
+        "version": "202607150004",
+        "name": "account_management_upgrade"
+      },
+      {
+        "version": "202607150005",
+        "name": "application_document_review_workflow"
+      },
+      {
+        "version": "202607150006",
+        "name": "repair_legacy_application_document_statuses"
+      },
+      {
+        "version": "202607150007",
+        "name": "application_document_resubmission"
+      },
+      {
+        "version": "202607150008",
+        "name": "visa_preparation_management"
+      },
+      {
+        "version": "202607150009",
+        "name": "owner_account_deletion"
+      },
+      {
+        "version": "202607150010",
+        "name": "restrict_visa_student_delete"
+      },
+      {
+        "version": "202607150011",
+        "name": "protect_profile_self_service_fields"
+      },
+      {
+        "version": "202607150012",
+        "name": "fix_current_role_keyword_collision"
+      },
+      {
+        "version": "202607150013",
+        "name": "visa_type_degree_levels"
+      },
+      {
+        "version": "202607160001",
+        "name": "announcements_and_permissions"
+      },
+      {
+        "version": "202607170001",
+        "name": "learning_assignments_and_exams"
+      },
+      {
+        "version": "202607170002",
+        "name": "conversation_practice_management"
+      },
+      {
+        "version": "202607170003",
+        "name": "split_announcement_reader_and_management"
+      },
+      {
+        "version": "202607170004",
+        "name": "help_center_and_support_tickets"
+      },
+      {
+        "version": "202607170005",
+        "name": "grade_center_management"
+      },
+      {
+        "version": "202607170006",
+        "name": "tighten_student_grade_visibility"
+      },
+      {
+        "version": "202607170007",
+        "name": "learning_records_management"
+      },
+      {
+        "version": "202607170008",
+        "name": "resource_library_management"
+      },
+      {
+        "version": "202607180001",
+        "name": "university_application_deadlines"
+      },
+      {
+        "version": "202607180002",
+        "name": "target_application_document_checklists"
+      },
+      {
+        "version": "202607180003",
+        "name": "admin_delete_student_service_cards"
+      },
+      {
+        "version": "202607180004",
+        "name": "fix_university_deadline_function_volatility"
+      },
+      {
+        "version": "202607180005",
+        "name": "owner_delete_own_service_cards"
+      },
+      {
+        "version": "202607180006",
+        "name": "university_application_document_requirements"
+      },
+      {
+        "version": "202607180007",
+        "name": "university_document_requirement_notes"
+      },
+      {
+        "version": "202607180008",
+        "name": "university_document_requirements_by_stage"
+      },
+      {
+        "version": "202607180009",
+        "name": "enforce_application_document_stage_match"
+      },
+      {
+        "version": "202607180010",
+        "name": "simplify_application_document_checklist"
+      },
+      {
+        "version": "202607180011",
+        "name": "add_not_needed_document_status"
+      },
+      {
+        "version": "202607180012",
+        "name": "sync_document_due_date_from_target"
+      },
+      {
+        "version": "202607180013",
+        "name": "application_documents_submission_lock"
+      },
+      {
+        "version": "202607180014",
+        "name": "admin_item_controls"
+      },
+      {
+        "version": "202607180015",
+        "name": "lock_prevents_document_delete"
+      },
+      {
+        "version": "202607180016",
+        "name": "admin_note_and_lock_edit"
+      },
+      {
+        "version": "202607180017",
+        "name": "admin_lock_target_documents"
+      },
+      {
+        "version": "202607180018",
+        "name": "lock_university_target_admin_only_unlock"
+      },
+      {
+        "version": "202607190001",
+        "name": "courier_shipping_info"
+      },
+      {
+        "version": "202607190002",
+        "name": "application_stage_timeline"
+      },
+      {
+        "version": "202607190003",
+        "name": "expand_application_stages"
+      },
+      {
+        "version": "202607190004",
+        "name": "courier_requires_stage_2"
+      },
+      {
+        "version": "202607190005",
+        "name": "auto_initialize_visa_workspace"
+      },
+      {
+        "version": "202607190006",
+        "name": "visa_workspace_requires_stage_9"
+      },
+      {
+        "version": "202607190007",
+        "name": "visa_case_source_target"
+      },
+      {
+        "version": "202607190008",
+        "name": "university_visa_application_requirements"
+      },
+      {
+        "version": "202607190009",
+        "name": "archive_visa_requirement_protection"
+      },
+      {
+        "version": "202607190010",
+        "name": "active_visa_task_write_policies"
+      },
+      {
+        "version": "202607190011",
+        "name": "visa_application_channels"
+      },
+      {
+        "version": "202607190012",
+        "name": "fix_visa_channel_role_check"
+      },
+      {
+        "version": "202607190013",
+        "name": "require_channel_before_stage_nine"
+      },
+      {
+        "version": "202607190014",
+        "name": "lock_student_visa_application_channel"
+      },
+      {
+        "version": "202607190015",
+        "name": "lock_student_visa_type_and_entry_date"
+      },
+      {
+        "version": "202607190016",
+        "name": "add_admin_preparing_visa_stage"
+      },
+      {
+        "version": "202607190017",
+        "name": "courier_no_stage_gate"
+      },
+      {
+        "version": "202607190018",
+        "name": "courier_requires_stage_3"
+      },
+      {
+        "version": "202607190019",
+        "name": "courier_requires_stage_2"
+      },
+      {
+        "version": "202607190020",
+        "name": "visa_case_residence_province_city"
+      },
+      {
+        "version": "202607190021",
+        "name": "visa_case_entry_and_airports"
+      },
+      {
+        "version": "202607190022",
+        "name": "visa_case_accommodation_status"
+      },
+      {
+        "version": "202607190023",
+        "name": "visa_case_airport_pickup_service"
+      },
+      {
+        "version": "202607200001",
+        "name": "ai_token_usage"
+      },
+      {
+        "version": "202607200002",
+        "name": "multi_tenant_foundation"
+      },
+      {
+        "version": "202607200003",
+        "name": "tenant_accounts_and_lifecycle"
+      },
+      {
+        "version": "202607200004",
+        "name": "tenant_disable_and_delete_semantics"
+      },
+      {
+        "version": "202607200005",
+        "name": "remove_confirmed_legacy_tenants"
+      },
+      {
+        "version": "202607200006",
+        "name": "platform_deputy_tenant_operator"
+      },
+      {
+        "version": "202607200007",
+        "name": "keep_platform_operators_out_of_tenant_members"
+      },
+      {
+        "version": "202607200008",
+        "name": "tenant_admin_global_role"
+      },
+      {
+        "version": "202607200009",
+        "name": "global_identity_roles"
+      },
+      {
+        "version": "202607200010",
+        "name": "account_permission_helpers_baseline"
+      },
+      {
+        "version": "202607200011",
+        "name": "is_owner_account_baseline"
+      },
+      {
+        "version": "202607210001",
+        "name": "tenant_id_on_business_tables"
+      },
+      {
+        "version": "202607210002",
+        "name": "tenant_scoped_rls"
+      },
+      {
+        "version": "202607210003",
+        "name": "tenant_scoped_rpcs_and_lifecycle"
+      },
+      {
+        "version": "202607210004",
+        "name": "split_platform_and_tenant_super_admin"
+      },
+      {
+        "version": "202607210005",
+        "name": "static_tenant_permanent_deletion"
+      },
+      {
+        "version": "202607210006",
+        "name": "platform_owner_full_admin"
+      },
+      {
+        "version": "202607210007",
+        "name": "platform_owner_tenant_bypass"
+      },
+      {
+        "version": "202607210008",
+        "name": "remove_puffy_bootstrap_tenant"
+      },
+      {
+        "version": "202607210009",
+        "name": "block_platform_student_activity"
+      },
+      {
+        "version": "202607210010",
+        "name": "fix_managed_account_creation_audit"
+      },
+      {
+        "version": "202607210011",
+        "name": "revert_managed_account_creation_audit_fix"
+      },
+      {
+        "version": "202607210012",
+        "name": "allow_platform_tenant_hard_delete_memberships"
+      },
+      {
+        "version": "202607210013",
+        "name": "fix_tenant_manager_auth_creation_audit"
+      },
+      {
+        "version": "202607210014",
+        "name": "revert_tenant_manager_auth_creation_audit_fix"
+      },
+      {
+        "version": "202607210015",
+        "name": "fix_tenant_manager_profile_audit_order"
+      },
+      {
+        "version": "202607210016",
+        "name": "fix_platform_catalog_requirement_sync"
+      },
+      {
+        "version": "202607210017",
+        "name": "restrict_requirement_sync_to_platform_catalog_managers"
+      },
+      {
+        "version": "202607210018",
+        "name": "fix_target_lock_tenant_admin_detection"
+      },
+      {
+        "version": "202607210019",
+        "name": "fix_document_item_tenant_admin_detection"
+      },
+      {
+        "version": "202607260001",
+        "name": "korean_chapter_test_attempts"
+      },
+      {
+        "version": "202607260002",
+        "name": "course_test_question_bank"
+      },
+      {
+        "version": "202607260003",
+        "name": "secure_course_test_scoring"
+      },
+      {
+        "version": "202607260004",
+        "name": "platform_standard_question_bank"
+      },
+      {
+        "version": "202607270001",
+        "name": "expand_korean_standard_question_bank"
+      },
+      {
+        "version": "202607270002",
+        "name": "standard_assessment_papers"
+      },
+      {
+        "version": "202607270003",
+        "name": "disable_tenant_single_question_assignment"
+      },
+      {
+        "version": "202607270004",
+        "name": "chapter_test_random_selection"
+      },
+      {
+        "version": "202607270005",
+        "name": "course_test_lesson_channel"
+      },
+      {
+        "version": "202607270006",
+        "name": "normalize_hangul_chapter_test_duration"
+      },
+      {
+        "version": "202607270007",
+        "name": "align_korean_beginner_lesson_titles"
+      },
+      {
+        "version": "202607270008",
+        "name": "vip2_korean_learning_permissions"
+      },
+      {
+        "version": "202607270009",
+        "name": "enforce_vip2_assignment_conversation_boundaries"
+      },
+      {
+        "version": "202607300001",
+        "name": "overwrite_course_test_attempts"
+      },
+      {
+        "version": "202607300002",
+        "name": "course_question_reviews"
+      },
+      {
+        "version": "202607300003",
+        "name": "course_ebook_progress"
+      },
+      {
+        "version": "202607300004",
+        "name": "course_ebook_effective_reading"
+      },
+      {
+        "version": "202607300005",
+        "name": "platform_account_roles"
+      },
+      {
+        "version": "202607310001",
+        "name": "grade_items_course_link"
+      },
+      {
+        "version": "202607310002",
+        "name": "chapter_homework_plans"
+      },
+      {
+        "version": "202607310003",
+        "name": "chapter_homework_skill_content"
+      },
+      {
+        "version": "202607310004",
+        "name": "chapter_homework_questions"
+      },
+      {
+        "version": "202607310005",
+        "name": "sync_chapter_titles"
+      },
+      {
+        "version": "202607310006",
+        "name": "prune_chapter_test_difficulties"
+      },
+      {
+        "version": "202607310007",
+        "name": "language_question_banks"
+      },
+      {
+        "version": "202607310008",
+        "name": "language_question_bank_manager_policies"
+      },
+      {
+        "version": "202607310009",
+        "name": "korean_answer_key_validation"
+      },
+      {
+        "version": "202607310010",
+        "name": "ebook_question_bank_sections"
+      },
+      {
+        "version": "202607310011",
+        "name": "balance_chapter_test_ebook_coverage"
+      },
+      {
+        "version": "202607310012",
+        "name": "unique_chapter_vocabulary_prompts"
+      },
+      {
+        "version": "202607310013",
+        "name": "smart_digital_textbook_chapter_one"
+      },
+      {
+        "version": "202607310014",
+        "name": "smart_digital_textbook_private_audio"
+      },
+      {
+        "version": "202607310015",
+        "name": "platform_course_inspector_role"
+      },
+      {
+        "version": "202608010001",
+        "name": "student_course_category_learning_plans"
+      },
+      {
+        "version": "202608010002",
+        "name": "course_catalog_workspace"
+      },
+      {
+        "version": "202608020001",
+        "name": "unified_grade_reviews"
+      },
+      {
+        "version": "202608020002",
+        "name": "platform_grade_overview"
+      },
+      {
+        "version": "202608020003",
+        "name": "platform_learning_record_overview"
+      },
+      {
+        "version": "202608020004",
+        "name": "platform_managed_resource_library"
+      },
+      {
+        "version": "202608020005",
+        "name": "library_resources_by_course"
+      },
+      {
+        "version": "202608020006",
+        "name": "library_resources_by_lesson"
+      },
+      {
+        "version": "202608020007",
+        "name": "complete_platform_lesson_catalog"
+      },
+      {
+        "version": "202608020008",
+        "name": "restrict_university_management_to_platform"
+      },
+      {
+        "version": "202608020009",
+        "name": "add_visa_applicable_scopes"
+      },
+      {
+        "version": "202608020010",
+        "name": "document_review_workflow"
+      },
+      {
+        "version": "202608020011",
+        "name": "visa_management_oversight"
+      },
+      {
+        "version": "202608020012",
+        "name": "secure_visa_card_deletion"
+      },
+      {
+        "version": "202608020013",
+        "name": "platform_visa_case_audit"
+      },
+      {
+        "version": "202608020014",
+        "name": "announcement_visibility_and_reads"
+      },
+      {
+        "version": "202608020015",
+        "name": "help_center_roles_and_oversight"
+      },
+      {
+        "version": "202608020016",
+        "name": "unified_permission_center"
+      },
+      {
+        "version": "202608030001",
+        "name": "student_course_category_favorites"
+      },
+      {
+        "version": "202608040001",
+        "name": "reserve_platform_tenant_slug"
+      },
+      {
+        "version": "202608050001",
+        "name": "tenant_student_learning_record_overview"
+      },
+      {
+        "version": "202608050002",
+        "name": "dynamic_chapter_test_slug_check"
+      },
+      {
+        "version": "202608050003",
+        "name": "chapter_test_lesson_completion"
+      },
+      {
+        "version": "202608050004",
+        "name": "document_checklist_respects_target_lock"
+      },
+      {
+        "version": "202608050005",
+        "name": "university_comparison_permission_whitelist"
+      },
+      {
+        "version": "202608050006",
+        "name": "ai_token_usage_quota_index"
+      },
+      {
+        "version": "202608050007",
+        "name": "submit_course_test_sequence_guard"
+      },
+      {
+        "version": "202608050008",
+        "name": "grade_review_request_lock"
+      },
+      {
+        "version": "202608050009",
+        "name": "record_ebook_progress_rpc"
+      },
+      {
+        "version": "202608050010",
+        "name": "assignment_submit_checks_starts_at"
+      },
+      {
+        "version": "202608050011",
+        "name": "university_assessment_dedup"
+      },
+      {
+        "version": "202608050012",
+        "name": "comparison_limit_ignores_unpublished"
+      },
+      {
+        "version": "202608060001",
+        "name": "is_admin_shim"
+      },
+      {
+        "version": "202608060002",
+        "name": "account_deletion_data_snapshot"
+      },
+      {
+        "version": "202608060003",
+        "name": "active_account_platform_roles"
+      },
+      {
+        "version": "202608060004",
+        "name": "course_content_audit_log_tenant_scope"
+      },
+      {
+        "version": "202608060005",
+        "name": "visa_auto_sync_system_exemption"
+      },
+      {
+        "version": "202608060006",
+        "name": "test_and_ebook_progress_tier_check"
+      },
+      {
+        "version": "202608060007",
+        "name": "course_favorites_plans_tenant_isolation"
+      },
+      {
+        "version": "202608060008",
+        "name": "profile_audit_tracks_global_role"
+      },
+      {
+        "version": "202608060009",
+        "name": "cleanup_stale_super_admin_role"
+      },
+      {
+        "version": "202608060010",
+        "name": "digital_textbook_unpublished_content_filter"
+      },
+      {
+        "version": "202608060011",
+        "name": "storage_policy_cleanup"
+      },
+      {
+        "version": "202608060012",
+        "name": "growth_toolbox_items"
+      },
+      {
+        "version": "202608060013",
+        "name": "growth_toolbox_related_course"
+      },
+      {
+        "version": "202608060014",
+        "name": "growth_toolbox_vocabulary"
+      },
+      {
+        "version": "202608060015",
+        "name": "growth_toolbox_grammar"
+      },
+      {
+        "version": "202608060016",
+        "name": "growth_toolbox_grammar_v2"
+      },
+      {
+        "version": "202608060017",
+        "name": "ebook_progress_reading_seconds"
+      },
+      {
+        "version": "202608070001",
+        "name": "student_teacher_assignments"
+      },
+      {
+        "version": "202608070002",
+        "name": "staff_profile_hired_at"
+      },
+      {
+        "version": "202608070003",
+        "name": "staff_profiles"
+      },
+      {
+        "version": "202608070004",
+        "name": "teacher_teaching_data_access"
+      },
+      {
+        "version": "202608070005",
+        "name": "teacher_lesson_progress_access"
+      },
+      {
+        "version": "202608070006",
+        "name": "teacher_learning_record_write"
+      },
+      {
+        "version": "202608070007",
+        "name": "live_class_sessions"
+      },
+      {
+        "version": "202608070008",
+        "name": "live_class_events"
+      },
+      {
+        "version": "202608070009",
+        "name": "realtime_channel_auth"
+      },
+      {
+        "version": "202608070010",
+        "name": "group_class_members"
+      },
+      {
+        "version": "202608070011",
+        "name": "fix_live_class_rls_recursion"
+      },
+      {
+        "version": "202608070012",
+        "name": "drop_session_student_not_null"
+      },
+      {
+        "version": "202608070013",
+        "name": "tighten_live_class_helper_functions"
+      },
+      {
+        "version": "202608080001",
+        "name": "student_assigned_teachers_rpc"
+      },
+      {
+        "version": "202608080002",
+        "name": "learning_time_log"
+      },
+      {
+        "version": "202608080003",
+        "name": "toolbox_study_time"
+      },
+      {
+        "version": "202608080004",
+        "name": "home_tree_visibility"
+      },
+      {
+        "version": "202608080005",
+        "name": "fix_platform_audit_tenant"
+      },
+      {
+        "version": "202608080006",
+        "name": "course_tree_views"
+      },
+      {
+        "version": "202608080007",
+        "name": "drop_show_on_home_tree"
+      },
+      {
+        "version": "202608080008",
+        "name": "tighten_live_class_data_model"
+      },
+      {
+        "version": "202608080009",
+        "name": "tighten_live_class_rls_privileges"
+      },
+      {
+        "version": "202608080010",
+        "name": "unique_active_live_classes"
+      },
+      {
+        "version": "202608080011",
+        "name": "live_class_sfu_voice"
+      },
+      {
+        "version": "202608090001",
+        "name": "fix_tenant_visa_requirement_sync"
+      },
+      {
+        "version": "202608140001",
+        "name": "chapter_test_requires_ebook_completion"
+      },
+      {
+        "version": "202608140002",
+        "name": "reset_corrupt_ebook_reading_time"
+      },
+      {
+        "version": "202608150001",
+        "name": "ebook_completion_uses_active_time"
+      },
+      {
+        "version": "202608150002",
+        "name": "idempotent_ebook_reading_segments"
+      },
+      {
+        "version": "202608150003",
+        "name": "student_grade_skill_profiles"
+      },
+      {
+        "version": "202608150004",
+        "name": "toolbox_practice_ability"
+      },
+      {
+        "version": "202608150005",
+        "name": "student_application_domains"
+      },
+      {
+        "version": "202608150006",
+        "name": "tenant_scoped_ebook_progress"
+      },
+      {
+        "version": "202608150007",
+        "name": "korean_chapter_test_app_guard"
+      },
+      {
+        "version": "202608150008",
+        "name": "admin_application_access"
+      },
+      {
+        "version": "202608150009",
+        "name": "recover_korean_catalog_prerequisites"
+      },
+      {
+        "version": "202608160001",
+        "name": "application_domain_hardening"
+      },
+      {
+        "version": "202608160002",
+        "name": "application_access_trigger_fix"
+      },
+      {
+        "version": "202608160003",
+        "name": "application_access_audit_trigger_fix"
+      },
+      {
+        "version": "202608160004",
+        "name": "explicit_app_ownership_trigger_fix"
+      },
+      {
+        "version": "202608160005",
+        "name": "route_namespace_and_privilege_hardening"
+      },
+      {
+        "version": "202608160006",
+        "name": "client_privilege_baseline"
+      },
+      {
+        "version": "202608160007",
+        "name": "view_privilege_baseline"
+      },
+      {
+        "version": "202608160008",
+        "name": "legacy_rpc_privilege_cleanup"
+      },
+      {
+        "version": "202608160009",
+        "name": "student_admin_contract_alignment"
+      },
+      {
+        "version": "202608160010",
+        "name": "library_application_scope"
+      },
+      {
+        "version": "202608160011",
+        "name": "application_workspace_permission_alignment"
+      },
+      {
+        "version": "202608160012",
+        "name": "expand_korean_course_catalog"
+      },
+      {
+        "version": "202608160013",
+        "name": "chapter_aligned_skill_practice"
+      },
+      {
+        "version": "202608160014",
+        "name": "toolbox_submission_app_scope"
+      },
+      {
+        "version": "202608160015",
+        "name": "toolbox_course_catalog_alignment"
+      },
+      {
+        "version": "202608160016",
+        "name": "student_learning_activity_events"
+      },
+      {
+        "version": "202608170001",
+        "name": "fix_ebook_progress_accumulation"
+      },
+      {
+        "version": "202608170002",
+        "name": "platform_conversation_practice_management"
+      },
+      {
+        "version": "202608170003",
+        "name": "tenant_admin_dashboard_aggregates"
+      },
+      {
+        "version": "202608170004",
+        "name": "platform_management_app_overview"
+      },
+      {
+        "version": "202608170005",
+        "name": "platform_management_app_overview_invoker_fix"
+      },
+      {
+        "version": "202608170006",
+        "name": "platform_lesson_activity_app_scope"
+      },
+      {
+        "version": "202608180001",
+        "name": "korean_level_one_course_overview"
+      },
+      {
+        "version": "202608180002",
+        "name": "keep_korean_level_one_intro_chapters_unlocked"
+      },
+      {
+        "version": "202608180003",
+        "name": "unlock_korean_level_one_after_overview"
+      },
+      {
+        "version": "202608180004",
+        "name": "prevent_smart_textbook_decorative_labels"
+      },
+      {
+        "version": "202608180005",
+        "name": "chapter_one_golden_smart_textbook"
+      },
+      {
+        "version": "202608180006",
+        "name": "chapter_one_submission_security"
+      },
+      {
+        "version": "202608180007",
+        "name": "chapter_two_golden_smart_textbook"
+      },
+      {
+        "version": "202608180008",
+        "name": "open_activity_unscored_mastery"
+      },
+      {
+        "version": "202608180009",
+        "name": "chapter_three_golden_smart_textbook"
+      },
+      {
+        "version": "202608180010",
+        "name": "chapter_four_golden_smart_textbook"
+      },
+      {
+        "version": "202608180011",
+        "name": "chapter_five_golden_smart_textbook"
+      },
+      {
+        "version": "202608180012",
+        "name": "chapter_six_golden_smart_textbook"
+      },
+      {
+        "version": "202608180013",
+        "name": "chapter_seven_golden_smart_textbook"
+      },
+      {
+        "version": "202608180014",
+        "name": "chapter_eight_golden_smart_textbook"
+      },
+      {
+        "version": "202608180015",
+        "name": "chapter_nine_golden_smart_textbook"
+      },
+      {
+        "version": "202608180016",
+        "name": "chapter_ten_golden_smart_textbook"
+      },
+      {
+        "version": "202608180017",
+        "name": "chapter_eleven_golden_smart_textbook"
+      },
+      {
+        "version": "202608180018",
+        "name": "chapter_twelve_golden_smart_textbook"
+      },
+      {
+        "version": "202608180019",
+        "name": "chapter_thirteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180020",
+        "name": "chapter_fourteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180021",
+        "name": "chapter_fifteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180022",
+        "name": "chapter_sixteen_golden_smart_textbook"
+      },
+      {
+        "version": "202608180023",
+        "name": "speaking_recording_evidence"
+      },
+      {
+        "version": "202608180024",
+        "name": "add_chapter_one_korean_transcriptions"
+      },
+      {
+        "version": "202608180025",
+        "name": "add_chapters_two_to_sixteen_korean_transcriptions"
+      },
+      {
+        "version": "202608180026",
+        "name": "add_chapter_one_second_grammar_round"
+      },
+      {
+        "version": "202608180027",
+        "name": "restore_objective_activity_recording"
+      },
+      {
+        "version": "202608180028",
+        "name": "expand_chapter_one_vocabulary_practice"
+      },
+      {
+        "version": "202608180029",
+        "name": "expand_chapter_one_grammar_practice"
+      },
+      {
+        "version": "202608180030",
+        "name": "merge_chapter_one_grammar_rounds"
+      },
+      {
+        "version": "202608180031",
+        "name": "expand_chapters_two_to_sixteen_practice"
+      },
+      {
+        "version": "202608180032",
+        "name": "platform_owner_publish_textbook_chapter"
+      },
+      {
+        "version": "202608180033",
+        "name": "lock_down_textbook_chapter_publish_rpc"
+      },
+      {
+        "version": "202608180034",
+        "name": "six_skill_chapter_homework"
+      },
+      {
+        "version": "202608180035",
+        "name": "assignment_speaking_recordings"
+      },
+      {
+        "version": "202608180036",
+        "name": "assignment_chapter_completion_unlock"
+      },
+      {
+        "version": "202608190000",
+        "name": "bootstrap_assessment_seed_sources"
+      },
+      {
+        "version": "202608190001",
+        "name": "homework_v11_grading_and_integrity"
+      },
+      {
+        "version": "202608190002",
+        "name": "rebuild_homework_listening_from_canonical_activity"
+      },
+      {
+        "version": "202608190003",
+        "name": "force_homework_listening_backfill"
+      },
+      {
+        "version": "202608190004",
+        "name": "fix_listening_backfill_trigger_order"
+      },
+      {
+        "version": "202608190005",
+        "name": "assignment_learning_loop"
+      },
+      {
+        "version": "202608190006",
+        "name": "platform_assessment_release_governance"
+      },
+      {
+        "version": "202608190007",
+        "name": "seed_korean_chapter_one_pilot_papers"
+      },
+      {
+        "version": "202608190008",
+        "name": "seed_korean_chapters_two_to_sixteen_paper_drafts"
+      },
+      {
+        "version": "202608190009",
+        "name": "batch_release_assessment_papers"
+      },
+      {
+        "version": "202608190010",
+        "name": "assignment_exam_delivery_settings"
+      },
+      {
+        "version": "202608190011",
+        "name": "assignment_submission_state_machine"
+      },
+      {
+        "version": "202608190012",
+        "name": "assignment_exam_authoritative_timing"
+      },
+      {
+        "version": "202608190013",
+        "name": "assignment_rubric_grading_and_release"
+      },
+      {
+        "version": "202608190014",
+        "name": "seed_korean_level_one_stage_exam_drafts"
+      },
+      {
+        "version": "202608190015",
+        "name": "chapter_practice_content"
+      },
+      {
+        "version": "202608190016",
+        "name": "student_practice_progress_and_review_items"
+      },
+      {
+        "version": "202608190017",
+        "name": "unified_student_review_center"
+      },
+      {
+        "version": "202608190018",
+        "name": "student_weekly_learning_plans"
+      },
+      {
+        "version": "202608190019",
+        "name": "teacher_learning_recommendations"
+      },
+      {
+        "version": "202608190020",
+        "name": "student_learning_task_preferences"
+      },
+      {
+        "version": "202608190021",
+        "name": "teacher_class_today_snapshot"
+      },
+      {
+        "version": "202608190022",
+        "name": "institution_platform_learning_overview"
+      },
+      {
+        "version": "202608190023",
+        "name": "seed_korean_level_one_midterm_v1_draft"
+      },
+      {
+        "version": "202608190024",
+        "name": "complete_korean_level_one_midterm_v1_draft"
+      },
+      {
+        "version": "202608200001",
+        "name": "assignment_grade_release_rls"
+      },
+      {
+        "version": "202608200002",
+        "name": "seed_korean_level_one_final_v1_draft"
+      },
+      {
+        "version": "202608200003",
+        "name": "course_completion_policies_and_evaluations"
+      },
+      {
+        "version": "202608200004",
+        "name": "single_student_completion_evaluator"
+      },
+      {
+        "version": "202608200005",
+        "name": "completion_refresh_orchestration"
+      },
+      {
+        "version": "202608200006",
+        "name": "course_completion_certificates"
+      },
+      {
+        "version": "202608200007",
+        "name": "completion_retake_connections"
+      },
+      {
+        "version": "202608200008",
+        "name": "course_completion_statistics"
+      },
+      {
+        "version": "202608210001",
+        "name": "publish_chapter_one_mission_scene"
+      },
+      {
+        "version": "202608210002",
+        "name": "add_chapter_one_orientation_dialogue_groups"
+      },
+      {
+        "version": "202608210003",
+        "name": "correct_chapter_one_orientation_dialogue_groups_target"
+      },
+      {
+        "version": "202608210004",
+        "name": "expand_chapter_one_orientation_diagnostics"
+      },
+      {
+        "version": "202608220001",
+        "name": "publish_chapter_one_vocabulary_scene"
+      },
+      {
+        "version": "202608220002",
+        "name": "publish_chapter_one_vocabulary_scene_wide"
+      },
+      {
+        "version": "202608220003",
+        "name": "publish_chapter_one_vocabulary_scene_panorama"
+      },
+      {
+        "version": "202608220004",
+        "name": "position_chapter_one_vocabulary_hotspots"
+      },
+      {
+        "version": "202608220005",
+        "name": "correct_chapter_one_vocabulary_hotspots"
+      },
+      {
+        "version": "202608220006",
+        "name": "publish_chapter_one_vocabulary_scene_lossless"
+      },
+      {
+        "version": "202608220007",
+        "name": "publish_chapter_one_vocabulary_scene_2x"
+      },
+      {
+        "version": "202608220008",
+        "name": "publish_chapter_one_steps_three_to_eight_scenes"
+      },
+      {
+        "version": "202608220009",
+        "name": "correct_chapter_one_task_scene_aspect_ratio"
+      },
+      {
+        "version": "202608220010",
+        "name": "remove_chapter_one_grammar_focus_gate"
+      },
+      {
+        "version": "202608220011",
+        "name": "add_chapter_one_grammar_choice_and_judgment"
+      },
+      {
+        "version": "202608220012",
+        "name": "keep_grammar_punctuation_in_prompts"
+      },
+      {
+        "version": "202608220013",
+        "name": "expand_chapter_one_pattern_cards"
+      },
+      {
+        "version": "202608220014",
+        "name": "add_chapter_one_pattern_choice_groups"
+      },
+      {
+        "version": "202608230001",
+        "name": "redesign_chapter_one_pattern_choice_content"
+      },
+      {
+        "version": "202608230002",
+        "name": "add_conversation_scenes_to_pattern_choices"
+      },
+      {
+        "version": "202608230003",
+        "name": "convert_pattern_choices_to_guided_conversation"
+      },
+      {
+        "version": "202608230004",
+        "name": "add_guided_conversation_audio_manifest"
+      },
+      {
+        "version": "202608230005",
+        "name": "add_chapter_one_pattern_composition"
+      },
+      {
+        "version": "202608230006",
+        "name": "expand_pattern_composition_to_two_way_dialogue"
+      },
+      {
+        "version": "202608230007",
+        "name": "present_pattern_order_as_expression_path"
+      },
+      {
+        "version": "202608230008",
+        "name": "redesign_chapter_one_dialogue_pages"
+      },
+      {
+        "version": "202608230009",
+        "name": "apply_chapter_one_dialogue_pages_to_smart_textbook"
+      },
+      {
+        "version": "202608230010",
+        "name": "add_chapter_one_dialogue_roleplay"
+      },
+      {
+        "version": "202608230011",
+        "name": "require_chapter_one_dialogue_roleplay"
+      },
+      {
+        "version": "202608230012",
+        "name": "recalculate_dialogue_progress_after_roleplay_requirement"
+      },
+      {
+        "version": "202608240001",
+        "name": "design_chapter_one_listen_speak_flow"
+      },
+      {
+        "version": "202608240002",
+        "name": "expand_chapter_one_listening_diagnostics"
+      },
+      {
+        "version": "202608240003",
+        "name": "finalize_chapter_one_listening_master"
+      },
+      {
+        "version": "202608240004",
+        "name": "publish_chapter_one_temporary_listening_audio"
+      },
+      {
+        "version": "202608240005",
+        "name": "persist_digital_textbook_page_progress"
+      },
+      {
+        "version": "202608240006",
+        "name": "split_chapter_one_listening_into_two_tracks"
+      },
+      {
+        "version": "202608240007",
+        "name": "balance_chapter_one_listening_answers"
+      },
+      {
+        "version": "202608240008",
+        "name": "add_two_track_repeat_materials"
+      },
+      {
+        "version": "202608240009",
+        "name": "design_independent_speaking_output"
+      },
+      {
+        "version": "202608240010",
+        "name": "require_independent_speaking_for_listen_speak_progress"
+      },
+      {
+        "version": "202608240011",
+        "name": "publish_chapters_two_to_sixteen_listening_audio"
+      },
+      {
+        "version": "202608240012",
+        "name": "publish_chapter_two_primary_scene"
+      },
+      {
+        "version": "202608240013",
+        "name": "publish_chapters_three_to_sixteen_primary_scenes"
+      },
+      {
+        "version": "202608240014",
+        "name": "publish_chapter_two_module_scenes"
+      },
+      {
+        "version": "202608240015",
+        "name": "publish_chapter_three_module_scenes"
+      },
+      {
+        "version": "202608240016",
+        "name": "publish_chapter_four_module_scenes"
+      },
+      {
+        "version": "202608240017",
+        "name": "publish_chapter_five_module_scenes"
+      },
+      {
+        "version": "202608240018",
+        "name": "publish_chapter_six_module_scenes"
+      },
+      {
+        "version": "202608240019",
+        "name": "publish_chapter_seven_module_scenes"
+      },
+      {
+        "version": "202608240020",
+        "name": "publish_chapter_eight_module_scenes"
+      },
+      {
+        "version": "202608240021",
+        "name": "publish_chapter_nine_module_scenes"
+      },
+      {
+        "version": "202608240022",
+        "name": "publish_chapter_ten_module_scenes"
+      },
+      {
+        "version": "202608240023",
+        "name": "publish_chapter_eleven_module_scenes"
+      },
+      {
+        "version": "202608240024",
+        "name": "publish_chapter_twelve_module_scenes"
+      },
+      {
+        "version": "202608240025",
+        "name": "publish_chapter_thirteen_module_scenes"
+      },
+      {
+        "version": "202608240026",
+        "name": "publish_chapter_fourteen_module_scenes"
+      },
+      {
+        "version": "202608240027",
+        "name": "publish_chapter_fifteen_module_scenes"
+      },
+      {
+        "version": "202608240028",
+        "name": "publish_chapter_sixteen_module_scenes"
+      },
+      {
+        "version": "202608240029",
+        "name": "remove_broken_legacy_ebook_progress_rpc"
+      },
+      {
+        "version": "202608240030",
+        "name": "persist_guided_repeat_progress"
+      },
+      {
+        "version": "202608260001",
+        "name": "teaching_agent_phase_one"
+      },
+      {
+        "version": "202608260002",
+        "name": "multi_subject_learning_agent_runtime"
+      },
+      {
+        "version": "202608260003",
+        "name": "split_ai_usage_by_provider"
+      },
+      {
+        "version": "202608260004",
+        "name": "learning_agent_model_switch_audit"
+      },
+      {
+        "version": "202608260005",
+        "name": "uply_guide_agent"
+      },
+      {
+        "version": "202608260006",
+        "name": "learning_agent_script_studio"
+      },
+      {
+        "version": "202608260007",
+        "name": "chapter_one_orientation_teaching_displays"
+      },
+      {
+        "version": "202608260008",
+        "name": "learning_agent_student_task_events"
+      },
+      {
+        "version": "202608270001",
+        "name": "link_orientation_scene_visual_cue"
+      },
+      {
+        "version": "202608270002",
+        "name": "add_visual_cue_duration"
+      },
+      {
+        "version": "202608270003",
+        "name": "learning_agent_node_interactions"
+      },
+      {
+        "version": "202608270004",
+        "name": "publish_korean_course_cover_series"
+      },
+      {
+        "version": "202608270005",
+        "name": "number_beginner_lesson_covers"
+      },
+      {
+        "version": "202608270006",
+        "name": "correct_beginner_lesson_cover_numbers"
+      },
+      {
+        "version": "202608280001",
+        "name": "defer_chapter_one_orientation_answer"
+      },
+      {
+        "version": "202608280002",
+        "name": "rename_korean_agent_to_teacher_kim"
+      },
+      {
+        "version": "202608280003",
+        "name": "show_teacher_kim_in_chapter_one_teaching_area"
+      },
+      {
+        "version": "202608280004",
+        "name": "update_teacher_kim_display_name"
+      },
+      {
+        "version": "202608280005",
+        "name": "remove_learning_agent_display_body"
+      },
+      {
+        "version": "202608280006",
+        "name": "add_learning_agent_script_audio_assets"
+      },
+      {
+        "version": "202608280007",
+        "name": "default_teacher_kim_for_all_script_nodes"
+      },
+      {
+        "version": "202608290001",
+        "name": "harden_learning_agent_script_flow"
+      },
+      {
+        "version": "202608310001",
+        "name": "inherit_learning_agent_script_audio"
+      },
+      {
+        "version": "202609010001",
+        "name": "add_character_style_templates"
+      },
+      {
+        "version": "202609010002",
+        "name": "add_blackboard_layout_templates"
+      },
+      {
+        "version": "202609010003",
+        "name": "add_smart_textbook_learning_target_registry"
+      },
+      {
+        "version": "202609010004",
+        "name": "add_generic_module_learning_target_registry"
+      },
+      {
+        "version": "202609010005",
+        "name": "add_teaching_area_toggle_learning_targets"
+      },
+      {
+        "version": "202609010006",
+        "name": "split_teaching_area_toggle_learning_target"
+      },
+      {
+        "version": "202609020001",
+        "name": "add_split_character_style_template_coordinates"
+      },
+      {
+        "version": "202609020002",
+        "name": "add_narrow_character_style_template_coordinates"
+      },
+      {
+        "version": "202609020003",
+        "name": "add_narrow_character_scale"
+      },
+      {
+        "version": "202609040001",
+        "name": "add_profile_motto_and_tags"
+      },
+      {
+        "version": "202609040002",
+        "name": "agent_operations_center"
+      },
+      {
+        "version": "202609040003",
+        "name": "point_agent_rule_to_korean_level_one"
+      },
+      {
+        "version": "202609040004",
+        "name": "harden_agent_operations"
+      },
+      {
+        "version": "202609040005",
+        "name": "agent_rule_versions_per_rule"
+      },
+      {
+        "version": "202609040006",
+        "name": "touch_guide_agent_session_on_message"
+      },
+      {
+        "version": "202609050001",
+        "name": "curriculum_learning_plan_workflow"
+      },
+      {
+        "version": "202609050002",
+        "name": "curriculum_plan_tenant_integrity"
+      },
+      {
+        "version": "202609050003",
+        "name": "curriculum_plan_access_hardening"
+      },
+      {
+        "version": "202609050004",
+        "name": "curriculum_plan_atomic_publish"
+      },
+      {
+        "version": "202609050005",
+        "name": "curriculum_plan_lesson_source_integrity"
+      },
+      {
+        "version": "202609050006",
+        "name": "curriculum_plan_progress_visibility"
+      },
+      {
+        "version": "202609050007",
+        "name": "korean_level_three_to_six_placeholders"
+      },
+      {
+        "version": "202609050008",
+        "name": "korean_level_one_lesson_numbering"
+      },
+      {
+        "version": "202609050009",
+        "name": "korean_intermediate_advanced_lesson_numbering"
+      },
+      {
+        "version": "202609050010",
+        "name": "remove_curriculum_plan_test_data"
+      },
+      {
+        "version": "202609050011",
+        "name": "curriculum_plan_chapter_source_support"
+      },
+      {
+        "version": "202609050012",
+        "name": "curriculum_plan_chapter_source_type_check"
+      },
+      {
+        "version": "202609050013",
+        "name": "remove_chapter_batch_test_data"
+      },
+      {
+        "version": "202609050014",
+        "name": "remove_retire_test_data"
+      },
+      {
+        "version": "202609050015",
+        "name": "remove_cancel_test_data"
+      },
+      {
+        "version": "202609050016",
+        "name": "curriculum_plan_chapter_test_source_support"
+      },
+      {
+        "version": "202609050017",
+        "name": "remove_chapter_test_binding_test_data"
+      },
+      {
+        "version": "202609050018",
+        "name": "remove_student_view_demo_data"
+      },
+      {
+        "version": "202609060001",
+        "name": "align_korean_beginner_lesson_sort_order"
+      },
+      {
+        "version": "202609060002",
+        "name": "enforce_lesson_progress_consistency"
+      },
+      {
+        "version": "202609070001",
+        "name": "teaching_script_atomic_video"
+      },
+      {
+        "version": "202609080001",
+        "name": "chapter_practice_bindings"
+      },
+      {
+        "version": "202609080002",
+        "name": "chapter_practice_explicit_function_grants"
+      },
+      {
+        "version": "202609080003",
+        "name": "teaching_script_source_reviews"
+      },
+      {
+        "version": "202609080006",
+        "name": "platform_application_settings"
+      },
+      {
+        "version": "202609080007",
+        "name": "conversation_platform_manager_guard"
+      },
+      {
+        "version": "202609080008",
+        "name": "institution_learning_followups"
+      },
+      {
+        "version": "202609090001",
+        "name": "recording_evidence_atomic_v2"
+      },
+      {
+        "version": "202609090002",
+        "name": "recording_domain_coordination"
+      },
+      {
+        "version": "202609100001",
+        "name": "runtime_publish_foundation"
+      },
+      {
+        "version": "202609100002",
+        "name": "runtime_publication_dependency_fence"
+      },
+      {
+        "version": "202609100003",
+        "name": "runtime_admission_control"
+      },
+      {
+        "version": "202609100004",
+        "name": "runtime_single_version_authoring"
+      },
+      {
+        "version": "202609100005",
+        "name": "chapter_publish_semantic_compatibility"
+      },
+      {
+        "version": "202609110001",
+        "name": "allow_evidence_graded_roleplay_publication"
+      },
+      {
+        "version": "202609110002",
+        "name": "restore_single_version_publish_wrapper"
+      },
+      {
+        "version": "202609130001",
+        "name": "textbook_grammar_authoring"
+      },
+      {
+        "version": "202609130002",
+        "name": "textbook_grammar_practice_binding"
+      },
+      {
+        "version": "202609130003",
+        "name": "runtime_authoring_nonretryable_error"
+      }
+    ],
+    "agentTables": 0
+  },
+  "productionWrites": 0,
+  "productionMigrationApplied": false,
+  "productionFlagEnabled": false
+}

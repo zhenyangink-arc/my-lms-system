@@ -1,0 +1,1100 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1-R1",
+  "recordedAt": "2026-09-20T05:30:46.344968+00:00",
+  "overall": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+  "incidentCode": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+  "targetPath": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+  "expectedSha256": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+  "preRecoverySha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+  "currentSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+  "postRecoverySha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+  "exactOriginalCandidate": "NOT_FOUND",
+  "candidateSha256": null,
+  "recovered": false,
+  "byteExact": false,
+  "historicalEvidenceRestored": false,
+  "remainingOverwrittenHistoricalEvidence": 1,
+  "incidentPreservation": {
+    "copyPath": "/tmp/uply-tls-i1-r1-recovery-wcbv_2ey/incident-current.log",
+    "sha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+    "mode": "0600",
+    "historicalIncidentEvidenceRetained": true
+  },
+  "searchedSources": [
+    {
+      "order": "A",
+      "source": "Git tracked history and all refs",
+      "finding": "Target ignored by .gitignore *.log, untracked, no exact-path history or all-refs object entry"
+    },
+    {
+      "order": "B",
+      "source": "Reflog, dangling and unreachable objects",
+      "finding": "All 9118 local Git objects enumerated; 4088 blobs in 1KB–2MB content range inspected; no matching content candidate. fsck found 1780 unreachable blobs, 1763 unreachable trees, 165 dangling trees; included in all-object scan"
+    },
+    {
+      "order": "C",
+      "source": "Git stash",
+      "finding": "No stash entries"
+    },
+    {
+      "order": "D",
+      "source": "Worktrees and older workspace copies",
+      "finding": "Only current worktree. Older broken workspace Git database inspected (4438 objects, 2046 candidate-size blobs), no content candidate; older workspace files included in filesystem search"
+    },
+    {
+      "order": "E",
+      "source": "Repository-local backups",
+      "finding": "Project tree scanned including ignored/hidden evidence and backup files; no exact original"
+    },
+    {
+      "order": "F",
+      "source": "Build/evidence archives",
+      "finding": "Archive member inventory/content inspected without extracting over project; no exact original"
+    },
+    {
+      "order": "G",
+      "source": "Release archives/tarballs",
+      "finding": "/home/yangzhen/releases, artifacts and operations inspected; 18 discovered project/temp archives read in total; no exact original"
+    },
+    {
+      "order": "H",
+      "source": "Server backups",
+      "finding": "/home/yangzhen/backups inventory and non-private file search; /var/backups only system package backups. Private database dump/credential contents excluded"
+    },
+    {
+      "order": "I",
+      "source": "Temporary/editor backup files",
+      "finding": "/tmp, /var/tmp, VSCode User History inspected; VSCode/Code backup directories and Trash absent; no matching editor or compressed-log candidate"
+    },
+    {
+      "order": "J",
+      "source": "Shell-created copied logs",
+      "finding": "Content-marker and extension-independent scans of temporary/project/release/ops files found only different historical runs"
+    },
+    {
+      "order": "K",
+      "source": "Older validation directories",
+      "finding": "I1, P1A, P1C-I2, TLS-I1 and ACL-F1 logs compared; no SHA match"
+    },
+    {
+      "order": "L",
+      "source": "Existing filesystem snapshots/backup artifacts",
+      "finding": "Known .snapshots and timeshift locations absent; /mnt and /media empty; no accessible project snapshot discovered. No raw-device recovery attempted"
+    }
+  ],
+  "candidateCount": 19,
+  "candidateCountDefinition": "19 content-marker file hits, including source/metadata references and current overwritten target; duplicate size-scan hits not counted again",
+  "exactMatches": 0,
+  "filesystemFilesContentInspected": 11793,
+  "extensionIndependentFilesHashed": 6328,
+  "archiveCount": 18,
+  "candidates": [
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/acl-f1-isolated-validation/acl-contract.tap",
+      "temp": "file-000.candidate",
+      "size": 7795,
+      "sha256": "0c79dd915b855b24d0a2db848eff13d62cca2556a7f58fdc24174a442c8cee0b",
+      "exact": false,
+      "logBytes": true
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/acl-f1-isolated-validation/regression.tap",
+      "temp": "file-001.candidate",
+      "size": 25549,
+      "sha256": "207f080c0df8b852fdf4ef110a46378bb4e4107921f78543cfd8340c5338959d",
+      "exact": false,
+      "logBytes": true
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1a-validation/existing-regression.log",
+      "temp": "file-002.candidate",
+      "size": 11895,
+      "sha256": "d32b13bb1db6c5dafb392c52f39bda956f2d8ff185bfb76c76a8ea1f2267bf15",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "temp": "file-003.candidate",
+      "size": 11890,
+      "sha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/existing-regression.log",
+      "temp": "file-004.candidate",
+      "size": 11906,
+      "sha256": "3e273f60efa08a0698e6d367fdb8610908a8fb881db91c89e8d19418f3eb3fb5",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-negative-tests.json",
+      "temp": "file-005.candidate",
+      "size": 13787,
+      "sha256": "fa9965076e6dc1144690ac469413407768e00cff719fd1011bcba7a4ae849106",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/new-tests.log",
+      "temp": "file-006.candidate",
+      "size": 15048,
+      "sha256": "fab9eac04e309080b51fc78b0576122953af8f9f563703e2d342611d04a8ffea",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "temp": "file-007.candidate",
+      "size": 11897,
+      "sha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/tests/chapter-practice-acl-contract.test.mjs",
+      "temp": "file-008.candidate",
+      "size": 21395,
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/home/yangzhen/projects/my-lms-system/tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "temp": "file-009.candidate",
+      "size": 10114,
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/acl-f1-final-tests.tap",
+      "temp": "file-010.candidate",
+      "size": 7795,
+      "sha256": "0c79dd915b855b24d0a2db848eff13d62cca2556a7f58fdc24174a442c8cee0b",
+      "exact": false,
+      "logBytes": true
+    },
+    {
+      "source": "/tmp/acl-f1-regression.log",
+      "temp": "file-011.candidate",
+      "size": 25549,
+      "sha256": "207f080c0df8b852fdf4ef110a46378bb4e4107921f78543cfd8340c5338959d",
+      "exact": false,
+      "logBytes": true
+    },
+    {
+      "source": "/tmp/acl-f1-tests.log",
+      "temp": "file-012.candidate",
+      "size": 4207,
+      "sha256": "06b8ce241557abf501361322932650c18381368add7d90e852c8e9101e4246ba",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-new-tests-consolidated.log",
+      "temp": "file-013.candidate",
+      "size": 15048,
+      "sha256": "fab9eac04e309080b51fc78b0576122953af8f9f563703e2d342611d04a8ffea",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-publication-sql-final.log",
+      "temp": "file-014.candidate",
+      "size": 3201,
+      "sha256": "5c65e66261b34a4fb8e08a4f22676fd3763c3ab665e4a09181e2fb82bb508571",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-persisted-final.log",
+      "temp": "file-015.candidate",
+      "size": 3639,
+      "sha256": "652f90d54d3336099ab4fb050e1ae4b5db1446549d4ca0e2c34dfb4d8c9a755f",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-new-tests-final.log",
+      "temp": "file-016.candidate",
+      "size": 19262,
+      "sha256": "f07df8312e7688a2c902923614677b10f39ac670ccc0f862b5cbe6e912d95f5c",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-persisted-tests.log",
+      "temp": "file-017.candidate",
+      "size": 3229,
+      "sha256": "6d990ba044679065af9b53fd103e8b25bfd83d30e1639df1f59493db03f4d9fa",
+      "exact": false,
+      "logBytes": false
+    },
+    {
+      "source": "/tmp/r7dc34b-publication-sql.log",
+      "temp": "file-018.candidate",
+      "size": 2665,
+      "sha256": "f7ef46bac9fd7db73f4a2ded15373c8a0a45056db3617ef93ace98924d230a1b",
+      "exact": false,
+      "logBytes": false
+    }
+  ],
+  "searchLimits": [
+    "System service private temp directories were inaccessible and unrelated to project validation",
+    "Production credential stores and private database backup payloads were excluded",
+    "No hypothetical, unmounted or unavailable external snapshots claimed searched",
+    "1KB–2MB marker scan plus 9KB–15KB extension-independent scan; no timing/PID synthesis or log reconstruction"
+  ],
+  "searchAudit": {
+    "git-audit": {
+      "fsck": {
+        "exitCode": 0,
+        "lineCount": 165,
+        "sha256": "e664de721de7dc0e5fd70028f5ee141bef3f25c2b84c4c03fd9f9e96ab75b8f6",
+        "objectClasses": {
+          "dangling tree": 165
+        }
+      },
+      "unreachable": {
+        "exitCode": 0,
+        "lineCount": 3543,
+        "sha256": "90b93e316f6c78ab98e0857efe6aee47a4b608a59d04c4362985820c6fbe988f",
+        "objectClasses": {
+          "unreachable blob": 1780,
+          "unreachable tree": 1763
+        }
+      },
+      "refs": {
+        "exitCode": 0,
+        "lineCount": 5575,
+        "sha256": "fb18a53a83bd390073e8cda9331838c7d1110239607f42deb555b26dbc88f740",
+        "exactPathEntries": 0
+      },
+      "reflog": {
+        "exitCode": 0,
+        "lineCount": 14,
+        "sha256": "592cf5faa34ab6927ab6aebbc620212c94e23495dbe72c78d4a063c70bf0a5ee"
+      },
+      "stash": {
+        "exitCode": 0,
+        "lineCount": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "worktrees": {
+        "exitCode": 0,
+        "lineCount": 4,
+        "sha256": "5c0b1d202e317e3e52e2c81591fca36ddfab8f16e8304714896f74a3f62f83a6"
+      }
+    },
+    "git-search": {
+      "allObjectCount": 9118,
+      "blobsHashedOrInspected": 4088,
+      "candidates": []
+    },
+    "other-git-search": [
+      {
+        "repository": "/tmp",
+        "candidates": [],
+        "blobsInspected": 0,
+        "exitCode": 128
+      },
+      {
+        "repository": "/home/yangzhen/projects/my-lms-system-broken-20260813",
+        "candidates": [],
+        "blobsInspected": 2046,
+        "exitCode": 0,
+        "objects": 4438
+      }
+    ],
+    "archive-search": {
+      "archives": [
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-build.tar.gz",
+          "members": 2186,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-source.tar.gz",
+          "members": 8,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7dc34b-validation-artifacts/validation-build.tar.gz",
+          "members": 2177,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7dc34b-validation-artifacts/validation-source-34.tar.gz",
+          "members": 34,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+          "members": 143,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+          "members": 1360,
+          "contentsInspected": 3,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-build.tar.gz",
+          "members": 1419,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-build.tar.gz",
+          "members": 2178,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-dependencies.tar.gz",
+          "members": 177,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-source.tar.gz",
+          "members": 35,
+          "contentsInspected": 2,
+          "candidates": 0
+        },
+        {
+          "path": "/tmp/lucide-react-1.23.0.tgz",
+          "members": 4028,
+          "contentsInspected": 83,
+          "candidates": 0
+        },
+        {
+          "path": "/tmp/r7dc34b-artifacts/validation-build.tar.gz",
+          "members": 2177,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/tmp/r7dc34b-artifacts/validation-source-34.tar.gz",
+          "members": 34,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/tmp/uply-r7cb-b3a-candidate/candidate-dependencies.tar.gz",
+          "members": 177,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/tmp/uply-r7cb-b3a-candidate/candidate-build.tar.gz",
+          "members": 2178,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/artifacts/uply-teaching-agent-foundation-r3d/candidate-build.tar.gz",
+          "members": 2153,
+          "contentsInspected": 1,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1d/20260917T071351Z/candidate-build.tar.gz",
+          "members": 1382,
+          "contentsInspected": 0,
+          "candidates": 0
+        },
+        {
+          "path": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/20260917T061353Z/candidate-build.tar.gz",
+          "members": 1382,
+          "contentsInspected": 0,
+          "candidates": 0
+        }
+      ],
+      "candidates": []
+    },
+    "snapshot-locations": [
+      {
+        "path": "/.snapshots",
+        "exists": false
+      },
+      {
+        "path": "/home/.snapshots",
+        "exists": false
+      },
+      {
+        "path": "/home/yangzhen/.snapshots",
+        "exists": false
+      },
+      {
+        "path": "/timeshift",
+        "exists": false
+      },
+      {
+        "path": "/run/timeshift",
+        "exists": false
+      },
+      {
+        "path": "/mnt",
+        "exists": true,
+        "entries": []
+      },
+      {
+        "path": "/media",
+        "exists": true,
+        "entries": []
+      },
+      {
+        "path": "/var/backups",
+        "exists": true,
+        "entries": [
+          "dpkg.status.3.gz",
+          "dpkg.diversions.3.gz",
+          "apt.extended_states.3.gz",
+          "dpkg.status.6.gz",
+          "dpkg.arch.1.gz",
+          "dpkg.status.0",
+          "alternatives.tar.1.gz",
+          "apt.extended_states.6.gz",
+          "dpkg.arch.5.gz",
+          "alternatives.tar.4.gz",
+          "dpkg.arch.4.gz",
+          "dpkg.diversions.4.gz",
+          "dpkg.statoverride.2.gz",
+          "dpkg.diversions.2.gz",
+          "dpkg.diversions.5.gz",
+          "dpkg.arch.6.gz",
+          "dpkg.statoverride.4.gz",
+          "dpkg.statoverride.0",
+          "alternatives.tar.3.gz",
+          "dpkg.status.1.gz",
+          "alternatives.tar.5.gz",
+          "dpkg.statoverride.5.gz",
+          "alternatives.tar.6.gz",
+          "dpkg.diversions.1.gz",
+          "dpkg.arch.2.gz",
+          "apt.extended_states.5.gz",
+          "apt.extended_states.2.gz",
+          "dpkg.statoverride.1.gz",
+          "alternatives.tar.0",
+          "dpkg.statoverride.6.gz",
+          "dpkg.diversions.6.gz",
+          "apt.extended_states.1.gz",
+          "dpkg.statoverride.3.gz",
+          "dpkg.status.4.gz",
+          "dpkg.status.5.gz",
+          "dpkg.diversions.0",
+          "dpkg.arch.3.gz",
+          "apt.extended_states.0",
+          "alternatives.tar.2.gz",
+          "dpkg.arch.0",
+          "apt.extended_states.4.gz",
+          "dpkg.status.2.gz"
+        ]
+      },
+      {
+        "path": "/home/yangzhen/backups",
+        "exists": true,
+        "entries": [
+          "uply-first-enable-20260910",
+          "uply"
+        ]
+      }
+    ],
+    "remaining-locations": {
+      "compressedLogCandidates": [],
+      "editorBackupCandidates": [],
+      "rootGitRepositories": [
+        "/home/yangzhen/projects/motion-studio",
+        "/home/yangzhen/projects/my-lms-system-broken-20260813",
+        "/home/yangzhen/projects/codex-test",
+        "/home/yangzhen/projects/my-lms-system",
+        "/home/yangzhen/projects/media-studio",
+        "/tmp"
+      ]
+    }
+  },
+  "integrityRecheck": {
+    "hashChecks": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+        "expected": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+        "actual": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+        "expected": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+        "actual": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+        "expected": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "actual": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+        "expected": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+        "actual": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+        "expected": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+        "actual": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+        "match": true
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "expected": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+        "actual": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+        "match": true
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "expected": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+        "actual": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+        "match": true
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+        "expected": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+        "actual": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/README.md",
+        "expected": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+        "actual": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+        "expected": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "actual": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+        "expected": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "actual": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+        "expected": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+        "actual": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+        "expected": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+        "actual": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+        "expected": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+        "actual": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+        "expected": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+        "actual": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+        "expected": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+        "actual": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+        "expected": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+        "actual": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+        "expected": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+        "actual": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+        "expected": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+        "actual": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+        "expected": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "actual": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+        "expected": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+        "actual": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+        "expected": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+        "actual": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+        "expected": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+        "actual": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+        "expected": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+        "actual": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+        "match": true
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+        "expected": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+        "actual": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+        "match": true
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+        "expected": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+        "actual": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+        "expected": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+        "actual": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "expected": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "actual": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "expected": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "actual": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/runner.py",
+        "expected": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+        "actual": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+        "expected": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+        "actual": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/locked-package.json",
+        "expected": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+        "actual": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/test_runner.py",
+        "expected": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+        "actual": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/README.md",
+        "expected": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+        "actual": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r4d/execute.py",
+        "expected": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+        "actual": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r4c/inventory.py",
+        "expected": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+        "actual": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+        "expected": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+        "actual": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+        "expected": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+        "actual": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+        "match": true
+      },
+      {
+        "path": "scripts/teaching-agent-r2/staging.py",
+        "expected": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+        "actual": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+        "match": true
+      },
+      {
+        "path": "scripts/supabase-baseline-catalog.sql",
+        "expected": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+        "actual": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+        "match": true
+      },
+      {
+        "path": "scripts/verify-supabase-baseline.py",
+        "expected": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+        "actual": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+        "match": true
+      },
+      {
+        "path": "supabase/bootstrap/app-schema-baseline.sql",
+        "expected": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+        "actual": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+        "match": true
+      },
+      {
+        "path": "supabase/bootstrap/baseline-manifest.json",
+        "expected": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+        "actual": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+        "match": true
+      },
+      {
+        "path": "supabase/bootstrap/migration-ledger-baseline.json",
+        "expected": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+        "actual": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+        "match": true
+      },
+      {
+        "path": "tests/chapter-practice-acl-contract.test.mjs",
+        "expected": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+        "actual": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+        "match": true
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+        "expected": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+        "actual": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+        "match": true
+      },
+      {
+        "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+        "expected": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+        "actual": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+        "match": true
+      },
+      {
+        "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+        "expected": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+        "actual": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+        "match": true
+      },
+      {
+        "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+        "expected": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+        "actual": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+        "expected": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+        "actual": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "expected": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "actual": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "expected": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "actual": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+        "expected": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+        "actual": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+        "expected": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+        "actual": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+        "expected": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+        "actual": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+        "expected": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+        "actual": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+        "expected": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+        "actual": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+        "expected": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+        "actual": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+        "expected": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+        "actual": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+        "expected": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+        "actual": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+        "match": true
+      },
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+        "expected": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+        "actual": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+        "match": true
+      },
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+        "expected": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+        "actual": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+        "match": true
+      },
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+        "expected": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+        "actual": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+        "expected": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+        "actual": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+        "expected": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+        "actual": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+        "expected": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+        "actual": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+        "expected": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+        "actual": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+        "expected": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+        "actual": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+        "expected": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+        "actual": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+        "expected": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+        "actual": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+        "expected": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+        "actual": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+        "expected": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+        "actual": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+        "expected": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+        "actual": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+        "expected": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+        "actual": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+        "expected": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+        "actual": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+        "match": true
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+        "expected": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+        "actual": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+        "match": true
+      }
+    ],
+    "hashMismatches": [],
+    "preImplementationInventoryCount": 3993,
+    "differencesFromPreImplementation": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+        "expected": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+        "actual": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+        "expected": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+        "actual": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+        "expected": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+        "actual": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+        "expected": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+        "actual": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+        "expected": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+        "actual": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/README.md",
+        "expected": "400ff14b3ea617b4bf7b10cc662c6b5ead4eb54a7be87b36c2f8338b7bd031e1",
+        "actual": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2"
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "expected": "4f9484c238ae27551f3c9d288e08561b5536838ebb553b7642ad0c7f6873eca1",
+        "actual": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2"
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+        "expected": "f02e882d614dbcb6a16b6064d63c0dd45a8195f103220f38c2a3b5773a14d587",
+        "actual": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22"
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "expected": "b87f80dfe8af51e1f77d4857399162304017fd0834ed39b1d87e2c596242707b",
+        "actual": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d"
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+        "expected": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+        "actual": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a"
+      }
+    ],
+    "requiredNineImplementationPaths": 9,
+    "allNineMatch": true,
+    "currentOutputDirectory": "runner-tls-i1-validation",
+    "currentOutputDirectoryInSource": true,
+    "oldOutputPathReferences": [],
+    "r5bHistoricalSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+    "testsEvidence": {
+      "passed": 134,
+      "caseCount": 134,
+      "allCasesPass": true
+    },
+    "regressionEvidence": {
+      "passed": 172,
+      "failed": 0,
+      "skipped": 0
+    },
+    "implementationStatus": "PASS_OWNED_VALIDATION",
+    "v4Exists": false,
+    "testsRerun": false
+  },
+  "TLSI1Implementation": "PASS_OWNED_VALIDATION_UNCHANGED",
+  "testsEvidence": "134/134 PASS_UNCHANGED_HASH_VERIFIED",
+  "regressionEvidence": "172 PASS / 0 SKIP / 0 FAIL_UNCHANGED_HASH_VERIFIED",
+  "r5bHistoricalLog": "EXACT",
+  "historicalEvidencePreservation": "BLOCKED",
+  "historicalTestsRerun": false,
+  "testsRerun": 0,
+  "outputPathSafety": "CURRENT_TEST_SOURCE_USES_runner-tls-i1-validation; old directory reference absent in scripts/tests source",
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "productionCredentialAccess": 0,
+  "captureRetry": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactHashes": "ALL_MATCH",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "controlledPreflightV4": "BLOCKED_NOT_GENERATED",
+  "evidenceLossWaiver": false,
+  "expectedHashChanged": false,
+  "targetWritten": false,
+  "C3BRelease": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+  "R7D-C3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0
+}

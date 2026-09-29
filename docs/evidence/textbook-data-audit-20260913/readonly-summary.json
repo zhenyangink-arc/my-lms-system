@@ -1,0 +1,1147 @@
+{
+  "source": "authorized PostgreSQL catalog and aggregate SELECTs",
+  "clientTls": "SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off, ALPN: none)",
+  "runtimeProjectMatched": true,
+  "studentRecordsRead": false,
+  "mutations": false,
+  "totals": {
+    "modules": 132,
+    "nodes": 132,
+    "vocabulary": 342,
+    "grammar": 0,
+    "grammar_cards": 63,
+    "activities": 203
+  },
+  "results": [
+    {
+      "readOnly": "on",
+      "ssl": false,
+      "at": "2026-09-13T01:51:40.267083+00:00"
+    },
+    {
+      "chapters": [
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 0,
+          "chapter": "course-overview",
+          "chapter_status": "published",
+          "modules": 4,
+          "nodes": 4,
+          "vocabulary": 0,
+          "grammar": 0,
+          "grammar_cards": 0,
+          "activities": 4
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 1,
+          "chapter": "hello",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 12,
+          "grammar": 0,
+          "grammar_cards": 3,
+          "activities": 19
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 2,
+          "chapter": "what-is-this",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 3,
+          "chapter": "daily-actions",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 21,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 4,
+          "chapter": "location",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 3,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 5,
+          "chapter": "weekend",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 20,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 6,
+          "chapter": "shopping",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 7,
+          "chapter": "weather",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 8,
+          "chapter": "movie-plan",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 21,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 9,
+          "chapter": "family",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 20,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 10,
+          "chapter": "time-schedule",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 11,
+          "chapter": "health",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 20,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 12,
+          "chapter": "phone-call",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 20,
+          "grammar": 0,
+          "grammar_cards": 5,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 13,
+          "chapter": "transportation",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 22,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 14,
+          "chapter": "clothing",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 28,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 15,
+          "chapter": "travel-wishes",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 24,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        },
+        {
+          "textbook": "korean-level-one-smart",
+          "textbook_status": "published",
+          "version_number": 1,
+          "version_status": "published",
+          "chapter_number": 16,
+          "chapter": "invitation",
+          "chapter_status": "published",
+          "modules": 8,
+          "nodes": 8,
+          "vocabulary": 24,
+          "grammar": 0,
+          "grammar_cards": 4,
+          "activities": 12
+        }
+      ]
+    },
+    {
+      "grammarNodeShapes": [
+        {
+          "chapter_number": 1,
+          "node_code": "topic-and-copula",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 2,
+          "node_code": "point-exist-request",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 3,
+          "node_code": "polite-action-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 4,
+          "node_code": "location-and-destination",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 5,
+          "node_code": "past-time-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 6,
+          "node_code": "shopping-language-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 7,
+          "node_code": "weather-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 8,
+          "node_code": "suggest-and-react",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 9,
+          "node_code": "respectful-family-forms",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 10,
+          "node_code": "time-range-and-plan",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 11,
+          "node_code": "health-advice-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 12,
+          "node_code": "phone-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 13,
+          "node_code": "route-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 14,
+          "node_code": "clothing-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 15,
+          "node_code": "travel-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        },
+        {
+          "chapter_number": 16,
+          "node_code": "invitation-grammar-tools",
+          "legacy_type": null,
+          "cards_type": "array",
+          "content_keys": [
+            "coach",
+            "grammarCards",
+            "lead",
+            "nextNode"
+          ],
+          "card_keys": [
+            "caution",
+            "comparison",
+            "examples",
+            "form",
+            "function",
+            "rules",
+            "source"
+          ]
+        }
+      ]
+    },
+    {
+      "libraries": {
+        "grammar": 3,
+        "vocabulary": 9,
+        "bindings": 0,
+        "bindingGrammarItems": 0
+      }
+    },
+    {
+      "chapterOne": [
+        {
+          "module_code": "orientation",
+          "sort_order": 1,
+          "node_code": "mission-map",
+          "activities": [
+            {
+              "key": "orientation-check",
+              "type": "single_choice"
+            },
+            {
+              "key": "orientation-jimin-occupation",
+              "type": "single_choice"
+            },
+            {
+              "key": "orientation-wangming-occupation",
+              "type": "single_choice"
+            }
+          ],
+          "scripts": [
+            {
+              "version": 23,
+              "nodes": 8,
+              "characterNodes": 8,
+              "teacherVideoNodes": 0
+            }
+          ]
+        },
+        {
+          "module_code": "vocabulary",
+          "sort_order": 2,
+          "node_code": "people-and-greetings",
+          "activities": [
+            {
+              "key": "vocabulary-check",
+              "type": "single_choice"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "grammar",
+          "sort_order": 3,
+          "node_code": "topic-and-copula",
+          "activities": [
+            {
+              "key": "grammar-choice",
+              "type": "single_choice"
+            },
+            {
+              "key": "grammar-judgment",
+              "type": "single_choice"
+            },
+            {
+              "key": "grammar-fill",
+              "type": "fill_blank"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "patterns",
+          "sort_order": 4,
+          "node_code": "introduce-yourself",
+          "activities": [
+            {
+              "key": "pattern-choice",
+              "type": "single_choice"
+            },
+            {
+              "key": "pattern-order",
+              "type": "ordering"
+            },
+            {
+              "key": "pattern-compose",
+              "type": "fill_blank"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "dialogue",
+          "sort_order": 5,
+          "node_code": "club-first-meeting",
+          "activities": [
+            {
+              "key": "dialogue-fact-check",
+              "type": "single_choice"
+            },
+            {
+              "key": "dialogue-response",
+              "type": "single_choice"
+            },
+            {
+              "key": "dialogue-roleplay",
+              "type": "speaking"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "listen_speak",
+          "sort_order": 6,
+          "node_code": "listen-and-respond",
+          "activities": [
+            {
+              "key": "listening-identity",
+              "type": "listening"
+            },
+            {
+              "key": "speaking-introduction",
+              "type": "speaking"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "read_write",
+          "sort_order": 7,
+          "node_code": "profile-note",
+          "activities": [
+            {
+              "key": "reading-profile",
+              "type": "single_choice"
+            },
+            {
+              "key": "write-profile",
+              "type": "writing"
+            }
+          ],
+          "scripts": null
+        },
+        {
+          "module_code": "review",
+          "sort_order": 8,
+          "node_code": "can-do-check",
+          "activities": [
+            {
+              "key": "review-multiple",
+              "type": "multiple_choice"
+            },
+            {
+              "key": "self-check",
+              "type": "self_check"
+            }
+          ],
+          "scripts": null
+        }
+      ]
+    },
+    [
+      {
+        "schema": "private",
+        "function": "can_manage_standard_question_bank"
+      }
+    ],
+    {
+      "librarySources": [
+        {
+          "kind": "grammar",
+          "source": "textbook",
+          "count": 3
+        },
+        {
+          "kind": "vocabulary",
+          "source": "textbook",
+          "count": 8
+        },
+        {
+          "kind": "vocabulary",
+          "source": "custom",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "relevantFunctions": [
+        {
+          "schema": "public",
+          "name": "read_chapter_practice_snapshots",
+          "args": "p_app_id uuid",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "6dd3f15de7c634185a237b9f12e3387b"
+        },
+        {
+          "schema": "public",
+          "name": "review_chapter_practice_binding",
+          "args": "p_app_id uuid, p_chapter_id uuid, p_expected_revision integer, p_expected_snapshot jsonb, p_enabled boolean",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "b23fcb5df0790fb6ba85129b37c2997e"
+        },
+        {
+          "schema": "private",
+          "name": "protect_published_chapter_practice",
+          "args": "",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "bfa91b831e07e5ff2af0d442ee643c72"
+        },
+        {
+          "schema": "public",
+          "name": "assert_runtime_dependency_fence_v1",
+          "args": "p_snapshot text, p_capture jsonb",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "235d35fda78370cd0fa98c8a5ea1f851"
+        },
+        {
+          "schema": "public",
+          "name": "edit_runtime_chapter_activity_v1",
+          "args": "p_actor uuid, p_scope jsonb, p_activity uuid, p_prompt jsonb, p_answer jsonb",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "d9f50f321f02c06c7d8daa1f10995d1a"
+        },
+        {
+          "schema": "public",
+          "name": "begin_runtime_textbook_edit_v1",
+          "args": "p_actor uuid, p_textbook uuid",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "89192ddc77e4589b89c226a8d2e4e695"
+        },
+        {
+          "schema": "public",
+          "name": "publish_digital_textbook_chapter",
+          "args": "p_chapter_id uuid",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "d5ac760c6e4fe1dc2ee03dbd709ca2b8"
+        },
+        {
+          "schema": "public",
+          "name": "publish_runtime_snapshot_v2",
+          "args": "p_actor uuid, p_scope jsonb, p_expected jsonb, p_operation text, p_bundle jsonb, p_target text",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "291fbf20f912829c4bf97770d88a7654"
+        },
+        {
+          "schema": "private",
+          "name": "is_platform_owner",
+          "args": "",
+          "securityDefiner": true,
+          "config": [
+            "search_path=\"\""
+          ],
+          "definitionHash": "726d39a707ea9f5671a905c3af6c33d7"
+        }
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "table_name": "chapter_practice_bindings",
+          "name": "chapter_practice_bindings_pkey"
+        },
+        {
+          "table_name": "chapter_practice_bindings",
+          "name": "chapter_practice_bindings_revision_check"
+        },
+        {
+          "table_name": "chapter_practice_bindings",
+          "name": "chapter_practice_bindings_snapshot_check"
+        },
+        {
+          "table_name": "chapter_practice_bindings",
+          "name": "chapter_practice_bindings_student_app_id_chapter_id_key"
+        },
+        {
+          "table_name": "chapter_practice_bindings",
+          "name": "chapter_practice_bindings_student_app_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_chapter_number_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_chapter_test_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_goal_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_pkey"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_production_status_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_scenario_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_status_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_title_check"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_version_id_chapter_number_key"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_version_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_chapters",
+          "name": "digital_textbook_chapters_version_id_slug_key"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_accent_role_check"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_chapter_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_chapter_id_module_code_key"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_chapter_id_sort_order_key"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_description_check"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_module_code_check"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_pkey"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_sort_order_check"
+        },
+        {
+          "table_name": "digital_textbook_modules",
+          "name": "digital_textbook_modules_title_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_content_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_estimated_minutes_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_module_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_module_id_node_code_key"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_module_id_sort_order_key"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_no_decorative_labels_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_node_type_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_pkey"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_sort_order_check"
+        },
+        {
+          "table_name": "digital_textbook_nodes",
+          "name": "digital_textbook_nodes_title_check"
+        },
+        {
+          "table_name": "digital_textbook_versions",
+          "name": "digital_textbook_versions_pkey"
+        },
+        {
+          "table_name": "digital_textbook_versions",
+          "name": "digital_textbook_versions_status_check"
+        },
+        {
+          "table_name": "digital_textbook_versions",
+          "name": "digital_textbook_versions_textbook_id_fkey"
+        },
+        {
+          "table_name": "digital_textbook_versions",
+          "name": "digital_textbook_versions_textbook_id_version_number_key"
+        },
+        {
+          "table_name": "digital_textbook_versions",
+          "name": "digital_textbook_versions_version_number_check"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_agent_profile_id_fkey"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_lesson_id_fkey"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_lesson_id_key"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_pkey"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_slug_key"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_status_check"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_student_app_id_fkey"
+        },
+        {
+          "table_name": "digital_textbooks",
+          "name": "digital_textbooks_title_check"
+        },
+        {
+          "table_name": "growth_toolbox_grammar",
+          "name": "growth_toolbox_grammar_pkey"
+        },
+        {
+          "table_name": "growth_toolbox_grammar",
+          "name": "growth_toolbox_grammar_source_check"
+        },
+        {
+          "table_name": "growth_toolbox_grammar",
+          "name": "growth_toolbox_grammar_student_app_id_fkey"
+        }
+      ]
+    },
+    {
+      "policies": [
+        {
+          "tablename": "chapter_practice_bindings",
+          "policyname": "standard content managers inspect practice bindings",
+          "roles": [
+            "authenticated"
+          ],
+          "cmd": "SELECT",
+          "qual": "current_user_can_manage_standard_question_bank()",
+          "with_check": null
+        },
+        {
+          "tablename": "digital_textbook_nodes",
+          "policyname": "authenticated read textbook nodes",
+          "roles": [
+            "authenticated"
+          ],
+          "cmd": "SELECT",
+          "qual": "(current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM (((digital_textbook_modules module\n     JOIN digital_textbook_chapters chapter ON ((chapter.id = module.chapter_id)))\n     JOIN digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((module.id = digital_textbook_nodes.module_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+          "with_check": null
+        },
+        {
+          "tablename": "digital_textbooks",
+          "policyname": "authenticated read textbook catalog",
+          "roles": [
+            "authenticated"
+          ],
+          "cmd": "SELECT",
+          "qual": "(current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND private.current_user_can_read_student_app(student_app_id)))",
+          "with_check": null
+        },
+        {
+          "tablename": "growth_toolbox_grammar",
+          "policyname": "application users read growth toolbox grammar",
+          "roles": [
+            "authenticated"
+          ],
+          "cmd": "SELECT",
+          "qual": "(private.current_user_can_read_student_app(student_app_id) OR private.current_user_has_app_capability(private.current_tenant_id(), student_app_id, 'manage_content'::text))",
+          "with_check": null
+        }
+      ]
+    }
+  ]
+}

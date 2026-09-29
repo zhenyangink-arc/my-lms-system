@@ -1,0 +1,174 @@
+{
+  "gates": [
+    {
+      "gate": "G-R5B-1",
+      "name": "Migration package locked",
+      "status": "PASS",
+      "evidence": "8 exact filenames/order/hashes; R5A MATCH"
+    },
+    {
+      "gate": "G-R5B-2",
+      "name": "Persistent artifact",
+      "status": "PASS",
+      "evidence": "exclusive copy/fsync/SHA/tar/Build ID; /tmp retained"
+    },
+    {
+      "gate": "G-R5B-3",
+      "name": "Runner exact range",
+      "status": "PASS",
+      "evidence": "fixed eight; missing/extra/order/hash/re-run rejected"
+    },
+    {
+      "gate": "G-R5B-4",
+      "name": "Atomic DDL+ledger",
+      "status": "PASS",
+      "evidence": "same transaction; real ledger-trigger failure rolls back000 DDL"
+    },
+    {
+      "gate": "G-R5B-5",
+      "name": "Commit contract",
+      "status": "PASS",
+      "evidence": "CONFIRMED/NOT_COMMITTED/UNKNOWN; no retry/no next after uncertainty"
+    },
+    {
+      "gate": "G-R5B-6",
+      "name": "R4D baseline restore",
+      "status": "PASS",
+      "evidence": "sealed dump; PG17.6;26 restored categories; original449 full prefix"
+    },
+    {
+      "gate": "G-R5B-7",
+      "name": "000 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify450"
+    },
+    {
+      "gate": "G-R5B-8",
+      "name": "001 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify451"
+    },
+    {
+      "gate": "G-R5B-9",
+      "name": "002 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify452"
+    },
+    {
+      "gate": "G-R5B-10",
+      "name": "003 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify453"
+    },
+    {
+      "gate": "G-R5B-11",
+      "name": "004 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify454"
+    },
+    {
+      "gate": "G-R5B-12",
+      "name": "005 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify455"
+    },
+    {
+      "gate": "G-R5B-13",
+      "name": "006 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify456"
+    },
+    {
+      "gate": "G-R5B-14",
+      "name": "007 PASS",
+      "status": "PASS",
+      "evidence": "CONFIRMED + fresh readonly verify457"
+    },
+    {
+      "gate": "G-R5B-15",
+      "name": "Final ledger457",
+      "status": "PASS",
+      "evidence": "latest140007; old449 including SQL unchanged; new8 SQL exact"
+    },
+    {
+      "gate": "G-R5B-16",
+      "name": "Expected objects",
+      "status": "PASS",
+      "evidence": "35 function bodies/config/owner; columns/constraints/indexes/triggers"
+    },
+    {
+      "gate": "G-R5B-17",
+      "name": "RLS/ACL",
+      "status": "PASS",
+      "evidence": "Agent browser denial; service RPC; safe view; skeleton/reconciler ACL"
+    },
+    {
+      "gate": "G-R5B-18",
+      "name": "Negative tests",
+      "status": "PASS",
+      "evidence": "17 protocol/unit cases + actual rollback/timeout/disconnect/bad ACK"
+    },
+    {
+      "gate": "G-R5B-19",
+      "name": "Re-run protection",
+      "status": "PASS",
+      "evidence": "457 rejects000, zero migration dispatches"
+    },
+    {
+      "gate": "G-R5B-20",
+      "name": "R3D candidate post-007",
+      "status": "PASS",
+      "evidence": "real isolated Auth/PostgREST;5 route checks; OFF rejection"
+    },
+    {
+      "gate": "G-R5B-21",
+      "name": "Deployment shape",
+      "status": "PASS",
+      "evidence": "1394 archive members unchanged after serving;19 required files; Next16.2.10"
+    },
+    {
+      "gate": "G-R5B-22",
+      "name": "Maintenance target",
+      "status": "PASS",
+      "evidence": "project/host MATCH; readonly TLS verify-full"
+    },
+    {
+      "gate": "G-R5B-23",
+      "name": "Maintenance privileges",
+      "status": "PASS",
+      "evidence": "SUFFICIENT by DB/schema/owner/grant/ledger privilege catalog"
+    },
+    {
+      "gate": "G-R5B-24",
+      "name": "Credential validity",
+      "status": "PASS",
+      "evidence": "VALID at observation; future window must recheck"
+    },
+    {
+      "gate": "G-R5B-25",
+      "name": "Single-operator dev exception",
+      "status": "PASS",
+      "evidence": "ACCEPTED BY 杨震; standby deferred to real rollout"
+    },
+    {
+      "gate": "G-R5B-26",
+      "name": "Cleanup",
+      "status": "PASS",
+      "evidence": "3 clones/volumes +2 services/internal network/private credentials removed; candidate session closed"
+    },
+    {
+      "gate": "G-R5B-27",
+      "name": "Production unchanged",
+      "status": "PASS",
+      "evidence": "start/end449/130003, Agent tables0, OFF/EMPTY, PM2/runtime/Serve MATCH"
+    },
+    {
+      "gate": "G-R5B-28",
+      "name": "Old-app compatibility",
+      "status": "N/A",
+      "evidence": "USER ACCEPTED FORWARD-ONLY DEVELOPMENT STRATEGY"
+    }
+  ],
+  "technicalPackage": "READY",
+  "productionAuthorization": "NOT GRANTED"
+}

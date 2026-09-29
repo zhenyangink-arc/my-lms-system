@@ -1,0 +1,106 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "contract": "exact-single-transaction/1",
+  "compatibility": "SUPPORTED_WITH_REVIEWED_OUTER_ENVELOPE_ONLY_HANDLING",
+  "rawFilesDirectlyEmbedded": "FORBIDDEN: all000/001/002 have outer BEGIN/COMMIT, so raw concatenation would break ledger atomicity.",
+  "envelopes": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "rawSha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "rawBytes": 4039,
+      "bodyStartByteInclusive": 168,
+      "bodyEndByteExclusive": 4031,
+      "bodySha256": "9408cb3afb59f495b01d20d1899aff29c73d87d67e3ebe826e3ccb77bc40530e",
+      "outerTransactionEnvelope": "ONE BEGIN/COMMIT PAIR",
+      "bodyIncludesPlpgsqlBeginEnd": true,
+      "transformation": "Only remove reviewed outer SQL transaction envelope/comments before BEGIN and final COMMIT; keep body bytes verbatim; ledger stores complete original file text."
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "rawSha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "rawBytes": 23761,
+      "bodyStartByteInclusive": 162,
+      "bodyEndByteExclusive": 23753,
+      "bodySha256": "a350e9eb65b670ec117b002632796f0e0283bfbf7df066c556d6c613bd2be2fe",
+      "outerTransactionEnvelope": "ONE BEGIN/COMMIT PAIR",
+      "bodyIncludesPlpgsqlBeginEnd": true,
+      "transformation": "Only remove reviewed outer SQL transaction envelope/comments before BEGIN and final COMMIT; keep body bytes verbatim; ledger stores complete original file text."
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "rawSha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "rawBytes": 13366,
+      "bodyStartByteInclusive": 158,
+      "bodyEndByteExclusive": 13358,
+      "bodySha256": "4272da6d1fb75d86369c27827827eef4b78515ca9a8edfc867884f01dbb0b0c4",
+      "outerTransactionEnvelope": "ONE BEGIN/COMMIT PAIR",
+      "bodyIncludesPlpgsqlBeginEnd": true,
+      "transformation": "Only remove reviewed outer SQL transaction envelope/comments before BEGIN and final COMMIT; keep body bytes verbatim; ledger stores complete original file text."
+    }
+  ],
+  "sourceAuthority": "Registry raw path+full SHA+body range+body SHA; offsets are code-reviewed registry tuples, never arbitrary plan slice arguments. Files remain byte-identical.",
+  "scanner": "New independently reviewed bounded top-level lexical scanner handles comments, ordinary/escaped strings, quoted identifiers and dollar-quoted bodies; reject malformed/unconsumed text, psql meta commands, nested top-level transaction control and unsafe top-level commands. Not a full SQL parser and not authority for arbitrary SQL.",
+  "unsafe": "Reject CONCURRENTLY, VACUUM, ALTER SYSTEM, CREATE/DROP DATABASE, transaction-controlling CALL, COPY PROGRAM/file, unreviewed extension/network/external commands at top level. PL/pgSQL BEGIN/END inside pinned quoted definitions is not transaction control.000 DO block catalog checks+REVOKE and002 DO constraint replacement are explicitly reviewed transactional effects.",
+  "migrationReview": {
+    "000": "Catalog pre/post checks +single transactional REVOKE, no body/global ACL mutation",
+    "001": "Transactional function creation/replacement/private ACLs. Agent DML occurs only in stored function bodies, not by installing definitions. No Agent routine is invoked.",
+    "002": "Transactional function DDL, exact constraint replacement and private ACLs. Publication DML in stored definitions only; no publish call or business row rewrite. Constraint validation may read existing rows during a later separately approved install.",
+    "prohibitedConstructsFound": [],
+    "filesChanged": 0
+  },
+  "sequence": [
+    "local plan/source/package/approval/target/backup locks pass",
+    "fresh RO preflight receipt, rollback RO transaction",
+    "open guarded apply session READ COMMITTED; BEGIN; fixed session/lock/statement timeouts; standard_conforming_strings=on",
+    "pg_try_advisory_xact_lock(4171,100); false=>CONCURRENT_APPLY_REJECTED before mutation",
+    "LOCK TABLE supabase_migrations.schema_migrations IN SHARE ROW EXCLUSIVE MODE (5s bounded wait)",
+    "recheck target identity, exact ledger/prefix/absences and all plan preconditions in this transaction; compare fresh RO capture and sealed baseline",
+    "capture catalog before set; execute ONLY hashed envelope body once",
+    "insert exactly one full-source ledger row; run all typed in-transaction postchecks and scope-delta checks",
+    "COMMIT exactly once; emit nonce-bound server commit ACK only after COMMIT; no next migration",
+    "separate fresh READ ONLY verification; compare old ledger rows/new exact source, target postconditions, protected catalogs; preserve original commit receipt even if verification differs"
+  ],
+  "concurrency": {
+    "contract": "uply-migration-serialization/1",
+    "key": [
+      4171,
+      100
+    ],
+    "rationale": "Reuse existing R5B advisory namespace/key so cooperative old/new runners serialize; do not mutate old runner.",
+    "lockLifetime": "transaction",
+    "ledgerLock": "SHARE ROW EXCLUSIVE prevents concurrent ledger writers",
+    "limits": "Advisory lock cannot block arbitrary privileged out-of-band DDL. Approved maintenance window must exclude external migration/ACL operators; fresh/under-lock/precommit/postcommit catalogs detect drift and STOP, no claim of universal DDL fencing."
+  },
+  "freshness": {
+    "preflightMaxAgeSeconds": 60,
+    "backupMaxAgeSeconds": 900,
+    "approval": "Window valid at dispatch and before COMMIT; operator authorization single-use; expiries never extended automatically",
+    "toctou": "Same apply session rechecks after lock; READ COMMITTED gets fresh statement snapshots; original file/plan bytes read once and retained/hash-checked; recheck runtime/backup identities at dispatch."
+  },
+  "failure": "No automatic down migration, GRANT, ledger deletion, retry or fallback. Missing commit ACK => COMMIT_UNKNOWN until independent human-reviewed resolution; later RO result is a new receipt, not rewritten commit history."
+}

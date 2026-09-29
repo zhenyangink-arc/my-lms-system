@@ -1,0 +1,28 @@
+{
+  "removed": {
+    "container": [
+      "supabase_storage_uply-agent-r2-862115d18b2d",
+      "supabase_rest_uply-agent-r2-862115d18b2d",
+      "supabase_realtime_uply-agent-r2-862115d18b2d",
+      "supabase_auth_uply-agent-r2-862115d18b2d",
+      "supabase_kong_uply-agent-r2-862115d18b2d",
+      "supabase_db_uply-agent-r2-862115d18b2d"
+    ],
+    "network": [
+      "supabase_network_uply-agent-r2-862115d18b2d"
+    ],
+    "volume": [
+      "supabase_db_uply-agent-r2-862115d18b2d",
+      "supabase_storage_uply-agent-r2-862115d18b2d"
+    ]
+  },
+  "remainingOwnedResources": 0,
+  "privateDirectoryRemoved": true,
+  "nextPortClosed": true,
+  "additionalOwnedFixtureDirectoriesRemoved": [
+    "uply-stage1d-next-oZRmRF",
+    "uply-stage1e-browser-Jtn9Mp",
+    "uply-r3-exact-smoke"
+  ],
+  "privateReleaseCandidateRetained": "/tmp/uply-r3-release-candidate/candidate-build.tar.gz"
+}

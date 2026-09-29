@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "gitHead": "b1672390ae96357a2143358235cc10edeff8d488",
+  "workspaceStartDigest": "16c289e54c678ff3f31a9e234235038ce960868661e26fd04d1d2b703d488e27",
+  "workspaceReleaseInputDigest": "fee44034f0607ed838e503a28bdf5fd784224a8ede72b249c5405e349721bcdf",
+  "releaseInputScope": "src/** + public/** + package/lock + next/ts/postcss config; reports/tests/operational helpers excluded",
+  "buildId": "T45ZN3yOYh5w194F5gq8o",
+  "artifactDigest": "fef96b47e2a3d8829b6d487e7984c4ae7f990db53e9bb4f5da074606b53f1263",
+  "archiveDigest": "058088bf645b65881fb43a712955e3e1f525e3436b77a2f3c60e8c17993fb790",
+  "artifactFiles": 1376,
+  "artifactLocation": "/tmp/uply-r3a-release-candidate/candidate-build.tar.gz",
+  "publicConfigMatchesProduction": true,
+  "baselineCutover": "202609130003",
+  "baselineSqlDigest": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+  "migrations": [
+    {
+      "filename": "202609140000_agent_core_foundation.sql",
+      "name": "agent_core_foundation",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "version": "202609140000"
+    },
+    {
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "name": "agent_runtime_completion_evidence",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "version": "202609140001"
+    },
+    {
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "name": "agent_run_cancel_request",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "version": "202609140002"
+    },
+    {
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "name": "teaching_operations_reissue",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "version": "202609140003"
+    },
+    {
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "name": "completion_policy_management_reissue",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "version": "202609140004"
+    },
+    {
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "name": "student_teaching_content_isolation",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "version": "202609140005"
+    },
+    {
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "name": "agent_run_reconciliation",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "version": "202609140006"
+    }
+  ],
+  "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+  "definition": {
+    "agentCode": "student-ai-teacher",
+    "definitionVersion": {
+      "name": "student-ai-teacher",
+      "version": "1.0.0"
+    },
+    "status": "published",
+    "promptVersion": {
+      "name": "student-ai-teacher-base",
+      "version": "1.0.0"
+    },
+    "contextVersion": {
+      "name": "student-teaching-context",
+      "version": "1.0.0"
+    },
+    "model": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "configVersion": "deepseek-tools-disabled-v1"
+    },
+    "allowedSkillRefs": [
+      {
+        "name": "explain-pinned-korean-segment",
+        "version": "1.0.0"
+      }
+    ],
+    "allowedToolRefs": [
+      {
+        "name": "get_current_lesson_context",
+        "version": "1.0.0"
+      },
+      {
+        "name": "get_current_teaching_state",
+        "version": "1.0.0"
+      }
+    ],
+    "policyVersion": {
+      "name": "student-teaching-read",
+      "version": "1.0.0"
+    },
+    "budget": {
+      "maxModelCalls": 3,
+      "maxToolExecutions": 4,
+      "maxInputTokensPerCall": 16000,
+      "maxOutputTokensPerCall": 2000,
+      "reservedTokens": 54000
+    },
+    "artifacts": {
+      "schemaVersion": 1,
+      "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+      "personaRef": {
+        "name": "kim",
+        "version": "1.0.0"
+      },
+      "privateInstructionsRef": {
+        "name": "student-ai-teacher-base",
+        "version": "1.0.0"
+      },
+      "skillDigest": "377595d3b27fda971e437848831cf84c9cc610c240911633e718005ecb7e893b",
+      "toolsDigest": "b417d70da48a32e81207e7adf2b051db22663506a95dbe9e3ff1261fd125902e",
+      "completionPolicyRef": {
+        "name": "student-explanation",
+        "version": "1.0.0"
+      },
+      "requiredEvidenceToolRef": {
+        "name": "get_current_lesson_context",
+        "version": "1.0.0"
+      }
+    }
+  },
+  "rlsMigration": {
+    "filename": "202609140005_student_teaching_content_isolation.sql",
+    "name": "student_teaching_content_isolation",
+    "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+    "version": "202609140005"
+  },
+  "reconcilerContractVersion": "deadline-terminal-v1",
+  "supersedes": "Stage 1F-R3 candidate; SUPERSEDED BY R3A CANDIDATE",
+  "operationalInputs": {
+    "README.md": "e71c334c611cc32aab18aab81856343091a7b9a5652e5bcb6a3e469271a1274c",
+    "candidate-smoke.py": "bd38d1e54d1983f8e405a0a19d465171905f975a3a247fe8881baeaec70095da",
+    "database-checks.py": "dcf9c2379353972b229163b636a8bd20090ff4e1b61f271b52b3ea617f49c28a",
+    "operator-checks.py": "e863b5812e05bdf80071393fa2a5d61bf6591a841ba3a4f6e058ccd97459fe28",
+    "operator-monitor.sql": "da5824a96fe9a5b4b3d5ea7f02c410cc4ee0a7c1a61c9f33f48d99cba040aa02",
+    "operator-reconcile.sql": "7c7c06fd0d00f9bb42efd8b3d611bccb31ebc324921617eb4a09d87bda90eddc",
+    "reconcile-command.py": "de6524fe53813e64ded6c9d4844233cd0fea462170fb0261ab7d19778a5eef10",
+    "refresh-pins.mjs": "5e0b5dd84e0d48f887e8f1df1afb5a1a12a2bb189b2da01136d0e7eeae83d864",
+    "rehearse-migrations.py": "3ffdd5a0a63277ca02ed87d2a2cd6d93212db315203d8f15ea78d6ee09fbc7e0",
+    "release-manifest.mjs": "7daf52a2e0c6c80c3d49298e2d64ea0f3c0d1c5cb1dfdf10ff6b8e4f9982c919",
+    "rpc-permissions.mjs": "6a5eb8046331dc764ebfc86679a5896322285dd2e6d70a6ac08578f56d4fa931",
+    "strong-kill.mjs": "ec9c54e8061d612ebb9e5127db4f846733ae188e1428317d63544c98bee4a133"
+  },
+  "featureConfigNames": [
+    "TEACHING_AGENT_STUDENT_TRANSPORT_ENABLED",
+    "TEACHING_AGENT_ALLOWED_TENANTS",
+    "TEACHING_AGENT_ALLOWED_COURSES",
+    "TEACHING_AGENT_ALLOWED_USERS"
+  ],
+  "rolloutPolicyVersion": "source-sha256:afc063f8ae03094a95885b29980733023b9903e46e9613069c389202ecbfd5af",
+  "productionFeatureFlag": "OFF",
+  "productionMigrations": "NOT APPLIED",
+  "productionDeploy": false,
+  "validationBoundary": "Original uninstrumented complete build. Functional Full Supabase/Provider-fixture tests use a separately built instrumented copy. This artifact was not enabled in production.",
+  "invalidation": "Any release input, migration, definition or artifact change requires affected gates to rerun."
+}

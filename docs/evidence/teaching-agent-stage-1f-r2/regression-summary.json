@@ -1,0 +1,21 @@
+{
+  "summary": [
+    "✖ PF-2/PF-3 actual publisher, fenced PostgreSQL, actual published Loader and durable session (121250.937042ms)",
+    "✖ 4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owner, seven commands, lifecycle (development mount, NOT complete readiness) (7223.382402ms)",
+    "✖ 4A-7 isolated release rehearsal: real PostgreSQL write chain, two instances, no external storage (101516.39297ms)",
+    "ℹ Next frames: run.started@4ms, run.status@177ms, tool.status@360ms, tool.status@540ms, answer.final@818ms, run.completed@819ms; cancel 764ms",
+    "ℹ Screenshots [temporary test artifact]; real Next/Chromium PASS; live requests 0",
+    "ℹ tests 1124",
+    "ℹ suites 0",
+    "ℹ pass 1112",
+    "ℹ fail 5",
+    "ℹ cancelled 0",
+    "ℹ skipped 7",
+    "ℹ todo 0",
+    "ℹ duration_ms 125881.536584",
+    "✖ failing tests:",
+    "✖ strict COMPLETE Chromium: published Loader → durable session → actual domain ports → same LessonRuntime (50124.630099ms)",
+    "✖ 4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owner, seven commands, lifecycle (development mount, NOT complete readiness) (7223.382402ms)",
+    "✖ 4A12 mounted Chromium recording → real v2 SQL → Reader → same Runtime state and reload (58338.309493ms)"
+  ]
+}

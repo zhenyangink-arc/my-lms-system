@@ -1,0 +1,12 @@
+{
+  "exit": 0,
+  "seconds": 91.27,
+  "instrumented": false,
+  "publicConfigMatchesProduction": true,
+  "productionDeploy": false,
+  "liveProviderCalls": 0,
+  "buildId": "T45ZN3yOYh5w194F5gq8o",
+  "artifactDigest": "fef96b47e2a3d8829b6d487e7984c4ae7f990db53e9bb4f5da074606b53f1263",
+  "artifactFiles": 1376,
+  "archiveDigest": "058088bf645b65881fb43a712955e3e1f525e3436b77a2f3c60e8c17993fb790"
+}

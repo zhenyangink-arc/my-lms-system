@@ -1,0 +1,718 @@
+supabase/migrations/202608280001_defer_chapter_one_orientation_answer.sql:6:update public.learning_agent_script_nodes node
+supabase/migrations/202608280001_defer_chapter_one_orientation_answer.sql:15:from public.learning_agent_script_versions version
+supabase/migrations/202608280001_defer_chapter_one_orientation_answer.sql:18:join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608180026_add_chapter_one_second_grammar_round.sql:10:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608190004_fix_listening_backfill_trigger_order.sql:19:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608190004_fix_listening_backfill_trigger_order.sql:77:  join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/migrations/202608230008_redesign_chapter_one_dialogue_pages.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608230008_redesign_chapter_one_dialogue_pages.sql:62:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608210001_publish_chapter_one_mission_scene.sql:20:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240015_publish_chapter_three_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202609090001_recording_evidence_atomic_v2.sql:115:      join public.digital_textbook_modules m on m.id=n.module_id
+supabase/migrations/202609090001_recording_evidence_atomic_v2.sql:205:    join public.digital_textbook_modules m on m.id=n.module_id
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:3:-- digital_textbook_modules/nodes/activities 的读策略之前是 qual = true，任何登录用户
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:8:drop policy if exists "authenticated read textbook modules" on public.digital_textbook_modules;
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:11:on public.digital_textbook_modules for select to authenticated
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:17:    where chapter.id = digital_textbook_modules.chapter_id
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:30:    from public.digital_textbook_modules as module
+supabase/migrations/202608060010_digital_textbook_unpublished_content_filter.sql:46:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608230001_redesign_chapter_one_pattern_choice_content.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240019_publish_chapter_seven_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180028_expand_chapter_one_vocabulary_practice.sql:13:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240018_publish_chapter_six_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608230003_convert_pattern_choices_to_guided_conversation.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608220012_keep_grammar_punctuation_in_prompts.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202609130001_textbook_grammar_authoring.sql:36: join public.digital_textbook_modules m on m.id=node.module_id
+supabase/migrations/202608240004_publish_chapter_one_temporary_listening_audio.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240004_publish_chapter_one_temporary_listening_audio.sql:26:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240004_publish_chapter_one_temporary_listening_audio.sql:48:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:4:  script_version_id uuid primary key references public.learning_agent_script_versions(id) on delete cascade,
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:27:  ) from public.learning_agent_script_versions v
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:29:  join public.digital_textbook_modules m on m.id = l.module_id
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:36:    'nodes', (select jsonb_agg(to_jsonb(n) order by n.id) from public.learning_agent_script_nodes n where n.script_version_id = v.id),
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:38:      join public.learning_agent_script_nodes n on n.id = s.node_id where n.script_version_id = v.id))::text)
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:39:  from public.learning_agent_script_versions v where v.id = p_version_id;
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:68:  lock table public.learning_agent_script_nodes, public.learning_agent_node_interaction_secrets in share row exclusive mode;
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:69:  lock table public.digital_textbook_modules, public.digital_textbook_nodes, public.digital_textbook_activities, public.digital_textbook_activity_secrets in share mode;
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:70:  perform 1 from public.learning_agent_script_versions where id = p_version_id and status in ('draft', 'published') for update;
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:94:    lock table public.digital_textbook_modules, public.digital_textbook_nodes, public.digital_textbook_activities, public.digital_textbook_activity_secrets in share mode;
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:105:on public.learning_agent_script_versions for each row execute function private.require_teaching_script_source_review();
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:119:  from public.learning_agent_script_versions v
+supabase/migrations/202609080003_teaching_script_source_reviews.sql:121:  join public.digital_textbook_modules m on m.id = l.module_id
+supabase/migrations/202608280002_rename_korean_agent_to_teacher_kim.sql:18:update public.learning_agent_script_nodes
+supabase/migrations/202608260007_chapter_one_orientation_teaching_displays.sql:4:  from public.learning_agent_script_nodes node
+supabase/migrations/202608260007_chapter_one_orientation_teaching_displays.sql:5:  join public.learning_agent_script_versions version on version.id = node.script_version_id
+supabase/migrations/202608260007_chapter_one_orientation_teaching_displays.sql:8:  join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608260007_chapter_one_orientation_teaching_displays.sql:72:update public.learning_agent_script_nodes node
+supabase/migrations/202608230010_add_chapter_one_dialogue_roleplay.sql:11:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240009_design_independent_speaking_output.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:4:  node_id uuid primary key references public.learning_agent_script_nodes(id) on delete cascade,
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:27:  from public.learning_agent_script_nodes node
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:28:  join public.learning_agent_script_versions script_version
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:31:  join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:38:update public.learning_agent_script_nodes node
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:56:  from public.learning_agent_script_nodes node
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:57:  join public.learning_agent_script_versions script_version
+supabase/migrations/202608270003_learning_agent_node_interactions.sql:60:  join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608180001_korean_level_one_course_overview.sql:99:  insert into public.digital_textbook_modules (chapter_id, module_code, sort_order, accent_role, title, description)
+supabase/migrations/202608180001_korean_level_one_course_overview.sql:150:  insert into public.digital_textbook_modules (chapter_id, module_code, sort_order, accent_role, title, description)
+supabase/migrations/202608180001_korean_level_one_course_overview.sql:201:  insert into public.digital_textbook_modules (chapter_id, module_code, sort_order, accent_role, title, description)
+supabase/migrations/202608180001_korean_level_one_course_overview.sql:252:  insert into public.digital_textbook_modules (chapter_id, module_code, sort_order, accent_role, title, description)
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:244:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:274:  delete from public.digital_textbook_modules
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:297:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:344:  using public.digital_textbook_nodes as node, public.digital_textbook_modules as module
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:374:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:402:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:449:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:473:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:498:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180012_chapter_six_golden_smart_textbook.sql:520:  using public.digital_textbook_nodes as node, public.digital_textbook_modules as module
+supabase/migrations/202608180006_chapter_one_submission_security.sql:149:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:355:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:366:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:372:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:387:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:394:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180006_chapter_one_submission_security.sql:454:    join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/migrations/202608240010_require_independent_speaking_for_listen_speak_progress.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240010_require_independent_speaking_for_listen_speak_progress.sql:24:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:152:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:181:  delete from public.digital_textbook_modules
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:202:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:243:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:253:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:273:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:289:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:308:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:328:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180016_chapter_ten_golden_smart_textbook.sql:345:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608220008_publish_chapter_one_steps_three_to_eight_scenes.sql:21:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180025_add_chapters_two_to_sixteen_korean_transcriptions.sql:68:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180025_add_chapters_two_to_sixteen_korean_transcriptions.sql:104:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180024_add_chapter_one_korean_transcriptions.sql:19:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202609130002_textbook_grammar_practice_binding.sql:69:  perform m.id from public.digital_textbook_modules m where m.chapter_id = p_chapter_id for share;
+supabase/migrations/202609130002_textbook_grammar_practice_binding.sql:71:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/migrations/202609130002_textbook_grammar_practice_binding.sql:74:  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
+supabase/migrations/202609130002_textbook_grammar_practice_binding.sql:77:  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
+supabase/migrations/202609130002_textbook_grammar_practice_binding.sql:86:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:128:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:137:  delete from public.digital_textbook_modules
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:156:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:169:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:174:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:192:    select node.id into node_uuid from public.digital_textbook_nodes node join public.digital_textbook_modules module on module.id=node.module_id where module.chapter_id=chapter_uuid and node.node_code=item->>'node';
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:197:  select node.id into node_uuid from public.digital_textbook_nodes node join public.digital_textbook_modules module on module.id=node.module_id where module.chapter_id=chapter_uuid and node.node_code='family-and-work';
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:206:  select node.id into node_uuid from public.digital_textbook_nodes node join public.digital_textbook_modules module on module.id=node.module_id where module.chapter_id=chapter_uuid and node.node_code='respectful-family-forms';
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:211:  select node.id into node_uuid from public.digital_textbook_nodes node join public.digital_textbook_modules module on module.id=node.module_id where module.chapter_id=chapter_uuid and node.node_code='family-photo-talk';
+supabase/migrations/202608180015_chapter_nine_golden_smart_textbook.sql:216:  select node.id,activity.id into node_uuid,activity_uuid from public.digital_textbook_nodes node join public.digital_textbook_modules module on module.id=node.module_id join public.digital_textbook_activities activity on activity.node_id=node.id where module.chapter_id=chapter_uuid and activity.activity_key='listening-family-job';
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:9:  v_current public.learning_agent_script_nodes%rowtype;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:10:  v_input public.learning_agent_script_nodes%rowtype;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:18:  lock table public.learning_agent_script_nodes in row exclusive mode;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:20:  select script_version_id into v_version_id from public.learning_agent_script_nodes where id = p_node_id;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:21:  select status into v_status from public.learning_agent_script_versions where id = v_version_id for update;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:23:  select * into v_current from public.learning_agent_script_nodes where id = p_node_id for update;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:38:  update public.learning_agent_script_nodes set
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:73:  from public.learning_agent_script_versions v
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:77:    from public.learning_agent_script_nodes node
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:99:  lock table public.learning_agent_script_nodes in share row exclusive mode;
+supabase/migrations/202609070001_teaching_script_atomic_video.sql:101:  perform 1 from public.learning_agent_script_versions where id = p_script_version_id for update;
+supabase/migrations/202608240022_publish_chapter_ten_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240026_publish_chapter_fourteen_module_scenes.sql:4: join public.digital_textbook_nodes node on node.id=media.node_id join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608210004_expand_chapter_one_orientation_diagnostics.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608270002_add_visual_cue_duration.sql:3:update public.learning_agent_script_nodes node
+supabase/migrations/202608270002_add_visual_cue_duration.sql:10:from public.learning_agent_script_versions script_version
+supabase/migrations/202608270002_add_visual_cue_duration.sql:13:join public.digital_textbook_modules module
+supabase/migrations/202608240014_publish_chapter_two_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:293:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:334:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:457:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:509:        public.digital_textbook_modules as module
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:536:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:568:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:626:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:662:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:706:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:749:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:821:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:834:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:840:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:855:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:861:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180005_chapter_one_golden_smart_textbook.sql:925:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180029_expand_chapter_one_grammar_practice.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608220002_publish_chapter_one_vocabulary_scene_wide.sql:16:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:256:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:306:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:358:        public.digital_textbook_modules as module
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:389:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:416:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:471:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:495:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180009_chapter_three_golden_smart_textbook.sql:519:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608230006_expand_pattern_composition_to_two_way_dialogue.sql:11:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608280007_default_teacher_kim_for_all_script_nodes.sql:6:update public.learning_agent_script_nodes
+supabase/migrations/202608190001_homework_v11_grading_and_integrity.sql:202:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240002_expand_chapter_one_listening_diagnostics.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240002_expand_chapter_one_listening_diagnostics.sql:41:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180034_six_skill_chapter_homework.sql:164:    join public.digital_textbook_modules as module
+supabase/migrations/202608180034_six_skill_chapter_homework.sql:205:    join public.digital_textbook_modules as module
+supabase/migrations/202608240017_publish_chapter_five_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql:53:from public.digital_textbook_modules as module
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:42:create table if not exists public.digital_textbook_modules (
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:61:  module_id uuid not null references public.digital_textbook_modules(id) on delete cascade,
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:158:    'digital_textbook_modules', 'digital_textbook_nodes', 'digital_textbook_activities',
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:174:alter table public.digital_textbook_modules enable row level security;
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:192:on public.digital_textbook_modules for select to authenticated using (true);
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:215:  public.digital_textbook_chapters, public.digital_textbook_modules,
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:300:  insert into public.digital_textbook_modules (chapter_id, module_code, sort_order, accent_role, title, description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:334:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:383:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:409:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:430:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:456:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:484:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:505:  insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202607310013_smart_digital_textbook_chapter_one.sql:547:comment on table public.digital_textbook_modules is '固定八步教学模块，所有后续电子书复用该骨架。';
+supabase/migrations/202608220010_remove_chapter_one_grammar_focus_gate.sql:7:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240007_balance_chapter_one_listening_answers.sql:5:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240007_balance_chapter_one_listening_answers.sql:31:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240007_balance_chapter_one_listening_answers.sql:48:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608230011_require_chapter_one_dialogue_roleplay.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:163:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:193:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:221:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:247:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:259:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:285:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:298:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180011_chapter_five_golden_smart_textbook.sql:312:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608240021_publish_chapter_nine_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240028_publish_chapter_sixteen_module_scenes.sql:4: join public.digital_textbook_nodes node on node.id=media.node_id join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180031_expand_chapters_two_to_sixteen_practice.sql:16:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180031_expand_chapters_two_to_sixteen_practice.sql:71:    from public.digital_textbook_modules as module
+supabase/migrations/202608180031_expand_chapters_two_to_sixteen_practice.sql:307:    from public.digital_textbook_modules as module
+supabase/migrations/202608260002_multi_subject_learning_agent_runtime.sql:98:from public.digital_textbook_modules module,
+supabase/migrations/202608060014_growth_toolbox_vocabulary.sql:40:join public.digital_textbook_modules m on m.id = n.module_id
+supabase/bootstrap/app-schema-baseline.sql:2238:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:2271:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:4659:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:4718:  join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/bootstrap/app-schema-baseline.sql:4743:    lock table public.digital_textbook_modules, public.digital_textbook_nodes, public.digital_textbook_activities, public.digital_textbook_activity_secrets in share mode;
+supabase/bootstrap/app-schema-baseline.sql:5283:    join public.digital_textbook_modules as module
+supabase/bootstrap/app-schema-baseline.sql:5324:    join public.digital_textbook_modules as module
+supabase/bootstrap/app-schema-baseline.sql:5680:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:5691:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:5697:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:5712:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:5719:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:5922:    'nodes', (select jsonb_agg(to_jsonb(n) order by n.id) from public.learning_agent_script_nodes n where n.script_version_id = v.id),
+supabase/bootstrap/app-schema-baseline.sql:5924:      join public.learning_agent_script_nodes n on n.id = s.node_id where n.script_version_id = v.id))::text)
+supabase/bootstrap/app-schema-baseline.sql:5925:  from public.learning_agent_script_versions v where v.id = p_version_id;
+supabase/bootstrap/app-schema-baseline.sql:5950:  ) from public.learning_agent_script_versions v
+supabase/bootstrap/app-schema-baseline.sql:5952:  join public.digital_textbook_modules m on m.id = l.module_id
+supabase/bootstrap/app-schema-baseline.sql:7395:    join public.digital_textbook_modules m on m.id=n.module_id
+supabase/bootstrap/app-schema-baseline.sql:7713:  lock table public.learning_agent_script_nodes, public.learning_agent_node_interaction_secrets in share row exclusive mode;
+supabase/bootstrap/app-schema-baseline.sql:7714:  lock table public.digital_textbook_modules, public.digital_textbook_nodes, public.digital_textbook_activities, public.digital_textbook_activity_secrets in share mode;
+supabase/bootstrap/app-schema-baseline.sql:7715:  perform 1 from public.learning_agent_script_versions where id = p_version_id and status in ('draft', 'published') for update;
+supabase/bootstrap/app-schema-baseline.sql:7974:  from public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:7980:  from public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:7984:  from public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:7988:  insert into public.learning_agent_script_versions (
+supabase/bootstrap/app-schema-baseline.sql:7992:    coalesce((select title from public.learning_agent_script_versions where id = v_published), '{}'::jsonb),
+supabase/bootstrap/app-schema-baseline.sql:7997:    insert into public.learning_agent_script_nodes (
+supabase/bootstrap/app-schema-baseline.sql:8005:    from public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:8030:    from public.learning_agent_script_nodes source_node
+supabase/bootstrap/app-schema-baseline.sql:8031:    join public.learning_agent_script_nodes draft_node
+supabase/bootstrap/app-schema-baseline.sql:10364:  join public.digital_textbook_modules m on m.id=n.module_id join public.digital_textbook_chapters c on c.id=m.chapter_id
+supabase/bootstrap/app-schema-baseline.sql:10394: join public.digital_textbook_modules m on m.id=node.module_id
+supabase/bootstrap/app-schema-baseline.sql:16010:  from public.learning_agent_script_versions v
+supabase/bootstrap/app-schema-baseline.sql:16012:  join public.digital_textbook_modules m on m.id = l.module_id
+supabase/bootstrap/app-schema-baseline.sql:16183:  v_node public.learning_agent_script_nodes%rowtype;
+supabase/bootstrap/app-schema-baseline.sql:16184:  v_neighbor public.learning_agent_script_nodes%rowtype;
+supabase/bootstrap/app-schema-baseline.sql:16192:  from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16193:  join public.learning_agent_script_versions version on version.id = node.script_version_id
+supabase/bootstrap/app-schema-baseline.sql:16200:    from public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:16205:    from public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:16211:  set constraints learning_agent_script_nodes_version_order_key deferred;
+supabase/bootstrap/app-schema-baseline.sql:16212:  update public.learning_agent_script_nodes set sort_order = v_neighbor.sort_order where id = v_node.id;
+supabase/bootstrap/app-schema-baseline.sql:16213:  update public.learning_agent_script_nodes set sort_order = v_node.sort_order where id = v_neighbor.id;
+supabase/bootstrap/app-schema-baseline.sql:16220:  from public.learning_agent_script_versions version
+supabase/bootstrap/app-schema-baseline.sql:16863:  v_version public.learning_agent_script_versions%rowtype;
+supabase/bootstrap/app-schema-baseline.sql:16875:  from public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:16882:  from public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:16887:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16895:  from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16899:        select 1 from public.learning_agent_script_nodes target
+supabase/bootstrap/app-schema-baseline.sql:16905:        select 1 from public.learning_agent_script_nodes target
+supabase/bootstrap/app-schema-baseline.sql:16914:  from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16922:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16931:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16936:        select 1 from public.learning_agent_script_nodes later
+supabase/bootstrap/app-schema-baseline.sql:16955:      from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:16975:      from public.learning_agent_script_nodes candidate
+supabase/bootstrap/app-schema-baseline.sql:17002:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:17012:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:17030:    select 1 from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:17042:  update public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:17046:  update public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:17245:  lock table public.learning_agent_script_nodes in share row exclusive mode;
+supabase/bootstrap/app-schema-baseline.sql:17247:  perform 1 from public.learning_agent_script_versions where id = p_script_version_id for update;
+supabase/bootstrap/app-schema-baseline.sql:17727:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:17882:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/bootstrap/app-schema-baseline.sql:19197:  perform m.id from public.digital_textbook_modules m where m.chapter_id = p_chapter_id for share;
+supabase/bootstrap/app-schema-baseline.sql:19199:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/bootstrap/app-schema-baseline.sql:19202:  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
+supabase/bootstrap/app-schema-baseline.sql:19205:  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
+supabase/bootstrap/app-schema-baseline.sql:19214:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/bootstrap/app-schema-baseline.sql:20565:  v_current public.learning_agent_script_nodes%rowtype;
+supabase/bootstrap/app-schema-baseline.sql:20566:  v_input public.learning_agent_script_nodes%rowtype;
+supabase/bootstrap/app-schema-baseline.sql:20574:  lock table public.learning_agent_script_nodes in row exclusive mode;
+supabase/bootstrap/app-schema-baseline.sql:20576:  select script_version_id into v_version_id from public.learning_agent_script_nodes where id = p_node_id;
+supabase/bootstrap/app-schema-baseline.sql:20577:  select status into v_status from public.learning_agent_script_versions where id = v_version_id for update;
+supabase/bootstrap/app-schema-baseline.sql:20579:  select * into v_current from public.learning_agent_script_nodes where id = p_node_id for update;
+supabase/bootstrap/app-schema-baseline.sql:20594:  update public.learning_agent_script_nodes set
+supabase/bootstrap/app-schema-baseline.sql:22580:  from public.learning_agent_script_versions v
+supabase/bootstrap/app-schema-baseline.sql:22584:    from public.learning_agent_script_nodes node
+supabase/bootstrap/app-schema-baseline.sql:23082:      join public.digital_textbook_modules m on m.id=n.module_id
+supabase/bootstrap/app-schema-baseline.sql:23369: digital_textbook_modules as materialized (select m.* from public.digital_textbook_modules m where m.chapter_id in(select id from digital_textbook_chapters)),
+supabase/bootstrap/app-schema-baseline.sql:23370: digital_textbook_nodes as materialized (select n.* from public.digital_textbook_nodes n where n.module_id in(select id from digital_textbook_modules)),
+supabase/bootstrap/app-schema-baseline.sql:23375: learning_agent_lessons as materialized (select l.* from public.learning_agent_lessons l where l.module_id in(select id from digital_textbook_modules)),
+supabase/bootstrap/app-schema-baseline.sql:23378: learning_agent_script_versions as materialized (select v.* from public.learning_agent_script_versions v where v.lesson_id in(select id from learning_agent_lessons) and v.status='published'),
+supabase/bootstrap/app-schema-baseline.sql:23379: learning_agent_script_nodes as materialized (select n.* from public.learning_agent_script_nodes n where n.script_version_id in(select id from learning_agent_script_versions)),
+supabase/bootstrap/app-schema-baseline.sql:23380: learning_agent_node_interaction_secrets as materialized (select s.* from public.learning_agent_node_interaction_secrets s where s.node_id in(select id from learning_agent_script_nodes)),
+supabase/bootstrap/app-schema-baseline.sql:23381: learning_agent_script_audio_assets as materialized (select a.* from public.learning_agent_script_audio_assets a where a.script_node_id in(select id from learning_agent_script_nodes)),
+supabase/bootstrap/app-schema-baseline.sql:23386: 'digital_textbook_modules',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from digital_textbook_modules r),
+supabase/bootstrap/app-schema-baseline.sql:23395: 'learning_agent_script_versions',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from learning_agent_script_versions r),
+supabase/bootstrap/app-schema-baseline.sql:23396: 'learning_agent_script_nodes',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from learning_agent_script_nodes r),
+supabase/bootstrap/app-schema-baseline.sql:25239:-- Name: digital_textbook_modules; Type: TABLE; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:25242:CREATE TABLE public.digital_textbook_modules (
+supabase/bootstrap/app-schema-baseline.sql:25252:    CONSTRAINT digital_textbook_modules_accent_role_check CHECK ((accent_role = ANY (ARRAY['jade'::text, 'iris'::text, 'coral'::text, 'sky'::text]))),
+supabase/bootstrap/app-schema-baseline.sql:25253:    CONSTRAINT digital_textbook_modules_description_check CHECK ((jsonb_typeof(description) = 'object'::text)),
+supabase/bootstrap/app-schema-baseline.sql:25254:    CONSTRAINT digital_textbook_modules_module_code_check CHECK ((module_code = ANY (ARRAY['orientation'::text, 'vocabulary'::text, 'grammar'::text, 'patterns'::text, 'dialogue'::text, 'listen_speak'::text, 'read_write'::text, 'review'::text]))),
+supabase/bootstrap/app-schema-baseline.sql:25255:    CONSTRAINT digital_textbook_modules_sort_order_check CHECK (((sort_order >= 1) AND (sort_order <= 8))),
+supabase/bootstrap/app-schema-baseline.sql:25256:    CONSTRAINT digital_textbook_modules_title_check CHECK ((jsonb_typeof(title) = 'object'::text))
+supabase/bootstrap/app-schema-baseline.sql:25260:ALTER TABLE public.digital_textbook_modules OWNER TO postgres;
+supabase/bootstrap/app-schema-baseline.sql:25263:-- Name: TABLE digital_textbook_modules; Type: COMMENT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:25266:COMMENT ON TABLE public.digital_textbook_modules IS '固定八步教学模块，所有后续电子书复用该骨架。';
+supabase/bootstrap/app-schema-baseline.sql:26898:-- Name: learning_agent_script_nodes; Type: TABLE; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:26901:CREATE TABLE public.learning_agent_script_nodes (
+supabase/bootstrap/app-schema-baseline.sql:26917:    CONSTRAINT learning_agent_script_nodes_action_type_check CHECK ((action_type = ANY (ARRAY['none'::text, 'focus_activity'::text, 'play_expression'::text, 'complete_lesson'::text]))),
+supabase/bootstrap/app-schema-baseline.sql:26918:    CONSTRAINT learning_agent_script_nodes_configuration_check CHECK ((jsonb_typeof(configuration) = 'object'::text)),
+supabase/bootstrap/app-schema-baseline.sql:26919:    CONSTRAINT learning_agent_script_nodes_node_key_check CHECK ((node_key ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'::text)),
+supabase/bootstrap/app-schema-baseline.sql:26920:    CONSTRAINT learning_agent_script_nodes_node_type_check CHECK ((node_type = ANY (ARRAY['opening'::text, 'explanation'::text, 'example'::text, 'question'::text, 'instruction'::text, 'summary'::text]))),
+supabase/bootstrap/app-schema-baseline.sql:26921:    CONSTRAINT learning_agent_script_nodes_sort_order_check CHECK (((sort_order >= 1) AND (sort_order <= 200))),
+supabase/bootstrap/app-schema-baseline.sql:26922:    CONSTRAINT learning_agent_script_nodes_teacher_script_check CHECK ((jsonb_typeof(teacher_script) = 'object'::text)),
+supabase/bootstrap/app-schema-baseline.sql:26923:    CONSTRAINT learning_agent_script_nodes_title_check CHECK ((jsonb_typeof(title) = 'object'::text))
+supabase/bootstrap/app-schema-baseline.sql:26927:ALTER TABLE public.learning_agent_script_nodes OWNER TO postgres;
+supabase/bootstrap/app-schema-baseline.sql:26930:-- Name: learning_agent_script_versions; Type: TABLE; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:26933:CREATE TABLE public.learning_agent_script_versions (
+supabase/bootstrap/app-schema-baseline.sql:26945:    CONSTRAINT learning_agent_script_versions_change_note_check CHECK ((char_length(change_note) <= 500)),
+supabase/bootstrap/app-schema-baseline.sql:26946:    CONSTRAINT learning_agent_script_versions_status_check CHECK ((status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text]))),
+supabase/bootstrap/app-schema-baseline.sql:26947:    CONSTRAINT learning_agent_script_versions_title_check CHECK ((jsonb_typeof(title) = 'object'::text)),
+supabase/bootstrap/app-schema-baseline.sql:26948:    CONSTRAINT learning_agent_script_versions_version_number_check CHECK ((version_number > 0))
+supabase/bootstrap/app-schema-baseline.sql:26952:ALTER TABLE public.learning_agent_script_versions OWNER TO postgres;
+supabase/bootstrap/app-schema-baseline.sql:30821:-- Name: digital_textbook_modules digital_textbook_modules_chapter_id_module_code_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:30824:ALTER TABLE ONLY public.digital_textbook_modules
+supabase/bootstrap/app-schema-baseline.sql:30825:    ADD CONSTRAINT digital_textbook_modules_chapter_id_module_code_key UNIQUE (chapter_id, module_code);
+supabase/bootstrap/app-schema-baseline.sql:30828:-- Name: digital_textbook_modules digital_textbook_modules_chapter_id_sort_order_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:30831:ALTER TABLE ONLY public.digital_textbook_modules
+supabase/bootstrap/app-schema-baseline.sql:30832:    ADD CONSTRAINT digital_textbook_modules_chapter_id_sort_order_key UNIQUE (chapter_id, sort_order);
+supabase/bootstrap/app-schema-baseline.sql:30835:-- Name: digital_textbook_modules digital_textbook_modules_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:30838:ALTER TABLE ONLY public.digital_textbook_modules
+supabase/bootstrap/app-schema-baseline.sql:30839:    ADD CONSTRAINT digital_textbook_modules_pkey PRIMARY KEY (id);
+supabase/bootstrap/app-schema-baseline.sql:31402:-- Name: learning_agent_script_nodes learning_agent_script_nodes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:31405:ALTER TABLE ONLY public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:31406:    ADD CONSTRAINT learning_agent_script_nodes_pkey PRIMARY KEY (id);
+supabase/bootstrap/app-schema-baseline.sql:31409:-- Name: learning_agent_script_nodes learning_agent_script_nodes_script_version_id_node_key_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:31412:ALTER TABLE ONLY public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:31413:    ADD CONSTRAINT learning_agent_script_nodes_script_version_id_node_key_key UNIQUE (script_version_id, node_key);
+supabase/bootstrap/app-schema-baseline.sql:31416:-- Name: learning_agent_script_nodes learning_agent_script_nodes_version_order_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:31419:ALTER TABLE ONLY public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:31420:    ADD CONSTRAINT learning_agent_script_nodes_version_order_key UNIQUE (script_version_id, sort_order) DEFERRABLE;
+supabase/bootstrap/app-schema-baseline.sql:31423:-- Name: learning_agent_script_versions learning_agent_script_versions_lesson_id_version_number_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:31426:ALTER TABLE ONLY public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:31427:    ADD CONSTRAINT learning_agent_script_versions_lesson_id_version_number_key UNIQUE (lesson_id, version_number);
+supabase/bootstrap/app-schema-baseline.sql:31430:-- Name: learning_agent_script_versions learning_agent_script_versions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:31433:ALTER TABLE ONLY public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:31434:    ADD CONSTRAINT learning_agent_script_versions_pkey PRIMARY KEY (id);
+supabase/bootstrap/app-schema-baseline.sql:33212:-- Name: learning_agent_script_nodes_version_idx; Type: INDEX; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:33215:CREATE INDEX learning_agent_script_nodes_version_idx ON public.learning_agent_script_nodes USING btree (script_version_id, sort_order);
+supabase/bootstrap/app-schema-baseline.sql:33218:-- Name: learning_agent_script_versions_lesson_idx; Type: INDEX; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:33221:CREATE INDEX learning_agent_script_versions_lesson_idx ON public.learning_agent_script_versions USING btree (lesson_id, version_number DESC);
+supabase/bootstrap/app-schema-baseline.sql:33224:-- Name: learning_agent_script_versions_one_draft_idx; Type: INDEX; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:33227:CREATE UNIQUE INDEX learning_agent_script_versions_one_draft_idx ON public.learning_agent_script_versions USING btree (lesson_id) WHERE (status = 'draft'::text);
+supabase/bootstrap/app-schema-baseline.sql:33230:-- Name: learning_agent_script_versions_one_published_idx; Type: INDEX; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:33233:CREATE UNIQUE INDEX learning_agent_script_versions_one_published_idx ON public.learning_agent_script_versions USING btree (lesson_id) WHERE (status = 'published'::text);
+supabase/bootstrap/app-schema-baseline.sql:34580:-- Name: digital_textbook_modules digital_textbook_modules_set_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:34583:CREATE TRIGGER digital_textbook_modules_set_updated_at BEFORE UPDATE ON public.digital_textbook_modules FOR EACH ROW EXECUTE FUNCTION private.set_updated_at();
+supabase/bootstrap/app-schema-baseline.sql:34964:-- Name: learning_agent_script_nodes learning_agent_script_nodes_set_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:34967:CREATE TRIGGER learning_agent_script_nodes_set_updated_at BEFORE UPDATE ON public.learning_agent_script_nodes FOR EACH ROW EXECUTE FUNCTION private.set_updated_at();
+supabase/bootstrap/app-schema-baseline.sql:34970:-- Name: learning_agent_script_versions learning_agent_script_versions_set_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:34973:CREATE TRIGGER learning_agent_script_versions_set_updated_at BEFORE UPDATE ON public.learning_agent_script_versions FOR EACH ROW EXECUTE FUNCTION private.set_updated_at();
+supabase/bootstrap/app-schema-baseline.sql:35312:-- Name: digital_textbook_modules runtime_publish_fence; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35315:CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_modules FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35366:-- Name: learning_agent_script_nodes runtime_publish_fence; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35369:CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35372:-- Name: learning_agent_script_versions runtime_publish_fence; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35375:CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_versions FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35414:-- Name: digital_textbook_modules runtime_publish_lock; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35417:CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_modules FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35468:-- Name: learning_agent_script_nodes runtime_publish_lock; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35471:CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35474:-- Name: learning_agent_script_versions runtime_publish_lock; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35477:CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_versions FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement();
+supabase/bootstrap/app-schema-baseline.sql:35726:-- Name: learning_agent_script_versions teaching_script_source_review_before_publish; Type: TRIGGER; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:35729:CREATE TRIGGER teaching_script_source_review_before_publish BEFORE UPDATE OF status ON public.learning_agent_script_versions FOR EACH ROW EXECUTE FUNCTION private.require_teaching_script_source_review();
+supabase/bootstrap/app-schema-baseline.sql:36734:-- Name: digital_textbook_modules digital_textbook_modules_chapter_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:36737:ALTER TABLE ONLY public.digital_textbook_modules
+supabase/bootstrap/app-schema-baseline.sql:36738:    ADD CONSTRAINT digital_textbook_modules_chapter_id_fkey FOREIGN KEY (chapter_id) REFERENCES public.digital_textbook_chapters(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:36773:    ADD CONSTRAINT digital_textbook_nodes_module_id_fkey FOREIGN KEY (module_id) REFERENCES public.digital_textbook_modules(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:36822:    ADD CONSTRAINT digital_textbook_teaching_lessons_module_id_fkey FOREIGN KEY (module_id) REFERENCES public.digital_textbook_modules(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37606:    ADD CONSTRAINT learning_agent_node_attempts_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.learning_agent_script_nodes(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37613:    ADD CONSTRAINT learning_agent_node_attempts_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37641:    ADD CONSTRAINT learning_agent_node_interaction_secrets_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.learning_agent_script_nodes(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37669:    ADD CONSTRAINT learning_agent_publish_logs_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37676:    ADD CONSTRAINT learning_agent_script_audio_assets_script_node_id_fkey FOREIGN KEY (script_node_id) REFERENCES public.learning_agent_script_nodes(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37679:-- Name: learning_agent_script_nodes learning_agent_script_nodes_reference_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:37682:ALTER TABLE ONLY public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:37683:    ADD CONSTRAINT learning_agent_script_nodes_reference_activity_id_fkey FOREIGN KEY (reference_activity_id) REFERENCES public.digital_textbook_activities(id) ON DELETE SET NULL;
+supabase/bootstrap/app-schema-baseline.sql:37686:-- Name: learning_agent_script_nodes learning_agent_script_nodes_script_version_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:37689:ALTER TABLE ONLY public.learning_agent_script_nodes
+supabase/bootstrap/app-schema-baseline.sql:37690:    ADD CONSTRAINT learning_agent_script_nodes_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37693:-- Name: learning_agent_script_versions learning_agent_script_versions_created_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:37696:ALTER TABLE ONLY public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:37697:    ADD CONSTRAINT learning_agent_script_versions_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL;
+supabase/bootstrap/app-schema-baseline.sql:37700:-- Name: learning_agent_script_versions learning_agent_script_versions_lesson_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:37703:ALTER TABLE ONLY public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:37704:    ADD CONSTRAINT learning_agent_script_versions_lesson_id_fkey FOREIGN KEY (lesson_id) REFERENCES public.learning_agent_lessons(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37707:-- Name: learning_agent_script_versions learning_agent_script_versions_published_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:37710:ALTER TABLE ONLY public.learning_agent_script_versions
+supabase/bootstrap/app-schema-baseline.sql:37711:    ADD CONSTRAINT learning_agent_script_versions_published_by_fkey FOREIGN KEY (published_by) REFERENCES auth.users(id) ON DELETE SET NULL;
+supabase/bootstrap/app-schema-baseline.sql:37725:    ADD CONSTRAINT learning_agent_sessions_current_node_id_fkey FOREIGN KEY (current_node_id) REFERENCES public.learning_agent_script_nodes(id) ON DELETE SET NULL;
+supabase/bootstrap/app-schema-baseline.sql:37732:    ADD CONSTRAINT learning_agent_sessions_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE SET NULL;
+supabase/bootstrap/app-schema-baseline.sql:37739:    ADD CONSTRAINT learning_agent_task_events_node_id_fkey FOREIGN KEY (node_id) REFERENCES public.learning_agent_script_nodes(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:37746:    ADD CONSTRAINT learning_agent_task_events_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:39125:    ADD CONSTRAINT teaching_script_source_reviews_script_version_id_fkey FOREIGN KEY (script_version_id) REFERENCES public.learning_agent_script_versions(id) ON DELETE CASCADE;
+supabase/bootstrap/app-schema-baseline.sql:39835:-- Name: learning_agent_script_nodes authenticated read published learning agent script nodes; Type: POLICY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:39838:CREATE POLICY "authenticated read published learning agent script nodes" ON public.learning_agent_script_nodes FOR SELECT TO authenticated USING ((EXISTS ( SELECT 1
+supabase/bootstrap/app-schema-baseline.sql:39839:   FROM public.learning_agent_script_versions version
+supabase/bootstrap/app-schema-baseline.sql:39840:  WHERE ((version.id = learning_agent_script_nodes.script_version_id) AND (version.status = 'published'::text)))));
+supabase/bootstrap/app-schema-baseline.sql:39843:-- Name: learning_agent_script_versions authenticated read published learning agent script versions; Type: POLICY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:39846:CREATE POLICY "authenticated read published learning agent script versions" ON public.learning_agent_script_versions FOR SELECT TO authenticated USING ((status = 'published'::text));
+supabase/bootstrap/app-schema-baseline.sql:39898:     JOIN public.digital_textbook_modules module ON ((module.id = node.module_id)))
+supabase/bootstrap/app-schema-baseline.sql:39920:-- Name: digital_textbook_modules authenticated read textbook modules; Type: POLICY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:39923:CREATE POLICY "authenticated read textbook modules" ON public.digital_textbook_modules FOR SELECT TO authenticated USING ((public.current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1
+supabase/bootstrap/app-schema-baseline.sql:39927:  WHERE ((chapter.id = digital_textbook_modules.chapter_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id))))));
+supabase/bootstrap/app-schema-baseline.sql:39934:   FROM (((public.digital_textbook_modules module
+supabase/bootstrap/app-schema-baseline.sql:40314:-- Name: digital_textbook_modules; Type: ROW SECURITY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:40317:ALTER TABLE public.digital_textbook_modules ENABLE ROW LEVEL SECURITY;
+supabase/bootstrap/app-schema-baseline.sql:40687:-- Name: learning_agent_script_nodes; Type: ROW SECURITY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:40690:ALTER TABLE public.learning_agent_script_nodes ENABLE ROW LEVEL SECURITY;
+supabase/bootstrap/app-schema-baseline.sql:40693:-- Name: learning_agent_script_versions; Type: ROW SECURITY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:40696:ALTER TABLE public.learning_agent_script_versions ENABLE ROW LEVEL SECURITY;
+supabase/bootstrap/app-schema-baseline.sql:41141:-- Name: learning_agent_script_nodes platform owner manages learning agent script nodes; Type: POLICY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:41144:CREATE POLICY "platform owner manages learning agent script nodes" ON public.learning_agent_script_nodes TO authenticated USING (( SELECT private.is_platform_owner() AS is_platform_owner)) WITH CHECK (( SELECT private.is_platform_owner() AS is_platform_owner));
+supabase/bootstrap/app-schema-baseline.sql:41147:-- Name: learning_agent_script_versions platform owner manages learning agent script versions; Type: POLICY; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:41150:CREATE POLICY "platform owner manages learning agent script versions" ON public.learning_agent_script_versions TO authenticated USING (( SELECT private.is_platform_owner() AS is_platform_owner)) WITH CHECK (( SELECT private.is_platform_owner() AS is_platform_owner));
+supabase/bootstrap/app-schema-baseline.sql:47108:-- Name: TABLE digital_textbook_modules; Type: ACL; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:47111:GRANT SELECT,MAINTAIN ON TABLE public.digital_textbook_modules TO anon;
+supabase/bootstrap/app-schema-baseline.sql:47112:GRANT SELECT,INSERT,DELETE,MAINTAIN,UPDATE ON TABLE public.digital_textbook_modules TO authenticated;
+supabase/bootstrap/app-schema-baseline.sql:47113:GRANT ALL ON TABLE public.digital_textbook_modules TO service_role;
+supabase/bootstrap/app-schema-baseline.sql:47507:-- Name: TABLE learning_agent_script_nodes; Type: ACL; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:47510:GRANT ALL ON TABLE public.learning_agent_script_nodes TO anon;
+supabase/bootstrap/app-schema-baseline.sql:47511:GRANT ALL ON TABLE public.learning_agent_script_nodes TO authenticated;
+supabase/bootstrap/app-schema-baseline.sql:47512:GRANT ALL ON TABLE public.learning_agent_script_nodes TO service_role;
+supabase/bootstrap/app-schema-baseline.sql:47515:-- Name: TABLE learning_agent_script_versions; Type: ACL; Schema: public; Owner: postgres
+supabase/bootstrap/app-schema-baseline.sql:47518:GRANT ALL ON TABLE public.learning_agent_script_versions TO anon;
+supabase/bootstrap/app-schema-baseline.sql:47519:GRANT ALL ON TABLE public.learning_agent_script_versions TO authenticated;
+supabase/bootstrap/app-schema-baseline.sql:47520:GRANT ALL ON TABLE public.learning_agent_script_versions TO service_role;
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:205:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:219:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:236:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:254:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180020_chapter_fourteen_golden_smart_textbook.sql:270:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608260001_teaching_agent_phase_one.sql:5:  module_id uuid not null unique references public.digital_textbook_modules(id) on delete cascade,
+supabase/migrations/202608260001_teaching_agent_phase_one.sql:126:from public.digital_textbook_modules module
+supabase/migrations/202608260001_teaching_agent_phase_one.sql:149:join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:205:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:219:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:236:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:254:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180017_chapter_eleven_golden_smart_textbook.sql:270:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608220003_publish_chapter_one_vocabulary_scene_panorama.sql:15:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:9:  from public.learning_agent_script_versions target
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:13:      from public.learning_agent_script_nodes target_node
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:25:    from public.learning_agent_script_versions candidate
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:30:        from public.learning_agent_script_nodes source_node
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:43:  join public.learning_agent_script_nodes target_node
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:45:  join public.learning_agent_script_nodes source_node
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:125:  from public.learning_agent_script_versions
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:131:  from public.learning_agent_script_versions
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:135:  from public.learning_agent_script_versions
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:139:  insert into public.learning_agent_script_versions (
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:143:    coalesce((select title from public.learning_agent_script_versions where id = v_published), '{}'::jsonb),
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:148:    insert into public.learning_agent_script_nodes (
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:156:    from public.learning_agent_script_nodes
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:181:    from public.learning_agent_script_nodes source_node
+supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql:182:    join public.learning_agent_script_nodes draft_node
+supabase/migrations/202608230007_present_pattern_order_as_expression_path.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180030_merge_chapter_one_grammar_rounds.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608230009_apply_chapter_one_dialogue_pages_to_smart_textbook.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608230009_apply_chapter_one_dialogue_pages_to_smart_textbook.sql:62:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202609080001_chapter_practice_bindings.sql:58:  perform m.id from public.digital_textbook_modules m where m.chapter_id = p_chapter_id for share;
+supabase/migrations/202609080001_chapter_practice_bindings.sql:60:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/migrations/202609080001_chapter_practice_bindings.sql:68:    join public.digital_textbook_modules m on m.id = n.module_id
+supabase/migrations/202608280005_remove_learning_agent_display_body.sql:3:update public.learning_agent_script_nodes
+supabase/migrations/202609100004_runtime_single_version_authoring.sql:155:  join public.digital_textbook_modules m on m.id=n.module_id join public.digital_textbook_chapters c on c.id=m.chapter_id
+supabase/migrations/202608240006_split_chapter_one_listening_into_two_tracks.sql:26:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240006_split_chapter_one_listening_into_two_tracks.sql:61:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240006_split_chapter_one_listening_into_two_tracks.sql:93:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240006_split_chapter_one_listening_into_two_tracks.sql:111:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240003_finalize_chapter_one_listening_master.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240003_finalize_chapter_one_listening_master.sql:27:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240003_finalize_chapter_one_listening_master.sql:49:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608220013_expand_chapter_one_pattern_cards.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:161:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:190:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:218:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:243:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:255:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:281:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:294:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180010_chapter_four_golden_smart_textbook.sql:308:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608210003_correct_chapter_one_orientation_dialogue_groups_target.sql:13:from public.digital_textbook_modules as module
+supabase/migrations/202608240027_publish_chapter_fifteen_module_scenes.sql:4: join public.digital_textbook_nodes node on node.id=media.node_id join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608190002_rebuild_homework_listening_from_canonical_activity.sql:45:  join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/migrations/202608190002_rebuild_homework_listening_from_canonical_activity.sql:107:join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/migrations/202608280006_add_learning_agent_script_audio_assets.sql:5:  script_node_id uuid not null references public.learning_agent_script_nodes(id) on delete cascade,
+supabase/migrations/202608240011_publish_chapters_two_to_sixteen_listening_audio.sql:19:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240011_publish_chapters_two_to_sixteen_listening_audio.sql:59:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240011_publish_chapters_two_to_sixteen_listening_audio.sql:77:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240011_publish_chapters_two_to_sixteen_listening_audio.sql:101:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:261:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:318:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:372:        public.digital_textbook_modules as module
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:403:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:435:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:485:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:513:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:542:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:628:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:806:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:817:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:823:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:838:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180007_chapter_two_golden_smart_textbook.sql:845:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608270001_link_orientation_scene_visual_cue.sql:3:update public.learning_agent_script_nodes node
+supabase/migrations/202608270001_link_orientation_scene_visual_cue.sql:10:from public.learning_agent_script_versions script_version
+supabase/migrations/202608270001_link_orientation_scene_visual_cue.sql:13:join public.digital_textbook_modules module
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:50:  SELECT 1 FROM public.digital_textbook_modules m
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:69:ALTER POLICY "authenticated read textbook modules" ON public.digital_textbook_modules
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:73:ALTER POLICY "authenticated read published learning agent script versions" ON public.learning_agent_script_versions
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:76:DROP POLICY "authenticated read published learning agent script nodes" ON public.learning_agent_script_nodes;
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:99:CREATE VIEW public.student_learning_agent_script_nodes WITH (security_barrier=true) AS
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:106: FROM public.learning_agent_script_nodes n
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:107: JOIN public.learning_agent_script_versions v ON v.id=n.script_version_id
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:111:ALTER VIEW public.student_learning_agent_script_nodes OWNER TO postgres;
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:112:REVOKE ALL ON public.student_learning_agent_script_nodes FROM PUBLIC,anon,authenticated;
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:113:GRANT SELECT ON public.student_learning_agent_script_nodes TO authenticated;
+supabase/migrations/202609140005_student_teaching_content_isolation.sql:114:COMMENT ON VIEW public.student_learning_agent_script_nodes IS 'Caller-bound public narration only. Raw authoring configuration is never projected. StudentTeachingPolicy additionally verifies unlock, selection and revision.';
+supabase/migrations/202608240001_design_chapter_one_listen_speak_flow.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240001_design_chapter_one_listen_speak_flow.sql:50:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240016_publish_chapter_four_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:8:  script_version_id uuid not null references public.learning_agent_script_versions(id) on delete cascade,
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:9:  node_id uuid not null references public.learning_agent_script_nodes(id) on delete cascade,
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:25:  from public.learning_agent_script_nodes node
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:26:  join public.learning_agent_script_versions script_version on script_version.id = node.script_version_id
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:29:  join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608260008_learning_agent_student_task_events.sql:39:update public.learning_agent_script_nodes node
+supabase/migrations/202608220011_add_chapter_one_grammar_choice_and_judgment.sql:9:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180008_open_activity_unscored_mastery.sql:125:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:98:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:108:    select id into module_uuid from public.digital_textbook_modules
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:123:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:150:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:155:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180013_chapter_seven_golden_smart_textbook.sql:159:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:20: digital_textbook_modules as materialized (select m.* from public.digital_textbook_modules m where m.chapter_id in(select id from digital_textbook_chapters)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:21: digital_textbook_nodes as materialized (select n.* from public.digital_textbook_nodes n where n.module_id in(select id from digital_textbook_modules)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:26: learning_agent_lessons as materialized (select l.* from public.learning_agent_lessons l where l.module_id in(select id from digital_textbook_modules)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:29: learning_agent_script_versions as materialized (select v.* from public.learning_agent_script_versions v where v.lesson_id in(select id from learning_agent_lessons) and v.status='published'),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:30: learning_agent_script_nodes as materialized (select n.* from public.learning_agent_script_nodes n where n.script_version_id in(select id from learning_agent_script_versions)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:31: learning_agent_node_interaction_secrets as materialized (select s.* from public.learning_agent_node_interaction_secrets s where s.node_id in(select id from learning_agent_script_nodes)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:32: learning_agent_script_audio_assets as materialized (select a.* from public.learning_agent_script_audio_assets a where a.script_node_id in(select id from learning_agent_script_nodes)),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:37: 'digital_textbook_modules',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from digital_textbook_modules r),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:46: 'learning_agent_script_versions',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from learning_agent_script_versions r),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:47: 'learning_agent_script_nodes',(select coalesce(jsonb_agg(to_jsonb(r) order by to_jsonb(r)::text),'[]'::jsonb) from learning_agent_script_nodes r),
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:104:create trigger runtime_publish_lock before insert or update or delete or truncate on public.digital_textbook_modules
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:106:create trigger runtime_publish_fence after insert or update or delete or truncate on public.digital_textbook_modules
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:140:create trigger runtime_publish_lock before insert or update or delete or truncate on public.learning_agent_script_versions
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:142:create trigger runtime_publish_fence after insert or update or delete or truncate on public.learning_agent_script_versions
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:144:create trigger runtime_publish_lock before insert or update or delete or truncate on public.learning_agent_script_nodes
+supabase/migrations/202609100002_runtime_publication_dependency_fence.sql:146:create trigger runtime_publish_fence after insert or update or delete or truncate on public.learning_agent_script_nodes
+supabase/migrations/202608240020_publish_chapter_eight_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608260006_learning_agent_script_studio.sql:3:create table public.learning_agent_script_versions (
+supabase/migrations/202608260006_learning_agent_script_studio.sql:18:create unique index learning_agent_script_versions_one_draft_idx
+supabase/migrations/202608260006_learning_agent_script_studio.sql:19:  on public.learning_agent_script_versions(lesson_id)
+supabase/migrations/202608260006_learning_agent_script_studio.sql:21:create unique index learning_agent_script_versions_one_published_idx
+supabase/migrations/202608260006_learning_agent_script_studio.sql:22:  on public.learning_agent_script_versions(lesson_id)
+supabase/migrations/202608260006_learning_agent_script_studio.sql:24:create index learning_agent_script_versions_lesson_idx
+supabase/migrations/202608260006_learning_agent_script_studio.sql:25:  on public.learning_agent_script_versions(lesson_id, version_number desc);
+supabase/migrations/202608260006_learning_agent_script_studio.sql:27:create table public.learning_agent_script_nodes (
+supabase/migrations/202608260006_learning_agent_script_studio.sql:29:  script_version_id uuid not null references public.learning_agent_script_versions(id) on delete cascade,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:48:  constraint learning_agent_script_nodes_version_order_key
+supabase/migrations/202608260006_learning_agent_script_studio.sql:52:create index learning_agent_script_nodes_version_idx
+supabase/migrations/202608260006_learning_agent_script_studio.sql:53:  on public.learning_agent_script_nodes(script_version_id, sort_order);
+supabase/migrations/202608260006_learning_agent_script_studio.sql:60:  script_version_id uuid not null references public.learning_agent_script_versions(id) on delete cascade,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:61:  node_id uuid not null references public.learning_agent_script_nodes(id) on delete cascade,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:73:  script_version_id uuid not null references public.learning_agent_script_versions(id) on delete cascade,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:86:  add column script_version_id uuid references public.learning_agent_script_versions(id) on delete set null,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:87:  add column current_node_id uuid references public.learning_agent_script_nodes(id) on delete set null,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:98:drop trigger if exists learning_agent_script_versions_set_updated_at on public.learning_agent_script_versions;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:99:create trigger learning_agent_script_versions_set_updated_at
+supabase/migrations/202608260006_learning_agent_script_studio.sql:100:before update on public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:103:drop trigger if exists learning_agent_script_nodes_set_updated_at on public.learning_agent_script_nodes;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:104:create trigger learning_agent_script_nodes_set_updated_at
+supabase/migrations/202608260006_learning_agent_script_studio.sql:105:before update on public.learning_agent_script_nodes
+supabase/migrations/202608260006_learning_agent_script_studio.sql:108:alter table public.learning_agent_script_versions enable row level security;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:109:alter table public.learning_agent_script_nodes enable row level security;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:114:on public.learning_agent_script_versions for select to authenticated
+supabase/migrations/202608260006_learning_agent_script_studio.sql:118:on public.learning_agent_script_versions for all to authenticated
+supabase/migrations/202608260006_learning_agent_script_studio.sql:123:on public.learning_agent_script_nodes for select to authenticated
+supabase/migrations/202608260006_learning_agent_script_studio.sql:125:  select 1 from public.learning_agent_script_versions version
+supabase/migrations/202608260006_learning_agent_script_studio.sql:130:on public.learning_agent_script_nodes for all to authenticated
+supabase/migrations/202608260006_learning_agent_script_studio.sql:142:grant select on public.learning_agent_script_versions,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:143:  public.learning_agent_script_nodes,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:146:grant all on public.learning_agent_script_versions,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:147:  public.learning_agent_script_nodes,
+supabase/migrations/202608260006_learning_agent_script_studio.sql:173:  from public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:179:  from public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:183:  from public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:187:  insert into public.learning_agent_script_versions (
+supabase/migrations/202608260006_learning_agent_script_studio.sql:191:    coalesce((select title from public.learning_agent_script_versions where id = v_published), '{}'::jsonb),
+supabase/migrations/202608260006_learning_agent_script_studio.sql:196:    insert into public.learning_agent_script_nodes (
+supabase/migrations/202608260006_learning_agent_script_studio.sql:204:    from public.learning_agent_script_nodes
+supabase/migrations/202608260006_learning_agent_script_studio.sql:230:  v_version public.learning_agent_script_versions%rowtype;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:239:  from public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:246:  from public.learning_agent_script_nodes
+supabase/migrations/202608260006_learning_agent_script_studio.sql:251:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608260006_learning_agent_script_studio.sql:259:  from public.learning_agent_script_nodes node
+supabase/migrations/202608260006_learning_agent_script_studio.sql:263:        select 1 from public.learning_agent_script_nodes target
+supabase/migrations/202608260006_learning_agent_script_studio.sql:268:        select 1 from public.learning_agent_script_nodes target
+supabase/migrations/202608260006_learning_agent_script_studio.sql:275:  update public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:279:  update public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:321:  v_node public.learning_agent_script_nodes%rowtype;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:322:  v_neighbor public.learning_agent_script_nodes%rowtype;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:330:  from public.learning_agent_script_nodes node
+supabase/migrations/202608260006_learning_agent_script_studio.sql:331:  join public.learning_agent_script_versions version on version.id = node.script_version_id
+supabase/migrations/202608260006_learning_agent_script_studio.sql:338:    from public.learning_agent_script_nodes
+supabase/migrations/202608260006_learning_agent_script_studio.sql:343:    from public.learning_agent_script_nodes
+supabase/migrations/202608260006_learning_agent_script_studio.sql:349:  set constraints learning_agent_script_nodes_version_order_key deferred;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:350:  update public.learning_agent_script_nodes set sort_order = v_neighbor.sort_order where id = v_node.id;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:351:  update public.learning_agent_script_nodes set sort_order = v_node.sort_order where id = v_neighbor.id;
+supabase/migrations/202608260006_learning_agent_script_studio.sql:358:  from public.learning_agent_script_versions version
+supabase/migrations/202608260006_learning_agent_script_studio.sql:377:  join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608260006_learning_agent_script_studio.sql:390:  from public.learning_agent_script_versions
+supabase/migrations/202608260006_learning_agent_script_studio.sql:395:    insert into public.learning_agent_script_versions (
+supabase/migrations/202608260006_learning_agent_script_studio.sql:407:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608260006_learning_agent_script_studio.sql:412:  insert into public.learning_agent_script_nodes (
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:4:update public.learning_agent_script_nodes
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:20:  v_version public.learning_agent_script_versions%rowtype;
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:32:  from public.learning_agent_script_versions
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:39:  from public.learning_agent_script_nodes
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:44:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:52:  from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:56:        select 1 from public.learning_agent_script_nodes target
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:62:        select 1 from public.learning_agent_script_nodes target
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:71:  from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:79:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:88:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:93:        select 1 from public.learning_agent_script_nodes later
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:112:      from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:132:      from public.learning_agent_script_nodes candidate
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:159:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:169:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:187:    select 1 from public.learning_agent_script_nodes node
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:199:  update public.learning_agent_script_versions
+supabase/migrations/202608290001_harden_learning_agent_script_flow.sql:203:  update public.learning_agent_script_versions
+supabase/migrations/202608240008_add_two_track_repeat_materials.sql:4:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608190003_force_homework_listening_backfill.sql:42:join public.digital_textbook_modules as module on module.chapter_id = chapter.id
+supabase/migrations/202608230005_add_chapter_one_pattern_composition.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180027_restore_objective_activity_recording.sql:48:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql:4:update public.learning_agent_script_nodes node
+supabase/migrations/202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql:24:from public.learning_agent_script_versions version
+supabase/migrations/202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql:27:join public.digital_textbook_modules module on module.id = lesson.module_id
+supabase/migrations/202608220014_add_chapter_one_pattern_choice_groups.sql:8:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240023_publish_chapter_eleven_module_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:206:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:220:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:237:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:256:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180018_chapter_twelve_golden_smart_textbook.sql:272:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:98:    insert into public.digital_textbook_modules (
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:108:    select id into module_uuid from public.digital_textbook_modules
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:123:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:150:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:155:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180014_chapter_eight_golden_smart_textbook.sql:159:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608230012_recalculate_dialogue_progress_after_roleplay_requirement.sql:7:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608220001_publish_chapter_one_vocabulary_scene.sql:23:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240013_publish_chapters_three_to_sixteen_primary_scenes.sql:6:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608220009_correct_chapter_one_task_scene_aspect_ratio.sql:15:join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node,public.digital_textbook_modules module
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:205:    join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:219:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:236:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:254:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180019_chapter_thirteen_golden_smart_textbook.sql:270:  join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608230004_add_guided_conversation_audio_manifest.sql:16:  join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608160001_application_domain_hardening.sql:1639:  on public.digital_textbook_modules;
+supabase/migrations/202608160001_application_domain_hardening.sql:1641:on public.digital_textbook_modules for select to authenticated
+supabase/migrations/202608160001_application_domain_hardening.sql:1649:    where chapter.id = digital_textbook_modules.chapter_id
+supabase/migrations/202608160001_application_domain_hardening.sql:1665:    from public.digital_textbook_modules as module
+supabase/migrations/202608160001_application_domain_hardening.sql:1686:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608160001_application_domain_hardening.sql:1714:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608160001_application_domain_hardening.sql:1748:    join public.digital_textbook_modules as module on module.id = node.module_id
+supabase/migrations/202608240024_publish_chapter_twelve_module_scenes.sql:5:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608240025_publish_chapter_thirteen_module_scenes.sql:4: join public.digital_textbook_nodes node on node.id=media.node_id join public.digital_textbook_modules module on module.id=node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:205:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:219:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:236:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:254:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180022_chapter_sixteen_golden_smart_textbook.sql:270:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:120:    insert into public.digital_textbook_modules (chapter_id,module_code,sort_order,accent_role,title,description)
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:133:  delete from public.digital_textbook_modules
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:152:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:176:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:186:  using public.digital_textbook_nodes node, public.digital_textbook_modules module
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:205:    join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:219:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:236:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:254:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608180021_chapter_fifteen_golden_smart_textbook.sql:270:  join public.digital_textbook_modules module on module.id = node.module_id
+supabase/migrations/202608230002_add_conversation_scenes_to_pattern_choices.sql:29:  join public.digital_textbook_modules as module on module.id = node.module_id

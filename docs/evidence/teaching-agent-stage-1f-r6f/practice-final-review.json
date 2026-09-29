@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "formalType": "instruction",
+  "practice": "DRAFT_TEXT_ONLY",
+  "answerCorrectnessRuntime": "DEFERRED",
+  "answers": [
+    {
+      "question": 1,
+      "correct": "B. ㅏ",
+      "reason": "ㄱ与ㄴ是辅音，ㅏ是元音。"
+    },
+    {
+      "question": 2,
+      "correct": "A. 가",
+      "reason": "ㄱ与ㅏ合写为가；나/다是已教的同维度干扰项。"
+    }
+  ],
+  "completeQuestionChoiceAnswerFeedbackText": true,
+  "koKrScope": "FEEDBACK ONLY — EXPECTED CONTRACT",
+  "feedback": "礼貌、鼓励，题2具体化建议保持OPTIONAL",
+  "learnerFacingAnswerVisibilityVerified": false,
+  "runtimeExecuted": false
+}

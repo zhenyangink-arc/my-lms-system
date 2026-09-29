@@ -1,0 +1,21 @@
+{
+  "status": "RESOLVED",
+  "atUtc": "2026-09-17T01:31:27.229Z",
+  "method": "EXISTING EXACT CHAPTER GET TAB",
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+  "lessonIdentityEvidence": "Revalidated DB version.lesson_id and canonical chain; version hash matches UI",
+  "textbook": "韩文字母入门",
+  "chapter": 0,
+  "module": "课前导航",
+  "version": 1,
+  "draft": true,
+  "nodes": 8,
+  "wrongTabUntouched": true,
+  "productionWrites": 0,
+  "formEdits": 0,
+  "newBrowser": false,
+  "newProfile": false,
+  "chromeLeftOpen": true
+}

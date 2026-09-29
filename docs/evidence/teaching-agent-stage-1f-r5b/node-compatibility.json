@@ -1,0 +1,9 @@
+{
+  "status": "MATCH",
+  "basis": "PM2 node_version and exec_interpreter metadata; direct /proc host PID not visible in sandbox",
+  "productionNodeVersion": "26.5.0",
+  "testedNodeVersion": "26.5.0",
+  "productionExecInterpreter": "/home/yangzhen/miniconda3/bin/node",
+  "testedNodeExecutable": "/home/yangzhen/miniconda3/bin/node",
+  "productionProcessRestarted": false
+}

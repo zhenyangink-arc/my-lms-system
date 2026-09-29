@@ -1,0 +1,28 @@
+{
+  "contract": "development-domain-execution/1",
+  "status": "BLOCKED UNDER STRICT ZERO-ISSUANCE REQUIREMENT",
+  "blocker": "BANNED_SESSION_DENIAL_IS_NOT_ZERO_MAGIC_LINK_OR_OTP_ISSUANCE",
+  "verified": {
+    "initialBanInCreateTransaction": true,
+    "passwordGrant": "DENIED user_banned",
+    "validMagicLinkVerification": "DENIED user_banned",
+    "validEmailOtpVerification": "DENIED user_banned",
+    "refreshWithoutIssuedGrant": "DENIED refresh_token_not_found",
+    "signedBearerForBannedActor": "DENIED user_banned",
+    "sessionRows": 0,
+    "refreshRows": 0,
+    "phoneAndExternalProviders": "DISABLED IN CURRENT CONFIG"
+  },
+  "notVerifiedAsDenied": {
+    "magicLinkIssuance": "HTTP200 in isolated mail sink",
+    "emailOtpIssuance": "HTTP200 after rate window; initial429 was only rate limiting",
+    "banIsForever": false
+  },
+  "banDuration": "876000h; finite approx100 years; scope must reject when remaining horizon < scopeTTL + 24h",
+  "noPasswordCaveat": "Admin create without password generates a random password in this Auth version; omission is not disabled password grant. Ban is the tested enforcement.",
+  "minimumAlternative": "Explicitly define LOGIN_DISABLED as inability to obtain/use an authenticated session while initially banned, with zero sessions/refresh/pending challenges at provisioning acceptance. Do not claim per-user public link/OTP issuance is disabled. Keep initial ban, inactive profile, suspended membership, disabled scopes and finite-horizon guard.",
+  "ifZeroIssuanceRemainsMandatory": "Do not provision. Need a separately reviewed supported Auth-layer per-subject issuance veto. Application-only UI guards cannot block direct Auth API; no global provider disable, trigger weakening or undocumented token edits.",
+  "currentDbWrites": 0,
+  "sourceReference": "https://raw.githubusercontent.com/supabase/auth/v2.197.0/internal/api/admin.go",
+  "verificationReference": "https://raw.githubusercontent.com/supabase/auth/v2.197.0/internal/api/verify.go"
+}

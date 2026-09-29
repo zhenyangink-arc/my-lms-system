@@ -1,0 +1,28 @@
+{
+  "idHash": "43b90695aa195bf4432f04cba8629b107e6f229e1854adeaed8293766fa3507a",
+  "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "order": 7,
+  "key": "step-7-57b0cd",
+  "type": "instruction",
+  "updatedAt": "2026-09-16T08:06:46.149325+00:00",
+  "createdAt": "2026-09-16T08:06:35.564463+00:00",
+  "actionType": "none",
+  "nextKey": null,
+  "observedAtUtc": "2026-09-16T08:06:48.111798+00:00",
+  "count": 7,
+  "logs": {
+    "add_node": 7,
+    "create_draft": 1,
+    "update_node": 21
+  },
+  "draft": true,
+  "status": "PASS",
+  "titleExact": true,
+  "primaryContentExact": true,
+  "koreanContentExact": true,
+  "contentSha256": "1656c671b94b3344c204d12810f357d3209f6ea2672672582a4491ac14d4e702",
+  "logicalAlias": "guided-practice",
+  "teacherMode": "legacy",
+  "interactionKind": "none",
+  "terminal": false
+}

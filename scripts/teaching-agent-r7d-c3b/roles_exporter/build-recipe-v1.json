@@ -1,0 +1,412 @@
+{
+  "architecture": "x86_64-linux-gnu",
+  "component": {
+    "name": "PG176_SESSION_READONLY_ROLES_EXPORTER",
+    "upstreamVersion": "17.6",
+    "version": 1
+  },
+  "configurePolicy": {
+    "icu": false,
+    "readline": false,
+    "ssl": "openssl"
+  },
+  "contract": "roles-exporter-build-recipe/1",
+  "dockerfilePath": "scripts/teaching-agent-r7d-c3b/roles_exporter/Dockerfile.v1",
+  "entrypointPath": "scripts/teaching-agent-r7d-c3b/roles_exporter/entrypoint-v1.sh",
+  "patchPath": "scripts/teaching-agent-r7d-c3b/roles_exporter/pg17.6-session-readonly-receipt-v1.patch",
+  "pullsAllowed": false,
+  "receiptContractPath": "scripts/teaching-agent-r7d-c3b/roles_exporter/receipt-contract-v1.json",
+  "runtimeImageContainsOwnLockOrDigest": false,
+  "runtimePrefix": "/opt/teaching-agent/roles-exporter/pg17.6-v1",
+  "schemaVersion": 1,
+  "steps": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import hashlib,json,os,pathlib,stat\ndef sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()\ndef canon(x): return json.dumps(x,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()\ndef tree(root):\n    records=[]\n    for parent,dirs,files in os.walk(root,followlinks=False):\n        for name in sorted(dirs+files):\n            p=pathlib.Path(parent)/name;s=p.lstat();r={\"path\":str(p.relative_to(root)),\"mode\":stat.S_IMODE(s.st_mode)}\n            if stat.S_ISLNK(s.st_mode): r.update(kind=\"symlink\",target=os.readlink(p))\n            elif stat.S_ISREG(s.st_mode): r.update(kind=\"file\",bytes=s.st_size,sha256=sha(p))\n            elif stat.S_ISDIR(s.st_mode): r.update(kind=\"directory\")\n            else: raise RuntimeError(\"unsupported build input type\")\n            records.append(r)\n    if not records: raise RuntimeError(\"missing build input tree\")\n    records.sort(key=lambda r:r[\"path\"])\n    return hashlib.sha256(canon(records)).hexdigest()\nexpected={'architecture': 'x86_64-linux-gnu', 'configureEnvironment': {'BISON_PKGDATADIR': '/build/overlay/usr/share/bison', 'CONFIG_SITE': '/dev/null', 'HOME': '/build/home', 'LC_ALL': 'C', 'M4': '/build/overlay/usr/bin/m4', 'PATH': '/build/overlay/usr/bin:/usr/bin:/bin', 'PKG_CONFIG_LIBDIR': '/build/empty-pkgconfig', 'TMPDIR': '/build/tmp'}, 'contract': 'roles-exporter-pinned-build-environment/1', 'fileRawSha256': {'/usr/bin/dash': 'c626229526bb58ec2d0f585f3c3ae1412e6f973b4353385042d11c38d8426917', '/usr/bin/make': '27c9f6d806aee15882b01c2c61848f7aa75caa14bc7b6f608ba422f9e46a7d49', '/usr/bin/python3.14': '52e0a13e60a981d8c4b6478be2ba5176f69da07948a056bf49cf6f077e30cb41', '/usr/bin/x86_64-linux-gnu-gcc-15': 'b5f1b773a7c733738352000c92a077dc5852a1a2fc6d836b1e411be1e9ec5f88', '/usr/bin/x86_64-linux-gnu-ld.bfd': '97f48d93b8b076a92d2809ec29dcb17f0f37c8827358f832255e2ed22fef6075', '/usr/lib64/ld-linux-x86-64.so.2': 'bda779ea9e9ad234f60315477d7cfd0bdde861cd8ddd9df8cdaf62f18c4cec14'}, 'overlayPackagesRawSha256': {'bison.deb': 'df3c66f15d5736094da21d45506c81027091c5a28f7b8f358bbef616a261a530', 'flex.deb': '622d3959e0424ca276a01946a44a30c327d4bd6963f96b070b94e9b80b541bb8', 'libssl-dev.deb': 'e246828d9998f432380908e72a70c57463455428931553a5deec1fce882bd3e6', 'm4.deb': '1890e37e38fd64bc10630e508f4a013a76bddbe05be2ed89e68df28463712b55'}, 'runtimeBaseImageId': 'sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029', 'treeRawCanonicalSha256': {'/usr/bin': '137bcb757155e0896914e7e425997c9a7f38a34a9491f71d0de99b989679e4b9', '/usr/include': '6f5464ae52f8751b9d7ad3b6dba15bf62a83562c9e115b502a63de81b1fbe31a', '/usr/lib/gcc/x86_64-linux-gnu/15': '21b79be2ee2fc11efb41ef3b16a9c4c3e808a5197a3927bdb48f1803fced5fa2', '/usr/lib/x86_64-linux-gnu': 'bd5ef1cfae4a610b4919ccd53f60301da2c73c9e7ba1599cf7d838713f9cccfe'}, 'emptyIncludeDirectories': ['/usr/local/include'], 'noAdditionalLinkerInputDirectories': ['/usr/local/lib', '/usr/local/lib64', '/usr/x86_64-linux-gnu/lib', '/usr/x86_64-linux-gnu/include'], 'publicLoaderConfigurationFileSha256': {'/etc/ld.so.cache': 'dff753e60e3cbd72e3fabbac06225756deae4e9894b1d864f31ce24341967d91', '/etc/ld.so.conf': 'd4b198c463418b493208485def26a6f4c57279467b9dfa491b70433cedb602e8'}}\nfor p,wanted in expected['treeRawCanonicalSha256'].items():\n    if tree(pathlib.Path(p))!=wanted: raise SystemExit('BUILD_INPUT_TREE_MISMATCH')\nfor p,wanted in expected['fileRawSha256'].items():\n    if sha(p)!=wanted: raise SystemExit('BUILD_TOOL_MISMATCH')\nfor p,wanted in {'/build/input/postgresql-17.6.tar.gz': '2910b85283674da2dae6ac13fe5ebbaaf3c482446396cba32e6728d3cc736d86', '/build/input/lineage/read-only-init-r1.patch': 'f08667dbc95ece957b2df121855178a29d842c4ab06307dcb9cc14fe3d10b101', '/build/input/lineage/patched-pg_dumpall-r1.c': '483d3a5d9a74b357af948535ba513bc69090c2210cd50239d2287a5256a8bcfc', '/build/input/pg17.6-session-readonly-receipt-v1.patch': '7bd5b096a990bb2f1d608a1037c15b7dcd02d34e0ef50f335fe287edd896186f', '/build/input/receipt-contract-v1.json': 'e13aae9d817453cf8e50e1e4a2a0e455f880e89a54b3bf91373b3983aab9ac51', '/build/input/entrypoint-v1.sh': '127077521ca6f0c2132a0acbdfa9aa3f78d6431551f74f838522d887e4cd303b', '/build/input/debs/bison.deb': 'df3c66f15d5736094da21d45506c81027091c5a28f7b8f358bbef616a261a530', '/build/input/debs/flex.deb': '622d3959e0424ca276a01946a44a30c327d4bd6963f96b070b94e9b80b541bb8', '/build/input/debs/m4.deb': '1890e37e38fd64bc10630e508f4a013a76bddbe05be2ed89e68df28463712b55', '/build/input/debs/libssl-dev.deb': 'e246828d9998f432380908e72a70c57463455428931553a5deec1fce882bd3e6'}.items():\n    if sha(p)!=wanted: raise SystemExit('BUILD_INPUT_FILE_MISMATCH')\nif hashlib.sha256(canon(expected)).hexdigest()!='eb87aad34c2d27fea9d5ab2857be04fb352d4081dffd231ee56dbcc30e032925': raise SystemExit('BUILD_ENVIRONMENT_MISMATCH')\nprint('PINNED_BUILD_INPUTS_VERIFIED')\n\nif sha(\"/build/input/Dockerfile.v1\")!='6190dcdabf49a20b38c4a2f54527d66ea8bf73f0b0d67586e4a02a3597d180fe': raise SystemExit(\"BUILD_DOCKERFILE_MISMATCH\")\n\nfor p in expected['emptyIncludeDirectories']:\n    if not pathlib.Path(p).is_dir() or list(pathlib.Path(p).iterdir()):raise SystemExit('UNBOUND_LOCAL_INCLUDE_INPUT')\nfor p in expected['noAdditionalLinkerInputDirectories']:\n    root=pathlib.Path(p)\n    if root.is_dir():\n        for x in root.iterdir():\n            if x.name.endswith(('.a','.o','.so')) or '.so.' in x.name or x.name=='x86_64-linux-gnu':raise SystemExit('UNBOUND_LOCAL_LINKER_INPUT')\nfor p,wanted in expected['publicLoaderConfigurationFileSha256'].items():\n    if sha(p)!=wanted:raise SystemExit('UNBOUND_BUILD_LOADER_CONFIGURATION')\n"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "VERIFY_PINNED_BUILD_INPUTS",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/mkdir",
+        "-p",
+        "/build/source",
+        "/build/work",
+        "/build/overlay",
+        "/build/empty-pkgconfig",
+        "/build/home",
+        "/build/tmp",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/bin",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/lib",
+        "/build/output/runtime-rootfs/lib64",
+        "/build/output/runtime-rootfs/bin"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "CREATE_BUILD_DIRECTORIES",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/dpkg-deb",
+        "-x",
+        "/build/input/debs/bison.deb",
+        "/build/overlay"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "EXTRACT_BISON",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/dpkg-deb",
+        "-x",
+        "/build/input/debs/flex.deb",
+        "/build/overlay"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "EXTRACT_FLEX",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/dpkg-deb",
+        "-x",
+        "/build/input/debs/m4.deb",
+        "/build/overlay"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "EXTRACT_M4",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/dpkg-deb",
+        "-x",
+        "/build/input/debs/libssl-dev.deb",
+        "/build/overlay"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "EXTRACT_LIBSSL_DEV",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import os; root='/build/overlay/usr/lib/x86_64-linux-gnu';\nfor name in ['libssl','libcrypto']:\n p=root+'/'+name+'.so'; os.unlink(p); os.symlink('/usr/lib/x86_64-linux-gnu/'+name+'.so.3',p)"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "BIND_OPENSSL_LINKER_INPUTS",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/tar",
+        "-xzf",
+        "/build/input/postgresql-17.6.tar.gz",
+        "-C",
+        "/build/source"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "EXTRACT_OFFICIAL_ARCHIVE",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import hashlib,pathlib; p=pathlib.Path('/build/source/postgresql-17.6/src/bin/pg_dump/pg_dumpall.c'); \nif hashlib.sha256(p.read_bytes()).hexdigest()!='5080a5879c44d3478ee3cbab0e55f49d3dcd3c4205e6d52cc5d3a6907c61e670': raise SystemExit('ORIGINAL_SOURCE_MISMATCH')"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "VERIFY_ORIGINAL_SOURCE",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/patch",
+        "--batch",
+        "--forward",
+        "--fuzz=0",
+        "-p1",
+        "-i",
+        "/build/input/pg17.6-session-readonly-receipt-v1.patch"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "APPLY_FORMAL_PATCH",
+      "workingDirectory": "/build/source/postgresql-17.6"
+    },
+    {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/build/overlay/usr/bin:/usr/bin:/bin",
+        "LC_ALL=C",
+        "CONFIG_SITE=/dev/null",
+        "BISON_PKGDATADIR=/build/overlay/usr/share/bison",
+        "M4=/build/overlay/usr/bin/m4",
+        "PKG_CONFIG_LIBDIR=/build/empty-pkgconfig",
+        "HOME=/build/home",
+        "TMPDIR=/build/tmp",
+        "/build/source/postgresql-17.6/configure",
+        "--prefix=/opt/teaching-agent/roles-exporter/pg17.6-v1",
+        "--with-ssl=openssl",
+        "--without-icu",
+        "--without-readline",
+        "--with-includes=/build/overlay/usr/include:/build/overlay/usr/include/x86_64-linux-gnu",
+        "--with-libraries=/build/overlay/usr/lib/x86_64-linux-gnu",
+        "CC=/usr/bin/x86_64-linux-gnu-gcc-15",
+        "LDFLAGS=-Wl,-rpath,/opt/teaching-agent/roles-exporter/pg17.6-v1/lib"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/build/overlay/usr/bin:/usr/bin:/bin"
+      },
+      "stepId": "CONFIGURE_PG176",
+      "workingDirectory": "/build/work"
+    },
+    {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/build/overlay/usr/bin:/usr/bin:/bin",
+        "LC_ALL=C",
+        "CONFIG_SITE=/dev/null",
+        "BISON_PKGDATADIR=/build/overlay/usr/share/bison",
+        "M4=/build/overlay/usr/bin/m4",
+        "PKG_CONFIG_LIBDIR=/build/empty-pkgconfig",
+        "HOME=/build/home",
+        "TMPDIR=/build/tmp",
+        "/usr/bin/make",
+        "-C",
+        "src/backend",
+        "generated-headers"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "GENERATE_PG_HEADERS",
+      "workingDirectory": "/build/work"
+    },
+    {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/build/overlay/usr/bin:/usr/bin:/bin",
+        "LC_ALL=C",
+        "CONFIG_SITE=/dev/null",
+        "BISON_PKGDATADIR=/build/overlay/usr/share/bison",
+        "M4=/build/overlay/usr/bin/m4",
+        "PKG_CONFIG_LIBDIR=/build/empty-pkgconfig",
+        "HOME=/build/home",
+        "TMPDIR=/build/tmp",
+        "/usr/bin/make",
+        "-C",
+        "src/bin/pg_dump",
+        "pg_dump",
+        "pg_dumpall"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "BUILD_MATCHING_CLIENTS",
+      "workingDirectory": "/build/work"
+    },
+    {
+      "argv": [
+        "/usr/bin/x86_64-linux-gnu-gcc-15",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wl,-rpath,/opt/teaching-agent/roles-exporter/pg17.6-v1/lib",
+        "-o",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/bin/receipt-launcher",
+        "/build/source/postgresql-17.6/src/bin/pg_dump/receipt-launcher.c"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "BUILD_RECEIPT_LAUNCHER",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/install",
+        "-m",
+        "0755",
+        "/build/work/src/bin/pg_dump/pg_dump",
+        "/build/work/src/bin/pg_dump/pg_dumpall",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/bin/"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "STAGE_CLIENTS",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/install",
+        "-m",
+        "0755",
+        "/build/work/src/interfaces/libpq/libpq.so.5.17",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/lib/libpq.so.5.17"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "STAGE_LIBPQ",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/ln",
+        "-s",
+        "libpq.so.5.17",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/lib/libpq.so.5"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "STAGE_LIBPQ_SONAME",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/install",
+        "-m",
+        "0755",
+        "/build/input/entrypoint-v1.sh",
+        "/build/output/runtime-rootfs/opt/teaching-agent/roles-exporter/pg17.6-v1/entrypoint-v1.sh"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "STAGE_ENTRYPOINT",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import hashlib,json,os,pathlib,re,shutil,subprocess\nprefix='/opt/teaching-agent/roles-exporter/pg17.6-v1'\nroot=pathlib.Path('/build/output/runtime-rootfs')\ndef raw(p): return hashlib.sha256(p.read_bytes()).hexdigest()\ndef elf(p):\n    # Bound readelf parses bytes; never ldd/execute the input under inspection.\n    dynamic=subprocess.run(['/usr/bin/readelf','-d',str(p)],check=True,capture_output=True,text=True).stdout\n    program=subprocess.run(['/usr/bin/readelf','-l',str(p)],check=True,capture_output=True,text=True).stdout\n    needed=re.findall(r'\\(NEEDED\\).*?\\[([^]]+)\\]',dynamic)\n    interpreter=re.findall(r'Requesting program interpreter: ([^]\\n]+)',program)\n    return needed,interpreter\ntools=[root/(prefix.lstrip('/')+'/bin/'+n) for n in ['pg_dumpall','pg_dump','receipt-launcher']]\nshutil.copy2('/usr/bin/dash',root/'bin/sh')\nlibpq=root/(prefix.lstrip('/')+'/lib/libpq.so.5.17')\nqueue=tools+[root/'bin/sh',libpq]\n# libpq belongs to the complete loader closure and remains in the traversal.\ndeps={'libpq.so.5':{'name':'libpq.so.5','path':prefix+'/lib/libpq.so.5','bytes':libpq.stat().st_size,'sha256':raw(libpq)}}; seen=set()\nwhile queue:\n    p=queue.pop()\n    if str(p) in seen: continue\n    seen.add(str(p)); needed,interpreters=elf(p)\n    for interp in interpreters:\n        if interp!='/lib64/ld-linux-x86-64.so.2': raise SystemExit('UNSUPPORTED_RUNTIME_LOADER')\n        src=pathlib.Path(interp).resolve(); dest=root/interp.lstrip('/')\n        if 'ld-linux-x86-64.so.2' not in deps:\n            shutil.copy2(src,dest); deps['ld-linux-x86-64.so.2']={'name':'ld-linux-x86-64.so.2','path':interp,'bytes':dest.stat().st_size,'sha256':raw(dest)};queue.append(dest)\n    for name in needed:\n        if '/' in name: raise SystemExit('UNSUPPORTED_NEEDED_PATH')\n        if name in deps: continue\n        src=pathlib.Path('/usr/lib/x86_64-linux-gnu')/name\n        if not src.is_file(): raise SystemExit('UNBOUND_RUNTIME_DEPENDENCY')\n        dest=root/(prefix.lstrip('/')+'/lib/'+name); shutil.copy2(src.resolve(),dest)\n        deps[name]={'name':name,'path':prefix+'/lib/'+name,'bytes':dest.stat().st_size,'sha256':raw(dest)}; queue.append(dest)\nitems=sorted(deps.values(),key=lambda x:x['name'].encode('ascii'))\nif not 1<=len(items)<=64 or len({x['name'] for x in items})!=len(items): raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n# This is a staged candidate, not a BUILT lock or evidence of loadability.\n# Actual loader closure (including dlopen/NSS/OpenSSL), versioned glibc/SSL\n# symbols, base-image ABI and unchanged bytes require the later real checks.\npathlib.Path('/build/output/runtime-dependencies-candidate.json').write_text(json.dumps(items,sort_keys=True,separators=(',',':'))+'\\n')\nprint('STAGED_CANDIDATE_REQUIRES_ACTUAL_LOADER_ABI_AND_TLS_VALIDATION')\n"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "STAGE_ELF_DEPENDENCY_CANDIDATE",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import subprocess\nimage='sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029';tag='teaching-agent-roles-exporter-pg176-base:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029'\ndef command(argv):return subprocess.run(argv,check=True,capture_output=True,text=True).stdout.strip()\nif command(['docker','image','inspect','--format','{{.Id}}',image])!=image: raise SystemExit('CACHED_RUNTIME_BASE_MISMATCH')\ncommand(['docker','tag',image,tag])\nif command(['docker','image','inspect','--format','{{.Id}}',tag])!=image: raise SystemExit('CACHED_RUNTIME_BASE_TAG_MISMATCH')\n# Legacy local-cache builder required. Unsupported builder is a terminal\n# future build failure, never a pull/network fallback or an alternate base.\n"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "BIND_CACHED_RUNTIME_BASE",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "LC_ALL=C",
+        "DOCKER_BUILDKIT=0",
+        "docker",
+        "build",
+        "--pull=false",
+        "--network=none",
+        "--no-cache",
+        "-f",
+        "/build/input/Dockerfile.v1",
+        "--iidfile",
+        "/build/output/runtime-image-candidate.id",
+        "/build/output"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "CREATE_RUNTIME_IMAGE_CANDIDATE",
+      "workingDirectory": "/build"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-c",
+        "import hashlib,json,pathlib,re,subprocess\nprefix='/opt/teaching-agent/roles-exporter/pg17.6-v1'\nimage=pathlib.Path('/build/output/runtime-image-candidate.id').read_text().strip()\nif not re.fullmatch('sha256:[a-f0-9]{64}',image):raise SystemExit('INVALID_CANDIDATE_IMAGE_ID')\ncandidate=json.loads(pathlib.Path('/build/output/runtime-dependencies-candidate.json').read_bytes())\ndef candidate_dependencies(candidate,prefix,libpq_bytes,libpq_sha):\n    # Private staging records retain the existing path field; formal lock and\n    # buildEvidence RuntimeDependency records remain exactly name/bytes/SHA.\n    if type(candidate) is not list or not 1<=len(candidate)<=64:\n        raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n    names=[]\n    for item in candidate:\n        if type(item) is not dict or set(item)!={'name','path','bytes','sha256'}:\n            raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n        name=item['name']\n        if type(name) is not str or not re.fullmatch(r'[A-Za-z0-9_.+-]{1,127}',name) or name in ('.','..'):\n            raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n        wanted='/lib64/ld-linux-x86-64.so.2' if name=='ld-linux-x86-64.so.2' else prefix+'/lib/'+name\n        if item['path']!=wanted or type(item['bytes']) is not int or item['bytes']<1 or type(item['sha256']) is not str or not re.fullmatch('[a-f0-9]{64}',item['sha256']):\n            raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n        names.append(name)\n    if names!=sorted(names,key=lambda n:n.encode('ascii')) or len(names)!=len(set(names)):\n        raise SystemExit('RUNTIME_DEPENDENCY_DOMAIN')\n    expected={x['name']:x for x in candidate}\n    if 'libpq.so.5' not in expected or expected['libpq.so.5']['bytes']!=libpq_bytes or expected['libpq.so.5']['sha256']!=libpq_sha:\n        raise SystemExit('LIBPQ_CANDIDATE_BINDING_MISMATCH')\n    return expected\nlibpq=pathlib.Path('/build/output/runtime-rootfs'+prefix+'/lib/libpq.so.5.17')\nexpected=candidate_dependencies(candidate,prefix,libpq.stat().st_size,hashlib.sha256(libpq.read_bytes()).hexdigest())\ndef invoke(entry,args=(),env=()):\n    argv=['docker','run','--rm','--pull=never','--network=none','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges']\n    for e in env:argv.extend(['--env',e])\n    argv.extend(['--entrypoint',entry,image]);argv.extend(args)\n    return subprocess.run(argv,check=True,capture_output=True)\nseen={}\nfor entry in [prefix+'/bin/pg_dump',prefix+'/bin/pg_dumpall',prefix+'/bin/receipt-launcher','/bin/sh']:\n    r=invoke(entry,env=('LD_TRACE_LOADED_OBJECTS=1',))\n    if r.stderr:raise SystemExit('LOADER_ABI_DIAGNOSTIC')\n    text=r.stdout.decode('ascii','strict')\n    if 'not found' in text:raise SystemExit('UNBOUND_RUNTIME_LOADER')\n    for line in text.splitlines():\n        if 'linux-vdso.so.1' in line:continue\n        m=re.fullmatch(r'\\s*(\\S+)\\s*=>\\s*(/\\S+)\\s*\\(0x[a-fA-F0-9]+\\)\\s*',line)\n        loader=re.fullmatch(r'\\s*(/\\S+)\\s*\\(0x[a-fA-F0-9]+\\)\\s*',line)\n        if m:name,path=m.groups()\n        elif loader:path=loader.group(1);name=path.rsplit('/',1)[-1]\n        else:raise SystemExit('UNRECOGNIZED_LOADER_RECORD')\n        if name not in expected or not (path.startswith(prefix+'/lib/') or path=='/lib64/ld-linux-x86-64.so.2'):\n            raise SystemExit('UNBOUND_RUNTIME_PATH')\n        if name in seen and seen[name]!=path:raise SystemExit('AMBIGUOUS_RUNTIME_NAME')\n        seen[name]=path\nif set(seen)!=set(expected):raise SystemExit('RUNTIME_CLOSURE_MISMATCH')\nfor name,path in seen.items():\n    digest=invoke('/usr/bin/sha256sum',(path,)).stdout.decode('ascii','strict').split()[0]\n    size=invoke('/usr/bin/wc',('-c',path)).stdout.decode('ascii','strict').split()[0]\n    if digest!=expected[name]['sha256'] or not size.isdecimal() or int(size)!=expected[name]['bytes']:\n        raise SystemExit('RUNTIME_DEPENDENCY_BYTES_MISMATCH')\nif invoke(prefix+'/bin/pg_dump',('--version',)).stdout!=b'pg_dump (PostgreSQL) 17.6\\n':\n    raise SystemExit('COMPANION_VERSION_MISMATCH')\n# Measured dynamic loading and no-DB companion check still do NOT establish\n# FD3 bridge, real TLS/DNS/dlopen closure, same-PGconn semantics, warm/reset,\n# read-only export or formal eligibility. P1/P2/N1-N8 and build evidence must\n# succeed later; neither this audit nor this recipe creates an artifact lock.\npathlib.Path('/build/output/runtime-loader-audit-candidate.json').write_text(json.dumps({'runtimeImageId':image,'loadedPaths':seen,'status':'CANDIDATE_LOADER_AUDIT_ONLY'},sort_keys=True,separators=(',',':'))+'\\n')\nprint('CANDIDATE_LOADER_AUDIT_ONLY_REQUIRES_FRESH_FORMAL_VALIDATION')\n"
+      ],
+      "environment": {
+        "LC_ALL": "C",
+        "PATH": "/usr/bin:/bin"
+      },
+      "stepId": "VERIFY_CANDIDATE_RUNTIME_LOADER_ABI_AND_BYTES",
+      "workingDirectory": "/build"
+    }
+  ],
+  "toolchainIdentity": {
+    "buildEnvironmentCanonicalSha256": "eb87aad34c2d27fea9d5ab2857be04fb352d4081dffd231ee56dbcc30e032925",
+    "compilerSha256": "b5f1b773a7c733738352000c92a077dc5852a1a2fc6d836b1e411be1e9ec5f88",
+    "linkerSha256": "97f48d93b8b076a92d2809ec29dcb17f0f37c8827358f832255e2ed22fef6075"
+  },
+  "upstreamInputs": {
+    "archiveRawSha256": "2910b85283674da2dae6ac13fe5ebbaaf3c482446396cba32e6728d3cc736d86",
+    "originalPgDumpallRawSha256": "5080a5879c44d3478ee3cbab0e55f49d3dcd3c4205e6d52cc5d3a6907c61e670",
+    "researchR1PatchRawSha256": "f08667dbc95ece957b2df121855178a29d842c4ab06307dcb9cc14fe3d10b101",
+    "researchR1SourceRawSha256": "483d3a5d9a74b357af948535ba513bc69090c2210cd50239d2287a5256a8bcfc"
+  }
+}

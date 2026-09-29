@@ -1,0 +1,19 @@
+{
+  "status": "MATCH",
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "candidateSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "approvedFilesMatched": 1394,
+  "compiledCreateAction": [
+    {
+      "file": ".next/server/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/page.js",
+      "sha256": "b6b278f298c7362a87a01d9dc7c0f393880805bc883a6377f22a8ba759b9cb63",
+      "rpcReference": true,
+      "createFailureTextPresent": true
+    }
+  ],
+  "workspaceSourceHashes": {
+    "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx": "e85b0f00fd033079986226f65db2aa17fa4f2965334b44de0cea236649eb5496",
+    "src/app/dashboard/admin/teaching-scripts/actions.ts": "4ef9669971974df7bcf3aba27dd65ad558653c390bee00fc26c0658e8ce734c9",
+    "src/features/learning-agent-script-studio/service.ts": "981966048e3362eec5e98c055f67cce2668559546e94a77746a85351d785bce2"
+  }
+}

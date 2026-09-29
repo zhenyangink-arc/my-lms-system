@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "sourceChecks": {
+    "all35FunctionBodiesAndSecurity": true,
+    "privateAgentAcl": true,
+    "agentRpcServiceOnly": true,
+    "skeletonAcl": true,
+    "agentTablesRlsNoBrowser": true,
+    "agentServiceTableAcl": true,
+    "sixIndexesValid": true,
+    "sevenTriggersEnabled": true,
+    "constraintCountsAndValidation": true,
+    "twoDeferredInputMessageFks": true,
+    "usageBoundariesRestrictive": true,
+    "rawNodeBroadPolicyRemoved": true,
+    "staffPolicies": true,
+    "safeView": true,
+    "exactNewColumns": true,
+    "usageNewColumns": true,
+    "cancelSequenceShape": true,
+    "agentRowsZero": true
+  },
+  "fullFunctionsPoliciesViewRlsMatchR5C": {
+    "functions": true,
+    "policies": true,
+    "view": true,
+    "rls": true
+  },
+  "safeViewSecurityBarrier": true,
+  "writeRpcCalls": 0
+}

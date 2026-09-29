@@ -1,0 +1,17 @@
+{
+  "status": "PARTIAL",
+  "ownerSession": "EXISTING SESSION VALID; no login or token transfer",
+  "targetPath": "/platform/dashboard/admin/apps/korean/textbooks/native-activity",
+  "renderedRole": "平台负责人",
+  "renderedTarget": "韩文字母入门 · 课前导航",
+  "scriptContext": "第0章 · 教学脚本第1版草稿 · 8个冻结小节",
+  "renderedQuestion": "哪个是元音？",
+  "optionsPresent": 3,
+  "creationControl": "DISABLED",
+  "renderedState": "目标状态不符，已停止创建。",
+  "rootCause": "b1c-draft-read-blocker.json",
+  "logicalCreateAttempts": 0,
+  "rawPersonalInformationStored": false,
+  "privateAnswerInPage": false,
+  "normalOwnerUIAvailable": true
+}

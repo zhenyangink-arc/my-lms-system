@@ -1,0 +1,1793 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tenant_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "actor_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "agent_code",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "app_id",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "scope_kind",
+        "notNull": true,
+        "number": 6,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "scope_ref",
+        "notNull": true,
+        "number": 7,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": "'active'::text",
+        "generated": "",
+        "identity": "",
+        "name": "status",
+        "notNull": true,
+        "number": 8,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "clock_timestamp()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 9,
+        "schema": "public",
+        "table": "agent_conversations",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "gen_random_uuid()",
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tenant_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "actor_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "agent_code",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "version",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "status",
+        "notNull": true,
+        "number": 6,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "manifest",
+        "notNull": true,
+        "number": 7,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "clock_timestamp()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 8,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "gen_random_uuid()",
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tenant_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "actor_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "conversation_id",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "run_id",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "role",
+        "notNull": true,
+        "number": 6,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "content",
+        "notNull": true,
+        "number": 7,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "state",
+        "notNull": true,
+        "number": 8,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": "'agent_core'::text",
+        "generated": "",
+        "identity": "",
+        "name": "origin",
+        "notNull": true,
+        "number": 9,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "'[]'::jsonb",
+        "generated": "",
+        "identity": "",
+        "name": "source_refs",
+        "notNull": true,
+        "number": 10,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "clock_timestamp()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 11,
+        "schema": "public",
+        "table": "agent_messages",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "gen_random_uuid()",
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tenant_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "actor_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "run_id",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "seq",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "bigint"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "kind",
+        "notNull": true,
+        "number": 6,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "model_call_id",
+        "notNull": false,
+        "number": 7,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tool_call_id",
+        "notNull": false,
+        "number": 8,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "skill_run_id",
+        "notNull": false,
+        "number": 9,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "'{}'::jsonb",
+        "generated": "",
+        "identity": "",
+        "name": "metadata",
+        "notNull": true,
+        "number": 10,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "clock_timestamp()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 11,
+        "schema": "public",
+        "table": "agent_run_events",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "gen_random_uuid()",
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "tenant_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "actor_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "conversation_id",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "input_message_id",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "definition_id",
+        "notNull": true,
+        "number": 6,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "agent_code",
+        "notNull": true,
+        "number": 7,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "profile_version",
+        "notNull": true,
+        "number": 8,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "skill_ref",
+        "notNull": true,
+        "number": 9,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "scope_ref",
+        "notNull": true,
+        "number": 10,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": "'created'::text",
+        "generated": "",
+        "identity": "",
+        "name": "status",
+        "notNull": true,
+        "number": 11,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "idempotency_key",
+        "notNull": true,
+        "number": 12,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "request_digest",
+        "notNull": true,
+        "number": 13,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "budget",
+        "notNull": true,
+        "number": 14,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "deadline_at",
+        "notNull": true,
+        "number": 15,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "lease_expires_at",
+        "notNull": true,
+        "number": 16,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "1",
+        "generated": "",
+        "identity": "",
+        "name": "state_version",
+        "notNull": true,
+        "number": 17,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "integer"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "gen_random_uuid()",
+        "generated": "",
+        "identity": "",
+        "name": "fencing_token",
+        "notNull": true,
+        "number": 18,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "1",
+        "generated": "",
+        "identity": "",
+        "name": "execution_attempt",
+        "notNull": true,
+        "number": 19,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "integer"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "retry_of_run_id",
+        "notNull": false,
+        "number": 20,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "'{}'::jsonb",
+        "generated": "",
+        "identity": "",
+        "name": "context_metadata",
+        "notNull": true,
+        "number": 21,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "terminal_reason",
+        "notNull": false,
+        "number": 22,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "clock_timestamp()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 23,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "ended_at",
+        "notNull": false,
+        "number": 24,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "run_id",
+        "notNull": false,
+        "number": 12,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "model_call_id",
+        "notNull": false,
+        "number": 13,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "attempt_index",
+        "notNull": false,
+        "number": 14,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "type": "integer"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "usage_status",
+        "notNull": false,
+        "number": 15,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "type": "text"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "duration_ms",
+        "notNull": false,
+        "number": 16,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "type": "integer"
+      }
+    ],
+    "removed": []
+  },
+  "constraints": {
+    "added": [
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (actor_id) REFERENCES public.profiles(id)",
+        "kind": "f",
+        "name": "agent_conversations_actor_id_fkey",
+        "schema": "public",
+        "table": "agent_conversations",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (id)",
+        "kind": "p",
+        "name": "agent_conversations_pkey",
+        "schema": "public",
+        "table": "agent_conversations",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'closed'::text])))",
+        "kind": "c",
+        "name": "agent_conversations_status_check",
+        "schema": "public",
+        "table": "agent_conversations",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, actor_id, id)",
+        "kind": "u",
+        "name": "agent_conversations_tenant_id_actor_id_id_key",
+        "schema": "public",
+        "table": "agent_conversations",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES public.tenants(id)",
+        "kind": "f",
+        "name": "agent_conversations_tenant_id_fkey",
+        "schema": "public",
+        "table": "agent_conversations",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (actor_id) REFERENCES public.profiles(id)",
+        "kind": "f",
+        "name": "agent_definition_versions_actor_id_fkey",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((jsonb_typeof(manifest) = 'object'::text))",
+        "kind": "c",
+        "name": "agent_definition_versions_manifest_check",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (id)",
+        "kind": "p",
+        "name": "agent_definition_versions_pkey",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((status = ANY (ARRAY['published'::text, 'disabled'::text])))",
+        "kind": "c",
+        "name": "agent_definition_versions_status_check",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, agent_code, version)",
+        "kind": "u",
+        "name": "agent_definition_versions_tenant_id_agent_code_version_key",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES public.tenants(id)",
+        "kind": "f",
+        "name": "agent_definition_versions_tenant_id_fkey",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, id)",
+        "kind": "u",
+        "name": "agent_definition_versions_tenant_id_id_key",
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((length(content) <= 100000))",
+        "kind": "c",
+        "name": "agent_messages_content_check",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (id)",
+        "kind": "p",
+        "name": "agent_messages_pkey",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))",
+        "kind": "c",
+        "name": "agent_messages_role_check",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (run_id, role)",
+        "kind": "u",
+        "name": "agent_messages_run_id_role_key",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((state = ANY (ARRAY['accepted'::text, 'final'::text, 'partial'::text])))",
+        "kind": "c",
+        "name": "agent_messages_state_check",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES public.agent_conversations(tenant_id, actor_id, id)",
+        "kind": "f",
+        "name": "agent_messages_tenant_id_actor_id_conversation_id_fkey",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, actor_id, id)",
+        "kind": "u",
+        "name": "agent_messages_tenant_id_actor_id_id_key",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": true,
+        "deferred": true,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES public.agent_runs(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED",
+        "kind": "f",
+        "name": "agent_messages_tenant_id_actor_id_run_id_fkey",
+        "schema": "public",
+        "table": "agent_messages",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (id)",
+        "kind": "p",
+        "name": "agent_run_events_pkey",
+        "schema": "public",
+        "table": "agent_run_events",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (run_id, seq)",
+        "kind": "u",
+        "name": "agent_run_events_run_id_seq_key",
+        "schema": "public",
+        "table": "agent_run_events",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES public.agent_runs(tenant_id, actor_id, id)",
+        "kind": "f",
+        "name": "agent_run_events_tenant_id_actor_id_run_id_fkey",
+        "schema": "public",
+        "table": "agent_run_events",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK (((length(idempotency_key) >= 8) AND (length(idempotency_key) <= 128)))",
+        "kind": "c",
+        "name": "agent_runs_idempotency_key_check",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": true,
+        "deferred": true,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, input_message_id) REFERENCES public.agent_messages(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED",
+        "kind": "f",
+        "name": "agent_runs_input_fk",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (id)",
+        "kind": "p",
+        "name": "agent_runs_pkey",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((request_digest ~ '^[a-f0-9]{64}$'::text))",
+        "kind": "c",
+        "name": "agent_runs_request_digest_check",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])))",
+        "kind": "c",
+        "name": "agent_runs_status_check",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES public.agent_conversations(tenant_id, actor_id, id)",
+        "kind": "f",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_fkey",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, actor_id, conversation_id, idempotency_key)",
+        "kind": "u",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (tenant_id, actor_id, id)",
+        "kind": "u",
+        "name": "agent_runs_tenant_id_actor_id_id_key",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id, actor_id, retry_of_run_id) REFERENCES public.agent_runs(tenant_id, actor_id, id)",
+        "kind": "f",
+        "name": "agent_runs_tenant_id_actor_id_retry_of_run_id_fkey",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (tenant_id, definition_id) REFERENCES public.agent_definition_versions(tenant_id, id)",
+        "kind": "f",
+        "name": "agent_runs_tenant_id_definition_id_fkey",
+        "schema": "public",
+        "table": "agent_runs",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (run_id) REFERENCES public.agent_runs(id)",
+        "kind": "f",
+        "name": "ai_token_usage_run_id_fkey",
+        "schema": "public",
+        "table": "ai_token_usage",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((usage_status = ANY (ARRAY['reported'::text, 'estimated'::text, 'unknown'::text])))",
+        "kind": "c",
+        "name": "ai_token_usage_usage_status_check",
+        "schema": "public",
+        "table": "ai_token_usage",
+        "typeName": null,
+        "validated": true
+      }
+    ],
+    "removed": []
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_conversation uuid, p_agent text, p_app text, p_scope_kind text, p_scope_ref text, p_key text, p_digest text, p_message text, p_definition_version text, p_skill jsonb, p_budget jsonb, p_deadline timestamp with time zone",
+        "definition": "CREATE OR REPLACE FUNCTION public.admit_agent_run_v1(p_tenant uuid, p_actor uuid, p_conversation uuid, p_agent text, p_app text, p_scope_kind text, p_scope_ref text, p_key text, p_digest text, p_message text, p_definition_version text, p_skill jsonb, p_budget jsonb, p_deadline timestamp with time zone)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare c public.agent_conversations; r public.agent_runs; d public.agent_definition_versions; rid uuid:=gen_random_uuid(); mid uuid:=gen_random_uuid();\nbegin\n  perform agent_core_private.actor_guard(p_tenant,p_actor);\n  if p_app is null or length(p_app)=0 or p_scope_ref is null or length(p_scope_ref)=0 or p_conversation is null then raise exception 'FORBIDDEN'; end if;\n  -- The transaction lock also serializes first conversation creation on retry.\n  perform pg_advisory_xact_lock(hashtextextended(p_conversation::text, 908));\n  select * into c from public.agent_conversations where id=p_conversation for update;\n  if found and (c.tenant_id<>p_tenant or c.actor_id<>p_actor or c.agent_code<>p_agent or c.app_id<>p_app or c.scope_kind<>p_scope_kind or c.scope_ref<>p_scope_ref or c.status<>'active') then raise exception 'FORBIDDEN'; end if;\n  select * into r from public.agent_runs where conversation_id=p_conversation and tenant_id=p_tenant and actor_id=p_actor and idempotency_key=p_key;\n  if found then\n    if r.request_digest is distinct from p_digest then raise exception 'IDEMPOTENCY_CONFLICT'; end if;\n    return jsonb_build_object('run',agent_core_private.run_json(r),'replayed',true);\n  end if;\n  if exists(select 1 from public.agent_runs where conversation_id=p_conversation and status in ('created','running','waiting_tool')) then raise exception 'CONVERSATION_BUSY'; end if;\n  select * into d from public.agent_definition_versions where tenant_id=p_tenant and agent_code=p_agent and version=p_definition_version and status='published';\n  if not found then raise exception 'BUDGET_UNAVAILABLE'; end if;\n  perform agent_core_private.check_budget(p_budget);\n  if (p_budget-'deadlineAt'-'usedModelCalls'-'usedToolExecutions') is distinct from (d.manifest->'budget')\n     or (p_budget->>'usedModelCalls')::int<>0 or (p_budget->>'usedToolExecutions')::int<>0\n     or p_deadline is null or p_deadline<=clock_timestamp() or p_deadline>clock_timestamp()+interval '45 seconds'\n     or (p_budget->>'deadlineAt')::timestamptz is distinct from p_deadline\n     or not coalesce((d.manifest->'allowedSkillRefs') @> jsonb_build_array(p_skill),false)\n  then raise exception 'BUDGET_UNAVAILABLE'; end if;\n  if p_message is null or length(trim(p_message)) not between 1 and 8000 then raise exception 'INVALID_REQUEST'; end if;\n  if c.id is null then\n    insert into public.agent_conversations(id,tenant_id,actor_id,agent_code,app_id,scope_kind,scope_ref)\n      values(p_conversation,p_tenant,p_actor,p_agent,p_app,p_scope_kind,p_scope_ref);\n  end if;\n  insert into public.agent_runs(id,tenant_id,actor_id,conversation_id,input_message_id,definition_id,agent_code,profile_version,skill_ref,scope_ref,idempotency_key,request_digest,budget,deadline_at,lease_expires_at)\n    values(rid,p_tenant,p_actor,p_conversation,mid,d.id,p_agent,p_definition_version,p_skill,p_scope_ref,p_key,p_digest,p_budget,p_deadline,p_deadline) returning * into r;\n  insert into public.agent_messages(id,tenant_id,actor_id,conversation_id,run_id,role,content,state)\n    values(mid,p_tenant,p_actor,p_conversation,rid,'user',p_message,'accepted');\n  return jsonb_build_object('run',agent_core_private.run_json(r),'replayed',false);\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_conversation uuid, p_agent text, p_app text, p_scope_kind text, p_scope_ref text, p_key text, p_digest text, p_message text, p_definition_version text, p_skill jsonb, p_budget jsonb, p_deadline timestamp with time zone",
+        "name": "admit_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb",
+        "definition": "CREATE OR REPLACE FUNCTION public.append_agent_run_event_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs;\nbegin\n  perform agent_core_private.actor_guard(p_tenant,p_actor);\n  select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor for update;\n  if not found then raise exception 'RUN_NOT_FOUND'; end if;\n  if r.state_version is distinct from p_version or r.fencing_token is distinct from p_fence or r.status in ('completed','failed','cancelled') then raise exception 'PERSISTENCE_FAILED'; end if;\n  if p_event->>'kind' is null or p_event->>'kind' not in ('run.started','permission.checked','context.resolved','skill.selected','model.started','tool.started','tool.completed')\n     or (p_event-'kind'-'runId'-'at'-'modelCallId'-'toolCallId'-'skillRunId'-'contextSnapshotId'-'errorCode')<>'{}'::jsonb\n     or p_event->>'runId' is distinct from p_run::text then raise exception 'INVALID_REQUEST'; end if;\n  if p_event->>'kind'='context.resolved' and (p_event->>'contextSnapshotId' is null\n    or (r.context_metadata ? 'snapshotId' and r.context_metadata->>'snapshotId' is distinct from p_event->>'contextSnapshotId')) then raise exception 'INVALID_REQUEST'; end if;\n  insert into public.agent_run_events(tenant_id,actor_id,run_id,seq,kind,model_call_id,tool_call_id,skill_run_id,metadata)\n    select p_tenant,p_actor,p_run,coalesce(max(seq),0)+1,p_event->>'kind',(p_event->>'modelCallId')::uuid,p_event->>'toolCallId',(p_event->>'skillRunId')::uuid,\n      jsonb_strip_nulls(jsonb_build_object('errorCode',p_event->>'errorCode','contextSnapshotId',p_event->>'contextSnapshotId')) from public.agent_run_events where run_id=p_run;\n  if p_event->>'kind'='context.resolved' then\n    update public.agent_runs set context_metadata=jsonb_build_object('snapshotId',(p_event->>'contextSnapshotId')::uuid) where id=p_run;\n  end if;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb",
+        "name": "append_agent_run_event_v1",
+        "owner": "postgres",
+        "result": "void",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_record jsonb",
+        "definition": "CREATE OR REPLACE FUNCTION public.record_agent_usage_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_record jsonb)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs; u jsonb:=p_record->'usage'; old_record jsonb; n text;\nbegin\n  -- Accounting for an already-started call is allowed during stop cleanup.\n  select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor for update;\n  if not found then raise exception 'RUN_NOT_FOUND'; end if;\n  if r.state_version is distinct from p_version or r.fencing_token is distinct from p_fence or r.status in ('completed','failed','cancelled') then raise exception 'PERSISTENCE_FAILED'; end if;\n  if (p_record-'runId'-'modelCallId'-'attemptIndex'-'provider'-'model'-'durationMs'-'usage')<>'{}'::jsonb\n    or p_record->>'runId' is distinct from p_run::text or p_record->>'modelCallId' is null\n    or (p_record->>'attemptIndex')::int is distinct from r.execution_attempt or (p_record->>'durationMs')::int<0\n    or u->>'status' is null or u->>'status' not in ('reported','estimated','unknown') then raise exception 'INVALID_REQUEST'; end if;\n  if u->>'status'='unknown' then\n    if u<>jsonb_build_object('status','unknown') then raise exception 'INVALID_REQUEST'; end if;\n  else\n    foreach n in array array['inputTokens','outputTokens','totalTokens'] loop\n      if u->>n is null or (u->>n)::int<0 then raise exception 'INVALID_REQUEST'; end if;\n    end loop;\n    if (u-'status'-'inputTokens'-'outputTokens'-'totalTokens')<>'{}'::jsonb or (u->>'totalTokens')::int<>(u->>'inputTokens')::int+(u->>'outputTokens')::int then raise exception 'INVALID_REQUEST'; end if;\n  end if;\n  select metadata into old_record from public.agent_run_events where run_id=p_run and model_call_id=(p_record->>'modelCallId')::uuid and kind='model.usage';\n  if found then\n    if old_record is distinct from p_record then raise exception 'IDEMPOTENCY_CONFLICT'; end if;\n    return;\n  end if;\n  insert into public.agent_run_events(tenant_id,actor_id,run_id,seq,kind,model_call_id,metadata)\n    select p_tenant,p_actor,p_run,coalesce(max(seq),0)+1,'model.usage',(p_record->>'modelCallId')::uuid,p_record from public.agent_run_events where run_id=p_run;\n  if u->>'status'<>'unknown' then\n    insert into public.ai_token_usage(user_id,tenant_id,provider,model,feature_code,agent_code,input_tokens,output_tokens,total_tokens,run_id,model_call_id,attempt_index,usage_status,duration_ms)\n      values(p_actor,p_tenant,p_record->>'provider',p_record->>'model','agent_core',r.agent_code,(u->>'inputTokens')::int,(u->>'outputTokens')::int,(u->>'totalTokens')::int,p_run,(p_record->>'modelCallId')::uuid,r.execution_attempt,u->>'status',(p_record->>'durationMs')::int);\n  end if;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_record jsonb",
+        "name": "record_agent_usage_v1",
+        "owner": "postgres",
+        "result": "void",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "definition": "CREATE OR REPLACE FUNCTION public.transition_agent_run_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs; terminal boolean;\nbegin\n  -- Stop-only cleanup remains valid after membership/authority expiry. The\n  -- service-only caller still supplies bound owner IDs and the live fence/version.\n  if p_to not in ('failed','cancelled') then perform agent_core_private.actor_guard(p_tenant,p_actor); end if;\n  select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor for update;\n  if not found then raise exception 'RUN_NOT_FOUND'; end if;\n  if r.status in ('completed','failed','cancelled') or r.status is distinct from p_expected_status or r.state_version is distinct from p_expected_version or r.fencing_token is distinct from p_fence then raise exception 'PERSISTENCE_FAILED'; end if;\n  if not coalesce((r.status='created' and p_to in ('running','failed','cancelled')) or (r.status='running' and p_to in ('waiting_tool','completed','failed','cancelled')) or (r.status='waiting_tool' and p_to in ('running','failed','cancelled')),false) then raise exception 'PERSISTENCE_FAILED'; end if;\n  terminal:=p_to in ('completed','failed','cancelled');\n  if p_to not in ('failed','cancelled') and least(r.deadline_at,r.lease_expires_at)<=clock_timestamp() then raise exception 'DEADLINE_EXCEEDED'; end if;\n  perform agent_core_private.check_budget(p_budget);\n  if (p_budget-'usedModelCalls'-'usedToolExecutions') is distinct from (r.budget-'usedModelCalls'-'usedToolExecutions')\n    or (p_budget->>'usedModelCalls')::int<(r.budget->>'usedModelCalls')::int\n    or (p_budget->>'usedToolExecutions')::int<(r.budget->>'usedToolExecutions')::int then raise exception 'BUDGET_UNAVAILABLE'; end if;\n  if p_to='completed' and p_final is null then raise exception 'INVALID_REQUEST'; end if;\n  if not terminal and p_final is not null then raise exception 'INVALID_REQUEST'; end if;\n  update public.agent_runs set status=p_to,state_version=state_version+1,budget=p_budget,\n    terminal_reason=case when terminal then left(p_reason,100) else null end,\n    ended_at=case when terminal then clock_timestamp() else null end where id=p_run returning * into r;\n  if terminal and p_final is not null then\n    insert into public.agent_messages(tenant_id,actor_id,conversation_id,run_id,role,content,state)\n      values(p_tenant,p_actor,r.conversation_id,p_run,'assistant',p_final,case when p_to='completed' then 'final' else 'partial' end);\n  end if;\n  if terminal then\n    insert into public.agent_run_events(tenant_id,actor_id,run_id,seq,kind,metadata)\n      select p_tenant,p_actor,p_run,coalesce(max(seq),0)+1,'run.'||p_to,'{}'::jsonb from public.agent_run_events where run_id=p_run;\n  end if;\n  return agent_core_private.run_json(r);\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    ],
+    "removed": []
+  },
+  "indexes": {
+    "added": [
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_conversations_pkey ON public.agent_conversations USING btree (id)",
+        "name": "agent_conversations_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_conversations",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_conversations_tenant_id_actor_id_id_key ON public.agent_conversations USING btree (tenant_id, actor_id, id)",
+        "name": "agent_conversations_tenant_id_actor_id_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_conversations",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_definition_versions_pkey ON public.agent_definition_versions USING btree (id)",
+        "name": "agent_definition_versions_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_definition_versions_tenant_id_agent_code_version_key ON public.agent_definition_versions USING btree (tenant_id, agent_code, version)",
+        "name": "agent_definition_versions_tenant_id_agent_code_version_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_definition_versions_tenant_id_id_key ON public.agent_definition_versions USING btree (tenant_id, id)",
+        "name": "agent_definition_versions_tenant_id_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_definition_versions",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE INDEX agent_messages_conversation_created ON public.agent_messages USING btree (conversation_id, created_at)",
+        "name": "agent_messages_conversation_created",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_messages",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_messages_pkey ON public.agent_messages USING btree (id)",
+        "name": "agent_messages_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_messages",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_messages_run_id_role_key ON public.agent_messages USING btree (run_id, role)",
+        "name": "agent_messages_run_id_role_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_messages",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_messages_tenant_id_actor_id_id_key ON public.agent_messages USING btree (tenant_id, actor_id, id)",
+        "name": "agent_messages_tenant_id_actor_id_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_messages",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_run_events_pkey ON public.agent_run_events USING btree (id)",
+        "name": "agent_run_events_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_run_events",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_run_events_run_id_seq_key ON public.agent_run_events USING btree (run_id, seq)",
+        "name": "agent_run_events_run_id_seq_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_run_events",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_run_usage_once ON public.agent_run_events USING btree (run_id, model_call_id) WHERE (kind = 'model.usage'::text)",
+        "name": "agent_run_usage_once",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_run_events",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE INDEX agent_runs_actor_created ON public.agent_runs USING btree (tenant_id, actor_id, created_at DESC)",
+        "name": "agent_runs_actor_created",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_runs_one_active ON public.agent_runs USING btree (conversation_id) WHERE (status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text]))",
+        "name": "agent_runs_one_active",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_runs_pkey ON public.agent_runs USING btree (id)",
+        "name": "agent_runs_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key ON public.agent_runs USING btree (tenant_id, actor_id, conversation_id, idempotency_key)",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_runs_tenant_id_actor_id_id_key ON public.agent_runs USING btree (tenant_id, actor_id, id)",
+        "name": "agent_runs_tenant_id_actor_id_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX agent_usage_call_once ON public.ai_token_usage USING btree (run_id, model_call_id) WHERE (run_id IS NOT NULL)",
+        "name": "agent_usage_call_once",
+        "ready": true,
+        "schema": "public",
+        "table": "ai_token_usage",
+        "valid": true
+      }
+    ],
+    "removed": []
+  },
+  "policies": {
+    "added": [
+      {
+        "cmd": "DELETE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "agent_usage_browser_delete_boundary",
+        "qual": "(run_id IS NULL)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "ai_token_usage",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "permissive": "RESTRICTIVE",
+        "policyname": "agent_usage_browser_insert_boundary",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "ai_token_usage",
+        "with_check": "(run_id IS NULL)"
+      },
+      {
+        "cmd": "UPDATE",
+        "permissive": "RESTRICTIVE",
+        "policyname": "agent_usage_browser_update_boundary",
+        "qual": "(run_id IS NULL)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "ai_token_usage",
+        "with_check": "(run_id IS NULL)"
+      }
+    ],
+    "removed": []
+  },
+  "relations": {
+    "added": [
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=r/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "agent_conversations",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=ar/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "agent_definition_versions",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=r/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "agent_messages",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=r/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "agent_run_events",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=r/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "agent_runs",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  },
+  "triggers": {
+    "added": [
+      {
+        "definition": "CREATE TRIGGER agent_definition_guard BEFORE INSERT ON public.agent_definition_versions FOR EACH ROW EXECUTE FUNCTION agent_core_private.definition_guard()",
+        "enabled": "O",
+        "name": "agent_definition_guard",
+        "schema": "public",
+        "table": "agent_definition_versions"
+      },
+      {
+        "definition": "CREATE TRIGGER agent_definition_immutable BEFORE DELETE OR UPDATE ON public.agent_definition_versions FOR EACH ROW EXECUTE FUNCTION agent_core_private.immutable()",
+        "enabled": "O",
+        "name": "agent_definition_immutable",
+        "schema": "public",
+        "table": "agent_definition_versions"
+      },
+      {
+        "definition": "CREATE TRIGGER agent_event_immutable BEFORE DELETE OR UPDATE ON public.agent_run_events FOR EACH ROW EXECUTE FUNCTION agent_core_private.immutable()",
+        "enabled": "O",
+        "name": "agent_event_immutable",
+        "schema": "public",
+        "table": "agent_run_events"
+      }
+    ],
+    "removed": []
+  },
+  "types": {
+    "added": [
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_agent_conversations",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_agent_definition_versions",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_agent_messages",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_agent_run_events",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_agent_runs",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "agent_conversations",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "agent_definition_versions",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "agent_messages",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "agent_run_events",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "agent_runs",
+        "notNull": false,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  }
+}

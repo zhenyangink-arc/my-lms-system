@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "concurrent identical request creates exactly one attempt; changed payload rejected",
+  "concurrentSameRequestAttempts": 1,
+  "newProcessReplayAttempts": 1,
+  "changedPayload": "REJECTED",
+  "changedGenerationSameLogicalPayload": "No new logical attempt",
+  "mechanism": "Existing advisory lock in same transaction plus request envelope in existing response JSONB",
+  "bareRpcOutsideSeamIdempotent": false,
+  "newTableOrRpc": false
+}

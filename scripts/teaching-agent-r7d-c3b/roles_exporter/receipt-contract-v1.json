@@ -1,0 +1,627 @@
+{
+  "component": {
+    "name": "PG176_SESSION_READONLY_ROLES_EXPORTER",
+    "upstreamVersion": "17.6",
+    "version": 1
+  },
+  "contract": "roles-exporter-receipt-contract/1",
+  "framing": "strict UTF8 canonical JSON (sorted keys,compact,ensure_ascii=false) plus exactly one terminal LF",
+  "maximumBytes": 8192,
+  "operationRegistry": {
+    "contract": "roles-exporter-operation-registry/1",
+    "initializers": [
+      {
+        "operationId": "SET_READONLY",
+        "sqlRawSha256": "e565671eeaa29192d225f4e6931c6e2597f8958eee2f0bcda5935efc4084822d"
+      },
+      {
+        "operationId": "SET_STATEMENT_TIMEOUT",
+        "sqlRawSha256": "e706aca44f89d211d48deabe07871e13b6dcb0d16f9eae417b8033cdd2a3a36f"
+      },
+      {
+        "operationId": "SET_LOCK_TIMEOUT",
+        "sqlRawSha256": "7b39880e432f137349b80aa457d97cfeda6c2432cd84ce0a2fff339101a821cc"
+      }
+    ],
+    "measurement": {
+      "columnCount": 11,
+      "columns": [
+        "transactionReadOnly",
+        "defaultTransactionReadOnly",
+        "backendPid",
+        "serverVersionNum",
+        "database",
+        "sessionUser",
+        "currentUser",
+        "serverEncoding",
+        "clientEncoding",
+        "statementTimeoutSetting",
+        "lockTimeoutSetting"
+      ],
+      "formats": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isNull": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "operationId": "MEASURE_GATE_11",
+      "rowCount": 1,
+      "sqlRawSha256": "69ca65eec13106041e9a35318a5395f5d32210cabba9374ee657a6a3cf466e8f",
+      "typeOids": [
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25
+      ]
+    },
+    "schemaVersion": 1
+  },
+  "operationSql": {
+    "initializers": [
+      {
+        "operationId": "SET_READONLY",
+        "requiredPgResultStatus": "PGRES_COMMAND_OK",
+        "sql": "SET SESSION default_transaction_read_only = on;\n",
+        "sqlRawSha256": "e565671eeaa29192d225f4e6931c6e2597f8958eee2f0bcda5935efc4084822d",
+        "utf8Bytes": 48
+      },
+      {
+        "operationId": "SET_STATEMENT_TIMEOUT",
+        "requiredPgResultStatus": "PGRES_COMMAND_OK",
+        "sql": "SET SESSION statement_timeout = 30000;\n",
+        "sqlRawSha256": "e706aca44f89d211d48deabe07871e13b6dcb0d16f9eae417b8033cdd2a3a36f",
+        "utf8Bytes": 39
+      },
+      {
+        "operationId": "SET_LOCK_TIMEOUT",
+        "requiredPgResultStatus": "PGRES_COMMAND_OK",
+        "sql": "SET SESSION lock_timeout = 5000;\n",
+        "sqlRawSha256": "7b39880e432f137349b80aa457d97cfeda6c2432cd84ce0a2fff339101a821cc",
+        "utf8Bytes": 33
+      }
+    ],
+    "measurement": {
+      "columnCount": 11,
+      "columns": [
+        "transactionReadOnly",
+        "defaultTransactionReadOnly",
+        "backendPid",
+        "serverVersionNum",
+        "database",
+        "sessionUser",
+        "currentUser",
+        "serverEncoding",
+        "clientEncoding",
+        "statementTimeoutSetting",
+        "lockTimeoutSetting"
+      ],
+      "expectedActualText": [
+        "on",
+        "on",
+        "STRICT_POSITIVE_DECIMAL_PID",
+        "170006",
+        "postgres",
+        "postgres",
+        "postgres",
+        "UTF8",
+        "UTF8",
+        "30s",
+        "5s"
+      ],
+      "formats": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "isNull": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "operationId": "MEASURE_GATE_11",
+      "rowCount": 1,
+      "sql": "SELECT\n    pg_catalog.current_setting('transaction_read_only'),\n    pg_catalog.current_setting('default_transaction_read_only'),\n    pg_catalog.pg_backend_pid()::pg_catalog.text,\n    pg_catalog.current_setting('server_version_num'),\n    pg_catalog.current_database()::pg_catalog.text,\n    SESSION_USER::pg_catalog.text,\n    CURRENT_USER::pg_catalog.text,\n    pg_catalog.current_setting('server_encoding'),\n    pg_catalog.current_setting('client_encoding'),\n    pg_catalog.current_setting('statement_timeout'),\n    pg_catalog.current_setting('lock_timeout');\n",
+      "sqlRawSha256": "69ca65eec13106041e9a35318a5395f5d32210cabba9374ee657a6a3cf466e8f",
+      "typeOids": [
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25,
+        25
+      ],
+      "utf8Bytes": 558
+    }
+  },
+  "producerReceiptSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "bindings": {
+        "additionalProperties": false,
+        "properties": {
+          "acquisitionId": {
+            "pattern": "^[a-f0-9]{32}$",
+            "type": "string"
+          },
+          "argvSha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "artifactLockSha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "dispatchSha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "invocationId": {
+            "pattern": "^[a-f0-9]{32}$",
+            "type": "string"
+          },
+          "rolesGateRegistrySha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          },
+          "sourceTargetId": {
+            "pattern": "^[a-f0-9]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "acquisitionId",
+          "invocationId",
+          "dispatchSha256",
+          "artifactLockSha256",
+          "sourceTargetId",
+          "rolesGateRegistrySha256",
+          "argvSha256"
+        ],
+        "type": "object"
+      },
+      "component": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "const": "PG176_SESSION_READONLY_ROLES_EXPORTER"
+          },
+          "upstreamVersion": {
+            "const": "17.6"
+          },
+          "version": {
+            "const": 1
+          }
+        },
+        "required": [
+          "name",
+          "version",
+          "upstreamVersion"
+        ],
+        "type": "object"
+      },
+      "contract": {
+        "const": "roles-exporter-measurement-receipt/1"
+      },
+      "frontendTls": {
+        "additionalProperties": false,
+        "properties": {
+          "cipher": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+            "type": "string"
+          },
+          "inUse": {
+            "const": true
+          },
+          "protocol": {
+            "enum": [
+              "TLSv1.2",
+              "TLSv1.3"
+            ]
+          }
+        },
+        "required": [
+          "inUse",
+          "protocol",
+          "cipher"
+        ],
+        "type": "object"
+      },
+      "initializerResults": {
+        "items": false,
+        "maxItems": 3,
+        "minItems": 3,
+        "prefixItems": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "commandTag": {
+                "const": "SET"
+              },
+              "connectionStatus": {
+                "const": "CONNECTION_OK"
+              },
+              "operationId": {
+                "const": "SET_READONLY"
+              },
+              "resultStatus": {
+                "const": "PGRES_COMMAND_OK"
+              },
+              "sqlRawSha256": {
+                "const": "e565671eeaa29192d225f4e6931c6e2597f8958eee2f0bcda5935efc4084822d"
+              },
+              "transactionStatus": {
+                "const": "PQTRANS_IDLE"
+              }
+            },
+            "required": [
+              "operationId",
+              "sqlRawSha256",
+              "resultStatus",
+              "commandTag",
+              "connectionStatus",
+              "transactionStatus"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "commandTag": {
+                "const": "SET"
+              },
+              "connectionStatus": {
+                "const": "CONNECTION_OK"
+              },
+              "operationId": {
+                "const": "SET_STATEMENT_TIMEOUT"
+              },
+              "resultStatus": {
+                "const": "PGRES_COMMAND_OK"
+              },
+              "sqlRawSha256": {
+                "const": "e706aca44f89d211d48deabe07871e13b6dcb0d16f9eae417b8033cdd2a3a36f"
+              },
+              "transactionStatus": {
+                "const": "PQTRANS_IDLE"
+              }
+            },
+            "required": [
+              "operationId",
+              "sqlRawSha256",
+              "resultStatus",
+              "commandTag",
+              "connectionStatus",
+              "transactionStatus"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "commandTag": {
+                "const": "SET"
+              },
+              "connectionStatus": {
+                "const": "CONNECTION_OK"
+              },
+              "operationId": {
+                "const": "SET_LOCK_TIMEOUT"
+              },
+              "resultStatus": {
+                "const": "PGRES_COMMAND_OK"
+              },
+              "sqlRawSha256": {
+                "const": "7b39880e432f137349b80aa457d97cfeda6c2432cd84ce0a2fff339101a821cc"
+              },
+              "transactionStatus": {
+                "const": "PQTRANS_IDLE"
+              }
+            },
+            "required": [
+              "operationId",
+              "sqlRawSha256",
+              "resultStatus",
+              "commandTag",
+              "connectionStatus",
+              "transactionStatus"
+            ],
+            "type": "object"
+          }
+        ],
+        "type": "array"
+      },
+      "measurement": {
+        "additionalProperties": false,
+        "properties": {
+          "actualTextValues": {
+            "items": false,
+            "maxItems": 11,
+            "minItems": 11,
+            "prefixItems": [
+              {
+                "const": "on"
+              },
+              {
+                "const": "on"
+              },
+              {
+                "pattern": "^[1-9][0-9]{0,9}$",
+                "type": "string"
+              },
+              {
+                "const": "170006"
+              },
+              {
+                "const": "postgres"
+              },
+              {
+                "const": "postgres"
+              },
+              {
+                "const": "postgres"
+              },
+              {
+                "const": "UTF8"
+              },
+              {
+                "const": "UTF8"
+              },
+              {
+                "const": "30s"
+              },
+              {
+                "const": "5s"
+              }
+            ],
+            "type": "array"
+          },
+          "columnCount": {
+            "const": 11
+          },
+          "connectionStatus": {
+            "const": "CONNECTION_OK"
+          },
+          "formats": {
+            "const": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "isNull": {
+            "const": [
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ]
+          },
+          "normalizedValues": {
+            "additionalProperties": false,
+            "properties": {
+              "backendPid": {
+                "maximum": 2147483647,
+                "minimum": 1,
+                "type": "integer",
+                "xRejectBoolean": true
+              },
+              "clientEncoding": {
+                "const": "UTF8"
+              },
+              "currentUser": {
+                "const": "postgres"
+              },
+              "database": {
+                "const": "postgres"
+              },
+              "defaultTransactionReadOnly": {
+                "const": "on"
+              },
+              "lockTimeoutMilliseconds": {
+                "const": 5000
+              },
+              "serverEncoding": {
+                "const": "UTF8"
+              },
+              "serverVersionNum": {
+                "const": 170006
+              },
+              "sessionUser": {
+                "const": "postgres"
+              },
+              "statementTimeoutMilliseconds": {
+                "const": 30000
+              },
+              "transactionReadOnly": {
+                "const": "on"
+              }
+            },
+            "required": [
+              "transactionReadOnly",
+              "defaultTransactionReadOnly",
+              "backendPid",
+              "serverVersionNum",
+              "database",
+              "sessionUser",
+              "currentUser",
+              "serverEncoding",
+              "clientEncoding",
+              "statementTimeoutMilliseconds",
+              "lockTimeoutMilliseconds"
+            ],
+            "type": "object"
+          },
+          "queryRawSha256": {
+            "const": "69ca65eec13106041e9a35318a5395f5d32210cabba9374ee657a6a3cf466e8f"
+          },
+          "resultStatus": {
+            "const": "PGRES_TUPLES_OK"
+          },
+          "rowCount": {
+            "const": 1
+          },
+          "transactionStatus": {
+            "const": "PQTRANS_IDLE"
+          },
+          "typeOids": {
+            "const": [
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25,
+              25
+            ]
+          }
+        },
+        "required": [
+          "queryRawSha256",
+          "connectionStatus",
+          "transactionStatus",
+          "resultStatus",
+          "rowCount",
+          "columnCount",
+          "typeOids",
+          "formats",
+          "isNull",
+          "actualTextValues",
+          "normalizedValues"
+        ],
+        "type": "object"
+      },
+      "measurementPoint": {
+        "const": "AFTER_THREE_SESSION_SET_BEFORE_CATALOG"
+      },
+      "rawResponseAvailable": {
+        "const": false
+      },
+      "rawResponseSha256": {
+        "const": null
+      },
+      "schemaVersion": {
+        "const": 1
+      },
+      "toolOperationCounts": {
+        "additionalProperties": false,
+        "properties": {
+          "fallbackCalls": {
+            "const": 0
+          },
+          "initializerSetAttempts": {
+            "const": 3
+          },
+          "logicalPgconnObjects": {
+            "const": 1
+          },
+          "measurementSelectAttempts": {
+            "const": 1
+          },
+          "physicalConnectionAttempts": {
+            "const": null
+          },
+          "physicalConnectionAttemptsStatus": {
+            "const": "NOT_OBSERVABLE"
+          },
+          "reconnectCalls": {
+            "const": 0
+          }
+        },
+        "required": [
+          "logicalPgconnObjects",
+          "initializerSetAttempts",
+          "measurementSelectAttempts",
+          "reconnectCalls",
+          "fallbackCalls",
+          "physicalConnectionAttempts",
+          "physicalConnectionAttemptsStatus"
+        ],
+        "type": "object"
+      }
+    },
+    "required": [
+      "contract",
+      "schemaVersion",
+      "component",
+      "bindings",
+      "measurementPoint",
+      "rawResponseAvailable",
+      "rawResponseSha256",
+      "initializerResults",
+      "measurement",
+      "frontendTls",
+      "toolOperationCounts"
+    ],
+    "type": "object"
+  },
+  "rawResponseAvailable": false,
+  "rawResponseSha256": null,
+  "schemaVersion": 1
+}

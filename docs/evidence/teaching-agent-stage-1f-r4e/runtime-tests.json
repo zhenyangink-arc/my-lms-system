@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--experimental-strip-types",
+    "--test",
+    "tests/teaching-agent-student-runtime.test.mjs",
+    "tests/teaching-agent-student-transport.test.mjs"
+  ],
+  "exit": 0,
+  "finishedAtUTC": "2026-09-15T06:57:02.618088+00:00",
+  "network": "fixture adapter only; Runtime suite live fetch forbidden",
+  "isolatedDbOptIn": false,
+  "summary": [],
+  "failedTests": [],
+  "summaryCapture": "Node default reporter is not TAP; numeric counters not captured. Exit0 observed; no total-count claim."
+}

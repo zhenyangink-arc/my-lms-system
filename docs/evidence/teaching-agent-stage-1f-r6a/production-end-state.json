@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T06:44:38.472046+00:00",
+  "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+  "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+  "postgres": "17.6",
+  "ledger": 457,
+  "latest": "202609140007",
+  "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+  "build": "6IhDHN8Dm1nCewiCEZnV5",
+  "pm2": {
+    "status": "online",
+    "exec_mode": "fork_mode",
+    "instances": 1,
+    "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000,
+    "restart_time": 0,
+    "pm_uptime": 1789529555153,
+    "name": "uply-first-enable",
+    "pid": 934715
+  },
+  "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+  "tailscaleSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "providerRequestsInTask": 0,
+  "foundationSchema": "UNCHANGED",
+  "schemaDigests": {
+    "columns": "473188077db2737cb79b75aca5563b556067d60a3b64a677ce98022d47c8564d",
+    "functions": "92f5d0909f50b1d05e24959dead933918d54f461804f3934fc2aa5c838df5f02",
+    "constraints": "032c92f8f2076aeca4db4579740a6bb2a2b7f4fe983acda52993f7cd64ea1b46",
+    "policies": "802c2abc0c25164352a851560cc0c09ebda98ce790e7596424f0471c68d89798",
+    "relations": "5833d70267adbf78aa2befd27bcb3eb3113797145d39bab9b9735307160cc4e6"
+  },
+  "unrelatedContent": "UNCHANGED",
+  "authorizedTargetContentWrites": {
+    "officialSkeletonInsertedRows": 5,
+    "method": "Existing user-owned Chrome -> official server action -> create_teaching_content_skeleton",
+    "scriptRows": 0
+  },
+  "codexProductionContentWrites": 5,
+  "productionMigrations": 0,
+  "productionDeploy": 0,
+  "pm2Mutations": 0,
+  "authWrites": 0,
+  "providerRequests": 0,
+  "authorizedMaintenanceWrites": {
+    "runtime_publish_private.retired_snapshots": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "unauthorizedContentWrites": 0,
+  "productionAgentRuns": 0,
+  "pinsGenerated": 0,
+  "definitionPublications": 0
+}

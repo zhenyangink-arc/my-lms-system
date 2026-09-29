@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "tests": 82,
+  "passed": 82,
+  "failed": 0,
+  "currentDbWrites": 0,
+  "environment": "in-memory fixtures; no current DB transport",
+  "coverage": [
+    "cue dedupe",
+    "backward seek",
+    "mandatory forward seek",
+    "refresh waiting/completed",
+    "stale generation",
+    "user pause",
+    "autoplay blocked",
+    "media error",
+    "single media owner",
+    "completion/readback",
+    "UNKNOWN no retry",
+    "third dispatch blocked",
+    "scope guards",
+    "public/private projection",
+    "facts projection"
+  ],
+  "currentDbBrowserCoverage": [
+    "video mount/play",
+    "cue pause/reveal",
+    "wrong hold",
+    "correct committed-response suppression/readback resume",
+    "owned child restart/completed restore"
+  ],
+  "boundary": "Seek/refresh/stale/autoplay/media-error fault branches verified in fixtures, not extra current-DB submissions",
+  "logSha256": "62e258f2041ecd7d272524cfe03239b1b962229796552e97696c165a75c6bf08",
+  "priorLockedB3ATests": "146/146; implementation/source unchanged"
+}

@@ -1,0 +1,20 @@
+{
+  "canonicalPath": "B",
+  "migrationRequired": true,
+  "migrationExecuted": 0,
+  "directPgDriver": "NOT RECOMMENDED",
+  "approvalA": "READY / NOT APPROVED",
+  "actorModel": "STABLE REUSABLE",
+  "developmentTenant": "REQUIRED",
+  "loginDisabledContract": "BLOCKED",
+  "authSideEffects": "NOT YET MAPPED TO EXACT COUNTS",
+  "approvalB": "BLOCKED",
+  "currentDbDurableE2E": "BLOCKED",
+  "productWrites": 0,
+  "businessWrites": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "stage1G": "NOT READY"
+}

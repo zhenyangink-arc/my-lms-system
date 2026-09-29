@@ -1,0 +1,41 @@
+{
+  "status": "AUDITED",
+  "overloads": [
+    {
+      "argumentCount": 8,
+      "source": "supabase/migrations/202608180008_open_activity_unscored_mastery.sql",
+      "liveSourceExact": true,
+      "bodySha256": "6290c9403765123d4005e82ef91adaa9e25527c31efb8b5d3b6303ad478ed6a3",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "argumentCount": 7,
+      "source": "supabase/migrations/202608180027_restore_objective_activity_recording.sql",
+      "liveSourceExact": true,
+      "bodySha256": "248c3dbb9975fd1d6bd92199dafa88bafa4482dd68aec8a4f9fe4407cdda0713",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    }
+  ],
+  "chosenArgumentCount": 7,
+  "writes": [
+    "digital_textbook_attempts INSERT",
+    "digital_textbook_node_progress UPSERT"
+  ],
+  "requestParameterExists": false,
+  "builtInRequestIdempotency": false,
+  "proposedNoDdlCorrelation": "Existing JSONB response envelope + same advisory transaction lock around check and exact RPC call",
+  "fallback": "FORBIDDEN",
+  "execution": "TEST DB VERIFIED",
+  "envelopeContract": "native-choice-response/1",
+  "envelopeFields": [
+    "requestId",
+    "bindingDigest",
+    "definitionDigest",
+    "optionIndex (student response, not correct key)",
+    "generation"
+  ],
+  "atomicRpcExecuted": true,
+  "migration": 0
+}

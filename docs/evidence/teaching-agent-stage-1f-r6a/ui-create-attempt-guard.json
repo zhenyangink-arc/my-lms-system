@@ -1,0 +1,15 @@
+{
+  "receiptVersion": 1,
+  "operator": "杨震",
+  "creationMethod": "OFFICIAL_AUTHORING_WORKFLOW",
+  "transport": "EXISTING_CHROME_CDP",
+  "targetSlot": "韩语初级 / 预备课：韩文字母入门",
+  "logicalAlias": "hangul-introduction",
+  "startedAtUtc": "2026-09-16T06:42:37.800Z",
+  "authenticatedOwnPlatformOwner": true,
+  "sessionSecretsReadOrExported": false,
+  "logicalCreateAttemptsAfterRetirement": 1,
+  "priorUserAttempt": "FAILED AND FULLY ROLLED BACK; no blind retry",
+  "result": "UNKNOWN",
+  "retryAllowed": false
+}

@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "outsideScopeChanges": [],
+  "changedExistingFiles": [
+    "docs/teaching-agent-pilot-operations-roles.md"
+  ],
+  "newStageFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4d/archive-validation.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/backup-directory.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/backup-summary.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/cleanup.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/completion-summary.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/preflight.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/private-batch-verification.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/production-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/restore-isolation.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/restore-verification.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/snapshot-summary.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/source-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/timing.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/workspace-before.json",
+    "docs/evidence/teaching-agent-stage-1f-r4d/workspace-scope.json",
+    "docs/teaching-agent-stage-1f-r4d-backup-recovery-verification.md",
+    "scripts/teaching-agent-r4d/execute.py",
+    "scripts/teaching-agent-r4d/finalize.py"
+  ],
+  "protectedExistingFiles": 3167,
+  "secretMatches": 0,
+  "jsonPythonMarkdown": "PASS",
+  "gateRows": 35,
+  "reportSections": 22,
+  "privateBatchHashesAndModes": "PASS",
+  "historicalFullBackupsRetainedAndUnchanged": true,
+  "recoveryContainerAndVolumeAbsent": true,
+  "gitDiffCheck": "PASS (tracked + each new text file)",
+  "productionDatabaseWrites": 0,
+  "authorizedBackupFilesystemWrites": true
+}

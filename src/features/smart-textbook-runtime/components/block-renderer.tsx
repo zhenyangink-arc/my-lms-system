@@ -2,6 +2,7 @@
 import { Component, type ReactNode } from 'react';
 import { blockSchemaV1, type BlockV1, type LessonManifestV1 } from '../../../lib/smart-textbook-runtime-v1/contracts';
 import { blockRegistryV1 } from '../../../lib/smart-textbook-runtime-v1/registry';
+import { NativeVideoBlock } from './video-block';
 import { TextBlock } from './text-block';
 import { MultipleChoiceBlock } from './choice-block';
 import { LearningContentRenderer } from './learning-content';
@@ -22,6 +23,7 @@ export function BlockRenderer({block:input,manifest}:{block:BlockV1;manifest:Les
   if(!declaration)throw Error('BLOCK_TARGET_MISSING');
   let content:ReactNode;
   switch(block.type){
+    case 'video':content=<NativeVideoBlock block={block}/>;break;
     case 'text':content=<TextBlock block={block}/>;break;
     case 'multiple_choice':content=<MultipleChoiceBlock block={block} manifest={manifest}/>;break;
     case 'compat.learning.v1':content=<LearningContentRenderer block={block} manifest={manifest}/>;break;

@@ -1,0 +1,13 @@
+{
+  "status": "AUDITED",
+  "attemptAuthority": "record_smart_textbook_attempt exact 7-argument overload",
+  "activityCompletion": "At least one correctly graded attempt for authorized tenant/student/activity/version; consistent node progress checked independently",
+  "nodeAuthority": "digital_textbook_node_progress maintained by same RPC",
+  "pageProgress": "NOT USED for this one single_choice Activity",
+  "stateFreshness": "No CAS revision in these tables; use attempt sequence, DB timestamps, consistent read and digest",
+  "previewDomain": "Existing preview branch returns grade without attempt/progress writes",
+  "studentAdmission": "Published-only current resolver; not modified",
+  "execution": "TEST DB VERIFIED",
+  "activityPageProgressWrites": 0,
+  "currentDatabaseBinding": "NOT VERIFIED"
+}

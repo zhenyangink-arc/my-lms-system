@@ -1,0 +1,33 @@
+{
+  "overall": "GO",
+  "gates": {
+    "Approved artifact/source lock": "PASS",
+    "Exact 11 files deployed": "PASS",
+    "Rollback presence manifest": "PASS",
+    "Single canonical PM2": "PASS",
+    "Owner authenticated UI": "PASS",
+    "Development environment/DB/Auth origin": "PASS",
+    "Bounded activation window": "PASS",
+    "No deploy journal claim": "PASS",
+    "ONE logical provisioning attempt": "PASS",
+    "Existing workflow reused": "PASS",
+    "INITIAL BAN / horizon": "PASS",
+    "Actor non-human/non-production": "PASS",
+    "Profile inactive": "PASS",
+    "Membership student/suspended/non-default": "PASS",
+    "Sessions/refresh zero": "PASS",
+    "Budget 15/8/0": "PASS",
+    "Independent readback COMPLETE": "PASS",
+    "R6F/B1 unchanged": "PASS",
+    "No attempt/progress/scope activation": "PASS",
+    "No Agent/Provider/Publish/Pins": "PASS",
+    "Feature OFF / allowlists EMPTY": "PASS",
+    "No migration/schema/RLS/Auth trigger change": "PASS",
+    "Runtime/launcher/Tailscale/public/dependencies unchanged": "PASS",
+    "Evidence boundary": "PASS"
+  },
+  "B2": "COMPLETE",
+  "B3": "AWAITING SEPARATE SCENARIO APPROVAL",
+  "R7D": "NOT READY",
+  "Stage1G": "NOT READY"
+}

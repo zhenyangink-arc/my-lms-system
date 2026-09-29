@@ -1,0 +1,9 @@
+{
+  "status": "PASS ISOLATED / CURRENT DB PLANNED",
+  "existingRepository": "advisory lock acquired in separate statement BEFORE READ COMMITTED request lookup; same request+payload ignoring generation -> REPLAYED, conflicting payload -> reject; no second RPC",
+  "uniqueConstraint": "tenant/actor/activity/attempt_number",
+  "scopeAdmission": "two single-use dispatch slots; second requires independent first durable observation; reject new stale-generation request, completed target or third slot",
+  "currentScenarioDuplicatePolicy": "logical first/second only; deliberate concurrency/replay probes verified isolated. No current-DB extra write-dispatch granted by this proposal.",
+  "tests": "R7C concurrent duplicate + B3 exact-trigger duplicate + scope reference tests PASS",
+  "rawRPC": "non-idempotent alone, forbidden as external entrypoint"
+}

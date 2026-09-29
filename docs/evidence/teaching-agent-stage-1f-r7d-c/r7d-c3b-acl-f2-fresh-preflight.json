@@ -1,0 +1,164 @@
+{
+  "stage": "R7D-C3B-ACL-F2",
+  "recordedAt": "2026-09-18T12:32:31.397413+00:00",
+  "authorization": "EXPLICIT_USER_APPROVAL_FOR_202609180000_ONLY",
+  "overall": "NO_GO",
+  "blockingCode": "EXACT_SINGLE_MIGRATION_RUNNER_UNAVAILABLE",
+  "currentDBReadOnlyTransactions": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstalls": 0,
+  "migrationLedgerWrites": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED_RETAINED_NO_ACTIVATION",
+  "Stage1G": "NOT_READY",
+  "historicalEvidenceModified": false,
+  "result": "FAIL",
+  "phase": "LOCAL_EXECUTION_CAPABILITY_PREFLIGHT",
+  "localChecks": {
+    "migrations": [
+      {
+        "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+        "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "match": true
+      },
+      {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "match": true
+      }
+    ],
+    "candidateArchives": [
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+        "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+        "match": true
+      },
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+        "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+        "match": true
+      },
+      {
+        "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+        "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+        "match": true
+      }
+    ],
+    "callers": [
+      {
+        "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+        "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+        "match": true
+      },
+      {
+        "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+        "sha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+        "match": true
+      },
+      {
+        "path": "src/lib/auth.ts",
+        "sha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+        "match": true
+      },
+      {
+        "path": "src/lib/admin.ts",
+        "sha256": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d",
+        "match": true
+      },
+      {
+        "path": "src/lib/supabase/server.ts",
+        "sha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+        "match": true
+      },
+      {
+        "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/src/features/growth-toolbox/api/chapter-practice-actions.ts",
+        "sha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+        "match": true
+      }
+    ],
+    "liveBuild": "PjpaYHAz0asyvwh0G-lBo",
+    "runtimeConfigSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureOff": true,
+    "allowlistsEmpty": true,
+    "productSourceHashesMatched": 1337
+  },
+  "runnerAudit": {
+    "searchScope": [
+      "repository scripts/src and hidden operational source paths",
+      "build operational Python/JS/shell files",
+      "docs/evidence operational scripts and historical install receipts",
+      "available temporary operational scripts"
+    ],
+    "findings": [
+      {
+        "path": "scripts/teaching-agent-r5b/runner.py",
+        "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+        "lines": [
+          19,
+          80,
+          86,
+          126,
+          134,
+          167,
+          222
+        ],
+        "finding": "Fixed eight-migration package202609140000..007; EXACT_EIGHT_REQUIRED/EXACT_ORDER_REQUIRED/EXACT_LOCKED_PLAN_REQUIRED. Ledger guard449+index and immutable449 prefix. Public run_all executes that exact package only."
+      },
+      {
+        "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+        "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+        "lines": [
+          22,
+          26,
+          33,
+          83
+        ],
+        "finding": "Production transport requires exact old VERSIONS list, old foundation authorization identity, old ledger449 fresh-backup contract; cannot accept current000 package through its guarded entrypoint."
+      },
+      {
+        "path": "tests/chapter-practice-acl-contract.test.mjs",
+        "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+        "finding": "F1 track() is explicitly an isolated test-runner model, not production installer; cannot promote to current DB installation."
+      },
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+        "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+        "finding": "Historical single170001 atomic install CONFIRMED; receipt does not supply a reusable currently available single-migration executor."
+      }
+    ],
+    "decision": "No compatible existing controlled000 single-migration runner located. Do not alter/bypass fixed runner guards or extract its transaction function into a new unreviewed current-DB install workflow.",
+    "stopAuthority": "Current user section12 explicitly says STOP if safe exact single-migration runner with honest atomic ledger recording is unavailable.",
+    "approvalNotMissing": "User install approval is valid. Blocker is execution capability, not a request to reapprove the same migration."
+  },
+  "databasePreflight": "NOT_EXECUTED_AFTER_RUNNER_STOP",
+  "expectedNotFreshlyObserved": {
+    "ledger": 458,
+    "000": "ABSENT",
+    "001": "ABSENT",
+    "002": "ABSENT",
+    "targetBodySha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "acl": [
+      "postgres",
+      "authenticated",
+      "service_role"
+    ]
+  },
+  "noNewSupportedServiceRoleCaller": "No source drift in1337 product files and6 local/live caller locks relative to prior caller audit. No new supported target caller found.",
+  "safety": "No DB connection or credential loading; no SQL dispatch; no workaround created."
+}

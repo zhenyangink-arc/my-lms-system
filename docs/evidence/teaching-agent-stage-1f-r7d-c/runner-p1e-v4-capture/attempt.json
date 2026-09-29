@@ -1,0 +1,15 @@
+{
+  "captureAttempts": 1,
+  "dispatchStartedAt": "2026-09-20T06:01:41.534601+00:00",
+  "command": [
+    "python3",
+    "-B",
+    "scripts/teaching-agent-r7d-c3b/runner.py",
+    "capture",
+    "--plan",
+    "acl-000-v1"
+  ],
+  "automaticRetry": false,
+  "priorReceiptPaths": [],
+  "authorizationSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31"
+}

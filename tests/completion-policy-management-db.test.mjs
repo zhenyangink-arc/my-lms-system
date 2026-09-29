@@ -28,7 +28,7 @@ test("policy drafts, atomic replacement, immutable published versions and refres
     const original = await read("202608200003_course_completion_policies_and_evaluations.sql");
     await db.exec(original.slice(original.indexOf("create or replace function private.completion_policy_requirements_are_valid"),original.indexOf("create table public.course_completion_policies")));
     await db.exec(original.slice(original.indexOf("create or replace function private.enforce_course_completion_policy_lifecycle"),original.indexOf("create table public.student_course_completion_evaluations")));
-    await db.exec(await read("202609080005_completion_policy_management.sql"));
+    await db.exec(await read("202609140004_completion_policy_management_reissue.sql"));
     const form = new FormData();
     for (const f of POLICY_FIELDS) form.set(`${f.section}.${f.key}`,String(f.initial));
     for (const f of POLICY_CHECKS) form.set(`${f.section}.${f.key}`,"on");

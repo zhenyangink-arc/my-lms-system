@@ -1,0 +1,24 @@
+{
+  "status": "DESIGN ONLY; NO CLEANUP AUTHORIZATION",
+  "stableActor": "Reuse disabled subject and dedicated tenant; no per-run Auth create/delete",
+  "completionAccumulation": "tenant+actor+activity aggregates persist. A new scenarioId cannot turn an already-completed activity into INCOMPLETE.",
+  "betweenScenarios": "Prefer readback-only reuse; from-empty scenarios require separately approved exact cleanup of test-owned attempt/progress IDs after dependency inventory",
+  "attemptPredicate": [
+    "exact approved actor",
+    "exact development tenant",
+    "exact Activity and version",
+    "recorded attempt IDs/request correlations"
+  ],
+  "nodeProgressPredicate": [
+    "exact actor+tenant+node+version",
+    "no other retained Activity attempts depending on aggregate"
+  ],
+  "pageLessonProgress": "If present derive existing FK/reference graph and delete/recompute only approved test-owned rows; never broad delete or arbitrary boolean reset",
+  "order": "Disable scope -> verify no inflight operation -> dependency audit -> preserve safe evidence -> child rows then parent aggregate rows in one reviewed transaction -> independent readback",
+  "registryCleanup": "Close/expire scope; retain safe operation receipt for reconciliation; never use registry deletion to reset domain truth",
+  "retire": "Default retain actor banned/profile inactive/membership suspended. Hard Auth/tenant deletion is not approved: existing FK ON DELETE CASCADE relationships exist. Must enumerate all effects and use separately approved non-cascading retirement plan.",
+  "inboundFkCountAudited": 163,
+  "explicitCASCADE": false,
+  "canonicalRowsDeleted": 0,
+  "currentDbDeletes": 0
+}

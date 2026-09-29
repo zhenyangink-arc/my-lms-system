@@ -1,0 +1,26 @@
+{
+  "command": [
+    "node_modules/.bin/eslint",
+    "--max-warnings=0",
+    "src/features/digital-textbook/api/create-teaching-content.ts",
+    "src/features/digital-textbook/components/create-teaching-content-entry.tsx",
+    "src/features/digital-textbook/components/create-teaching-content-form.tsx",
+    "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+    "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+    "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+    "src/features/teaching-agent/server/transport/rollout-policy.ts",
+    "scripts/teaching-agent-r3d/actors.mjs",
+    "scripts/teaching-agent-r3d/author-browser.mjs",
+    "scripts/teaching-agent-r3d/closing-checks.mjs",
+    "scripts/teaching-agent-r3d/project-pins.mjs",
+    "scripts/teaching-agent-r3d/refresh-auth.mjs",
+    "scripts/teaching-agent-r3d/rpc-tests.mjs",
+    "tests/teaching-agent-release-metadata.test.mjs",
+    "tests/teaching-agent-release-migrations.test.mjs",
+    "tests/teaching-agent-rls-surface.test.mjs"
+  ],
+  "exit": 0,
+  "durationSeconds": 5.633,
+  "stdout": "",
+  "stderr": ""
+}

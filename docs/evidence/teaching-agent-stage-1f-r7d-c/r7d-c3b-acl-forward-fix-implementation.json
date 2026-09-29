@@ -1,0 +1,125 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "decision": "REMOVE_SERVICE_ROLE_FORWARD_ONLY",
+  "files": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "mode": "0o664",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "previousSha256": null,
+      "operation": "ADD"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "mode": "0o664",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "previousSha256": "9f066e0b8ab5899df0a9925af663a8c5309b059a6706dcf2cc8dbc00f2ee7fad",
+      "operation": "MODIFY"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "mode": "0o664",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "previousSha256": null,
+      "operation": "ADD"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "mode": "0o664",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "previousSha256": null,
+      "operation": "ADD"
+    }
+  ],
+  "existingHelperChanges": 1,
+  "newTestFiles": 1,
+  "newFixtures": 1,
+  "newMigrations": 1,
+  "migration": {
+    "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+    "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+  },
+  "tests": {
+    "plannedCategories": 23,
+    "executedCategories": 23,
+    "passedCategories": 23,
+    "failedCategories": 0,
+    "skippedCategories": 0,
+    "executedLeafTests": 39,
+    "passedLeafTests": 39,
+    "failedLeafTests": 0,
+    "skippedLeafTests": 0,
+    "nodeTestRunnerTotalIncludingParent": 40,
+    "negativeLeafTests": 26
+  },
+  "regression": {
+    "passed": 126,
+    "skipped": 3,
+    "failed": 0,
+    "mainCommand": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "--test-reporter=tap",
+      "tests/chapter-practice-binding.test.mjs",
+      "tests/chapter-practice-binding-db.test.mjs",
+      "tests/teaching-script-source-review-db.test.mjs",
+      "tests/completion-policy-management-db.test.mjs",
+      "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "tests/teaching-agent-r7d-legacy-publication-compatibility.test.mjs",
+      "tests/teaching-agent-r7cb-authoring-db.test.mjs"
+    ],
+    "mainCounts": {
+      "pass": 123,
+      "skip": 3,
+      "fail": 0
+    },
+    "additionalCommand": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "tests/teaching-agent-rls-surface.test.mjs"
+    ],
+    "additionalCounts": {
+      "pass": 3,
+      "skip": 0,
+      "fail": 0
+    },
+    "skippedFiles": [
+      "tests/chapter-practice-binding-db.test.mjs",
+      "tests/teaching-script-source-review-db.test.mjs",
+      "tests/completion-policy-management-db.test.mjs"
+    ],
+    "skipReason": "Existing tests require locally unavailable @electric-sql/pglite / LMS_PGLITE_MODULE. No dependency installed and no old expected result changed. No claim that these three executed. Target RPC authorization/CAS/source/published checks executed separately in new owned PG tests; publication/completion SQL regressions executed in owned PG."
+  },
+  "historicalEvidenceModified": false,
+  "historicalPrecondition": "postgres/authenticated/service_role; PUBLIC and anon denied",
+  "desiredContract": "postgres/authenticated only",
+  "isolatedOnly": true
+}

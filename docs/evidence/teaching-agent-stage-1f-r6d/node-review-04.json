@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 4,
+  "title": "再认识基础辅音",
+  "formalType": "explanation",
+  "purpose": "辨认八个基础辅音并降低记忆压力。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "NEEDS_REVISION",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "TOO_LONG",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "八个字母作为Exposure合理，不能要求立即Mastery。最后一句语法正确但嵌套过长，换行不会消除语法加工负担。ㅇ的初声无声特性不能被Node2“所有辅音制造开头声音”覆盖。",
+  "classification": "SHOULD_FIX",
+  "issueIds": [
+    "S2"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "S2",
+      "classification": "SHOULD_FIX",
+      "proposedText": "지금 다 외우지 않아도 괜찮아요.\n자음과 모음은 달라요.\n모양을 천천히 보세요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=4",
+  "renderedReference": "ui-render-validation.json / order=4",
+  "nodeWrites": 0
+}

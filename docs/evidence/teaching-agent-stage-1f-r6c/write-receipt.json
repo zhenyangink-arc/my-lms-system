@@ -1,0 +1,15 @@
+{
+  "status": "CONFIRMED",
+  "operator": "杨震",
+  "method": "OFFICIAL SCRIPT STUDIO UI / EXISTING AUTHENTICATED CHROME",
+  "nodeInserts": 8,
+  "nodeUpdateAuditCount": 24,
+  "officialAuditInserts": 32,
+  "versionInserts": 0,
+  "nodeDeletes": 0,
+  "publishWrites": 0,
+  "unauthorizedWrites": 0,
+  "otherContentWrites": 0,
+  "normalization": "Browser form serializes LF as CRLF; exact text comparison normalizes CRLF only",
+  "locatorInterruptions": "Node1 navigation/control location failed twice; new readonly checks established no unknown write; existing node continued, no repeated creation"
+}

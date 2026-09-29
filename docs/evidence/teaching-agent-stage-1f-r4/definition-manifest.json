@@ -1,0 +1,73 @@
+{
+  "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+  "profile": {
+    "agentCode": "student-ai-teacher",
+    "definitionVersion": {
+      "name": "student-ai-teacher",
+      "version": "1.0.0"
+    },
+    "status": "published",
+    "promptVersion": {
+      "name": "student-ai-teacher-base",
+      "version": "1.0.0"
+    },
+    "contextVersion": {
+      "name": "student-teaching-context",
+      "version": "1.0.0"
+    },
+    "model": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash",
+      "configVersion": "deepseek-tools-disabled-v1"
+    },
+    "allowedSkillRefs": [
+      {
+        "name": "explain-pinned-korean-segment",
+        "version": "1.0.0"
+      }
+    ],
+    "allowedToolRefs": [
+      {
+        "name": "get_current_lesson_context",
+        "version": "1.0.0"
+      },
+      {
+        "name": "get_current_teaching_state",
+        "version": "1.0.0"
+      }
+    ],
+    "policyVersion": {
+      "name": "student-teaching-read",
+      "version": "1.0.0"
+    },
+    "budget": {
+      "maxModelCalls": 3,
+      "maxToolExecutions": 4,
+      "maxInputTokensPerCall": 16000,
+      "maxOutputTokensPerCall": 2000,
+      "reservedTokens": 54000
+    },
+    "artifacts": {
+      "schemaVersion": 1,
+      "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+      "personaRef": {
+        "name": "kim",
+        "version": "1.0.0"
+      },
+      "privateInstructionsRef": {
+        "name": "student-ai-teacher-base",
+        "version": "1.0.0"
+      },
+      "skillDigest": "377595d3b27fda971e437848831cf84c9cc610c240911633e718005ecb7e893b",
+      "toolsDigest": "b417d70da48a32e81207e7adf2b051db22663506a95dbe9e3ff1261fd125902e",
+      "completionPolicyRef": {
+        "name": "student-explanation",
+        "version": "1.0.0"
+      },
+      "requiredEvidenceToolRef": {
+        "name": "get_current_lesson_context",
+        "version": "1.0.0"
+      }
+    }
+  }
+}

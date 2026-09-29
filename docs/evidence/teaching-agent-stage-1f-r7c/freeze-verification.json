@@ -1,0 +1,10 @@
+{
+  "status": "VERIFIED",
+  "baselinePayloadSha256": "55a2b81ed6912e392ab17d502e5d2ffce3e0ddce330ae45d09ba79ccadcd43b8",
+  "nodeCount": 8,
+  "allRowsExact": true,
+  "objectiveMapSha256": "85a750709306882092bb04cfcc5471961684b9ac39de964df06064ff950dfce5",
+  "writes": 0,
+  "endStateVerified": true,
+  "endObservedAtUtc": "2026-09-17T03:31:21.865642+00:00"
+}

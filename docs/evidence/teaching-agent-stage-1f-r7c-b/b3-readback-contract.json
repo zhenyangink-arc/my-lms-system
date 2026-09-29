@@ -1,0 +1,19 @@
+{
+  "status": "PASS — existing isolated durable repository plus exact live SQL schema",
+  "connection": "new independent READ ONLY transaction per call; never submit response authority",
+  "INCOMPLETE": "valid exact definition/scope, 0 or only incorrect attempts, sequence consistent, corresponding noncompleted node progress for recorded attempts",
+  "COMPLETED": "correct durable attempt + valid bound progress record and consistent sequence; for this one-Activity target explicitly verify node status completed/100/attempt_count2",
+  "UNKNOWN": [
+    "read failure",
+    "missing progress with attempts",
+    "binding mismatch",
+    "stale evidence",
+    "expired/unsafe scope",
+    "sequence mismatch",
+    "conflicting correctness/progress state"
+  ],
+  "hardeningRequired": "current completion service validates progress presence/count but does not itself reject every contradictory progress status/percent; add strict one-target consistency check before canonical execution",
+  "evidence": "attempt sequence + timestamps + non-reversible state digest; content revision != student-state evidence != runtime generation",
+  "noFakeCAS": true,
+  "clientOutput": "minimal activity-completion/2 whitelist; no raw IDs/response/private definition digest"
+}

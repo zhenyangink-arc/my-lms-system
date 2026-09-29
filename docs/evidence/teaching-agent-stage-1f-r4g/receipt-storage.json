@@ -1,0 +1,165 @@
+{
+  "status": "READY",
+  "verifiedAtUtc": "2026-09-15T07:52:37.186683+00:00",
+  "osAccount": "yangzhen",
+  "uid": 1001,
+  "gid": 1001,
+  "ancestorChecks": [
+    {
+      "path": "/",
+      "exists": true,
+      "owner": "root",
+      "group": "root",
+      "mode": "0755",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home",
+      "exists": true,
+      "owner": "root",
+      "group": "root",
+      "mode": "0755",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0750",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen/operations",
+      "exists": false
+    },
+    {
+      "path": "/home/yangzhen/operations/uply",
+      "exists": false
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent",
+      "exists": false
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent/receipts",
+      "exists": false
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent/acceptance",
+      "exists": false
+    }
+  ],
+  "mount": {
+    "filesystems": [
+      {
+        "target": "/",
+        "fstype": "ext4",
+        "options": "rw,relatime"
+      }
+    ]
+  },
+  "osAncestorOwnershipRule": "/ and /home root-owned; /home/yangzhen and task paths yangzhen-owned",
+  "createdDirectories": [
+    "/home/yangzhen/operations",
+    "/home/yangzhen/operations/uply",
+    "/home/yangzhen/operations/uply/teaching-agent",
+    "/home/yangzhen/operations/uply/teaching-agent/receipts",
+    "/home/yangzhen/operations/uply/teaching-agent/acceptance"
+  ],
+  "directoryChecks": [
+    {
+      "path": "/home/yangzhen/operations",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen/operations/uply",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent/receipts",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    },
+    {
+      "path": "/home/yangzhen/operations/uply/teaching-agent/acceptance",
+      "exists": true,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "symlink": false,
+      "directory": true,
+      "device": 66306,
+      "aclXattrs": []
+    }
+  ],
+  "existingParentsChmodded": false,
+  "receiptDirectory": "/home/yangzhen/operations/uply/teaching-agent/receipts/",
+  "receiptDirectoryMode": "0700",
+  "operatorWritable": true,
+  "atomicStorageProbe": {
+    "status": "PASS",
+    "syntheticOnly": true,
+    "sameDirectoryTemporary": true,
+    "temporaryMode": "0600",
+    "flush": true,
+    "fileFsync": true,
+    "atomicRename": true,
+    "directoryFsync": true,
+    "finalFileMode": "0600",
+    "readbackMatches": true,
+    "probeRemoved": true,
+    "temporaryRemoved": true
+  },
+  "privateAcceptanceRecord": {
+    "status": "CREATED",
+    "path": "/home/yangzhen/operations/uply/teaching-agent/acceptance/r4g-pilot-operations-acceptance-20260915T075237180731Z.json",
+    "sha256": "c74fd98f175d5a85179e052f1ae5773458ce3fdba777a44b4f7e8c5a77bee914",
+    "mode": "0600",
+    "owner": "yangzhen",
+    "acceptedAtUtc": "2026-09-15T07:52:37.180731Z",
+    "mtimeUtc": "2026-09-15T07:52:37.180921+00:00",
+    "contentCopiedToRepository": false,
+    "isDatabaseInvocationReceipt": false
+  }
+}

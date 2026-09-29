@@ -1,0 +1,135 @@
+{
+  "status": "REVIEWED_FOR_PLAN",
+  "sourcePriority": "CURRENT_SOURCE_AND_SCHEMA_BEFORE_V2_REFERENCE",
+  "files": [
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "63373d9c11218b0295b57ac299c91e6a0a4c9135f779d17cb4353686096e3933"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/registry.ts",
+      "sha256": "135671252c7c9233839e0bb652a35268f98c7c0e9dc1f5b0cc6369a057ae72b3"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "0678ffb08b0aeca42ec21a97b5e0ef15bfdfa4db3430e09123b3f05ce2f4d6a1"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/block-registry.ts",
+      "sha256": "8ffc78c29bf21c788893587f8c7375aa80a467414bea4815c5eb790655b5237f"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/services.ts",
+      "sha256": "1c632f7cc593cf46b445361b0d70dc3599896d75e6da331090a29d5e26124d13"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/target-registry.ts",
+      "sha256": "7f9f601611cfe65b6da2d88bddce9d1f6b14d7418b7966accf55a6d2392f0133"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+      "sha256": "1cd8ff550e038dce86a2e0c71c05b6798b96a84bff66e0d79a02626ca638bf5d"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+      "sha256": "779001a4e4d5e724394ef6f730de92c111600789d5a411348301a037184b6927"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+      "sha256": "c62379740253e79b9b7142ec3e4b814de646cc0a21aeffb8e49612c8e069e894"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+      "sha256": "45eaef66542d396de44318ae45da4900dcd206f0481a9ae2980027f3a1b38aa5"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/choice-block.tsx",
+      "sha256": "d21a265484e0ee96eba4fa5aab43d7c05fd7b8adb8fcdf8ad9253b70eb863296"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+      "sha256": "4cd0e17c6328b870b8db232fa0d040af34f3d6140ddc057e42c2bff5ecb7cf2e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime.css",
+      "sha256": "fbd72b35e992c4f47449ca8bde927336da60e63d53df665fc90f0901111ef572"
+    },
+    {
+      "path": "tests/smart-textbook-runtime-4a.test.mjs",
+      "sha256": "a36abf6b27aa1192b9a81d60a4c548f6bf34f3ad174b4a1e66afdcdb71a4b9d2"
+    },
+    {
+      "path": "tests/smart-textbook-runtime-4a14.test.mjs",
+      "sha256": "fde418bed9b0523bb6094faf205b7126cd972015f0a93df85652ded05f31f2aa"
+    },
+    {
+      "path": "tests/smart-textbook-runtime-4a-browser.test.mjs",
+      "sha256": "988fcd123577ac43c089569ce7e7905a5cadd0c3557570cd79e939bfbdcc23bb"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/step-controller.ts",
+      "sha256": "22ef767e7eace2a8a2ee0dd800b66393905f41dd4241ad49211254a2b05d9ec0"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/activity-executor.tsx",
+      "sha256": "85258fc4bb5bc3668feb2c17f6747dd1d0c416ac67f774bb26e55c74c671a8d2"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "sha256": "c03efafaba9a100c48ba8190e6a65b4b8868a7f749b5423bd18311fc6d5a175d"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-history.server.ts",
+      "sha256": "f2eea3c020eba9a59a3886050ff97fc4f4e2e5ecb2c040734a674786e8c34096"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/progress-projection.server.ts",
+      "sha256": "f1d29b95c438cdaccf34de666de7b72299ff8daa3f954d3298c57fc68a1c958c"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+      "sha256": "3a390765cb26ef73bf6f26121a8738085589d61f6f1ab9e1978c34cadf4f768e"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "sha256": "7da75210911760fe54f67120c62d2e8d5ea76b804dddb3763e5986af9d1f996c"
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "sha256": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63"
+    },
+    {
+      "path": "src/lib/teaching-video.ts",
+      "sha256": "578d9a039c4cb913fcb0c6f67ec12a3f84dcbee8a68624e9008335d575779ad2"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts",
+      "sha256": "ffc9282ca985fc9df03b88049ff9761c1d6e1e316e7d5489a6325c8fe023edd7"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r7a-lesson-execution-foundation.md",
+      "sha256": "1b1e88ea86992e8dd0901cfb431f679bcb30363a6468663518d675fab71a8f4f"
+    },
+    {
+      "path": "docs/architecture/uply-smart-textbook-interactive-video-architecture-v2.md",
+      "sha256": "9e634f485c42acebdaabe4b49deca2676b06faecc32f1aad6a59ee360fab8fa1"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r6f-final-teaching-script-review-content-freeze.md",
+      "sha256": "d25a190fd58cf8505b00b6182a22e7c6cbb920b9e55fa9ab5125432a456f3306"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6f/content-freeze-baseline.json",
+      "sha256": "2100390215d6cc0a290cc5d07bb99d4b83b3b63fd5341e0828599f7ff5927a22"
+    }
+  ],
+  "keyFindings": [
+    "Manifest is strict, without a generic extension slot",
+    "Native video declared but not implemented in mounted renderer",
+    "Native multiple_choice already exists",
+    "ActivityResult.ok is not completion authority",
+    "Existing progress sourceRevision is content revision, not student-state revision",
+    "Current Lesson Tool is verified-selection content read only, not current runtime facts",
+    "Existing production activity fallback is excluded from new native fixture path"
+  ]
+}

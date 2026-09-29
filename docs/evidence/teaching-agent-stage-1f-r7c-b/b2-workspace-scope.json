@@ -1,0 +1,18 @@
+{
+  "productCodeWrites": 0,
+  "testHarness": "Evidence-only isolated harness retained under b2-isolated-harness",
+  "docs": "B2 evidence and append-only B2 report sections",
+  "liveBuild": "UNCHANGED f3AMbrTZfbg0_VWwnSE6i",
+  "currentDbWrites": 0,
+  "migration": 0,
+  "deploy": 0,
+  "pm2Mutation": 0,
+  "runtimeMutation": 0,
+  "launcherMutation": 0,
+  "tailscaleMutation": 0,
+  "b1ServerSourceLock": "MATCH",
+  "credentialsScanned": 18,
+  "sensitiveMatches": 0,
+  "isolatedCleanup": "PASS",
+  "priorB1AndB2History": "PRESERVED"
+}

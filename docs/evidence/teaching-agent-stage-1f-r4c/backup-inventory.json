@@ -1,0 +1,464 @@
+{
+  "observedAt": "2026-09-15T06:12:36.647423+00:00",
+  "scanScope": "Only known backup root direct children and prior stage schema archives; no business rows read",
+  "records": [
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/20260910T1353Z.LlXXsY/database.dump",
+      "filename": "database.dump",
+      "exists": true,
+      "bytes": 4911185,
+      "mtime": "2026-09-10T14:06:57.588084+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "81dc7a65084ddbfd8b3c66bee12bd33cebc935eac5a76f45036cc923f6687f54",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-10 14:06:50 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 215,
+      "tocEntryCount": 4125,
+      "dataSchemas": [
+        "auth",
+        "public",
+        "realtime",
+        "storage",
+        "supabase_migrations",
+        "vault"
+      ],
+      "classification": "B — FULL LOGICAL BACKUP (historical scope)",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change",
+      "archiveSealChecks": {
+        "BACKUP_MANIFEST.json": true
+      },
+      "sealInventory": {
+        "BACKUP_MANIFEST.json": {
+          "checked": 75,
+          "mismatches": []
+        }
+      },
+      "snapshotTime": "2026-09-10T14:06:47.353Z",
+      "ageHoursAtInventory": 112.09702622861111,
+      "historicalRestore": {
+        "verifiedAt": "2026-09-10T14:31:03.538Z",
+        "archiveReadable": true,
+        "actualDatabaseRestorePassed": true,
+        "allChecksPassed": true,
+        "checks": {
+          "tables": true,
+          "functions": true,
+          "constraints": true,
+          "indexes": true,
+          "policies": true,
+          "extensions": true,
+          "schemaAcl": true,
+          "defaultAcl": true,
+          "originalSnapshotTableCounts": true,
+          "databaseSettings": true,
+          "roles": true,
+          "memberships": true,
+          "eventTriggers": true,
+          "triggers": true,
+          "sequences": true,
+          "largeObjects": true,
+          "databaseLocaleOwnerAclSettings": true,
+          "publications": true,
+          "publicationTables": true,
+          "views": true,
+          "foreignTables": true,
+          "subscriptions": true
+        },
+        "mediaObjectsBackedUp": false,
+        "exitReceipt": {
+          "at": "2026-09-10T14:25:41.752Z",
+          "restoreExit": 0,
+          "roleResetExit": 0,
+          "database": "uply_verified",
+          "sourceLocalePreserved": true,
+          "extensionOwnersPreserved": true
+        }
+      }
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/checkpoint-20260911.hgEVNx/database.dump",
+      "filename": "database.dump",
+      "exists": true,
+      "bytes": 4911185,
+      "mtime": "2026-09-10T18:50:08.928557+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "b2f656f2c87c8a8ae0ba7a29485e60fca942c3973099a2d2c0449f38849b3b5b",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-10 18:49:59 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 215,
+      "tocEntryCount": 4125,
+      "dataSchemas": [
+        "auth",
+        "public",
+        "realtime",
+        "storage",
+        "supabase_migrations",
+        "vault"
+      ],
+      "classification": "B — FULL LOGICAL BACKUP (historical scope)",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change",
+      "checkpointEvidence": {
+        "at": "2026-09-10T18:50:09.878Z",
+        "fullRestoreSqlEqual": true,
+        "newArchiveRestoredSeparately": false
+      },
+      "archiveSealChecks": {
+        "FRESHNESS.json": true
+      },
+      "checkpointComparedAt": "2026-09-10T18:50:09.878Z"
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/database.dump",
+      "filename": "database.dump",
+      "exists": true,
+      "bytes": 5746105,
+      "mtime": "2026-09-13T03:22:56.418601+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "843a2b7e74708f2992265a963618cf69b9c4acc491ecc328ccbb4362c54a7b8a",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-13 03:22:48 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 229,
+      "tocEntryCount": 4325,
+      "dataSchemas": [
+        "auth",
+        "public",
+        "realtime",
+        "recording_private",
+        "runtime_publish_private",
+        "storage",
+        "supabase_migrations",
+        "vault"
+      ],
+      "classification": "B — FULL LOGICAL BACKUP (historical scope)",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change",
+      "archiveSealChecks": {
+        "PRE_MIGRATION_BACKUP_SHA256.json": true,
+        "FINAL_BACKUP_FILES_SHA256.json": true
+      },
+      "sealInventory": {
+        "PRE_MIGRATION_BACKUP_SHA256.json": {
+          "checked": 63,
+          "mismatches": []
+        },
+        "FINAL_BACKUP_FILES_SHA256.json": {
+          "checked": 83,
+          "mismatches": []
+        }
+      },
+      "snapshotTime": "2026-09-13T03:22:45.723Z",
+      "ageHoursAtInventory": 50.83081233972222,
+      "historicalRestore": {
+        "verifiedAt": "2026-09-13T03:28:17.926Z",
+        "archiveReadable": true,
+        "actualDatabaseRestorePassed": true,
+        "allChecksPassed": true,
+        "checks": {
+          "tables": true,
+          "functions": true,
+          "constraints": true,
+          "indexes": true,
+          "policies": true,
+          "extensions": true,
+          "schemaAcl": true,
+          "defaultAcl": true,
+          "originalSnapshotTableCounts": true,
+          "databaseSettings": true,
+          "roles": true,
+          "memberships": true,
+          "eventTriggers": true,
+          "triggers": true,
+          "sequences": true,
+          "largeObjects": true,
+          "databaseLocaleOwnerAclSettings": true,
+          "publications": true,
+          "publicationTables": true,
+          "views": true,
+          "foreignTables": true,
+          "subscriptions": true
+        },
+        "mediaObjectsBackedUp": false,
+        "exitReceipt": {
+          "at": "2026-09-13T03:25:59.145Z",
+          "restoreExit": 0,
+          "roleResetExit": 0,
+          "database": "uply_verified",
+          "sourceLocalePreserved": true,
+          "extensionOwnersPreserved": true
+        }
+      }
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/pre-migration-20260910.Bvr8gH/database.dump",
+      "filename": "database.dump",
+      "exists": true,
+      "bytes": 4911185,
+      "mtime": "2026-09-10T14:52:56.011607+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "87a30a271f8c551f014549907912c212ccf09eed2c4c1eeb0cf653c82cf0ecf3",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-10 14:52:48 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 215,
+      "tocEntryCount": 4125,
+      "dataSchemas": [
+        "auth",
+        "public",
+        "realtime",
+        "storage",
+        "supabase_migrations",
+        "vault"
+      ],
+      "classification": "B — FULL LOGICAL BACKUP (historical scope)",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change",
+      "archiveSealChecks": {
+        "BACKUP_MANIFEST.json": true
+      },
+      "sealInventory": {
+        "BACKUP_MANIFEST.json": {
+          "checked": 54,
+          "mismatches": []
+        }
+      },
+      "snapshotTime": "2026-09-10T14:52:46.476Z",
+      "ageHoursAtInventory": 111.33060317305555,
+      "historicalRestore": {
+        "verifiedAt": "2026-09-10T18:44:57.148Z",
+        "archiveReadable": true,
+        "actualDatabaseRestorePassed": true,
+        "allChecksPassed": true,
+        "checks": {
+          "tables": true,
+          "functions": true,
+          "constraints": true,
+          "indexes": true,
+          "policies": true,
+          "extensions": true,
+          "schemaAcl": true,
+          "defaultAcl": true,
+          "originalSnapshotTableCounts": true,
+          "databaseSettings": true,
+          "roles": true,
+          "memberships": true,
+          "eventTriggers": true,
+          "triggers": true,
+          "sequences": true,
+          "largeObjects": true,
+          "databaseLocaleOwnerAclSettings": true,
+          "publications": true,
+          "publicationTables": true,
+          "views": true,
+          "foreignTables": true,
+          "subscriptions": true
+        },
+        "mediaObjectsBackedUp": false,
+        "exitReceipt": {
+          "at": "2026-09-10T14:55:13.675Z",
+          "restoreExit": 0,
+          "roleResetExit": 0,
+          "database": "uply_verified",
+          "sourceLocalePreserved": true,
+          "extensionOwnersPreserved": true
+        }
+      }
+    },
+    {
+      "path": "/tmp/uply-stage1f-readonly/r1b-schema.dump",
+      "filename": "r1b-schema.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-14T04:35:59.982934+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "8f31512aa71bd63aa33f8b5e1acd7f657b27c01981103cecc5d9498178260501",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-14 04:35:52 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    },
+    {
+      "path": "/tmp/uply-stage1f-readonly/r3-schema.dump",
+      "filename": "r3-schema.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-14T12:20:34.979468+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "b5cf69d801ea8d5adf3393e63da1cde938c1543770738131e0d1dec136e9b499",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-14 12:20:28 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    },
+    {
+      "path": "/tmp/uply-stage1f-readonly/r3a-schema.dump",
+      "filename": "r3a-schema.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-14T13:33:58.019802+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "400050663a736a17449e6e8ee1d3ca4d521576866891fab6325299c7ee5be317",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-14 13:33:51 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    },
+    {
+      "path": "/tmp/uply-stage1f-readonly/r4-schema-snapshot.dump",
+      "filename": "r4-schema-snapshot.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-15T03:05:58.541498+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "b834691101a59dd62dc1b3b6e597357417cb34148cf4adb514022e2bb770ea16",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-15 03:05:52 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    },
+    {
+      "path": "/tmp/uply-stage1f-readonly/schema.dump",
+      "filename": "schema.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-14T02:59:01.083670+00:00",
+      "owner": "yangzhen",
+      "mode": "0o600",
+      "directoryMode": "0o700",
+      "sha256": "127e4fce8c0fb389b626fb7001586196fe1db0f28470ebe5de90c59791037aa4",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-14 02:58:55 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    },
+    {
+      "path": "/tmp/uply-r1b-snapshot/schema.dump",
+      "filename": "schema.dump",
+      "exists": true,
+      "bytes": 2801375,
+      "mtime": "2026-09-14T04:39:15.154263+00:00",
+      "owner": "yangzhen",
+      "mode": "0o664",
+      "directoryMode": "0o700",
+      "sha256": "8f31512aa71bd63aa33f8b5e1acd7f657b27c01981103cecc5d9498178260501",
+      "tocReadable": true,
+      "tocHeader": {
+        "Archive created at": "2026-09-14 04:35:52 UTC",
+        "Compression": "gzip",
+        "Dump Version": "1.16-0",
+        "Format": "CUSTOM",
+        "Dumped from database version": "17.6",
+        "Dumped by pg_dump version": "17.6"
+      },
+      "tableDataEntries": 0,
+      "tocEntryCount": 4077,
+      "dataSchemas": [],
+      "classification": "A — SCHEMA-ONLY",
+      "freshRecoveryPoint": false,
+      "freshnessClassification": "D — STALE: predates current Teaching Agent change"
+    }
+  ],
+  "latestFullBackup": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/database.dump",
+  "latestFullBackupAgeHours": 50.83081233972222,
+  "freshRecoveryPointCreated": false,
+  "restoreExecuted": false
+}

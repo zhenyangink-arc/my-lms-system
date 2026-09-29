@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "count": 31,
+  "pass": 31,
+  "fail": 0,
+  "command": "node --experimental-strip-types --test tests/teaching-agent-r7cb-authoring.test.mjs tests/teaching-agent-r7cb-authoring-db.test.mjs tests/teaching-agent-r7cb-owner-preflight.test.mjs",
+  "finalLogSha256": "bcafb434398e516b4407a27c805412146bae413b526ae0820f0e8d29a1d62c19",
+  "coverage": [
+    "A Owner Draft returns EMPTY",
+    "B non-owner denied before privileged reader",
+    "C anonymous denied",
+    "D wrong target BLOCKED",
+    "E lesson/script/node full-row fingerprint mismatch BLOCKED",
+    "F partial node and Activity-without-secret BLOCKED",
+    "G complete existing binding EXISTING",
+    "H private row presence only; answer not selected or returned",
+    "I unchanged create method uses authenticated caller RPC",
+    "J current lesson published-only policy unchanged"
+  ],
+  "realRlsRegression": "OWNER_DRAFT_PREFLIGHT_UNDER_CURRENT_RLS",
+  "mechanism": "Production readCanonicalBinding executes SELECT through an isolated PG-backed query adapter using authenticated/service_role database roles; exact current lesson policy and module gate installed from existing migration. No mocked lesson visibility. Auth session boundary replaced by owned test authorization guard; no real Auth user/session. Published textbook leaf simplified to isolated draft/published fixture predicate.",
+  "currentDbTestWrites": 0,
+  "isolatedWrites": "Owned fixture graph; existing RPC tests plus isolated partial→complete triple. No attempt/progress or negative prompt/frozen UPDATE. Owned containers disposed.",
+  "limitation": "Owner UI under new deployed code remains pending deployment approval; not Student E2E"
+}

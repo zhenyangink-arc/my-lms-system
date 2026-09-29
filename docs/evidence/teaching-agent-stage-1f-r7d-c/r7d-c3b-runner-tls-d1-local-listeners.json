@@ -1,0 +1,419 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "OBSERVED",
+  "observations": {
+    "tcp": {
+      "exit": 0,
+      "relevant": [
+        "LISTEN 0      4096                     0.0.0.0:54324      0.0.0.0:*          ",
+        "LISTEN 0      4096                     0.0.0.0:54327      0.0.0.0:*          ",
+        "LISTEN 0      4096                     0.0.0.0:54321      0.0.0.0:*          ",
+        "LISTEN 0      4096                     0.0.0.0:54323      0.0.0.0:*          ",
+        "LISTEN 0      4096                     0.0.0.0:54322      0.0.0.0:*          ",
+        "LISTEN 0      4096                        [::]:54324         [::]:*          ",
+        "LISTEN 0      4096                        [::]:54327         [::]:*          ",
+        "LISTEN 0      4096                        [::]:54321         [::]:*          ",
+        "LISTEN 0      4096                        [::]:54323         [::]:*          ",
+        "LISTEN 0      4096                        [::]:54322         [::]:*          "
+      ],
+      "listenersCount": 85
+    },
+    "unix": {
+      "exit": 0,
+      "relevant": [
+        "u_str LISTEN 0      4096                                                         /var/run/docker/metrics.sock 22418               * 0          ",
+        "u_str LISTEN 0      4096                                                         /run/user/1001/openssh_agent 438049              * 0          ",
+        "u_str LISTEN 0      5                                                                  /run/user/1001/gcr/ssh 438060              * 0          ",
+        "u_str LISTEN 0      4096                                                 /run/user/1001/gnupg/S.gpg-agent.ssh 444573              * 0          ",
+        "u_str LISTEN 0      4096                                                       /run/tailscale/tailscaled.sock 22850               * 0          ",
+        "u_str LISTEN 0      4096                                                                     /run/docker.sock 16960               * 0          ",
+        "u_str LISTEN 0      4096                                         /var/run/docker/libnetwork/0046796adf6e.sock 28512               * 0          ",
+        "u_str LISTEN 0      4096                                                           /run/ssh-unix-local/socket 21619               * 0          "
+      ],
+      "listenersCount": 162
+    },
+    "processNames": [],
+    "containers": [
+      {
+        "ID": "009cc434e315",
+        "Names": "supabase_db_my-lms-system",
+        "Image": "public.ecr.aws/supabase/postgres:17.6.1.141",
+        "State": "running",
+        "Status": "Up 2 days (healthy)",
+        "Ports": "0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp",
+        "Networks": "supabase_network_my-lms-system"
+      },
+      {
+        "ID": "cca2ccd76d81",
+        "Names": "supabase_db_koflow",
+        "Image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        "State": "running",
+        "Status": "Up 2 days (healthy)",
+        "Ports": "0.0.0.0:55322->5432/tcp, [::]:55322->5432/tcp",
+        "Networks": "supabase_network_koflow"
+      }
+    ],
+    "argvRead": false,
+    "containerEnvironmentRead": false,
+    "psObservation": {
+      "exit": 0,
+      "matchingProcessNames": [],
+      "processCount": 4
+    },
+    "procFilesystemVisibility": "No readable matching comm from direct /proc walk; do not interpret as process absence",
+    "hostProcessNames": {
+      "exit": 0,
+      "matches": [
+        "1578 tailscaled",
+        "1618 sshd",
+        "3405 dockerd",
+        "4714 postgrest",
+        "5309 postgrest",
+        "5344 postgres",
+        "5730 docker-proxy",
+        "5744 docker-proxy",
+        "6036 docker-proxy",
+        "6041 docker-proxy",
+        "6934 beam.smp",
+        "6995 docker-proxy",
+        "7011 docker-proxy",
+        "7546 .postgres-wrapp",
+        "7678 docker-proxy",
+        "7684 docker-proxy",
+        "7755 .postgres-wrapp",
+        "7837 docker-proxy",
+        "7848 docker-proxy",
+        "7956 docker-proxy",
+        "7976 docker-proxy",
+        "8031 docker-proxy",
+        "8038 docker-proxy",
+        "8358 docker-proxy",
+        "8372 docker-proxy",
+        "8481 beam.smp",
+        "8543 postgres",
+        "8544 postgres",
+        "8752 docker-proxy",
+        "8766 docker-proxy",
+        "8958 docker-entrypoi",
+        "9443 docker-entrypoi",
+        "9872 .postgres-wrapp",
+        "9874 .postgres-wrapp",
+        "9959 .postgres-wrapp",
+        "9960 .postgres-wrapp",
+        "11678 .postgres-wrapp",
+        "11679 .postgres-wrapp",
+        "11682 .postgres-wrapp",
+        "11683 .postgres-wrapp",
+        "11684 .postgres-wrapp",
+        "11847 postgres",
+        "11848 postgres",
+        "11849 postgres",
+        "12083 .postgres-wrapp",
+        "12224 docker-proxy",
+        "12235 docker-proxy",
+        "12384 .postgres-wrapp",
+        "12386 .postgres-wrapp",
+        "12389 .postgres-wrapp",
+        "12391 .postgres-wrapp",
+        "12392 .postgres-wrapp",
+        "13194 beam.smp",
+        "13402 .postgres-wrapp",
+        "14507 .postgres-wrapp",
+        "15009 .postgres-wrapp",
+        "15880 .postgres-wrapp",
+        "15882 .postgres-wrapp",
+        "15884 .postgres-wrapp",
+        "15885 .postgres-wrapp",
+        "15886 .postgres-wrapp",
+        "15982 .postgres-wrapp",
+        "15984 .postgres-wrapp",
+        "16650 .postgres-wrapp",
+        "16652 .postgres-wrapp",
+        "16655 .postgres-wrapp",
+        "16656 .postgres-wrapp",
+        "16661 .postgres-wrapp",
+        "16785 .postgres-wrapp",
+        "16786 .postgres-wrapp",
+        "17445 .postgres-wrapp",
+        "17446 .postgres-wrapp",
+        "17448 .postgres-wrapp",
+        "17449 .postgres-wrapp",
+        "17450 .postgres-wrapp",
+        "17451 .postgres-wrapp",
+        "17453 .postgres-wrapp",
+        "17454 .postgres-wrapp",
+        "17455 .postgres-wrapp",
+        "17456 .postgres-wrapp",
+        "17458 .postgres-wrapp",
+        "17574 .postgres-wrapp",
+        "17576 .postgres-wrapp",
+        "17577 .postgres-wrapp",
+        "21692 .postgres-wrapp",
+        "124446 gcr-ssh-agent",
+        "124448 ssh-agent",
+        "151970 postgres",
+        "300842 postgres",
+        "300843 postgres",
+        "304732 postgres",
+        "304733 postgres",
+        "328291 sshd-session",
+        "328349 sshd-session",
+        "328704 sshd-session",
+        "328739 sshd-session"
+      ],
+      "argvOrEnvironmentRead": false
+    },
+    "redactedProcessAudit": [
+      {
+        "pid": 1578,
+        "process": "tailscaled"
+      },
+      {
+        "pid": 1618,
+        "process": "sshd"
+      },
+      {
+        "pid": 5730,
+        "process": "docker-proxy",
+        "host-port": "54324",
+        "container-port": "8025",
+        "proto": "tcp"
+      },
+      {
+        "pid": 5744,
+        "process": "docker-proxy",
+        "host-port": "54324",
+        "container-port": "8025",
+        "proto": "tcp"
+      },
+      {
+        "pid": 6036,
+        "process": "docker-proxy",
+        "host-port": "55321",
+        "container-port": "8000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 6041,
+        "process": "docker-proxy",
+        "host-port": "55321",
+        "container-port": "8000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 6934,
+        "process": "beam.smp",
+        "serviceMarkers": [
+          "realtime"
+        ]
+      },
+      {
+        "pid": 6995,
+        "process": "docker-proxy",
+        "host-port": "54322",
+        "container-port": "5432",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7011,
+        "process": "docker-proxy",
+        "host-port": "54322",
+        "container-port": "5432",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7678,
+        "process": "docker-proxy",
+        "host-port": "55322",
+        "container-port": "5432",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7684,
+        "process": "docker-proxy",
+        "host-port": "55322",
+        "container-port": "5432",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7837,
+        "process": "docker-proxy",
+        "host-port": "55324",
+        "container-port": "8025",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7848,
+        "process": "docker-proxy",
+        "host-port": "55324",
+        "container-port": "8025",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7956,
+        "process": "docker-proxy",
+        "host-port": "54321",
+        "container-port": "8000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 7976,
+        "process": "docker-proxy",
+        "host-port": "54321",
+        "container-port": "8000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8031,
+        "process": "docker-proxy",
+        "host-port": "55323",
+        "container-port": "3000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8038,
+        "process": "docker-proxy",
+        "host-port": "55323",
+        "container-port": "3000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8358,
+        "process": "docker-proxy",
+        "host-port": "54323",
+        "container-port": "3000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8372,
+        "process": "docker-proxy",
+        "host-port": "54323",
+        "container-port": "3000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8481,
+        "process": "beam.smp",
+        "serviceMarkers": [
+          "realtime"
+        ]
+      },
+      {
+        "pid": 8752,
+        "process": "docker-proxy",
+        "host-port": "54327",
+        "container-port": "4000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 8766,
+        "process": "docker-proxy",
+        "host-port": "54327",
+        "container-port": "4000",
+        "proto": "tcp"
+      },
+      {
+        "pid": 12224,
+        "process": "docker-proxy",
+        "host-port": "5003",
+        "container-port": "5003",
+        "proto": "tcp"
+      },
+      {
+        "pid": 12235,
+        "process": "docker-proxy",
+        "host-port": "5003",
+        "container-port": "5003",
+        "proto": "tcp"
+      },
+      {
+        "pid": 13194,
+        "process": "beam.smp",
+        "serviceMarkers": [
+          "logflare"
+        ]
+      },
+      {
+        "pid": 328291,
+        "process": "sshd-session"
+      },
+      {
+        "pid": 328349,
+        "process": "sshd-session"
+      },
+      {
+        "pid": 328704,
+        "process": "sshd-session"
+      },
+      {
+        "pid": 328739,
+        "process": "sshd-session"
+      }
+    ],
+    "serviceUnits": {
+      "exit": 0,
+      "identifiersAndStatesOnly": [
+        [
+          "ssh.service",
+          "loaded",
+          "active",
+          "running"
+        ],
+        [
+          "sshd-keygen.service",
+          "loaded",
+          "inactive",
+          "dead"
+        ],
+        [
+          "sshd@sshd-keygen.service",
+          "loaded",
+          "inactive",
+          "dead"
+        ],
+        [
+          "sssd-ssh.service",
+          "loaded",
+          "inactive",
+          "dead"
+        ],
+        [
+          "tailscaled.service",
+          "loaded",
+          "active",
+          "running"
+        ]
+      ]
+    },
+    "rawArgvPersisted": false
+  },
+  "conclusion": "Local development Postgres port forwards and SSH/Tailscale services exist. No named stunnel/socat/PgBouncer/Supavisor/ssh client forwarding process was found; beam processes identified as realtime/logflare. These local services are not the selected remote endpoint.",
+  "limitations": "Process/listener observations are point-in-time; they do not prove absence of transparent external infrastructure. Initial sandbox process namespace was restricted; host process names and sanitized argv/service metadata were separately read with approval.",
+  "tailscale": "Running tailscaled and local control socket observed; route/encryption for DB traffic not established; not a TLS substitute."
+}

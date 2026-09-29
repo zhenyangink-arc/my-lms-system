@@ -1,0 +1,22 @@
+{
+  "status": "PASS ISOLATED / CURRENT DB PLANNED",
+  "object": "only owned B3 controlled execution child process/composition with recorded PID, never uply-first-enable/host/database",
+  "currentService": "NOT STARTED / composition pending deployment approval",
+  "stableBindings": [
+    "same B2 actor and tenant",
+    "same scenario/session",
+    "same immutable snapshot",
+    "same Activity/version/freeze",
+    "same private scope/journal lease; runtime generation changes"
+  ],
+  "procedure": [
+    "confirm two attempts and COMPLETED using new read connection",
+    "terminate only recorded B3 process",
+    "restart same controlled composition with write admission disabled",
+    "readback only; do not replay submit",
+    "COMPLETED -> RESUME_READY / no mandatory cue re-trigger",
+    "verify attempts remain 2, progress remains one completed row"
+  ],
+  "cleanup": "retain attempts/progress as evidence; future reset requires exact separate approval; no CASCADE",
+  "isolatedProof": "B3 budget test restarted actual child PID and only read back, audit shows zero new writes"
+}

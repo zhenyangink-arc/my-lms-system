@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "objectives": [
+    {
+      "objectiveNumber": 1,
+      "objective": "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "coverage": "FULL",
+      "nodes": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "evidence": "Node2明确字母放入同一个가字形，局部左右位置解释与Node6下置元音形成一致的块内布局说明。",
+      "objectiveTextSha256": "f2a66d8ad3692ca2ca905724c710fdb50465911d8612b84422fe74c45f1e18e0"
+    },
+    {
+      "objectiveNumber": 2,
+      "objective": "能辨认并朗读基础元音和常用基础辅音。",
+      "coverage": "FULL TEXT COVERAGE",
+      "nodes": [
+        3,
+        4,
+        5
+      ],
+      "evidence": "Node3六元音辨形与跟读，Node4八辅音辨形、减压，Node5八个简单音节跟读；FULL只签署文本指导覆盖。",
+      "objectiveTextSha256": "df32ad6c92682d226d29ee8547bb5f1b886561fd2e145b8503d804754b55fcfc"
+    },
+    {
+      "objectiveNumber": 3,
+      "objective": "理解初声、中声、终声组成韩语音节的基本方式。",
+      "coverage": "FULL",
+      "nodes": [
+        6,
+        8
+      ],
+      "evidence": "Node6初声/中声/终声角色与한拆分正确，中声位置不固定；Node8清楚说明终声可选。",
+      "objectiveTextSha256": "46893d34b974c903cb27e8866e099a62e4c9f3339868d7325f18e8ea4dac6499"
+    },
+    {
+      "objectiveNumber": 4,
+      "objective": "能将基础辅音与元音组合成简单韩语音节。",
+      "coverage": "FULL",
+      "nodes": [
+        2,
+        5,
+        7
+      ],
+      "evidence": "Node2组合说明、Node5四个正确组合、Node7对가的辨认检查形成入门覆盖。",
+      "objectiveTextSha256": "a7968259415355ac3ab080f3709e36840c9cd9c078350cf865aaa36549d9b93b"
+    }
+  ],
+  "fullTextCoverageCount": 4,
+  "audioVerification": "NOT TESTED",
+  "studentMastery": "NOT TESTED",
+  "studentRuntime": "NOT TESTED",
+  "learningObjectivesModified": false
+}

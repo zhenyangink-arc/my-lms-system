@@ -1,0 +1,18 @@
+import '../../tests/fixtures/smart-textbook-legacy-adapter/register-server-only.mjs';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {createClient} from '@supabase/supabase-js';
+import {SupabaseStudentTeachingReadRepository} from '../../src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts';
+import {projectStudentSelectionPins} from '../../src/features/teaching-agent/server/page-projection/selection-projection.ts';
+const d=process.argv[2],read=n=>JSON.parse(readFileSync(d+'/'+n)),s=read('state.json'),k=read('status.json'),ids=read('fixture.json'),u=read('users.private.json');
+if(s.marker!=='uply-teaching-agent-r2-disposable-v1'||s.url!==`http://127.0.0.1:${s.ports.api}`||k.API_URL!==s.url)throw Error('OWNED_LOCAL_REQUIRED');
+const client=createClient(s.url,k.ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+assert.equal((await client.auth.signInWithPassword({email:u.A1.email,password:u.A1.password})).error,null);
+const authenticate=async()=>{const {data}=await client.auth.getUser();assert.equal(data.user.id,u.A1.id);const m=await client.from('tenant_memberships').select('tenant_id,role,status').eq('user_id',data.user.id).eq('is_default',true).single();assert.equal(m.error,null);assert.equal(m.data.role,'student');return {actorId:data.user.id,tenantId:m.data.tenant_id};};
+const pins=await projectStudentSelectionPins({candidates:ids.anodes.map(nodeId=>({lessonId:ids.alesson,moduleId:ids.amodule,scriptVersionId:ids.ascriptVersion,nodeId})),repository:new SupabaseStudentTeachingReadRepository(client),authenticate,execution:{signal:AbortSignal.timeout(12000),deadlineAt:new Date(Date.now()+12000).toISOString(),runId:randomUUID()}});
+writeFileSync(d+'/r3d-pins.private.json',JSON.stringify(pins));
+assert.ok(pins.length>=2);assert.ok(pins.every(p=>p.displayText==='저는 학생입니다.')); 
+writeFileSync(d+'/pins.json',JSON.stringify(pins));
+const result={status:'PASS',pinCount:pins.length,distinctNodes:new Set(pins.map(p=>p.nodeId)).size,realStudentAuth:true,actualPolicyAndProjector:true,source:'formal product authoring publication',liveProviderRequests:0};
+writeFileSync(d+'/r3d-pins-result.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));

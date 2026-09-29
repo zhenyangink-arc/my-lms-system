@@ -1,0 +1,10 @@
+[
+  "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+  "src/features/teaching-agent/server/domain-ports/index.ts",
+  "src/features/teaching-agent/server/tools/contracts.ts",
+  "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+  "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+  "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+  "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+  "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx"
+]

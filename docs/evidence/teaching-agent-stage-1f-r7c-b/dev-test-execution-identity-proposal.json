@@ -1,0 +1,8 @@
+{
+  "contract": "development-domain-execution/1",
+  "status": "REVISED PROPOSAL ONLY",
+  "model": "STABLE REUSABLE",
+  "currentProposal": "r7c-b2-approval-package.json",
+  "previousPerRunProposal": "dev-test-execution-identity-proposal-before-b1-b2.json",
+  "approved": false
+}

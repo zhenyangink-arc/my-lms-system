@@ -1,0 +1,16 @@
+{
+  "scope": "READ ONLY REVIEW",
+  "productionWritesAuthorized": false,
+  "status": "READ-ONLY REVIEW COMPLETE",
+  "nodeClicks": "Read-only target node navigation only after recovery; wrong tab0",
+  "fieldInputEvents": 0,
+  "saveClicks": 0,
+  "browserLaunched": false,
+  "browserClosed": false,
+  "cookiesOrTokensRead": false,
+  "contextRecoveryAllowed": true,
+  "initialStopReason": "现有 Chrome 是韩国语 1 级 / 第1章 / 课前导航 / version24 draft；目标DB仍是韩文字母入门 / 第0章 / version1 draft。触发目标UI上下文不一致后停止。",
+  "targetContext": "RESOLVED",
+  "productionWrites": 0,
+  "firstAttemptPreserved": true
+}

@@ -1,0 +1,59 @@
+{
+  "observedAtUtc": "2026-09-16T07:56:16.002784+00:00",
+  "foundation": {
+    "status": "PASS",
+    "observedAtUtc": "2026-09-16T07:56:15.004790+00:00",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "postgres": "17.6",
+    "ledger": 457,
+    "latest": "202609140007",
+    "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+    "build": "6IhDHN8Dm1nCewiCEZnV5",
+    "pm2": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789529555153,
+      "name": "uply-first-enable",
+      "pid": 934715
+    },
+    "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "tailscaleSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "agentRows": {
+      "agent_definition_versions": 0,
+      "agent_conversations": 0,
+      "agent_runs": 0,
+      "agent_messages": 0,
+      "agent_run_events": 0
+    },
+    "providerRequestsInTask": 0
+  },
+  "script": {
+    "versionCount": 1,
+    "versions": [
+      {
+        "idSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+        "lessonSha256": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+        "versionNumber": 1,
+        "status": "draft",
+        "title": {},
+        "publishedAt": null,
+        "createdAt": "2026-09-16T07:11:49.544966+00:00"
+      }
+    ],
+    "nodeCount": 0,
+    "logs": {
+      "create_draft": 1
+    },
+    "activeInconsistentFences": 0
+  },
+  "canonicalChains": 1
+}

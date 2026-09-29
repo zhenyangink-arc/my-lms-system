@@ -1,0 +1,59 @@
+{
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb",
+        "name": "append_agent_run_event_v2",
+        "owner": "postgres",
+        "result": "void",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "e21cacbf376bf18de4a49dbe3f2462ad079ac7cefdcf24b5bd607be14740fc6f"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "057d66983125feea2dcc818ec7a6420e96a20c61e096eb45db5b2eb10f6b98e4"
+      }
+    ],
+    "removed": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "d8402ecc2016a8a2a9de800424856ad504c3dab85b752acc0b6ca1b0c1d34d26"
+      }
+    ]
+  }
+}

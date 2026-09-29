@@ -1,0 +1,79 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED CONTRACT; production integration pending",
+  "reuse": "resolveAllowedToolDefinitions + request-local createToolRegistry + executeAllowedTool",
+  "intersection": [
+    "published Profile allowedToolRefs",
+    "published selected Skill allowedTools",
+    "enabled registry exact VersionRef",
+    "risk level 0",
+    "PermissionPolicy decision for same authority/scope/deadline"
+  ],
+  "matrix": [
+    {
+      "skill": {
+        "name": "explain-pinned-korean-segment",
+        "version": "1.0.0"
+      },
+      "visibleCandidates": [
+        {
+          "name": "get_current_lesson_context",
+          "version": "1.0.0"
+        },
+        {
+          "name": "get_current_teaching_state",
+          "version": "1.0.0"
+        }
+      ],
+      "durableToolVisible": false
+    },
+    {
+      "skill": {
+        "name": "summarize-current-lesson-execution",
+        "version": "1.0.0"
+      },
+      "visibleCandidates": [
+        {
+          "name": "get_current_lesson_execution_facts",
+          "version": "1.0.0"
+        }
+      ],
+      "lessonContextToolVisible": false,
+      "productionRegistration": "NOT YET"
+    }
+  ],
+  "versionPolicy": "Exact get_current_lesson_execution_facts@1.0.0; one version of each provider-visible name per Run; no version substitution.",
+  "planningChoice": "auto in planning/corrective; none only after evidence satisfied in final stage. No mandatory durable call for unrelated Skills.",
+  "input": "strict {} rejects every extra field, including actor/tenant/target/source/credentials",
+  "productionPath": [
+    "Normal authenticated Student admission and verified Agent Run context",
+    "Existing StudentPolicy and selection revalidation",
+    "Authoritative published runtime snapshot join for same subject/tenant/lesson/version/Activity",
+    "Request-local LessonFacts issuer, port and Tool registration",
+    "Skill/Profile/policy intersection",
+    "Existing Core executor",
+    "Private per-Run Skill ledger",
+    "Skill evidence/output gate",
+    "Existing persisted completion CAS with versioned evidence policy"
+  ],
+  "activationBlockers": [
+    "No published canonical facts adapter yet.",
+    "No production receipt provenance yet.",
+    "No durable-aware persisted Run gate yet."
+  ],
+  "forbidden": [
+    "global all-tools exposure",
+    "second Tool router",
+    "Owner audit issuer as production binding",
+    "fixed B2 actor in production",
+    "legacy chapter-one fallback"
+  ]
+}

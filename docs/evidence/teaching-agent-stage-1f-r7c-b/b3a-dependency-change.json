@@ -1,0 +1,17 @@
+{
+  "pg": "8.23.0",
+  "@types/pg": "8.23.1",
+  "added": [
+    "node_modules/@types/pg",
+    "node_modules/pg-int8",
+    "node_modules/pg-protocol",
+    "node_modules/pg-types",
+    "node_modules/postgres-array",
+    "node_modules/postgres-bytea",
+    "node_modules/postgres-date",
+    "node_modules/postgres-interval",
+    "node_modules/xtend"
+  ],
+  "changedExisting": [],
+  "installedWorkspaceOnly": true
+}

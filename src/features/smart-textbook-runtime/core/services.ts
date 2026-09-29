@@ -30,6 +30,7 @@ export type ContentCard = { partId:string; title:string; paragraphs:string[]; ch
 export type LearningPanel = {partId:string;title:string;contentPartId:string|null;activityRefs:string[];nativeChoices:boolean;navigation:boolean};
 export type LearningContent = { revision:string; capsuleRef:string; stepId:string; cards:ContentCard[]; unsupported:string[];panels?:LearningPanel[] };
 export type RuntimeServices = {
+  nativeExecution?:import('./execution-contracts.ts').NativeExecutionServices;
   sceneImage?(capsuleRef:string,signal:AbortSignal):Promise<Blob|null>;
   learningTools?: import('./learning-tools').LearningToolServices;
   learningFlow?: import('./learning-flow').LearningFlowServices;

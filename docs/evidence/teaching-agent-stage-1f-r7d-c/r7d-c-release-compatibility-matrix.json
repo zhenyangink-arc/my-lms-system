@@ -1,0 +1,57 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "result": "LOCKED",
+  "matrix": [
+    {
+      "app": "CURRENT PjpaYHAz0asyvwh0G-lBo",
+      "schema": "CURRENT declared ledger458",
+      "status": "SUPPORTED",
+      "scope": "Existing v1 behavior; feature OFF. No fresh ledger query performed in target-only audit."
+    },
+    {
+      "app": "CURRENT",
+      "schema": "001 + 002 installed",
+      "status": "TEMPORARILY_SAFE",
+      "scope": "Existing Explain/v1 behavior preserved by isolated validation; do not create native v2 publication or artifact2 execution traffic before new app. Legacy-only consumers cannot handle native v2."
+    },
+    {
+      "app": "NEW KeQ6bud_Us1ED6hnG7YB8",
+      "schema": "CURRENT",
+      "status": "FAIL_CLOSED_FOR_NEW_CAPABILITIES",
+      "scope": "Existing v1 remains supported; native publication admission and typed completion gate require migrations; never use this state to activate Summary."
+    },
+    {
+      "app": "NEW",
+      "schema": "001 + 002 installed",
+      "status": "SUPPORTED_WITH_ACTIVATION_PREREQUISITES",
+      "scope": "Server code ready; feature/allowlists remain off/empty. Exact QA target, official native publication, private read config and legitimate entrypoint still required."
+    }
+  ],
+  "basis": [
+    "34b isolated migration installation individually and both orders",
+    "Existing v1 certification and Explain regression",
+    "Current live archive hash match",
+    "Exact new production build from locked source"
+  ],
+  "noFreshSchemaInstallOrCurrentAgentCalls": true,
+  "rollbackBeforeV2": "Application-only restore allowed only after proving no new native v2 or incompatible artifact2 traffic/data. Keep schema forward.",
+  "rollbackAfterV2": "Version-aware forward fix; no row deletion, v2→v1 rewrite or old-reader fallback."
+}

@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": 0,
+  "agentAdmissionTest": "NOT EXECUTED BY DESIGN",
+  "sourceEvidence": [
+    {
+      "file": "src/features/teaching-agent/server/transport/transport-config.ts",
+      "behavior": "Only exact 1/true enables transport"
+    },
+    {
+      "file": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "behavior": "Transport handlers reject disabled feature before authenticated runtime"
+    },
+    {
+      "file": "src/features/teaching-agent/server/transport/rollout-policy.ts",
+      "behavior": "Server-owned identity/course allowlists mandatory; empty lists deny"
+    },
+    {
+      "file": "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+      "behavior": "Feature OFF returns undefined before context/selection lookup"
+    }
+  ],
+  "runtimeBinding": "Approved unchanged launcher injects approved unchanged runtime; PM2 start metadata unchanged from R5C; all compiled artifact members match",
+  "limits": "No Agent POST and no authenticated student page render; not a live admission test"
+}

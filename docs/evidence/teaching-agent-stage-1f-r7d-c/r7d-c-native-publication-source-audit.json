@@ -1,0 +1,699 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "COMPLETE_SOURCE_AUDIT",
+  "originalHashes": [
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "expected": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "actual": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "expected": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "actual": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "expected": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "actual": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "expected": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "actual": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "expected": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "actual": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "expected": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "actual": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "expected": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "actual": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "expected": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "actual": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "expected": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "actual": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "expected": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "actual": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "expected": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "actual": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "expected": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "actual": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "expected": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "actual": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "expected": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "actual": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "expected": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "actual": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "expected": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+      "actual": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "expected": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+      "actual": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+      "match": true
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "expected": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6",
+      "actual": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6",
+      "match": true
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "expected": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "actual": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "match": true
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "expected": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "actual": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "match": true
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "expected": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "actual": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "match": true
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "expected": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "actual": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "match": true
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "expected": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "actual": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "match": true
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "expected": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "actual": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "match": true
+    }
+  ],
+  "sourceLocks": [
+    {
+      "path": "src/app/api/learning-agent/characters/[pose]/route.ts",
+      "sha256": "9102b4207ee46ace669dffb575038b85eed7c9cfaaef170723498b9f3e78ff37",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/api/learning-agent/speech/[assetId]/route.ts",
+      "sha256": "fd1ce1cdf5ebcefe547ac721c94a285ccd5a512c52ac2cb2ef1eb54e7979c1f5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "sha256": "b873ae944de5aecc22abccab08a37badddd5715496d967f88655a1848357e2d5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/listening/route.ts",
+      "sha256": "584a98f99af861680bd2fbb32c1d5daa15e38797ca21f033dc5958db89de3d8e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "sha256": "3045d571a8c1e9ea194985aa4b02d234bcf252aaa97fa61e1b3b64739367d720",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/activity-pages.ts",
+      "sha256": "7b144275b01ed5e67814f476ccf95c8a4f67a06b9d927a725bd867c86a5bbc57",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/activity.ts",
+      "sha256": "1074ed9bca1aa8e7c111ed030f2fe2c2f24e3821d8354099fda6335211596ebb",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/learning-flow.ts",
+      "sha256": "71d0501d7dd19ca726582871f8a825832c850833e8e3f796871840ce9f4a2a2b",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/learning-tools.ts",
+      "sha256": "93f4fbd01d256175f496add372a3ba30a2647d468677ff16a99e04d75881fab9",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/patterns.ts",
+      "sha256": "796c8892f2f95d9b0dc00724f334ecd4c127c87963432bd217fc342c5be51452",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/recording.ts",
+      "sha256": "f81e13c0fa7d312bd2341c176e4777e467da9ace3759cee1ce30abb963768fd4",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/services.ts",
+      "sha256": "2cd89f50ca480c9707c8ad994b5f611db2d855ee9b94892b48d1141605797eca",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-actions.ts",
+      "sha256": "7bde98111937350b620bc889dd97f29c4f8edc8ab1ba309548899597c5566a5b",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-flow-actions.ts",
+      "sha256": "0eb3be35f6e1fe95388428ad00fe4f92d5f9dd3ab7e643de08279bd5744ab1d5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-flow.server.ts",
+      "sha256": "2944b87f7ddffb1af645f5d4e8514028ebfee7e38b52afd006e01bb3026db78d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "sha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-recording.server.ts",
+      "sha256": "fa92f107c0c229b1bba61f78beeead8ab244e7b6a28789816c0f520c56c14a10",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-repeat-actions.ts",
+      "sha256": "f5f8262727c357b05b89df5f8e85557c6f4b4952158e9d6e39c0165936f7326a",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-session.server.ts",
+      "sha256": "706f5532cd7eb6bd10a9ff6912224ae830ff3d66f11de958f6a016e9a327ad0e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-speech.server.ts",
+      "sha256": "6c258cda1044032bb6fb7fe24f903249804e3c63506b07b3d091b5fdcd6b2161",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "sha256": "a2ff5de5104f350c2523df7f0840cd3a75f6eeabf48e0d3fa2df3a34cf353b42",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-tool-actions.ts",
+      "sha256": "58e0ad25a06481ea9850289e85aaa65a0e2055981053429b76aadfb05eb83637",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "sha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/pattern-media.server.ts",
+      "sha256": "bb84383c0e44c107fbaa0b746faa634b46bafeb3a6ce206a0260ad37eac49141",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "sha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "sha256": "c03efafaba9a100c48ba8190e6a65b4b8868a7f749b5423bd18311fc6d5a175d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-teacher-agent.server.ts",
+      "sha256": "ac4faf4aca41312487d49bc34af66888bc21cc5008f793ab994e3e213a66db3b",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "sha256": "a294f34ad49c0e4e99dcd037e98b7459f21a50a539ad9b0e6f6ab2efa8644568",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/recording-binding.server.ts",
+      "sha256": "1a249761501817ddff99549b9527483be7736a1ea4723af7a5033988a88f1b23",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/recording-production.server.ts",
+      "sha256": "42447701d96affd97c9f33020e49c145071febc450bf6e464d483235d5fe670e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/scene-image-storage.server.ts",
+      "sha256": "baa7f6655233ce1f551fc66675d62afd510f68b93cef972ff91e02f3abf601ac",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/scene-image.server.ts",
+      "sha256": "fc7bc4acfa6b59485693988b33684e72a8c0ed5bc8c1e63b045ab34961b51fd3",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/teacher-boundary.server.ts",
+      "sha256": "8068c2015bb7fc948dee637a5fbc9c02c80df0223c54fdbc2c708968a1bafabe",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "sha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/admin.ts",
+      "sha256": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "sha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/recording-domain-gateway.server.ts",
+      "sha256": "3232e1a26a23c4ed2391a5a0c0cb199df48c1f4293c86664866f019e45731436",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "sha256": "c346e65e1dfbee89933a669b599e881fd4dbc695ca929a819a838e770cee929f",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts",
+      "sha256": "c5351a4bcdc390d205fb6a05e198dc449706cef2ccce23e457d5772600c38a9a",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "sha256": "2a676789a1c1dc48666e62272e71aacf7388f174110ca0a90c56122e79bd39ab",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/profile.server.ts",
+      "sha256": "55677b1942c27870f30e40835f48a8dcee0e17de49b7b4779feedc040f3ad9ea",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/reader.server.ts",
+      "sha256": "819977bab018e1c5d5bc90bebfd42cd268264a107d89a17674ff62cdebedb8e9",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-contracts.server.ts",
+      "sha256": "70f9924e270e5c7ee827244cba858acc0e041eb393da6994486e4c75e6379a02",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "sha256": "48c710f2bbe109a0898f813ddb7f8131d2a3cf1c27b779532df6810525c76d8d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts",
+      "sha256": "817d866a91dfd032733370616146cc11908978f75b44ab3fddbaca16ff6c6fcd",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/service-reader.server.ts",
+      "sha256": "7be66188b19f6096fd8bbe72956e6d10fcc11f56b884311ed6742fa1f1cfde14",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/source.server.ts",
+      "sha256": "bf34d5b6120f7b49de03a08c77f80f086f3ad7ccf9b98df393272c5c59888d89",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "sha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-identities.server.ts",
+      "sha256": "84d9ddf6948df60ffab1936c70af0e24076e508d03794ea39da01115d6bacbd5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-media-audit.server.ts",
+      "sha256": "224a0351dfa24d73ed25c86d543713efd556725171e2d4b752d043e77635652b",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-service-identities.server.ts",
+      "sha256": "5e086413203f35a6a59c6b65fc00ae6888d3cae15a32f809b5caf9b189bcb147",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "sha256": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "sha256": "e3c4734c292fe389a1fcc6435a764a65db1d41fd2308b1c89546fe89d49e76ec",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "sha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "sha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "sha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "sha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/student-permissions.ts",
+      "sha256": "3e98043d9a6fe73284f70613747e76a5896f69d206c5670ee740318946429528",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/supabase/admin.ts",
+      "sha256": "4e8bcaad4df73ba59862e845ee60e4eadb8d588bf06c89e9a3a9d8cf5372d5f9",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    }
+  ],
+  "historicalSQLLocks": [
+    {
+      "path": "supabase/migrations/202609100001_runtime_publish_foundation.sql",
+      "sha256": "8dbff15e8f74d70228e1a5440afa603dfe1af963c078decd6c89ebb0b27c2874",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609100002_runtime_publication_dependency_fence.sql",
+      "sha256": "cecd409633d4849115716b75b686eb86241ddcc94baa8d24d7fe3b5a422b0332",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609100003_runtime_admission_control.sql",
+      "sha256": "2f993901f0f3b23474aad88e07c9b58daaa4e5c74c4b8b1eb759d58a54a65b3a",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609100004_runtime_single_version_authoring.sql",
+      "sha256": "b7b8836e639933e5548ba9080f6823d975a77be07651ba74be04be64322ca9d5",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql",
+      "sha256": "78f9fae8f971cb20343ff04eba8a17c2e5796428904dd62cdcfe817b8e43881d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609110001_allow_evidence_graded_roleplay_publication.sql",
+      "sha256": "a786590ea6b3793266d0020ca422587da50f84561d3f377af999f97a961f96cd",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609110002_restore_single_version_publish_wrapper.sql",
+      "sha256": "e567ee37c8a89520a985d10d169c746e3d33cf9f5aa98cc140f3e8e6c13e50a6",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609130001_textbook_grammar_authoring.sql",
+      "sha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a",
+      "presence": "EXISTS",
+      "mode": "0o600"
+    },
+    {
+      "path": "supabase/migrations/202609130002_textbook_grammar_practice_binding.sql",
+      "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8",
+      "presence": "EXISTS",
+      "mode": "0o600"
+    },
+    {
+      "path": "supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql",
+      "sha256": "0c5a16609d3c7196284f86cecb96f250988d2ff78834a92d8e0cce5966edd73d",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609140007_teaching_content_skeleton.sql",
+      "sha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+      "sha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    }
+  ],
+  "scopeApprovalLocks": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-production-prerequisites.json",
+      "sha256": "7eb43d24267245ef93793393e593fee6250a393437be983bd4e33810951720cb",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-production-prerequisites-revision.json",
+      "sha256": "dcdbca2899e7dd85e09251589ea2331c2c64f9656a7bd2fced8713cff991a2cc",
+      "presence": "EXISTS",
+      "mode": "0o664"
+    }
+  ],
+  "sourceScan": {
+    "tsJsModules": 1315,
+    "method": "Static local import/from/re-export/require literal graph plus manual named-call, type-consumer and SQL-body audit; no modules executed",
+    "unresolvedPublicationImports": []
+  },
+  "notClaimed": [
+    "live publication row inventory",
+    "actual active sessions/runtime requests",
+    "current DB schema parity",
+    "external deployment rollback reachability",
+    "production validation"
+  ]
+}

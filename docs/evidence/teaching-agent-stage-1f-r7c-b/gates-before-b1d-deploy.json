@@ -1,0 +1,294 @@
+{
+  "overall": "NO-GO",
+  "executionStatus": "BLOCKED",
+  "gates": [
+    {
+      "id": "G-R7CB-1",
+      "name": "R7C Test Durable Contract Accepted",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-2",
+      "name": "R6F Freeze Verified",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-3",
+      "name": "Target Binding Empty Before",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-4",
+      "name": "Exact Write Authorization",
+      "status": "PASS",
+      "reason": "Approval A and A-Environment explicitly granted; B2 excluded"
+    },
+    {
+      "id": "G-R7CB-5",
+      "name": "No Authorization Deviation",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-6",
+      "name": "Existing Schema Reused",
+      "status": "PARTIAL",
+      "reason": "Approved RPC/UI implemented and isolated-tested; current DB installation/application not executed"
+    },
+    {
+      "id": "G-R7CB-7",
+      "name": "Only Separately Approved Migration",
+      "status": "PASS",
+      "reason": "Only202609170001 applied;457→458"
+    },
+    {
+      "id": "G-R7CB-8",
+      "name": "Official/Canonical Authoring Path",
+      "status": "PARTIAL",
+      "reason": "Owner UI accessible after deployment, but draft lesson preflight uses caller RLS and returns BLOCKED; no create clicked"
+    },
+    {
+      "id": "G-R7CB-9",
+      "name": "Execution Node Created",
+      "status": "BLOCKED",
+      "reason": "Owner UI accessible after deployment, but draft lesson preflight uses caller RLS and returns BLOCKED; no create clicked"
+    },
+    {
+      "id": "G-R7CB-10",
+      "name": "Activity Created",
+      "status": "BLOCKED",
+      "reason": "Owner UI accessible after deployment, but draft lesson preflight uses caller RLS and returns BLOCKED; no create clicked"
+    },
+    {
+      "id": "G-R7CB-11",
+      "name": "Private Answer Created",
+      "status": "BLOCKED",
+      "reason": "Owner UI accessible after deployment, but draft lesson preflight uses caller RLS and returns BLOCKED; no create clicked"
+    },
+    {
+      "id": "G-R7CB-12",
+      "name": "Parent Chain Correct",
+      "status": "BLOCKED",
+      "reason": "Owner UI accessible after deployment, but draft lesson preflight uses caller RLS and returns BLOCKED; no create clicked"
+    },
+    {
+      "id": "G-R7CB-13",
+      "name": "Duplicate Zero",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-14",
+      "name": "Public Prompt Safe",
+      "status": "PARTIAL",
+      "reason": "Static/client boundary and receipt tests PASS; current DB/browser creation unverified"
+    },
+    {
+      "id": "G-R7CB-15",
+      "name": "Private Answer Server Only",
+      "status": "PARTIAL",
+      "reason": "Static/client boundary and receipt tests PASS; current DB/browser creation unverified"
+    },
+    {
+      "id": "G-R7CB-16",
+      "name": "Current DB Wrong Attempt",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-17",
+      "name": "Current DB Correct Attempt",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-18",
+      "name": "Existing Progress Updated",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-19",
+      "name": "INCOMPLETE Readback",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-20",
+      "name": "COMPLETED Readback",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-21",
+      "name": "UNKNOWN Readback",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-22",
+      "name": "Lost Response Safe",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-23",
+      "name": "No Blind Retry",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-24",
+      "name": "Idempotency",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-25",
+      "name": "Restart Persistence",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-26",
+      "name": "Current DB Runtime Pause",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-27",
+      "name": "Wrong Holds",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-28",
+      "name": "Correct Durable Completion Resumes",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-29",
+      "name": "Cue Dedupe Regression",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-30",
+      "name": "Seek Regression",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-31",
+      "name": "Refresh Regression",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-32",
+      "name": "Stale Generation Regression",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-33",
+      "name": "Runtime Facts Current DB Evidence",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-34",
+      "name": "Runtime Facts No Private Answer",
+      "status": "BLOCKED",
+      "reason": "CURRENT-DB TEST IDENTITY BLOCKER"
+    },
+    {
+      "id": "G-R7CB-35",
+      "name": "Public Leakage Scan",
+      "status": "PARTIAL",
+      "reason": "Static/client boundary and receipt tests PASS; current DB/browser creation unverified"
+    },
+    {
+      "id": "G-R7CB-36",
+      "name": "Frozen Nodes Unchanged",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-37",
+      "name": "Script Version Unchanged",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-38",
+      "name": "Mock Cue Still Nonpersistent",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-39",
+      "name": "No Agent Run",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-40",
+      "name": "No Provider",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-41",
+      "name": "No Publish",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-42",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-43",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-44",
+      "name": "No Legacy Fallback",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    },
+    {
+      "id": "G-R7CB-45",
+      "name": "Build Pass",
+      "status": "PASS",
+      "reason": "Minimal canonical candidate build/typecheck PASS; four application files unchanged from lint-passing source lock"
+    },
+    {
+      "id": "G-R7CB-46",
+      "name": "Tests Pass",
+      "status": "PARTIAL",
+      "reason": "15/15 authoring tests previously passed and source unchanged, but real Owner Draft RLS read was not covered; canonical UI create blocked"
+    },
+    {
+      "id": "G-R7CB-47",
+      "name": "New Lint Errors Zero",
+      "status": "PASS",
+      "reason": "Minimal canonical candidate build/typecheck PASS; four application files unchanged from lint-passing source lock"
+    },
+    {
+      "id": "G-R7CB-48",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "reason": "Read-only audit or boundary verified; G1 accepts historical isolated result only"
+    }
+  ]
+}

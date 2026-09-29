@@ -1,0 +1,21 @@
+{
+  "status": "COMPLETED THROUGH EXISTING CHROME CDP",
+  "requestedAtUtc": "2026-09-16T05:35:25.073578+00:00",
+  "targetSlot": "韩语初级 / 预备课：韩文字母入门",
+  "chapterTitle": "韩文字母入门",
+  "logicalAlias": "hangul-introduction",
+  "objectives": [
+    "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+    "能辨认并朗读基础元音和常用基础辅音。",
+    "理解初声、中声、终声组成韩语音节的基本方式。",
+    "能将基础辅音与元音组合成简单韩语音节。"
+  ],
+  "action": "CreateTeachingContentForm → createTeachingContentAction → create_teaching_content_skeleton",
+  "maxLogicalCreateAttempts": "1 new explicitly authorized attempt after precise retirement; prior failed attempt retained in first-create-failure.json",
+  "unknownResultRule": "STOP; NO RETRY; NEW READ-ONLY VERIFY",
+  "afterSuccess": "Click 进入教学脚本; verify target chapter0 orientation; stop before 新建教学脚本",
+  "forbidden": "No script draft/node/save/publish/provider/Agent/pins",
+  "codexSessionAccess": true,
+  "userReportedSession": "Normal Platform Owner login; user confirms textbooks page opens",
+  "completedAtUtc": "2026-09-16T06:43:59.741Z"
+}

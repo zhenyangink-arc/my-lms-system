@@ -1,0 +1,21 @@
+{
+  "status": "COMPLETE",
+  "rubric": {
+    "Grammar Accuracy": "PASS",
+    "Natural Korean": "NEEDS_REVISION",
+    "Simple Vocabulary": "NEEDS_REVISION",
+    "Short Sentences": "NEEDS_REVISION",
+    "Polite Style": "PASS",
+    "Beginner Comprehension": "NEEDS_REVISION",
+    "Pedagogical Clarity": "NEEDS_REVISION"
+  },
+  "grammar": "PASS",
+  "naturalness": "NEEDS_REVISION",
+  "noNumericalScore": true,
+  "reason": "没有明显屈折/助词/句尾错误；Node1构成句自然度、Node4名词化长句及Node6术语解释需调整。礼貌教学语气整体成立；볼까요/보세요是自然礼貌引导，不属于반말。",
+  "wordingComparisonNode1": {
+    "한글은 자음과 모음으로 만들어요.": "语法可解释；自然度SHOULD_FIX",
+    "한글은 자음과 모음으로 이루어져 있어요.": "准确但书面、负担较高，不首选",
+    "한글에는 자음과 모음이 있어요.": "准确、自然、简单；与后句组合说明配合最佳"
+  }
+}

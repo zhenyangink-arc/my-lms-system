@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "currentBuild": "vZokoJqpKDRZxnpQcQpah",
+  "candidateBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "candidateDirectory": "/tmp/uply-r7cb-b3a-candidate",
+  "productFiles": [
+    "package-lock.json",
+    "package.json",
+    "src/app/[space]/dashboard/admin/development-execution/runtime/media/route.ts",
+    "src/app/[space]/dashboard/admin/development-execution/runtime/page.tsx",
+    "src/features/development-execution/components/execution-console.tsx",
+    "src/features/development-execution/server/execution-child.server.ts",
+    "src/features/development-execution/server/execution-composition.server.ts",
+    "src/features/development-execution/server/execution-guard.server.ts",
+    "src/features/development-execution/server/execution-journal.server.ts",
+    "src/features/development-execution/server/execution-manager.server.ts",
+    "src/features/development-execution/server/execution-scope.server.ts",
+    "src/features/development-execution/server/execution-transport.server.ts",
+    "src/features/development-execution/server/execution.actions.ts",
+    "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/choice-block.tsx",
+    "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+    "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+    "src/features/smart-textbook-runtime/components/runtime.css",
+    "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/video-block.tsx",
+    "src/features/smart-textbook-runtime/core/block-registry.ts",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "src/features/smart-textbook-runtime/core/services.ts",
+    "src/features/smart-textbook-runtime/core/target-registry.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+    "src/lib/smart-textbook-runtime-v1/contracts.ts",
+    "src/lib/smart-textbook-runtime-v1/execution.ts",
+    "src/lib/smart-textbook-runtime-v1/registry.ts",
+    "src/lib/smart-textbook-runtime-v1/validator.ts"
+  ],
+  "sourceHashes": {
+    "package-lock.json": "32afe671ae11e981d3d889c546b4c6a8e240e95ce934be2aa9f76bc81c2e7a2d",
+    "package.json": "3f86c618474619c4e3ad49ae619e096a602a0d32bb93b97b3597f18f84cc90f1",
+    "src/app/[space]/dashboard/admin/development-execution/runtime/media/route.ts": "172a489937c9d8e7df3a6bbb3f83d87bbfb392a5e33356f414a70b586e5f957c",
+    "src/app/[space]/dashboard/admin/development-execution/runtime/page.tsx": "5f5b71650706218d6e4562608e1eb141b373c290ebef79b8a992e296fbb56525",
+    "src/features/development-execution/components/execution-console.tsx": "7d515ac260a3b2b01783a7834fde7bc72be91b9ffaecf987955d1466b0df87c5",
+    "src/features/development-execution/server/execution-child.server.ts": "16585603fc974a1929a74e8b80decbee2f961504c5a5078667f52cbd1a66efe6",
+    "src/features/development-execution/server/execution-composition.server.ts": "73a252f39b091c61e0f7149a7144769e7c03895c5fe0f05614845a6b79846528",
+    "src/features/development-execution/server/execution-guard.server.ts": "a14855acaaa9dd604d6999346cfbbf15fa20111162d3eb8f8684979cebc97041",
+    "src/features/development-execution/server/execution-journal.server.ts": "25fd6e2cdcb2f76ea2215ece3010d95cb5083e02946ae5c79285c15af039b5aa",
+    "src/features/development-execution/server/execution-manager.server.ts": "759e0783e5bc45809eac5d117f87a88c9d654bde3d8beb3ea452db150ff657eb",
+    "src/features/development-execution/server/execution-scope.server.ts": "dc0fd2be93489f515e9631d205325638eed6879768e855d48a273dbc6ddb6f08",
+    "src/features/development-execution/server/execution-transport.server.ts": "ff0f54f057d08200764f77438198f6e0116de33977f1a7fd9d041b2bf578a2d0",
+    "src/features/development-execution/server/execution.actions.ts": "9f9cc7805c328a77f909e309b627992b275ea869fb191f4aa171c104d8a2e1ac",
+    "src/features/smart-textbook-runtime/components/block-renderer.tsx": "7f69309e478945b68f248952152424ce89f206f1acad390a9a0d6433f2899334",
+    "src/features/smart-textbook-runtime/components/choice-block.tsx": "13aac266efcb230883f9dacc8d16f3b34a8b6a8ff0550c953da3cbcb26130001",
+    "src/features/smart-textbook-runtime/components/region-renderer.tsx": "13cae3a99198ba27126d922d9922afb3faa1dd54ad7e8bd7ff0842513347c876",
+    "src/features/smart-textbook-runtime/components/runtime-context.tsx": "2c8d263571a8e6566a4123040a5ebc4ef7c8867f8ee9d5a8fdde42d4f6910a73",
+    "src/features/smart-textbook-runtime/components/runtime-root.tsx": "0d1b8b801d3840477352acfb9d5d6665e262e225f607cd39330d8a52b99991b8",
+    "src/features/smart-textbook-runtime/components/runtime.css": "508cf0301f8a15b9e5e99e5462596d72971d370a919658690b6ffee5805df303",
+    "src/features/smart-textbook-runtime/components/template-renderer.tsx": "4521c6b7fa991d4a886d0ea0058521a23debf0eb6d62a186d0238f1b97d2817e",
+    "src/features/smart-textbook-runtime/components/video-block.tsx": "967743a3fa1610055063caa2292486548e26efb4dd842d30b5afe43cd91cd042",
+    "src/features/smart-textbook-runtime/core/block-registry.ts": "600a4b117eed6b2c3ec43f91d13130aa944ba34d55d809353d61864dd9ffcd8c",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts": "e0be7eb2d48d40cfb177b9b02f400016b845c5a6c254e620f9fd8905531f1bb9",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts": "35eaf42079249fa8b9dcfa28b61429ca3f974a1d1c01e224b7e8dda1c61a7a2e",
+    "src/features/smart-textbook-runtime/core/services.ts": "2cd89f50ca480c9707c8ad994b5f611db2d855ee9b94892b48d1141605797eca",
+    "src/features/smart-textbook-runtime/core/target-registry.ts": "364b9e0d12e8074a1ef0b55b71f244f93bef19d3b96fbdc14a1c8d5448c7ccd6",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "4a4cd76c69d9e7639767a49fd40eb0e707a9075a25e74528e579d535b88d9c50",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+    "src/lib/smart-textbook-runtime-v1/contracts.ts": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+    "src/lib/smart-textbook-runtime-v1/execution.ts": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+    "src/lib/smart-textbook-runtime-v1/registry.ts": "4d41f360ec4b6ba625effb6780087f1f283d05bf6d77fb875ec1b4221430b0e8",
+    "src/lib/smart-textbook-runtime-v1/validator.ts": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e"
+  },
+  "artifacts": {
+    "/tmp/uply-r7cb-b3a-candidate/candidate-build.tar.gz": {
+      "sha256": "5d0b773125450bca5372085c142b2b524907f962ddc73837183615ffeb764c9e",
+      "bytes": 7322450
+    },
+    "/tmp/uply-r7cb-b3a-candidate/candidate-dependencies.tar.gz": {
+      "sha256": "3c2b871724cc349414031f1471e05504f0b969596d8d07f25e162e6704012ae9",
+      "bytes": 119004
+    },
+    "/tmp/uply-r7cb-b3a-candidate/.next/server/b3/child.cjs": {
+      "sha256": "85fa440a154841ae2c646426bd056e2af56a21bd773ddf45cf20b8d7dce3a036",
+      "bytes": 113623
+    },
+    "/tmp/uply-r7cb-b3a-candidate/.next/server/b3/development-video.webm": {
+      "sha256": "1e4460ccf62254dc01b75ba5ed444a05cc954f64a10f067e8d39bdbd7d4bb227",
+      "bytes": 606155
+    }
+  },
+  "routePresent": true,
+  "serverActionsPresent": true,
+  "clientSecretMarkerHits": [],
+  "typeScript": "PASS",
+  "B3AModifiedLint": "PASS",
+  "priorRuntimeLintErrors": 3,
+  "priorRuntimeLintWarnings": 2,
+  "newLintErrors": 0,
+  "deploy": 0,
+  "currentDbMutation": 0,
+  "sealedWorkspaceArtifacts": {
+    "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-build.tar.gz": {
+      "sha256": "5d0b773125450bca5372085c142b2b524907f962ddc73837183615ffeb764c9e",
+      "bytes": 7322450
+    },
+    "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-dependencies.tar.gz": {
+      "sha256": "3c2b871724cc349414031f1471e05504f0b969596d8d07f25e162e6704012ae9",
+      "bytes": 119004
+    },
+    "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/candidate-source.tar.gz": {
+      "sha256": "c76868ac77b5fec44c0d8a072396a2aea2174af79f03664b26068594b0914ae7",
+      "bytes": 166211
+    }
+  },
+  "sealedSourceDirectory": "/home/yangzhen/projects/my-lms-system/build/r7cb-b3a-candidate/source",
+  "deployArchiveSha256": "5d0b773125450bca5372085c142b2b524907f962ddc73837183615ffeb764c9e"
+}

@@ -1,0 +1,93 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "READY FOR SEPARATE APPROVAL; NOT IMPLEMENTED",
+  "scope": "Production prerequisites implementation and isolated verification only; no activation/deploy/DB install/Agent Run implied",
+  "A": {
+    "name": "Published execution read authority",
+    "design": "New canonical published read adapter from verified Student Run subject/tenant and published runtime snapshot; fixed current lesson/version/Activity resolved server-side. Existing policy unchanged; no Owner/B2 issuer, chapter-one capsule or legacy fallback. Reuse trusted repository and validated same-snapshot projection.",
+    "testing": "Owned isolated published fixtures; frozen current Draft target and B3 facts remain unchanged."
+  },
+  "B": {
+    "name": "Production provenance",
+    "design": "Introduce versioned completion receipt activity-completion/3 with CURRENT_PUBLISHED_DB bound to verified server transport/database identity. Preserve v2 development/isolated receipts.",
+    "versionDecisionRequiringApproval": "Recommend new Tool get_current_lesson_execution_facts@1.1.0 and summarize-current-lesson-execution@1.1.0 / output1.1.0 for expanded production wire contract. Preserve current1.0.0 behavior and C2 exact evidence requirement; never silently satisfy v1.1 Skill with v1.0 evidence. This version change is proposed, not implemented/approved.",
+    "safety": "No test relabeling; new production composition cannot accept development or fixture receipts."
+  },
+  "C": {
+    "name": "Versioned persisted completion policy",
+    "design": "Extend existing artifact/trace/SQL validators to typed evidence requirements and safe receipt refs: same Run/Skill/tool-call/exact version/subject scope/content snapshot/storage/freshness, matched evidence/output, existing fencing/CAS/cancellation. Preserve Explain v1 sentence gate; activityRef never occupies segmentRef. No new tables.",
+    "migrationFileProposed": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "install": "NOT AUTHORIZED; write/test proposed migration only if next approval explicitly covers it"
+  },
+  "D": {
+    "name": "Coordinator/registry/Profile/permission binding",
+    "design": "Explicit versioned Profile and selected-Skill dispatch within existing coordinator, request-local filtered registries and exact permission mapping; planning auto, final none, fail-closed mandatory evidence. New production composition remains unavailable until later separately approved release/admission activation. Persona cannot grant permissions.",
+    "toolEvidence": "Explain continues mandatory lesson context; execution summary requires exact new durable Tool version."
+  },
+  "exactProposedFiles": {
+    "modify": [
+      "src/features/teaching-agent/server/repositories/contracts.ts",
+      "src/features/teaching-agent/server/domain-ports/index.ts",
+      "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "src/features/teaching-agent/server/tools/contracts.ts",
+      "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "src/features/agent-core/contracts/server.ts",
+      "src/features/agent-core/observability/trace.ts",
+      "src/features/agent-core/persistence/supabase/repositories.ts",
+      "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts"
+    ],
+    "add": [
+      "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+      "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+      "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts"
+    ],
+    "newMigration": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "productCount": 27
+  },
+  "proposedTests": [
+    "tests/teaching-agent-r7d-production-binding.test.mjs",
+    "tests/teaching-agent-r7d-production-provenance.test.mjs",
+    "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+    "tests/fixtures/teaching-agent-r7d-production/published-fixture.mjs"
+  ],
+  "preImplementationRule": "Re-audit these source hashes and all call-site/interface dependencies before editing; if any additional product path is necessary STOP and amend scope. Current transport/UI intent exposure is not authorized by this package.",
+  "writesBeforeSeparateDeploymentApproval": {
+    "currentDBReads": 0,
+    "currentDBBusinessWrites": 0,
+    "migrationInstall": 0,
+    "publish": 0,
+    "auth": 0,
+    "AgentRun": 0,
+    "Provider": 0,
+    "deployment": 0,
+    "pm2": 0
+  },
+  "laterAcceptance": "Fresh DB schema/read contract check, migration install/deploy approval, and any Agent/provider execution each require separate explicit authorization. C2 completion alone cannot enter C3."
+}

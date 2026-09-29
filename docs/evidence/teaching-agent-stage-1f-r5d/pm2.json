@@ -1,0 +1,102 @@
+{
+  "status": "PASS",
+  "namedApp": {
+    "status": "online",
+    "exec_mode": "fork_mode",
+    "instances": 1,
+    "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000,
+    "restart_time": 0,
+    "pm_uptime": 1789529555153,
+    "name": "uply-first-enable",
+    "pid": 934715
+  },
+  "node_version": "26.5.0",
+  "exec_interpreter": "/home/yangzhen/miniconda3/bin/node",
+  "otherAppsUnchanged": true,
+  "otherApps": [
+    {
+      "name": "uply-dev",
+      "pid": 0,
+      "status": "stopped",
+      "restart_time": 0,
+      "pm_uptime": 1789289955750,
+      "pm_cwd": "/home/yangzhen/projects/my-lms-system",
+      "pm_exec_path": "/home/yangzhen/miniconda3/bin/npm"
+    },
+    {
+      "name": "cezar",
+      "pid": 1752,
+      "status": "online",
+      "restart_time": 0,
+      "pm_uptime": 1789289955755,
+      "pm_cwd": "/home/yangzhen/projects/my-lms-system",
+      "pm_exec_path": "/usr/bin/bash"
+    },
+    {
+      "name": "alphalens",
+      "pid": 1753,
+      "status": "online",
+      "restart_time": 0,
+      "pm_uptime": 1789289955763,
+      "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+      "pm_exec_path": "/home/yangzhen/miniconda3/bin/npm"
+    },
+    {
+      "name": "alphalens-api",
+      "pid": 1754,
+      "status": "online",
+      "restart_time": 0,
+      "pm_uptime": 1789289955763,
+      "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+      "pm_exec_path": "/home/yangzhen/AIresearch/AlphaLens/services/market_data/.venv/bin/uvicorn"
+    },
+    {
+      "name": "alphalens-worker",
+      "pid": 226755,
+      "status": "online",
+      "restart_time": 1,
+      "pm_uptime": 1789459220872,
+      "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+      "pm_exec_path": "/home/yangzhen/AIresearch/AlphaLens/services/market_data/.venv/bin/python"
+    },
+    {
+      "name": "siheung-volunteer",
+      "pid": 0,
+      "status": "stopped",
+      "restart_time": 59,
+      "pm_uptime": 1787128620551,
+      "pm_cwd": "/home/yangzhen/Dedication",
+      "pm_exec_path": "/home/yangzhen/Dedication/node_modules/wrangler/wrangler-dist/cli.js"
+    },
+    {
+      "name": "siheung-volunteer-test",
+      "pid": 1773,
+      "status": "online",
+      "restart_time": 0,
+      "pm_uptime": 1789289955777,
+      "pm_cwd": "/home/yangzhen/Dedication",
+      "pm_exec_path": "/home/yangzhen/Dedication/node_modules/wrangler/wrangler-dist/cli.js"
+    },
+    {
+      "name": "motion-studio",
+      "pid": 1775,
+      "status": "online",
+      "restart_time": 0,
+      "pm_uptime": 1789289955778,
+      "pm_cwd": "/home/yangzhen/projects/motion-studio",
+      "pm_exec_path": "/usr/bin/bash"
+    },
+    {
+      "name": "motion-studio-editor",
+      "pid": 3947,
+      "status": "online",
+      "restart_time": 42,
+      "pm_uptime": 1789289962441,
+      "pm_cwd": "/home/yangzhen/projects/motion-studio",
+      "pm_exec_path": "/home/yangzhen/miniconda3/bin/node"
+    }
+  ],
+  "mutations": 0
+}

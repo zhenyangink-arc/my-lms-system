@@ -12,12 +12,12 @@ const {projectLearningContent}=await import('../src/lib/smart-textbook-legacy-ad
 const {learningRequest,submitRequest,turnRequest}=await import('../src/features/smart-textbook-runtime/server/audit-requests.server.ts');
 const file=p=>readFileSync(p,'utf8');
 
-test('non UI proof intact; proven chapter capabilities activate, unimplemented video remains refused',()=>{
+test('non UI proof intact; proven chapter capabilities activate, native video is declared and unsupported image remains refused',()=>{
   assert.equal(compiled.nonUiRuntimeReady,true);assert.equal(runtimeReadiness(manifest,true).runtimeReady,true);
   assert.equal(validateRuntimeActivation(minimalManifest()).success,true);
   assert.equal(Object.keys(rendererRegistry).length,25);
-  assert.deepEqual(Object.values(rendererRegistry).filter(r=>r.rendererStatus==='implemented').map(r=>r.type),['text','multiple_choice','compat.teacher.v1','compat.learning.v1']);
-  assert.equal(validateRuntimeActivation(blockManifest('video')).success,false);
+  assert.deepEqual(Object.values(rendererRegistry).filter(r=>r.rendererStatus==='implemented').map(r=>r.type),['video','text','multiple_choice','compat.teacher.v1','compat.learning.v1']);
+  assert.equal(validateRuntimeActivation(blockManifest('image')).success,false);
 });
 test('first chapter inventory, original semantic digest and v23 stay fixed',()=>{
   assert.equal(manifest.steps.length,8);assert.equal(manifest.activityRefs.length,19);assert.equal(manifest.blocks.filter(b=>b.type==='multiple_choice').length,3);

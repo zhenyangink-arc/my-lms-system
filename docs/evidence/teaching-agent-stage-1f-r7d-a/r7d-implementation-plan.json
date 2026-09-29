@@ -1,0 +1,51 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "overall": "READY FOR R7D IMPLEMENTATION",
+  "decision": "Audit/design stop. Existing infrastructure sufficient to reuse, but durable Tool requires distinct authorized read binding and shared validated snapshot projection; no hurried Draft bypass.",
+  "modifiedProductFiles": [
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/teaching-agent/server/domain-ports/index.ts",
+    "src/features/teaching-agent/server/tools/contracts.ts"
+  ],
+  "newProductFiles": [
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts"
+  ],
+  "plannedTestFiles": [
+    "tests/teaching-agent-r7d-lesson-facts.test.mjs",
+    "tests/teaching-agent-r7d-lesson-tool.test.mjs",
+    "tests/teaching-agent-r7d-evidence.test.mjs",
+    "tests/fixtures/teaching-agent-r7d/readonly-fixture.mjs"
+  ],
+  "steps": [
+    "Extract readRows consistency authority within existing durable completion module, preserving B3 behavior and all existing tests",
+    "Expose read-only summary and receipt from single validated snapshot; retain private key internal",
+    "Define exact bounded input/output schemas in existing tool contracts and Domain Port in existing domain-ports",
+    "Mint request-local read authorization; do not treat serialized context as capability",
+    "Add ToolRegistration that calls read port; use existing createToolRegistry/Core executor in isolated composition",
+    "Add development-only fixed-subject read adapter, no B3 activation; normal Owner guard if exposed via server action later",
+    "Run negative matrix, baseline regression, typecheck/scoped lint/build as implementation acceptance",
+    "Only then prepare current-DB Tool acceptance or separate Deploy approval if a live entrypoint is necessary"
+  ],
+  "productionRegistryChanges": 0,
+  "skillRegistryChanges": 0,
+  "profilePublicationChanges": 0,
+  "providerChanges": 0,
+  "migration": 0,
+  "packageChanges": 0,
+  "runtimeOwnerChanges": 0,
+  "deploymentThisRound": 0,
+  "approvalR7DADeploy": "NOT REQUIRED THIS AUDIT; no candidate or artifact created",
+  "newRuntime": false,
+  "newProgressSystem": false,
+  "newActivitySystem": false,
+  "newToolFramework": false
+}

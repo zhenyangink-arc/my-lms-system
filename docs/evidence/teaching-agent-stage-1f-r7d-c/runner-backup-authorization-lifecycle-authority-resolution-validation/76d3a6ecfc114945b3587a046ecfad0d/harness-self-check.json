@@ -1,0 +1,1 @@
+{"checks":{"arbitraryPythonDenied":true,"captureCLIAllowed":true,"localOpenSSLAllowed":true,"ownedDockerAllowed":true,"productionMountDenied":true,"productionPathsDenied":true,"shellDenied":true},"childGuardSha256":"f779cc0d64658cbd160910b6134e9d5dc8c761d0b1574d8e4b4fbb38ad8f6afe","status":"PASS","testsExecuted":0}

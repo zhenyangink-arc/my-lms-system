@@ -1,0 +1,159 @@
+{
+  "acquisitionSourceDigest": "71d753fae6edf3d18840234a2cbeaaa7ca871881789edec057d46f64d72d1b5e",
+  "acquisitionSourceHashes": {
+    "scripts/teaching-agent-r7d-c3b/backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "scripts/teaching-agent-r7d-c3b/capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "scripts/teaching-agent-r7d-c3b/checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "scripts/teaching-agent-r7d-c3b/maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "scripts/teaching-agent-r7d-c3b/plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "scripts/teaching-agent-r7d-c3b/plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py": "74cdce63e757d9338790567409c5e13bdda37e20397f7f0b815715731937f1e9",
+    "scripts/teaching-agent-r7d-c3b/receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "scripts/teaching-agent-r7d-c3b/runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "scripts/teaching-agent-r7d-c3b/target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "scripts/teaching-agent-r7d-c3b/transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "actualModifyPaths": [
+    "docs/teaching-agent-source-provenance-acquisition.md",
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py",
+    "tests/teaching_agent_source_provenance_acquisition_test.py"
+  ],
+  "addedImplementationPaths": [],
+  "admissionDesignSha256": "faf65e0d5e5893cecbee8262dde987ece802bc03101c66ac1dadd5daae687c6d",
+  "approvedModifyPaths": [
+    "docs/teaching-agent-source-provenance-acquisition.md",
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py",
+    "tests/teaching_agent_source_provenance_acquisition_test.py"
+  ],
+  "contract": "source-provenance-direct-implementation/1",
+  "deletedImplementationPaths": [],
+  "designSha256": "a205da202b3361969c47e247d1f169eda409f89537cc1193a7c978b6889bc706",
+  "directProfileSha256": "92fe3d598614b91eba59fd8d5c6f9f6fcf2b9d1496ac29f30855e87cc4eeb4e9",
+  "exactTestSelectionSha256": "7a2a684533f3866b9f347619086dc8db3dc635ceabe269c9e3e4c85e1bb8cdf4",
+  "fileChanges": [
+    {
+      "afterSha256": "85d42d50833e7e0f6feb6f8ccddf5f4efd3bb0da2f16bfa89b4b4c7590dde126",
+      "beforeSha256": "3d700b371dbc259d8158709cc80d4c6bbd27ae42bf9986bbd7bfbac11bb2c9b2",
+      "path": "docs/teaching-agent-source-provenance-acquisition.md"
+    },
+    {
+      "afterSha256": "74cdce63e757d9338790567409c5e13bdda37e20397f7f0b815715731937f1e9",
+      "beforeSha256": "162f705ea7eb67bccadf38cbdb3a425f60f7f7d7898dcb804ae08b0a64951da2",
+      "path": "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py"
+    },
+    {
+      "afterSha256": "c3c917420c609cad0f7a155420e0f95dff8d07979f584a0373e55df91f8aa3c3",
+      "beforeSha256": "9faa86c205c442c669d43a53ae597fe55fadb14cfa1a8616d8e5a77f5db3d01f",
+      "path": "tests/teaching_agent_source_provenance_acquisition_test.py"
+    }
+  ],
+  "formalRepositoryTestsRun": 0,
+  "forwardDesignSha256": "d83a4acaa12b85c3a4fdab193993762774053fe95b0d576946afa313ed085334",
+  "operationalPackageDigest": "1f80cfc251818c882b1cd37f58157f03ee985ba89ee422c40447a90c35fc333f",
+  "operationalPackageHashes": {
+    "backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "overall": "D26_DIRECT_SOURCE_ACQUISITION_IMPLEMENTATION_COMPLETE_AWAITING_FRESH_VALIDATION",
+  "predecessorEvidenceBindings": {
+    "D19": {
+      "bytes": 1613787,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d19-source-only-bootstrap-provenance-acquisition-contract-design-review.json",
+      "sha256": "a205da202b3361969c47e247d1f169eda409f89537cc1193a7c978b6889bc706"
+    },
+    "D20": {
+      "bytes": 1464074,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d20-source-only-provenance-acquisition-implementation-result.json",
+      "sha256": "d6eb934b00fac2557d65f8eb49983111dfb4935740e91a1b89a3b75c788b46a7"
+    },
+    "D21": {
+      "bytes": 3403279,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-source-only-provenance-acquisition-fresh-validation-result.json",
+      "sha256": "804efe16fdd414472d86481c7a0af68d599398de312e398d76dd958e5100f2fe"
+    },
+    "D21-F1": {
+      "bytes": 1445809,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-f1-source-only-provenance-acquisition-failure-review.json",
+      "sha256": "df9dbce2b9b0e1528473f6c7d3575dbe1b83adc4283d2c5f645c7d305425a986"
+    },
+    "D21-F2": {
+      "bytes": 1399432,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-f2-minimal-terminal-order-test-fix-implementation-result.json",
+      "sha256": "38314c199ce0608fca226aa62f75a39af604209c750439e54c1ad5dc94d68a07"
+    },
+    "D21-F3": {
+      "bytes": 1494183,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-f3-forward-validation-evidence-admission-design-review.json",
+      "sha256": "701dd316f2c865b2197dc44a00448dc16bf6529e0ce61aa6e1f4aadb0b55b4b0"
+    },
+    "D21-F4": {
+      "bytes": 7164,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-f4-forward-admission-reference-implementation-result.json",
+      "sha256": "e46c5aefda65199c87e8cc001b8b70b039ff0cf1d70cdcfb4657903b331c43e0"
+    },
+    "D21-R1": {
+      "bytes": 2518530,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-r1-source-only-provenance-acquisition-fresh-revalidation-result.json",
+      "sha256": "a81b91e564b6eff96a2f7e3d47da9384375175bbfbaf35a226dee60eda79f213"
+    },
+    "D21-R1-F1": {
+      "bytes": 1740110,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-r1-f1-failure-review-minimal-fix-scope.json",
+      "sha256": "99221a366aa988c2b0452ef35ef09cb222eba95020556ab7b498d75b93514034"
+    },
+    "D21-R1-F2": {
+      "bytes": 1528354,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d21-r1-f2-bounded-forward-reference-design-review.json",
+      "sha256": "afa4a6b865147803cd61ddb484f3d3740f00108401756d3906648e8bdeaed406"
+    }
+  },
+  "productionCounters": {
+    "AgentRun": 0,
+    "PM2": 0,
+    "Provider": 0,
+    "approvalRotation": 0,
+    "authorizationReplay": 0,
+    "deployment": 0,
+    "migrationInstall": 0,
+    "mint": 0,
+    "preinstall": 0,
+    "productionBackup": 0,
+    "productionCOMMIT": 0,
+    "productionCredentialAccess": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionHostAccess": 0,
+    "productionProvenanceAcquisition": 0,
+    "productionRestore": 0,
+    "productionRolesExport": 0,
+    "publish": 0
+  },
+  "queryRegistrySha256": "852bcc36e10a21da2d61ed220238f8b6f329d386722b311217cb322066173d0f",
+  "recordedAt": 1790501191.7271733,
+  "schemaVersion": 1,
+  "staticChecks": {
+    "exactModifyScope": true,
+    "exactTestSelectionRetained": true,
+    "historicalEvidenceUnchanged": true,
+    "noFutureHashCycle": true,
+    "noLegacyFallback": true,
+    "protectedSymbolsUnchanged": true,
+    "sealedPackageUnchanged": true,
+    "syntax": true,
+    "terminal019FixRetained": true
+  },
+  "transportPolicySha256": "8921a33f721940fe3a4684a7429bc1dfb97867452769aad308ad296812e68b08",
+  "validationContextHashes": {
+    "docs/teaching-agent-source-provenance-acquisition.md": "85d42d50833e7e0f6feb6f8ccddf5f4efd3bb0da2f16bfa89b4b4c7590dde126",
+    "tests/teaching_agent_source_provenance_acquisition_test.py": "c3c917420c609cad0f7a155420e0f95dff8d07979f584a0373e55df91f8aa3c3"
+  }
+}

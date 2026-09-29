@@ -1,0 +1,24 @@
+{
+  "status": "CONFIRMED CONTRACT MISMATCH",
+  "code": "OWNER_DRAFT_LESSON_PREFLIGHT_RLS_MISMATCH",
+  "source": "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+  "query": "authenticated caller SELECT id FROM learning_agent_lessons WHERE module_id = bound module",
+  "actualPolicies": [
+    {
+      "name": "authenticated read published learning agent lessons",
+      "cmd": "SELECT",
+      "roles": [
+        "authenticated"
+      ],
+      "qual": "((status = 'published'::text) AND private.can_read_published_teaching_module(module_id))"
+    }
+  ],
+  "effect": "Target draft lesson not visible to caller select; readCanonicalBinding returns BLOCKED",
+  "UI": "Existing Owner reaches page; target title correct; creation button disabled",
+  "logicalCreateAttempts": 0,
+  "rpcBusinessCalls": 0,
+  "notCausedBy": "B2 identity or target/freeze drift",
+  "existingOfficialPattern": "src/features/learning-agent-script-studio/service.ts: requirePlatformOwner then server-only createAdminClient for bounded authoring reads; caller retained for writes",
+  "recommendedFix": "Explicit Owner reauthorization and existing server-only authoring read for the bound draft lesson only. Keep authenticated caller for creation RPC, unchanged RLS/private answer/RPC/migration. Requires amendment to locked source and rebuild/deploy approval.",
+  "applied": false
+}

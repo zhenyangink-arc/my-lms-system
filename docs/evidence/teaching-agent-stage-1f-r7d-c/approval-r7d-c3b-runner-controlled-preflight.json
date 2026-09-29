@@ -1,0 +1,135 @@
+{
+  "stage": "R7D-C3B-RUNNER-I1",
+  "recordedAt": "2026-09-18T13:42:58.888611+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "realBackup": 0,
+  "credentialAccess": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "historicalEvidenceModified": false,
+  "status": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "approved": false,
+  "approvalType": "CONTROLLED_PRODUCTION_READ_ONLY_BASELINE_CAPTURE_AND_REVIEW_ONLY",
+  "implementationAuthority": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-implementation-result.json",
+  "implementationResultSha256": "7e5551c7d01cae4916d7f711aaf137cc7d825c67e0dbd01d96546c2de3007270",
+  "sourceLock": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-source-lock.json",
+  "sourceLockSha256": "ef19dbc735849b7b5206c004711bd9211d02602201781f9913cdca7e1bdf79c6",
+  "operationalFiles": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "operation": "ADD",
+      "sha256": "a5efb5e778178f9cb79132476fdb97371e3b2c85771e7c2afe20ea0dbe76a45f",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "operation": "ADD",
+      "sha256": "18cc080bf1e564954d1351c96d28e05bbf9df09da1c5992838e0876fb809a7c6",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "operation": "ADD",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "operation": "ADD",
+      "sha256": "cbce3e27fef1d03d3d6298ebfd15e332693e84a43b7862c2e0422d7a583b7c9e",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "operation": "ADD",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "operation": "ADD",
+      "sha256": "a6d818f207afa1bcaccc2cccc0a17e95354912889fcffdbe948718a50c996616",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "operation": "ADD",
+      "sha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "operation": "ADD",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "operation": "ADD",
+      "sha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "operation": "ADD",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "mode": "0o664"
+    }
+  ],
+  "futureAllowedReads": [
+    "full statements-inclusive Supabase migration ledger and descriptor",
+    "exact target function definition/ACL/effective privileges",
+    "role flags and memberships/default privileges",
+    "complete protected schema catalog",
+    "non-secret target DB/project/role/TLS identity",
+    "operational package/source identities",
+    "backup/recovery tooling and capability identity, no backup execution"
+  ],
+  "transaction": "REPEATABLE READ READ ONLY for catalog capture; no business RPC calls",
+  "expectedHistoricalBaselineNotFreshAuthority": {
+    "ledgerCount": 458,
+    "absentVersions": [
+      "202609180000",
+      "202609180001",
+      "202609180002"
+    ],
+    "targetDefinitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "beforeAcl": [
+      "postgres",
+      "authenticated",
+      "service_role"
+    ]
+  },
+  "productionPlanRemainsDraftUntilSeparateReview": true,
+  "executionBoundary": "This is an approval proposal for the next controlled read-only capture/review stage, not an executable production capture plan. Existing DRAFT CLI guards must not be bypassed. That stage must explicitly bind its reviewed read-only capture procedure and operator authorization; adding code/files or lifting a guard requires separately approved exact scope. No plan sealing is performed by the current implementation.",
+  "excluded": [
+    "ACL/DDL/DML/ledger mutation",
+    "migration install 000/001/002",
+    "backup execution or production restore",
+    "application deploy or rebuild",
+    "PM2",
+    "Agent/Provider/Publish",
+    "target setup",
+    "transport activation",
+    "feature/allowlists/B3",
+    "automatic READY/seal/authorization"
+  ],
+  "automaticNextMigration": false,
+  "stopOnMismatch": true
+}

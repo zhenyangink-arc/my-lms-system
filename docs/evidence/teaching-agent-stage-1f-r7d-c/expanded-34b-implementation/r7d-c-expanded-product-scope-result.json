@@ -1,0 +1,251 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "productCount": 34,
+  "existingModified": 30,
+  "newProductFiles": 4,
+  "deletedProductFiles": 0,
+  "scopeAuthority": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-production-prerequisites-expanded-34b.json",
+    "sha256": "ccd78eabb2e312d572358491ed89d883c6495312db5b6781572debd4f940a393",
+    "mode": "0o664",
+    "bytes": 39908
+  },
+  "freshPreflightReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-34b-approval-resolution.json",
+  "changedPaths": [
+    "src/features/agent-core/contracts/server.ts",
+    "src/features/agent-core/observability/trace.ts",
+    "src/features/agent-core/persistence/supabase/repositories.ts",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+    "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+    "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+    "src/features/teaching-agent/server/domain-ports/index.ts",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+    "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+    "src/features/teaching-agent/server/repositories/contracts.ts",
+    "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+    "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+    "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+    "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+    "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+    "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+    "src/features/teaching-agent/server/tools/contracts.ts",
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+    "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+    "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+    "src/lib/smart-textbook-publishing/artifact.server.ts",
+    "src/lib/smart-textbook-publishing/capture.server.ts",
+    "src/lib/smart-textbook-publishing/loader.server.ts",
+    "src/lib/smart-textbook-publishing/publisher.server.ts",
+    "src/lib/smart-textbook-publishing/repository.server.ts"
+  ],
+  "addedPaths": [
+    "src/lib/smart-textbook-publishing/native-publication.server.ts",
+    "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+    "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+    "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts"
+  ],
+  "unexpectedChanges": [],
+  "existingTestFilesChanged": 0,
+  "historicalMigrationFilesChanged": 0,
+  "historicalEvidenceFilesChanged": 0,
+  "unchangedBoundaryCount": 24,
+  "boundaries": [
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "sha256": "e3c4734c292fe389a1fcc6435a764a65db1d41fd2308b1c89546fe89d49e76ec",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "PublicationBundle union retains common snapshotId and privatePayload.dependencies. Existing fence RPC remains kind-neutral and exact; no change required."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "sha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical 75-media audit / Chapter One exceptions remain legacy-only; native cannot invoke this exemption policy."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "sha256": "48c710f2bbe109a0898f813ddb7f8131d2a3cf1c27b779532df6810525c76d8d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen historical validator remains intact; dispatch moves outside it, so no loosening or generalized optional fields."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "sha256": "c346e65e1dfbee89933a669b599e881fd4dbc695ca929a819a838e770cee929f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical capsule/readiness bindings remain only for v1."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "sha256": "2a676789a1c1dc48666e62272e71aacf7388f174110ca0a90c56122e79bd39ab",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse only canonical()/digest()/persistent-key identity utilities; no frozen identity map/legacy walks in native strategy."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing native text/multiple_choice Manifest1.0.0 and native compatibility profile suffice for the bounded first native publication contract; no new runtime DTO."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse published generic structural/association validation; native certificate adds source semantics instead of weakening generic validator."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Fixed Node5/Node7 native-execution/1 cue fixture is not generalized or installed into production snapshot."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen development preview compiler is not production authority and is not reused."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Draft/alias-specific B1/B3 validator stays unchanged; production published policy is a separate versioned read policy in approved completion/native authority code."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "sha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Its ReturnType-derived legacy Authority remains narrow after resolver guard; no native submission path added."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "sha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Capsule/recording/legacy ports see only legacy resolver output; never route native Tool facts here."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "sha256": "a294f34ad49c0e4e99dcd037e98b7459f21a50a539ad9b0e6f6ab2efa8644568",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Legacy source/services type remains stable; this is not a native Teaching Agent issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "sha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview consumes unchanged legacy Authority subset; no new production adapter dependency."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "sha256": "a2ff5de5104f350c2523df7f0840cd3a75f6eeabf48e0d3fa2df3a34cf353b42",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview remains separate; no native production capability."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "sha256": "b873ae944de5aecc22abccab08a37badddd5715496d967f88655a1848357e2d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "sha256": "3045d571a8c1e9ea194985aa4b02d234bcf252aaa97fa61e1b3b64739367d720",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Public summarize_execution intake deferred to separate activation approval; existing explain-only contract maintained."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing feature/rollout/authentication wiring untouched; source-only future native factory does not enable a public intent."
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing active-self/published Student admission is retained. Publication authority uses new approved adapter after verified binding, not a replacement StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "No relaxation of active membership, tenant, published content or per-call authorization."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Opaque selection authority remains issuer-owned; native mapping uses verified scope/source node, not model UUIDs or inferred cursor."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Current verified selection can scope the initial summary; no new public input shape in this implementation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "sha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing policy/verifier composition reused by the approved runtime factory without alteration."
+    }
+  ],
+  "newMigrationCount": 2,
+  "newTestAndHelperCount": 9
+}

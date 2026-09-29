@@ -1,0 +1,57 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "designStatus": "VERIFIED / NOT IMPLEMENTED",
+  "proposedTool": {
+    "name": "get_current_lesson_execution_facts",
+    "version": "1.0.0",
+    "riskLevel": 0,
+    "requiredPermissions": [
+      "teaching.execution.self.read"
+    ],
+    "timeoutMs": 12000,
+    "maxResultBytes": 16384
+  },
+  "modelInput": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "forbiddenModelInputs": [
+    "actorId",
+    "tenantId",
+    "lessonId",
+    "activityId",
+    "versionId",
+    "databaseIdentity",
+    "storage",
+    "serviceKey",
+    "SQL",
+    "maxAgeMs",
+    "completion"
+  ],
+  "binding": "request-local opaque server-minted handle; identity/context object equality + registry/permission gate + every-read resource reauthorization",
+  "boundFields": [
+    "tenant",
+    "subject actor",
+    "lesson",
+    "textbook version",
+    "script version",
+    "execution node",
+    "Activity",
+    "frozen source hashes",
+    "snapshot digest",
+    "authorized read purpose",
+    "expiry"
+  ],
+  "futureProduction": "verified Agent Run context only; no development issuer import; existing StudentPolicy unchanged",
+  "developmentValidation": "authenticated Platform Owner is operator only; fixed existing B2 actor is evidence subject. Dedicated read-only capability, separate from B3 ACTIVE write scope. Do not forge StudentBinding/RunAuthority or call Run coordinator.",
+  "noB3ScopeActivation": true,
+  "newAuthorityImplementationNeeded": true
+}

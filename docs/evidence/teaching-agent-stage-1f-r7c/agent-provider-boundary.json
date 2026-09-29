@@ -1,0 +1,13 @@
+{
+  "agentRuns": 0,
+  "providerRequestsInTask": 0,
+  "definitionPublication": 0,
+  "pinsWrites": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "authMutation": 0,
+  "oldAgentFallback": false,
+  "studentAdmission": "NOT TESTED",
+  "lessonToolRegistration": false,
+  "stage1G": "NOT READY"
+}

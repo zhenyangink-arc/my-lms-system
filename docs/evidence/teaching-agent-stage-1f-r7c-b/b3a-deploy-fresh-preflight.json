@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "at": "2026-09-17T13:06:47.545917+00:00",
+  "currentBuild": "vZokoJqpKDRZxnpQcQpah",
+  "candidateBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "archives": {
+    "candidate-build.tar.gz": "5d0b773125450bca5372085c142b2b524907f962ddc73837183615ffeb764c9e",
+    "candidate-dependencies.tar.gz": "3c2b871724cc349414031f1471e05504f0b969596d8d07f25e162e6704012ae9",
+    "candidate-source.tar.gz": "c76868ac77b5fec44c0d8a072396a2aea2174af79f03664b26068594b0914ae7"
+  },
+  "sourceFiles": 35,
+  "dependencies": 15,
+  "dependencyExistingIdentical": 0,
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "freeze": "MATCH",
+  "actor": "EXACT / BANNED / INACTIVE / SUSPENDED / NON-DEFAULT",
+  "actorSessions": 0,
+  "actorRefresh": 0,
+  "attempt": 0,
+  "nodeProgress": 0,
+  "pageProgress": 0,
+  "ledger": 458,
+  "rpcHash": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+  "nodeProgressTriggers": "MATCH",
+  "triggerHashes": [
+    "dc4b02e8193a230c8e7afff2f9817c4783ff66db7e816e9aa4576062885f914e",
+    "c924abb4504eedb90737c0d4956ecfb9df6bea3eaa2f1f0fb9eed3214bd74fbe"
+  ],
+  "scope": "DISABLED",
+  "privateB3State": "ABSENT",
+  "scenarioBudget": {
+    "INSERT": 3,
+    "UPDATE": 1,
+    "DELETE": 0
+  },
+  "protected": {
+    "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "publicTreeHash": "37e8b563e79e70ee38f882464121b76481b3f4df1df57eeb0c5515bb41871425",
+    "tailscaleServeHash": "2f91b70d3e6b2a29ce9f4be55610306c2cfd493dcd90b6548fb62d7782e68fe3"
+  },
+  "pm2": {
+    "name": "uply-first-enable",
+    "status": "online",
+    "pid": 1844,
+    "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source"
+  },
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "dbWrites": 0,
+  "deployMutation": 0
+}

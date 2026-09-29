@@ -1,0 +1,49 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "durableAuthorityAudit": "PASS; fresh independent current DB read completed",
+  "lessonToolCurrentDbAcceptance": "NOT EXECUTED",
+  "preconditions": [
+    "B1/B2/B3 unchanged",
+    "actor banned/session0/refresh0/inactive/suspended/non-default",
+    "B3 scope disabled",
+    "current Build/source/schema identity match",
+    "Owner authenticated operator or approved formal read harness; no spoofing",
+    "read-only connection enforcement; zero mutation methods"
+  ],
+  "sequence": [
+    "create request-local read-only binding for fixed B2 subject, not Student admission",
+    "invoke new ToolRegistration through existing Core executor using direct authorized audit harness (no provider/coordinator)",
+    "Domain Port fresh reads existing trusted repository under DB READ ONLY transaction",
+    "reuse strict B3 completion validation; derive safe facts/receipt from same read",
+    "expect 2 attempts, latest correct, one completed100/mastery100/count2 row, CURRENT_DEVELOPMENT_DB evidence",
+    "independent new readonly connection compares result and freshness",
+    "compare before/after row/evidence fingerprints and B3 private file hashes; no mutation",
+    "destroy read capability; B3 scope remains disabled"
+  ],
+  "expected": {
+    "attempts": 2,
+    "latestResult": "CORRECT",
+    "nodeProgressRows": 1,
+    "nodeProgressStatus": "completed",
+    "completionPercent": 100,
+    "masteryScore": 100,
+    "attemptCount": 2,
+    "activityPageProgress": 0,
+    "storage": "CURRENT_DEVELOPMENT_DB"
+  },
+  "writes": {
+    "attempt": 0,
+    "progress": 0,
+    "content": 0,
+    "auth": 0,
+    "agent": 0,
+    "allOtherBusiness": 0
+  },
+  "deployment": "not needed for this audit; if live Owner route is later required, separate deployment approval after tested candidate exists"
+}

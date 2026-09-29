@@ -1,0 +1,73 @@
+{
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_limit integer DEFAULT 50",
+        "definition": "CREATE OR REPLACE FUNCTION public.find_reconcilable_agent_runs_v1(p_tenant uuid, p_limit integer DEFAULT 50)\n RETURNS TABLE(run_id uuid, status text, deadline_at timestamp with time zone, lease_expires_at timestamp with time zone, cancel_requested_at timestamp with time zone, state_version integer, fencing_token uuid)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare cutoff timestamptz:=clock_timestamp()-interval '6 seconds';\nbegin\n  if p_tenant is null or p_limit is null or p_limit not between 1 and 100 then raise exception 'INVALID_REQUEST'; end if;\n  return query select r.id,r.status,r.deadline_at,r.lease_expires_at,r.cancel_requested_at,r.state_version,r.fencing_token\n    from public.agent_runs r where r.tenant_id=p_tenant and r.status in ('created','running','waiting_tool')\n    and r.deadline_at <= cutoff\n    order by r.deadline_at,r.id limit p_limit;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_limit integer",
+        "name": "find_reconcilable_agent_runs_v1",
+        "owner": "postgres",
+        "result": "TABLE(run_id uuid, status text, deadline_at timestamp with time zone, lease_expires_at timestamp with time zone, cancel_requested_at timestamp with time zone, state_version integer, fencing_token uuid)",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_limit integer DEFAULT 50",
+        "definition": "CREATE OR REPLACE FUNCTION public.reconcile_agent_run_batch_v1(p_tenant uuid, p_limit integer DEFAULT 50)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\n SET lock_timeout TO '2s'\nAS $function$\ndeclare candidate record; outcome jsonb; outcomes jsonb:='[]'; reconciled_cancelled integer:=0;\n  reconciled_deadline_failed integer:=0;\nbegin\n  -- A single bounded transaction. Any exception rolls back the entire batch;\n  -- caller records a failed invocation, never reports a partial commit as success.\n  for candidate in select * from public.find_reconcilable_agent_runs_v1(p_tenant,p_limit) loop\n    outcome:=public.reconcile_agent_run_v1(p_tenant,candidate.run_id,candidate.state_version,candidate.fencing_token);\n    outcomes:=outcomes||jsonb_build_array(jsonb_build_object('runId',candidate.run_id)||outcome);\n    if outcome->>'result'='reconciled' then\n      if outcome->>'status'='cancelled' then reconciled_cancelled:=reconciled_cancelled+1;\n      else reconciled_deadline_failed:=reconciled_deadline_failed+1; end if;\n    end if;\n  end loop;\n  return jsonb_build_object('contractVersion','deadline-terminal-v1','results',outcomes,\n    'reconciledCancelled',reconciled_cancelled,'reconciledDeadlineFailed',reconciled_deadline_failed,'reconcileError',0);\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_limit integer",
+        "name": "reconcile_agent_run_batch_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\"",
+          "lock_timeout=2s"
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_run uuid, p_expected_version integer, p_fence uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.reconcile_agent_run_v1(p_tenant uuid, p_run uuid, p_expected_version integer, p_fence uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs; previous text; target text; reason text; stamp timestamptz; sequence bigint;\nbegin\n  if p_tenant is null or p_run is null or p_expected_version is null or p_expected_version<1 or p_fence is null\n    then raise exception 'INVALID_REQUEST'; end if;\n  select * into r from public.agent_runs where tenant_id=p_tenant and id=p_run for update;\n  if not found then return jsonb_build_object('result','not_found'); end if;\n  -- Terminal winner is immutable, even if the scanner saw an older version/fence.\n  if r.status in ('completed','failed','cancelled') then\n    return jsonb_build_object('result','already_terminal','status',r.status);\n  end if;\n  if r.state_version<>p_expected_version or r.fencing_token<>p_fence then\n    return jsonb_build_object('result','fence_conflict');\n  end if;\n  stamp:=clock_timestamp();\n  -- Admission fixes lease=deadline; no heartbeat/ownership-death guess. Deadline\n  -- already denies completion. Allow existing 3 x 2s stop-only cleanup first.\n  if r.deadline_at>stamp-interval '6 seconds' then\n    return jsonb_build_object('result','not_eligible','status',r.status);\n  end if;\n  previous:=r.status;\n  if r.cancel_requested_at is not null and r.cancel_requested_at<r.deadline_at then\n    target:='cancelled'; reason:='RUN_CANCELLED';\n  else target:='failed'; reason:='DEADLINE_EXCEEDED'; end if;\n  update public.agent_runs set status=target,state_version=state_version+1,ended_at=stamp,terminal_reason=reason\n    where id=r.id and tenant_id=p_tenant and state_version=p_expected_version and fencing_token=p_fence;\n  if not found then return jsonb_build_object('result','fence_conflict'); end if;\n  select coalesce(max(seq),0) into sequence from public.agent_run_events where run_id=r.id;\n  insert into public.agent_run_events(tenant_id,actor_id,run_id,seq,kind,metadata) values\n    (r.tenant_id,r.actor_id,r.id,sequence+1,'run.reconciled',jsonb_build_object('reason',reason,'previousStatus',previous,\n      'deadlineExceeded',true,'cancelRequested',r.cancel_requested_at is not null,'reconcilerVersion','deadline-terminal-v1')),\n    (r.tenant_id,r.actor_id,r.id,sequence+2,'run.'||target,'{}'::jsonb);\n  -- No message, usage, context, teaching data, or answer.final is written.\n  return jsonb_build_object('result','reconciled','status',target,'reason',reason);\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_run uuid, p_expected_version integer, p_fence uuid",
+        "name": "reconcile_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    ],
+    "removed": []
+  },
+  "indexes": {
+    "added": [
+      {
+        "clustered": false,
+        "definition": "CREATE INDEX agent_runs_reconcile_deadline ON public.agent_runs USING btree (tenant_id, deadline_at, id) WHERE (status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text]))",
+        "name": "agent_runs_reconcile_deadline",
+        "ready": true,
+        "schema": "public",
+        "table": "agent_runs",
+        "valid": true
+      }
+    ],
+    "removed": []
+  }
+}

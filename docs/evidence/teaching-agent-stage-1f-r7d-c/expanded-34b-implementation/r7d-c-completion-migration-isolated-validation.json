@@ -1,0 +1,99 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "VALIDATED",
+  "migration": {
+    "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+    "mode": "0o664",
+    "bytes": 23761
+  },
+  "isolated": {
+    "engine": "postgres:15-alpine (preexisting local image; --pull=never)",
+    "ownership": "Unique uply-r7dc34b-* container per fixture, label uply.task=r7dc34b",
+    "network": "none; no published ports/host mounts; psql docker exec into owned container only",
+    "storage": "tmpfs PGDATA, --rm, stopped in finally; no persistent volume",
+    "cleanup": "PASS; no remaining owned containers",
+    "bootstrap": "Minimal domain dependencies; all 13 relevant historical publication/Agent migrations installed verbatim. Not an all-458-migration current-DB replica.",
+    "historicalChain": [
+      "202609100001_runtime_publish_foundation.sql",
+      "202609100002_runtime_publication_dependency_fence.sql",
+      "202609100003_runtime_admission_control.sql",
+      "202609100004_runtime_single_version_authoring.sql",
+      "202609100005_chapter_publish_semantic_compatibility.sql",
+      "202609110001_allow_evidence_graded_roleplay_publication.sql",
+      "202609110002_restore_single_version_publish_wrapper.sql",
+      "202609130001_textbook_grammar_authoring.sql",
+      "202609130002_textbook_grammar_practice_binding.sql",
+      "202609130003_runtime_authoring_nonretryable_error.sql",
+      "202609140000_agent_core_foundation.sql",
+      "202609140001_agent_runtime_completion_evidence.sql",
+      "202609140002_agent_run_cancel_request.sql"
+    ],
+    "schemaReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+    "logs": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/new-tests.log"
+  },
+  "independentInstall": "PASS",
+  "combinedInstall": "PASS",
+  "SQLTests": {
+    "pass": 58,
+    "fail": 0
+  },
+  "schemaDelta": {
+    "addedFunctions": [
+      {
+        "signature": "agent_core_private.validate_artifact_v2(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "aad0bf616f5c642634bffaeafbcdd64cc8b475b864792bd023317f5fc7da3b89"
+      },
+      {
+        "signature": "agent_core_private.validate_typed_evidence(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "eabdb61d81abe02e92de89ab7b58e6ec96d610cbdc0155724f82ff7173eecf2d"
+      }
+    ],
+    "changedFunctions": [
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "5c182d2540348b933de4c5737463acff7b607d0991b4104e185b00aeb99a65a1"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "961f11c720644f61dab6105b6be8fc24b5ea25d5ad1cb265023bb6c41539dd99"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b389166d4defea7aee230bb237eb9edb1557f5bbe69161e1b4b9d9b5dc793703"
+      }
+    ],
+    "relationsUnchanged": true,
+    "changedConstraints": []
+  },
+  "historicalMigrationsChanged": 0,
+  "noNewTables": true,
+  "publicationDDL": false,
+  "currentDBInstall": 0
+}

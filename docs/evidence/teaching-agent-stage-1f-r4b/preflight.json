@@ -1,0 +1,285 @@
+{
+  "taskStartedAtSeoul": "2026-09-15T14:07:53+09:00",
+  "deadlineAtSeoul": "2026-09-15T14:37:53+09:00",
+  "approvedWindowMinutes": 30,
+  "targetBindingMinutes": 10,
+  "account": "yangzhen",
+  "hostname": "kmgwak-System-Product-Name",
+  "version": "1.102.2\n  tailscale commit: 6cac918179d4d673bfebe2fc74f81183ddd73fea\n  long version: 1.102.2-t6cac91817-g6ff0ddc72\n  other commit: 6ff0ddc7264e38276f40986706ae4607dbab57d8\n  go version: go1.26.5 (tailscale/go 63ae404c82)",
+  "serveBefore": {
+    "TCP": {
+      "443": {
+        "HTTPS": true
+      },
+      "4000": {
+        "HTTPS": true
+      },
+      "8443": {
+        "HTTPS": true
+      }
+    },
+    "Web": {
+      "kmgwak-system-product-name.taila18cd5.ts.net:4000": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:4000"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3001"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:8443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3000"
+          }
+        }
+      }
+    }
+  },
+  "listenerInventory": [
+    {
+      "port": 55324,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55321,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55322,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55323,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54324,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54327,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54321,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54322,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54323,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 53,
+      "scope": "loopback"
+    },
+    {
+      "port": 3002,
+      "scope": "tailnet"
+    },
+    {
+      "port": 3003,
+      "scope": "tailnet"
+    },
+    {
+      "port": 3108,
+      "scope": "tailnet"
+    },
+    {
+      "port": 4000,
+      "scope": "tailnet"
+    },
+    {
+      "port": 443,
+      "scope": "tailnet"
+    },
+    {
+      "port": 53,
+      "scope": "loopback"
+    },
+    {
+      "port": 8443,
+      "scope": "tailnet"
+    },
+    {
+      "port": 46707,
+      "scope": "loopback"
+    },
+    {
+      "port": 42583,
+      "scope": "loopback"
+    },
+    {
+      "port": 43231,
+      "scope": "loopback"
+    },
+    {
+      "port": 38581,
+      "scope": "loopback"
+    },
+    {
+      "port": 34383,
+      "scope": "loopback"
+    },
+    {
+      "port": 7070,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 5003,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 8384,
+      "scope": "loopback"
+    },
+    {
+      "port": 9229,
+      "scope": "loopback"
+    },
+    {
+      "port": 3001,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 22,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 50618,
+      "scope": "tailnet"
+    },
+    {
+      "port": 4321,
+      "scope": "loopback"
+    },
+    {
+      "port": 8001,
+      "scope": "loopback"
+    },
+    {
+      "port": 631,
+      "scope": "loopback"
+    },
+    {
+      "port": 3000,
+      "scope": "loopback"
+    },
+    {
+      "port": 3108,
+      "scope": "loopback"
+    },
+    {
+      "port": 55324,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55321,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55322,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 55323,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54324,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54327,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54321,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54322,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 54323,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 8443,
+      "scope": "tailnet"
+    },
+    {
+      "port": 4000,
+      "scope": "tailnet"
+    },
+    {
+      "port": 443,
+      "scope": "tailnet"
+    },
+    {
+      "port": 33087,
+      "scope": "loopback"
+    },
+    {
+      "port": 47626,
+      "scope": "tailnet"
+    },
+    {
+      "port": 7070,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 5003,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 3389,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 22,
+      "scope": "other/wildcard"
+    },
+    {
+      "port": 631,
+      "scope": "loopback"
+    },
+    {
+      "port": 4000,
+      "scope": "loopback"
+    }
+  ],
+  "portsFree": true,
+  "cliCompatible": true,
+  "productionPm2": {
+    "name": "uply-first-enable",
+    "pid": 1176676,
+    "pm_id": 9,
+    "status": "online",
+    "restart_time": 0,
+    "pm_uptime": 1789294455603,
+    "execPath": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000
+  },
+  "runtime": {
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    }
+  },
+  "productionDatabaseQueried": false
+}

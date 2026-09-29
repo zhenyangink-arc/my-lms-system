@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "contract": "activity-completion/2",
+  "r7bContract": "activity-completion/1 retained for existing isolated R7B tests",
+  "statuses": [
+    "COMPLETED",
+    "INCOMPLETE",
+    "UNKNOWN"
+  ],
+  "identityFields": [
+    "request correlation",
+    "session/snapshot digest",
+    "step/block/activity alias",
+    "media revision",
+    "cue alias",
+    "generation"
+  ],
+  "evidenceFields": [
+    "source=activity-domain",
+    "storage=isolated-test-db",
+    "kind=durable-attempt-sequence",
+    "attemptSequence",
+    "stateDigest",
+    "observedAt",
+    "latestAttemptAt",
+    "progressUpdatedAt"
+  ],
+  "completedAt": "Database correct-attempt timestamp",
+  "studentCasRevision": "NOT CLAIMED",
+  "contentRevision": "Separate from attempt sequence",
+  "correctAnswerIncluded": false,
+  "rawResponseIncluded": false,
+  "rawDatabaseIdsIncluded": false
+}

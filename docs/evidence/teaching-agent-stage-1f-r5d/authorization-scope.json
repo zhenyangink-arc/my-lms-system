@@ -1,0 +1,8 @@
+{
+  "scope": "READ-ONLY ACCEPTANCE ONLY",
+  "userRequest": "Stage 1F-R5D",
+  "productionChangesAuthorized": false,
+  "authenticatedSessionAvailable": false,
+  "privateAcceptanceReceiptAuthorized": true,
+  "r5cHistoricalStatus": "CONDITIONAL — WINDOW EXPIRED / EXECUTION INCOMPLETE"
+}

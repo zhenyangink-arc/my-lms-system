@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "testsRun": 17,
+  "failures": 0,
+  "errors": 0,
+  "scope": "Fault-injected transport/unit tests, no live provider or DB connection",
+  "requiredCases": [
+    "wrong ledger",
+    "wrong hash",
+    "wrong order",
+    "missing migration",
+    "extra migration",
+    "already applied",
+    "timeout",
+    "connection lost",
+    "bad commit acknowledgement"
+  ],
+  "noRetryOrNextOnFailure": true
+}

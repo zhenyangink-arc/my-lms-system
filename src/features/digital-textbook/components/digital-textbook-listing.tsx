@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CreateTeachingContentEntry } from "./create-teaching-content-entry";
 
 import {
   ManagementMetricStrip,
@@ -65,6 +66,7 @@ export default async function DigitalTextbookListing({
 
   return (
     <div className="space-y-6">
+      {result.canPublishChapters && !chapterId && <CreateTeachingContentEntry studentAppId={studentAppId} />}
       <ManagementNotice tone="warning">
         发布章节会同时发布关联章节测试，不会发布教学脚本。视频课堂还需在教学脚本中完成预览与发布；独立练习库不会随教材修改自动同步。
       </ManagementNotice>

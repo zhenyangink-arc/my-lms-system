@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "operation": "Owner UI restart button once",
+  "serverResponse": {
+    "ready": true
+  },
+  "ownedChildPidAfter": 665807,
+  "ownedChildStartedAt": "2026-09-17T13:39:41Z",
+  "parentNextPid": 503047,
+  "parentNextStartedAt": "2026-09-17T13:06:50Z",
+  "pm2Mutations": 0,
+  "serverRestarts": 0,
+  "databaseRestarts": 0,
+  "mutationAdmission": "OFF",
+  "beforeChildPid": "NOT CAPTURED: sandbox process namespace did not expose host child",
+  "processProof": "Host read-only ps confirmed new child start at restart time under unchanged Next parent; locked manager waits for old child exit before starting replacement",
+  "postRestartBrowserResponseCapture": "Request 190 listed HTTP200 but body unavailable/ERR_ABORTED in DevTools retrieval; no fabricated response body. Existing controller later held fresh CURRENT_DEVELOPMENT_DB evidence observed 13:41:23.271Z. Independent DB restart readback separately confirms completion.",
+  "readbackFile": "b3-execution-restart-readback.json",
+  "noAnswerResubmission": true
+}

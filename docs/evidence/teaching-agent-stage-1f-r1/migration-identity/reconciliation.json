@@ -1,0 +1,48 @@
+{
+  "oldAgentFilename": "202609130001_agent_core_foundation.sql",
+  "newAgentFilename": "202609140000_agent_core_foundation.sql",
+  "identicalSqlSha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+  "recoveredTargetHistory": [
+    {
+      "filename": "202609100003_runtime_admission_control.sql",
+      "sha256": "2f993901f0f3b23474aad88e07c9b58daaa4e5c74c4b8b1eb759d58a54a65b3a",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609100003_runtime_admission_control.sql"
+    },
+    {
+      "filename": "202609100004_runtime_single_version_authoring.sql",
+      "sha256": "b7b8836e639933e5548ba9080f6823d975a77be07651ba74be04be64322ca9d5",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609100004_runtime_single_version_authoring.sql"
+    },
+    {
+      "filename": "202609100005_chapter_publish_semantic_compatibility.sql",
+      "sha256": "78f9fae8f971cb20343ff04eba8a17c2e5796428904dd62cdcfe817b8e43881d",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql"
+    },
+    {
+      "filename": "202609110001_allow_evidence_graded_roleplay_publication.sql",
+      "sha256": "a786590ea6b3793266d0020ca422587da50f84561d3f377af999f97a961f96cd",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609110001_allow_evidence_graded_roleplay_publication.sql"
+    },
+    {
+      "filename": "202609110002_restore_single_version_publish_wrapper.sql",
+      "sha256": "e567ee37c8a89520a985d10d169c746e3d33cf9f5aa98cc140f3e8e6c13e50a6",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609110002_restore_single_version_publish_wrapper.sql"
+    },
+    {
+      "filename": "202609130001_textbook_grammar_authoring.sql",
+      "sha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609130001_textbook_grammar_authoring.sql"
+    },
+    {
+      "filename": "202609130002_textbook_grammar_practice_binding.sql",
+      "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609130002_textbook_grammar_practice_binding.sql"
+    },
+    {
+      "filename": "202609130003_runtime_authoring_nonretryable_error.sql",
+      "sha256": "0c5a16609d3c7196284f86cecb96f250988d2ff78834a92d8e0cce5966edd73d",
+      "source": "/home/yangzhen/releases/uply-first-enable-20260910/source/supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql"
+    }
+  ],
+  "productionLedgerMutated": false
+}

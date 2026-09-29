@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "tsc": {
+    "command": "tsc --noEmit --incremental false",
+    "exit": 0
+  },
+  "scopedLint": {
+    "command": "eslint scripts/teaching-agent-r3b/targeted-reconcile.mjs",
+    "exit": 0
+  },
+  "staticTests": {
+    "tests": 17,
+    "pass": 17,
+    "files": [
+      "tests/teaching-agent-release-migrations.test.mjs",
+      "tests/teaching-agent-student-rollout.test.mjs",
+      "tests/teaching-agent-page-rollout.test.mjs"
+    ]
+  },
+  "pythonSyntax": "PASS via ast.parse (no pycache)",
+  "reconcileDBAssertions": 18,
+  "fullSupabaseRerun": false,
+  "full1135plus199Rerun": false,
+  "r3aStaticBasis": "Exact 006 SQL and all R3A operational input hashes unchanged; targeted DB executes same reconciliation SQL",
+  "buildEvidence": "verification-build-result.json",
+  "largeRegressionBasis": "No product/release-input changes; scoped prior R3/R3A evidence retained."
+}

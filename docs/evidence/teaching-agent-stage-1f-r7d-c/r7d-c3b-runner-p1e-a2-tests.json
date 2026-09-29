@@ -1,0 +1,2101 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A2",
+  "contract": "authorization-lifecycle-owned-validation/1",
+  "recordedAt": "2026-09-20T07:47:51.655151+00:00",
+  "overall": "BLOCKED",
+  "validationDirectory": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/7680d40e7a364f529055e8f5c4685bb1",
+  "exclusiveRunDirectory": true,
+  "validationInvocationCount": 1,
+  "commandExitCode": 1,
+  "requiredCases": [
+    {
+      "id": "AUTH-LIFECYCLE-01",
+      "case": "fresh mint with canonical absent",
+      "acceptance": "Explicit ABSENT approval, no unresolved state -> one READY /2; runner not auto-called",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_01_fresh",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 615,
+        "lifecycleId": "AUTH-LIFECYCLE-01",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-02",
+      "case": "expired old rotation",
+      "acceptance": "Exact expired SHA moves once to immutable archive; fresh /2 publishes",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_02_rotate",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 621,
+        "lifecycleId": "AUTH-LIFECYCLE-02",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-03",
+      "case": "old bytes preservation",
+      "acceptance": "Archived raw SHA and byte comparison equal old; no old JSON reserialization",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_03_exact_bytes",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 627,
+        "lifecycleId": "AUTH-LIFECYCLE-03",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-04",
+      "case": "archive collision",
+      "acceptance": "Any existing destination including identical hash or symlink -> deny; original untouched",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_04_archive_collision",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 633,
+        "lifecycleId": "AUTH-LIFECYCLE-04",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-05",
+      "case": "wrong old SHA",
+      "acceptance": "Deny before moving or minting",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_05_old_hash",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 638,
+        "lifecycleId": "AUTH-LIFECYCLE-05",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-06",
+      "case": "wrong modes",
+      "acceptance": "Canonical/archive/receipt/approval parent or file mode mismatch -> deny; no chmod",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_06_modes",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 642,
+        "lifecycleId": "AUTH-LIFECYCLE-06",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-07",
+      "case": "wrong owner",
+      "acceptance": "UID mismatch including lock file -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_07_owner",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 648,
+        "lifecycleId": "AUTH-LIFECYCLE-07",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-08",
+      "case": "canonical symlink",
+      "acceptance": "Deny including dangling link",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_08_canonical_symlink",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 652,
+        "lifecycleId": "AUTH-LIFECYCLE-08",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-09",
+      "case": "archive symlink or unsafe parent",
+      "acceptance": "Deny before move; no path escape",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_09_archive_symlink",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 656,
+        "lifecycleId": "AUTH-LIFECYCLE-09",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-10",
+      "case": "concurrent mint",
+      "acceptance": "Real separate processes contend one flock; at most one operation; loser performs no mint",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_10_concurrent",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 660,
+        "lifecycleId": "AUTH-LIFECYCLE-10",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-11",
+      "case": "crash before archive",
+      "acceptance": "PREPARED/claims retained; no auto-resume; old unmodified",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_11_crash_prepared",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 671,
+        "lifecycleId": "AUTH-LIFECYCLE-11",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-12",
+      "case": "crash after archive before mint",
+      "acceptance": "Old archive exact, canonical absent; runner credential sentinel untouched",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_12_crash_archived",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 674,
+        "lifecycleId": "AUTH-LIFECYCLE-12",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-13",
+      "case": "crash before canonical publication",
+      "acceptance": "Pending never considered active; no DB; no fallback",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_13_crash_staged",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 678,
+        "lifecycleId": "AUTH-LIFECYCLE-13",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-14",
+      "case": "crash after canonical before READY",
+      "acceptance": "Schema-valid current auth still rejected before credentials",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_14_crash_published",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 683,
+        "lifecycleId": "AUTH-LIFECYCLE-14",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-15",
+      "case": "partial READY or fsync failure",
+      "acceptance": "Invalid/missing commit denies capture; no silent success",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_15_partial_ready",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 688,
+        "lifecycleId": "AUTH-LIFECYCLE-15",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-16",
+      "case": "wrong strict schema",
+      "acceptance": "Missing/extra field or wrong type -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_16_schema",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 694,
+        "lifecycleId": "AUTH-LIFECYCLE-16",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-17",
+      "case": "expiry over900 or future/expired time",
+      "acceptance": "Deny; no expiry renewal",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_17_expiry",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 699,
+        "lifecycleId": "AUTH-LIFECYCLE-17",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-18",
+      "case": "reused nonce",
+      "acceptance": "Permanent reservation denies a new approval with old nonce, including historical nonce",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_18_nonce",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 702,
+        "lifecycleId": "AUTH-LIFECYCLE-18",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-19",
+      "case": "authorization replay",
+      "acceptance": "Second runner call with same auth denied before transport/credential sentinel",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_19_auth_replay",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 710,
+        "lifecycleId": "AUTH-LIFECYCLE-19",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-20",
+      "case": "missing fresh explicit approval",
+      "acceptance": "Source proposal alone or old chat approval insufficient",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_20_missing_user",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 718,
+        "lifecycleId": "AUTH-LIFECYCLE-20",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-21",
+      "case": "wrong source proposal hash",
+      "acceptance": "Wrong v4 historical anchor, future v5 hash or v4 fallback -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_21_source_authority",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 721,
+        "lifecycleId": "AUTH-LIFECYCLE-21",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-22",
+      "case": "stage closed",
+      "acceptance": "Valid/malformed/symlink closure presence -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_22_closed",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 726,
+        "lifecycleId": "AUTH-LIFECYCLE-22",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-23",
+      "case": "risk expired/revoked",
+      "acceptance": "Scope inactive or expired attestation -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_23_risk",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 730,
+        "lifecycleId": "AUTH-LIFECYCLE-23",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-24",
+      "case": "historical loss mismatch",
+      "acceptance": "Loss record hash/acceptedLoss/false restored contract mismatch -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_24_loss",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 735,
+        "lifecycleId": "AUTH-LIFECYCLE-24",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-25",
+      "case": "permission or disk IO failure",
+      "acceptance": "Archive/pending/fsync/claim/receipt failures preserve evidence, block",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_25_io_failure",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 739,
+        "lifecycleId": "AUTH-LIFECYCLE-25",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-26",
+      "case": "no credentials during mint",
+      "acceptance": "Spy safe_file/open/path and subprocess/socket APIs; connectionDirectory never read and no network/tool process",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_26_no_credentials",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 746,
+        "lifecycleId": "AUTH-LIFECYCLE-26",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-27",
+      "case": "per-approval replay",
+      "acceptance": "Same ID or same approval-reference hash used again after failed mint -> deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_27_approval_replay",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 757,
+        "lifecycleId": "AUTH-LIFECYCLE-27",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-28",
+      "case": "mint versus capture concurrency",
+      "acceptance": "Same lock prevents canonical change while runtime rechecks it",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_28_mint_capture_lock",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 763,
+        "lifecycleId": "AUTH-LIFECYCLE-28",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-29",
+      "case": "pre-credential consume ordering",
+      "acceptance": "Runner durable claim observed before CaptureTransport constructor; constructor failure still burns authority",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_29_consume_before_constructor",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 774,
+        "lifecycleId": "AUTH-LIFECYCLE-29",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-30",
+      "case": "success consumption finalization",
+      "acceptance": "Owned capture baseline durable, ROLLBACK, archived auth and linked outcome, replay denied",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_30_success_finalization",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "line": 853,
+        "lifecycleId": "AUTH-LIFECYCLE-30",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-31",
+      "case": "capture gate failure",
+      "acceptance": "Owned mismatch ROLLBACK, failure outcome/archival, no replay",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_31_gate_failure",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "line": 862,
+        "lifecycleId": "AUTH-LIFECYCLE-31",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-32",
+      "case": "kill after consume",
+      "acceptance": "Canonical surviving kill cannot be reused; no inferred successful baseline",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_32_kill_consumed",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 783,
+        "lifecycleId": "AUTH-LIFECYCLE-32",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-33",
+      "case": "capture receipt failure",
+      "acceptance": "DB rollback may complete but no success; consumed preserved and follow-up required",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_33_receipt_failure",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "line": 877,
+        "lifecycleId": "AUTH-LIFECYCLE-33",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-34",
+      "case": "unexpired active authorization",
+      "acceptance": "Mint refuses replacement; no supersede command",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_34_unexpired",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 792,
+        "lifecycleId": "AUTH-LIFECYCLE-34",
+        "status": "PASS",
+        "safetyCritical": true
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-35",
+      "case": "historical output immutability",
+      "acceptance": "Regression outputs only new exclusive directory; finalize collision fails BEFORE test subprocesses",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_35_output_immutable",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 799,
+        "lifecycleId": "AUTH-LIFECYCLE-35",
+        "status": "ERROR",
+        "safetyCritical": true
+      },
+      "status": "ERROR"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-36",
+      "case": "actual rename/fsync safety",
+      "acceptance": "Owned same-FS no-replace succeeds; collision and unsupported/cross-device simulation deny without fallback",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_36_rename_fsync",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 812,
+        "lifecycleId": "AUTH-LIFECYCLE-36",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-37",
+      "case": "fixed CLI bounds",
+      "acceptance": "Reject plan/path/profile/SQL/host/DSN/risk/force override attempts",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_37_cli",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 824,
+        "lifecycleId": "AUTH-LIFECYCLE-37",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-38",
+      "case": "privacy and receipt linking",
+      "acceptance": "Safe hashes only; no raw auth copies in public docs; raw/canonical SHA domains explicit; tampered READY/outcome deny",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_38_privacy_chain",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 829,
+        "lifecycleId": "AUTH-LIFECYCLE-38",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-39",
+      "case": "single owned session/query order",
+      "acceptance": "Lifecycle integration retains one REPEATABLE READ READ ONLY snapshot, LEDGER<PRE_GATE<DEFINITION<CATALOG, ROLLBACK and writes0",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_39_session_order",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "line": 884,
+        "lifecycleId": "AUTH-LIFECYCLE-39",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "AUTH-LIFECYCLE-40",
+      "case": "new package/source authority",
+      "acceptance": "Utility participates in hash map; new source rejects old v4 package and v4-only auth; prior guard/134-case behavior and install DRAFT rejection preserved",
+      "safetyCritical": true,
+      "testMapping": {
+        "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_40_package",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "line": 837,
+        "lifecycleId": "AUTH-LIFECYCLE-40",
+        "status": "NOT_RUN",
+        "safetyCritical": true
+      },
+      "status": "NOT_RUN"
+    }
+  ],
+  "counts": {
+    "lifecycleExpected": 40,
+    "lifecycleExecuted": 32,
+    "lifecyclePassed": 31,
+    "lifecycleAssertionFailures": 0,
+    "lifecycleErrors": 1,
+    "lifecycleNotRun": 8,
+    "existingRunnerExpected": 134,
+    "existingRunnerExecuted": 0,
+    "existingRunnerNotRun": 134,
+    "totalExpected": 174,
+    "totalDiscovered": 174,
+    "totalExecuted": 32,
+    "totalPassed": 31,
+    "totalFailedOrErrored": 1,
+    "totalNotRun": 142,
+    "skipped": 0,
+    "safetyCriticalSkipped": 0,
+    "safetyCriticalNotRun": 8,
+    "xfail": 0
+  },
+  "allTests": [
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_01",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 40,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_02",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 44,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_03",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 54,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_04",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 62,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_05",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 72,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_06",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 80,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_07",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 87,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_08",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 93,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_09",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 104,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_10",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 110,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_29",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 116,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_30",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 125,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_32",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 132,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_33",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 145,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_49",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 154,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_50",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 160,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_01_missing_auth_before_credentials",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 204,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_02_explicit_draft_authority",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 212,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_03_cannot_authorize_install",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 218,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_04_strict_schema",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 223,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_05_static_hashes",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 231,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_06_raw_file_recheck",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 240,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_07_freshness",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 245,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_08_fixed_identity_tls",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 250,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_09_no_mutation_or_tools",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 260,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_10_fixture_separation",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 270,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_11_cli_arbitrary_inputs",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 278,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_12_production_auth_without_credentials",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 285,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_13_ledger_first_mock",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 299,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_14_modes_reject_bad_session",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 308,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_25_production_tls_before_ledger",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 317,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_26_runtime_guards_preserved",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 331,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_01_missing_risk",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 371,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_02_risk_hash",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 378,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_03_risk_scope",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 384,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_04_explicit_operator_binding",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 390,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_05_expiry",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 397,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_06_closure",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 401,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_07_v4_only",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 410,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_08_ready_guards",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 415,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_09_fixture_separation",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 420,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_10_port_profile",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 439,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_11_tcp_only",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 445,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_12_identity_ca_policy",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 449,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_13_mode_gss",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 453,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_19_metadata_missing",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 461,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_28_tool_override",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 467,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_32_privacy",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 473,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_33_durability",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 481,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_34_scope",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 492,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_01_fresh",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 615,
+      "lifecycleId": "AUTH-LIFECYCLE-01",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_02_rotate",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 621,
+      "lifecycleId": "AUTH-LIFECYCLE-02",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_03_exact_bytes",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 627,
+      "lifecycleId": "AUTH-LIFECYCLE-03",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_04_archive_collision",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 633,
+      "lifecycleId": "AUTH-LIFECYCLE-04",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_05_old_hash",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 638,
+      "lifecycleId": "AUTH-LIFECYCLE-05",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_06_modes",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 642,
+      "lifecycleId": "AUTH-LIFECYCLE-06",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_07_owner",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 648,
+      "lifecycleId": "AUTH-LIFECYCLE-07",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_08_canonical_symlink",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 652,
+      "lifecycleId": "AUTH-LIFECYCLE-08",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_09_archive_symlink",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 656,
+      "lifecycleId": "AUTH-LIFECYCLE-09",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_10_concurrent",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 660,
+      "lifecycleId": "AUTH-LIFECYCLE-10",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_11_crash_prepared",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 671,
+      "lifecycleId": "AUTH-LIFECYCLE-11",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_12_crash_archived",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 674,
+      "lifecycleId": "AUTH-LIFECYCLE-12",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_13_crash_staged",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 678,
+      "lifecycleId": "AUTH-LIFECYCLE-13",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_14_crash_published",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 683,
+      "lifecycleId": "AUTH-LIFECYCLE-14",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_15_partial_ready",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 688,
+      "lifecycleId": "AUTH-LIFECYCLE-15",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_16_schema",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 694,
+      "lifecycleId": "AUTH-LIFECYCLE-16",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_17_expiry",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 699,
+      "lifecycleId": "AUTH-LIFECYCLE-17",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_18_nonce",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 702,
+      "lifecycleId": "AUTH-LIFECYCLE-18",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_19_auth_replay",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 710,
+      "lifecycleId": "AUTH-LIFECYCLE-19",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_20_missing_user",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 718,
+      "lifecycleId": "AUTH-LIFECYCLE-20",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_21_source_authority",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 721,
+      "lifecycleId": "AUTH-LIFECYCLE-21",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_22_closed",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 726,
+      "lifecycleId": "AUTH-LIFECYCLE-22",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_23_risk",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 730,
+      "lifecycleId": "AUTH-LIFECYCLE-23",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_24_loss",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 735,
+      "lifecycleId": "AUTH-LIFECYCLE-24",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_25_io_failure",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 739,
+      "lifecycleId": "AUTH-LIFECYCLE-25",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_26_no_credentials",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 746,
+      "lifecycleId": "AUTH-LIFECYCLE-26",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_27_approval_replay",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 757,
+      "lifecycleId": "AUTH-LIFECYCLE-27",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_28_mint_capture_lock",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 763,
+      "lifecycleId": "AUTH-LIFECYCLE-28",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_29_consume_before_constructor",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 774,
+      "lifecycleId": "AUTH-LIFECYCLE-29",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_32_kill_consumed",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 783,
+      "lifecycleId": "AUTH-LIFECYCLE-32",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_34_unexpired",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 792,
+      "lifecycleId": "AUTH-LIFECYCLE-34",
+      "status": "PASS",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_35_output_immutable",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 799,
+      "lifecycleId": "AUTH-LIFECYCLE-35",
+      "status": "ERROR",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_36_rename_fsync",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 812,
+      "lifecycleId": "AUTH-LIFECYCLE-36",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_37_cli",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 824,
+      "lifecycleId": "AUTH-LIFECYCLE-37",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_38_privacy_chain",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 829,
+      "lifecycleId": "AUTH-LIFECYCLE-38",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_40_package",
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 837,
+      "lifecycleId": "AUTH-LIFECYCLE-40",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_11",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 59,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_12",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 64,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_13",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 76,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_14",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 82,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_15",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 87,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_16",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 95,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_17",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 102,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_18",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 107,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_19",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 115,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_20",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 124,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_21",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 130,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_22",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 136,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_23",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 142,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_24",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 150,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_25",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 167,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_26",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 186,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_27",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 189,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_28",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 194,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_31",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 201,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_43",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 207,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_44",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 229,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_45",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 238,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_46",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 244,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_47",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 254,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_48",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 263,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_51",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 270,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_15_owned_baseline_rollback",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 314,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_16_cli_owned_adapter",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 327,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_17_readonly_mutation_probe",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 343,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_18_count_mismatch_early_stop",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 355,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_19_duplicates_early_stop",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 359,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_20_statement_digest_and_pinned_recapture",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 363,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_21_wrong_function_body",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 371,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_22_wrong_owner_definer_path",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 379,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_23_wrong_acl",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 387,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_24_wrong_versions_same_count",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 392,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 397,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_01_ledger_gate",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 453,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_02_body",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 469,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_03_raw_definition",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 475,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_04_owner",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 480,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_05_definer",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 483,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_06_search_path",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 486,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_07_metadata",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 489,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_08_acl",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 496,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_09_effective",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 508,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_10_missing",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 519,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_11_success_order",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 525,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_12_metadata_consistency",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 548,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_13_acl_effective_consistency",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 553,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_14_ledger_consistency",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 558,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_15_same_snapshot_readonly",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 563,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_16_rollback_phases",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 581,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_17_fixed_inputs",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 591,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_18_receipt",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 600,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_19_full_coverage",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 611,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_20_capture_isolation",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 622,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_14_real_psql",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 716,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_15_no_tls",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 728,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_16_bad_ca",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 734,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_17_bad_hostname",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 740,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_18_proof_replay",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 749,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_20_backend_false",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 758,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_21_backend_unavailable",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 776,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_22_order",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 793,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_23_all_modes",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 798,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_35_atomicity_regression",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 809,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_36_precommit_risk_expiry",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 817,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_30_success_finalization",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 853,
+      "lifecycleId": "AUTH-LIFECYCLE-30",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_31_gate_failure",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 862,
+      "lifecycleId": "AUTH-LIFECYCLE-31",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_33_receipt_failure",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 877,
+      "lifecycleId": "AUTH-LIFECYCLE-33",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_39_session_order",
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "line": 884,
+      "lifecycleId": "AUTH-LIFECYCLE-39",
+      "status": "NOT_RUN",
+      "safetyCritical": true
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_34",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 46,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_35",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 50,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_36",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 54,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_37",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 60,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_38",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 75,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_39",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 83,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_40",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 99,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_41",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 113,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_42",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 123,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_24_full_dump",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 175,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_25_schema_dump",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 176,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_26_roles_dump",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 177,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_27_each_tool_tls_negative",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 179,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_29_replay",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 201,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_30_exit_output",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 211,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    },
+    {
+      "testId": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_31_manifest",
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "line": 225,
+      "lifecycleId": null,
+      "status": "NOT_RUN",
+      "safetyCritical": false
+    }
+  ],
+  "error": {
+    "code": "BLOCKED_REQUIRED_VALIDATION_ERROR",
+    "testId": "AUTH-LIFECYCLE-35",
+    "classification": "VALIDATION_WRAPPER_PATH_RELATIVIZATION_ERROR",
+    "exceptionType": "ValueError",
+    "originPath": "/tmp/uply-p1e-a2-validate.py",
+    "originLine": 24,
+    "originSha256": "394ef58b96d62de18ee2632462ee91d2e36d23d8f4dc8eba58b0290b374993eb",
+    "explanation": "The temporary validation wrapper calls path.relative_to(real_repository_root) after the test deliberately substitutes an owned temporary ROOT. That temporary path is outside the real repository, causing ValueError before this case completes. This is not a passing result and does not establish correctness of the remaining implementation.",
+    "stopAuthority": "Current user stage A2 section 54: any required test fail -> STOP",
+    "sourceChangedAfterError": false,
+    "wrapperChangedAfterError": false,
+    "retryPerformed": false,
+    "remainingValidation": "NOT_RUN_AFTER_REQUIRED_TEST_ERROR",
+    "historicalEvidenceOverwrite": false,
+    "autoRepairPerformed": false
+  },
+  "ownedPostgres": {
+    "status": "NOT_RUN",
+    "connections": 0
+  },
+  "ownedTls": {
+    "status": "NOT_RUN",
+    "psql": "NOT_RUN",
+    "pg_dump": "NOT_RUN",
+    "pg_dumpall": "NOT_RUN"
+  },
+  "historicalRegression": {
+    "status": "NOT_RUN",
+    "expectedPassed": 172,
+    "executed": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "reason": "Stopped on first required validation error before regression suite"
+  },
+  "logs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/7680d40e7a364f529055e8f5c4685bb1/contract.log",
+      "sha256": "efc0cecf1f6f5c8deab667db130b33f0b8be84d0fd853868eaf071ab6df5b95a"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/7680d40e7a364f529055e8f5c4685bb1/summary.json",
+      "sha256": "d9bb436bc0004f7a65c1b65f7a1a0668a4187331d5bd91f17cd3e3967930dd68"
+    }
+  ],
+  "noHistoricalTestResultsSubstituted": true,
+  "productionBoundaries": {
+    "productionAuthorizationMint": 0,
+    "productionCredentialAccess": 0,
+    "productionCredentialUse": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionCapture": 0,
+    "productionBackup": 0,
+    "productionRestore": 0,
+    "planSeal": 0,
+    "migrationInstall": 0,
+    "deployment": 0,
+    "pm2Mutation": 0,
+    "providerExecution": 0,
+    "agentRuns": 0,
+    "publish": 0,
+    "migrationChanges": 0,
+    "productChanges": 0,
+    "dependencyChanges": 0,
+    "legacyCleanupCandidates": 0,
+    "safeDeletions": 0
+  },
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-source-lock.json",
+    "sha256": "95c477b4c48744189e08575a4392a5cafe8586285a8133aeecb7e341a6bee731"
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "approval": "Approval B — GRANTED",
+  "status": "BLOCKED BEFORE MUTATION",
+  "B1": "COMPLETE",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "B2Provisioning": "NOT STARTED",
+  "developmentActor": 0,
+  "developmentTenant": 0,
+  "actualWrites": {
+    "auth.identities": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.users": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.learning_grading_comments": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.profiles": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_memberships": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_student_apps": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenants": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.audit_log_entries": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.sessions": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.refresh_tokens": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.account_management_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.user_permission_grants": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_provisioned_accounts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_attempts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "writeEvidence": "No mutation path invoked; only read-only PostgreSQL and Auth GET requests. Not WAL event accounting.",
+  "currentDbIdentityWrites": 0,
+  "journalClaimCreated": false,
+  "privateJournalDirectoryCreated": false,
+  "executionScope": "DISABLED",
+  "attempt": 0,
+  "progress": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "productCodeWritesThisTurn": 0,
+  "migration": 0,
+  "deploy": 0,
+  "pm2Mutation": 0,
+  "launcherMutation": 0,
+  "tailscaleMutation": 0,
+  "frozenContent": "UNCHANGED",
+  "canonicalActivity": "UNCHANGED",
+  "currentBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "ledger": 458,
+  "blocker": "OWNER_AUTHENTICATED_DEVELOPMENT_PROVISIONING_ENTRYPOINT_UNAVAILABLE",
+  "R7D": "NOT READY",
+  "Stage1G": "NOT READY",
+  "nextRequirement": "A separately reviewed Owner-authenticated development invocation/composition entry; no repeat request for the already granted DB write budget. Any deploy needs separate permission.",
+  "recordedAt": "2026-09-17T08:47:10.556753+00:00"
+}

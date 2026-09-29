@@ -1,0 +1,21 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentFiveTableRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "agentRunsDuringTask": 0,
+  "providerRequestsDuringTask": 0,
+  "pinsCreated": 0,
+  "definitionPublication": 0,
+  "authWrites": 0,
+  "publish": 0,
+  "runtime": 0,
+  "previewRuntime": 0,
+  "stage1G": "NOT READY",
+  "noGlobalHistoricalProviderClaim": true
+}

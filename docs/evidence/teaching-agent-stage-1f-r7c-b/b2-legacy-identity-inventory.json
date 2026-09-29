@@ -1,0 +1,11 @@
+{
+  "status": "NO LEGACY ACTOR SELECTED",
+  "existingPurposeTaggedSubjects": 0,
+  "exactProposedDevTenantCount": 0,
+  "oldSyntheticAuthHarness": "scripts/teaching-agent-r5b/synthetic-auth.mjs creates and logs in a synthetic Owner: reference infrastructure only; NOT eligible stable runtime actor",
+  "oldDurableHarness": "tests/fixtures/teaching-agent-r7c/postgres.mjs uses isolated SQL synthetic FK rows; no approved current-DB provisioning contract",
+  "classification": "Existing demo/personal/test accounts are not candidates to reuse; record-level legacy deletion not assessed or authorized",
+  "currentAccountRowsExported": 0,
+  "deleteCandidates": 0,
+  "cleanupExecuted": false
+}

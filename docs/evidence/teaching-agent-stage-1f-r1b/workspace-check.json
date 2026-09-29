@@ -1,0 +1,14 @@
+{
+  "baselineFiles": 2620,
+  "changedExisting": [
+    "scripts/verify-teaching-agent-release-migrations.py",
+    "supabase/migrations/202609080004_teaching_operations.sql",
+    "supabase/migrations/202609080005_completion_policy_management.sql",
+    "tests/completion-policy-management-db.test.mjs",
+    "tests/teaching-agent-release-migrations.test.mjs",
+    "tests/teaching-operations-db.test.mjs"
+  ],
+  "allOtherBaselineFilesUnchanged": true,
+  "srcAndRuntimeConfigurationUnchanged": true,
+  "historicalReportsAndEvidenceUnchanged": true
+}

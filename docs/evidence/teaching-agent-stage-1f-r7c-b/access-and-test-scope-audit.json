@@ -1,0 +1,1064 @@
+{
+  "relations": [
+    {
+      "schema": "public",
+      "table": "digital_textbook_activities",
+      "owner": "postgres",
+      "rls": true,
+      "forceRls": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": true,
+      "serviceSelect": true,
+      "serviceInsert": true
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_activity_secrets",
+      "owner": "postgres",
+      "rls": true,
+      "forceRls": false,
+      "authenticatedSelect": false,
+      "authenticatedInsert": false,
+      "serviceSelect": true,
+      "serviceInsert": true
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_attempts",
+      "owner": "postgres",
+      "rls": true,
+      "forceRls": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": false,
+      "serviceSelect": true,
+      "serviceInsert": true
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_node_progress",
+      "owner": "postgres",
+      "rls": true,
+      "forceRls": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": false,
+      "serviceSelect": true,
+      "serviceInsert": true
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "owner": "postgres",
+      "rls": true,
+      "forceRls": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": true,
+      "serviceSelect": true,
+      "serviceInsert": true
+    }
+  ],
+  "identityCatalogCandidates": [
+    {
+      "schema": "auth",
+      "table": "audit_log_entries",
+      "column": "instance_id"
+    },
+    {
+      "schema": "auth",
+      "table": "audit_log_entries",
+      "column": "id"
+    },
+    {
+      "schema": "auth",
+      "table": "audit_log_entries",
+      "column": "payload"
+    },
+    {
+      "schema": "auth",
+      "table": "audit_log_entries",
+      "column": "created_at"
+    },
+    {
+      "schema": "auth",
+      "table": "audit_log_entries",
+      "column": "ip_address"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "target_user_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "action"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "changed_fields"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "before_data"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "after_data"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "account_management_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "entity_type"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "entity_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "operation"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "before_data"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "after_data"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_content_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "target_user_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "target_email"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "target_full_name"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "target_role"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "deletion_reason"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "related_data_counts"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "deleted_at"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "account_deletion_audit_logs",
+      "column": "deleted_data_snapshot"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "permission_grant_id"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "subject_user_id"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "permission_key"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "action"
+    },
+    {
+      "schema": "public",
+      "table": "permission_grant_audit_logs",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "student_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "test_slug"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "test_version"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "score"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "correct_count"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "total_questions"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "passed"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "answers"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "dimension_scores"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "attempted_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_attempts",
+      "column": "test_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "test_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "question_key"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "prompt"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "options"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "correct_option"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "explanation"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "skill"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "sort_order"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "updated_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "question_type"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "correct_answer"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "default_points"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "difficulty"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "tags"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "status"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "version"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "created_by"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "updated_by"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "is_chapter_test_item"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "ebook_section_step"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_questions",
+      "column": "ebook_page_reference"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "slug"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "course_key"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "chapter_number"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "title"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "korean_title"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "description"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "duration_minutes"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "passing_score"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "skills"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "version"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "status"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "updated_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "lesson_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_tests",
+      "column": "student_app_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "student_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "test_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "question_id"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_test_question_reviews",
+      "column": "updated_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "slug"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "course_key"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "chapter_number"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "title"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "korean_title"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "description"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "duration_minutes"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "passing_score"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "skills"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "version"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "status"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "updated_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_tests",
+      "column": "lesson_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "test_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "question_key"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "prompt"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "options"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "correct_option"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "explanation"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "skill"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "sort_order"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "updated_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "question_type"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "correct_answer"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "default_points"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "difficulty"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "tags"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "status"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "version"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "created_by"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "updated_by"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_questions",
+      "column": "is_chapter_test_item"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "student_id"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "test_slug"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "test_version"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "score"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "correct_count"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "total_questions"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "passed"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "answers"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "dimension_scores"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "attempted_at"
+    },
+    {
+      "schema": "public",
+      "table": "course_test_attempts",
+      "column": "test_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "target_user_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "operation"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "before_data"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "after_data"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_membership_audit_logs",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "tenant_slug"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "action"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "details"
+    },
+    {
+      "schema": "public",
+      "table": "tenant_lifecycle_audit_logs",
+      "column": "created_at"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "id"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "tenant_id"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "app_id"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "actor_id"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "subject_type"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "subject_user_id"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "operation"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "before_data"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "after_data"
+    },
+    {
+      "schema": "public",
+      "table": "application_access_audit_logs",
+      "column": "created_at"
+    }
+  ],
+  "identityFunctionCandidates": [
+    {
+      "schema": "public",
+      "name": "get_platform_visa_case_audit",
+      "args": ""
+    },
+    {
+      "schema": "public",
+      "name": "audit_course_content_change",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "chapter_test_attempts_validate_slug",
+      "args": ""
+    },
+    {
+      "schema": "public",
+      "name": "audit_profile_management_change",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "capture_chapter_test_activity_event",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "audit_tenant_membership_change",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "overwrite_previous_course_test_attempt",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "ensure_homework_plan_for_new_course_test",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "enforce_chapter_test_learning_prerequisites",
+      "args": ""
+    },
+    {
+      "schema": "public",
+      "name": "submit_course_test",
+      "args": "p_test_slug text, p_answers jsonb"
+    },
+    {
+      "schema": "public",
+      "name": "replace_chapter_test_questions",
+      "args": "p_test_id uuid, p_question_ids uuid[]"
+    },
+    {
+      "schema": "private",
+      "name": "audit_application_access_change",
+      "args": ""
+    },
+    {
+      "schema": "private",
+      "name": "capture_chapter_test_review_items",
+      "args": ""
+    },
+    {
+      "schema": "public",
+      "name": "migrate_chapter_test_question_reviews_to_review_items",
+      "args": ""
+    }
+  ],
+  "guards": [
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE TRIGGER digital_textbook_activities_set_updated_at BEFORE UPDATE ON public.digital_textbook_activities FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "function": "set_updated_at",
+      "body": "\nbegin\n  new.updated_at := now();\n  return new;\nend;\n"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_activities FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()",
+      "function": "check_authoring_statement",
+      "body": "\ndeclare f runtime_publish_private.dependency_fences%rowtype;\nbegin\n for f in select d.* from runtime_publish_private.dependency_fences d\n  where not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id) order by d.snapshot_id loop\n  if runtime_publish_private.capture(f.scope) is distinct from runtime_publish_private.semantic_capture(f.capture) then\n   raise exception 'PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW' using errcode='PT409';\n  end if;\n end loop;\n return null;\nend "
+    },
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_activities FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()",
+      "function": "lock_authoring_statement",
+      "body": "\nbegin\n -- TRUNCATE takes AccessExclusiveLock before statement triggers; never wait\n -- for the authoring advisory lock while holding that conflicting table lock.\n if tg_op='TRUNCATE' then raise exception 'PUBLICATION_DEPENDENCY_TRUNCATE_FORBIDDEN'; end if;\n perform runtime_publish_private.authoring_lock();return null;\nend "
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "definition": "CREATE TRIGGER digital_textbook_activity_secrets_set_updated_at BEFORE UPDATE ON public.digital_textbook_activity_secrets FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "function": "set_updated_at",
+      "body": "\nbegin\n  new.updated_at := now();\n  return new;\nend;\n"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_activity_secrets FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()",
+      "function": "check_authoring_statement",
+      "body": "\ndeclare f runtime_publish_private.dependency_fences%rowtype;\nbegin\n for f in select d.* from runtime_publish_private.dependency_fences d\n  where not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id) order by d.snapshot_id loop\n  if runtime_publish_private.capture(f.scope) is distinct from runtime_publish_private.semantic_capture(f.capture) then\n   raise exception 'PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW' using errcode='PT409';\n  end if;\n end loop;\n return null;\nend "
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_activity_secrets FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()",
+      "function": "lock_authoring_statement",
+      "body": "\nbegin\n -- TRUNCATE takes AccessExclusiveLock before statement triggers; never wait\n -- for the authoring advisory lock while holding that conflicting table lock.\n if tg_op='TRUNCATE' then raise exception 'PUBLICATION_DEPENDENCY_TRUNCATE_FORBIDDEN'; end if;\n perform runtime_publish_private.authoring_lock();return null;\nend "
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE TRIGGER digital_textbook_nodes_set_updated_at BEFORE UPDATE ON public.digital_textbook_nodes FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "function": "set_updated_at",
+      "body": "\nbegin\n  new.updated_at := now();\n  return new;\nend;\n"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()",
+      "function": "check_authoring_statement",
+      "body": "\ndeclare f runtime_publish_private.dependency_fences%rowtype;\nbegin\n for f in select d.* from runtime_publish_private.dependency_fences d\n  where not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id) order by d.snapshot_id loop\n  if runtime_publish_private.capture(f.scope) is distinct from runtime_publish_private.semantic_capture(f.capture) then\n   raise exception 'PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW' using errcode='PT409';\n  end if;\n end loop;\n return null;\nend "
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()",
+      "function": "lock_authoring_statement",
+      "body": "\nbegin\n -- TRUNCATE takes AccessExclusiveLock before statement triggers; never wait\n -- for the authoring advisory lock while holding that conflicting table lock.\n if tg_op='TRUNCATE' then raise exception 'PUBLICATION_DEPENDENCY_TRUNCATE_FORBIDDEN'; end if;\n perform runtime_publish_private.authoring_lock();return null;\nend "
+    }
+  ]
+}

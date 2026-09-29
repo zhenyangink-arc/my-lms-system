@@ -1,0 +1,26 @@
+{
+  "nodeNumber": 8,
+  "title": "今天学了什么？",
+  "formalType": "summary",
+  "purpose": "回顾基本结构、可选终声和下一步。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "초성과 중성이 있어요与종성은 있을 수도, 없을 수도 있어요分句明确必需/可选范围。在当前가/한这类合体字形语境中准确，并非宣称每个独立字母符号都含这些部分。总结与Node6一致，最后的배워 볼게요自然礼貌。",
+  "resolvedItems": [
+    "S4"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b",
+  "teacherScriptSha256": "185ce97672de351d8d27f5a64ae1bec5b6f4db035a47837706b7e4cc3307b9a5",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

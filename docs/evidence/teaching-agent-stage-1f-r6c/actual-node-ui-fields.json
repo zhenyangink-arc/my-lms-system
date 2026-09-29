@@ -1,0 +1,498 @@
+{
+  "order": 1,
+  "fields": [
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "video",
+          "text": "教师视频课堂"
+        },
+        {
+          "value": "legacy",
+          "text": "原有形象与朗读"
+        }
+      ]
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "checkbox",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "title_zh",
+      "type": "text",
+      "readOnly": false,
+      "maxLength": 80
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "auto",
+          "text": "自动判断"
+        },
+        {
+          "value": "zh-CN",
+          "text": "中文"
+        },
+        {
+          "value": "ko-KR",
+          "text": "韩语"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "0.85",
+          "text": "慢速"
+        },
+        {
+          "value": "1",
+          "text": "标准"
+        },
+        {
+          "value": "1.15",
+          "text": "稍快"
+        }
+      ]
+    },
+    {
+      "tag": "TEXTAREA",
+      "name": "script_zh",
+      "type": "textarea",
+      "readOnly": false,
+      "maxLength": 1600
+    },
+    {
+      "tag": "SELECT",
+      "name": "script_pose",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "greeting",
+          "text": "问候"
+        },
+        {
+          "value": "explaining",
+          "text": "讲解"
+        },
+        {
+          "value": "encouraging",
+          "text": "鼓励"
+        },
+        {
+          "value": "pointing-left",
+          "text": "指向学习内容"
+        },
+        {
+          "value": "repeat-after-me",
+          "text": "示范跟读"
+        },
+        {
+          "value": "listening",
+          "text": "倾听学生"
+        },
+        {
+          "value": "gentle-correction",
+          "text": "温和纠错"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "script_voice",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "on",
+          "text": "朗读这句台词"
+        },
+        {
+          "value": "off",
+          "text": "只显示文字"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "script_voice_language",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "auto",
+          "text": "自动判断"
+        },
+        {
+          "value": "zh-CN",
+          "text": "中文"
+        },
+        {
+          "value": "ko-KR",
+          "text": "韩语"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "script_voice_rate",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "0.85",
+          "text": "慢速"
+        },
+        {
+          "value": "1",
+          "text": "标准"
+        },
+        {
+          "value": "1.15",
+          "text": "稍快"
+        }
+      ]
+    },
+    {
+      "tag": "TEXTAREA",
+      "name": "hint_zh",
+      "type": "textarea",
+      "readOnly": false,
+      "maxLength": 600
+    },
+    {
+      "tag": "TEXTAREA",
+      "name": "example_zh",
+      "type": "textarea",
+      "readOnly": false,
+      "maxLength": 600
+    },
+    {
+      "tag": "TEXTAREA",
+      "name": "script_ko",
+      "type": "textarea",
+      "readOnly": false,
+      "maxLength": 1600
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "text",
+      "readOnly": false,
+      "maxLength": 60
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "选择模板…"
+        },
+        {
+          "value": "sha256:6fffa971ae571dd4ea99e6a47d2cc6854b4ec44d6865c3cab5f099278389d058",
+          "text": "本章学习路线模板"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "0",
+          "text": "台词 1：请填写这一小节的老师台词。"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "greeting",
+          "text": "问候"
+        },
+        {
+          "value": "explaining",
+          "text": "讲解"
+        },
+        {
+          "value": "encouraging",
+          "text": "鼓励"
+        },
+        {
+          "value": "pointing-left",
+          "text": "指向学习内容"
+        },
+        {
+          "value": "repeat-after-me",
+          "text": "示范跟读"
+        },
+        {
+          "value": "listening",
+          "text": "倾听学生"
+        },
+        {
+          "value": "gentle-correction",
+          "text": "温和纠错"
+        }
+      ]
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "range",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "range",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "number",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "text",
+      "readOnly": false,
+      "maxLength": -1
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "0",
+          "text": "台词 1：请填写这一小节的老师台词。"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "plain",
+          "text": "白色"
+        },
+        {
+          "value": "warm",
+          "text": "暖色"
+        },
+        {
+          "value": "grid",
+          "text": "方格"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "选择版式…"
+        }
+      ]
+    },
+    {
+      "tag": "INPUT",
+      "name": "",
+      "type": "text",
+      "readOnly": false,
+      "maxLength": 60
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "请先选择页面"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "请先选择区域"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "不安排宠物操作"
+        },
+        {
+          "value": "header",
+          "text": "固定顶部栏"
+        },
+        {
+          "value": "scene",
+          "text": "第1页 · 情景与表达"
+        },
+        {
+          "value": "teaching_area",
+          "text": "教学区"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "请先选择页面"
+        }
+      ]
+    },
+    {
+      "tag": "SELECT",
+      "name": "",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "",
+          "text": "请先选择区域"
+        }
+      ]
+    },
+    {
+      "tag": "INPUT",
+      "name": "continue_label_zh",
+      "type": "text",
+      "readOnly": false,
+      "maxLength": 40
+    },
+    {
+      "tag": "SELECT",
+      "name": "node_type",
+      "type": "select-one",
+      "readOnly": false,
+      "options": [
+        {
+          "value": "opening",
+          "text": "课堂开场"
+        },
+        {
+          "value": "instruction",
+          "text": "观察或操作引导"
+        },
+        {
+          "value": "explanation",
+          "text": "知识讲解"
+        },
+        {
+          "value": "example",
+          "text": "例句示范"
+        },
+        {
+          "value": "question",
+          "text": "理解检查"
+        },
+        {
+          "value": "summary",
+          "text": "课堂总结"
+        }
+      ]
+    },
+    {
+      "tag": "INPUT",
+      "name": "node_key",
+      "type": "text",
+      "readOnly": true,
+      "maxLength": -1
+    }
+  ]
+}

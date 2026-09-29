@@ -1,0 +1,17 @@
+{
+  "summary": [
+    "✖ 4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owner, seven commands, lifecycle (development mount, NOT complete readiness) (4320.982436ms)",
+    "✖ 4A-7 isolated release rehearsal: real PostgreSQL write chain, two instances, no external storage (92333.851638ms)",
+    "ℹ tests 30",
+    "ℹ suites 0",
+    "ℹ pass 27",
+    "ℹ fail 3",
+    "ℹ cancelled 0",
+    "ℹ skipped 0",
+    "ℹ todo 0",
+    "ℹ duration_ms 117551.230853",
+    "✖ failing tests:",
+    "✖ 4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owner, seven commands, lifecycle (development mount, NOT complete readiness) (4320.982436ms)",
+    "✖ 4A12 mounted Chromium recording → real v2 SQL → Reader → same Runtime state and reload (56483.54498ms)"
+  ]
+}

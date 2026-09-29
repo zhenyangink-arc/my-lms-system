@@ -1,0 +1,965 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "result": "READY",
+  "futureBackupRoot": "/home/yangzhen/operations/uply/teaching-agent/r7d-c3a/<separately-approved-deployment-UTC>/rollback",
+  "backupPerformedThisTurn": false,
+  "liveNext": {
+    "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/.next",
+    "treeSha256": "69c0e9755756416706b72b04c05f0c9e5dfc57a31b8856083b5bf8b003bcdff1",
+    "files": 1416,
+    "manifest": "release-c3a/runtime-tree-manifests.json",
+    "alreadyPreservedApprovedArchive": {
+      "archive": "build/r7d-b-candidate/candidate-build.tar.gz",
+      "sha256": "c95ba807a5e4094062a2af1e465d01e3ec5413765a31fd14359a84499eb046fd",
+      "comparedFiles": 1416,
+      "drift": []
+    }
+  },
+  "sourcePaths": [
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx",
+      "presence": "EXISTS",
+      "sha256": "b8783b18db19699993f0a66a550a6ced93b42c738a1b5b222f0a31a003d6016e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/page.tsx",
+      "presence": "EXISTS",
+      "sha256": "f0e1368d11bf21fb30baca9808a9fec6b1bbe9c1815d80fc154350e69374cfcb",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/cancel/route.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/route.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/route.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+      "presence": "EXISTS",
+      "sha256": "f22379a775888e37e49b66c4bbe5de48d84fb8ae2e1550342645875a811a4420",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "presence": "EXISTS",
+      "sha256": "144e824442bc1ae525ceec3b831ef4bf05ae7970a589b4f69f87489f64b56614",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/page-content.tsx",
+      "presence": "EXISTS",
+      "sha256": "57600a1ff59611770ebac103f31ff9e86ffaa6450c56fb3fc66910ce2c29ec1a",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/HangulInteractiveBook.tsx",
+      "presence": "EXISTS",
+      "sha256": "4c49603f7ba57f8ee0d6cbe35fe04c68b7abcc09b711430eba3e08f4eeba6a03",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx",
+      "presence": "EXISTS",
+      "sha256": "39378c99697219bed872f0b922d07cde96d70f9376d1eec9e34717744131037e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx",
+      "presence": "EXISTS",
+      "sha256": "650b7b0c1a84372cc9088df586de267efb09bb7c4978f1b9f9294f21d44d8823",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/agent-core/contracts/provider.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/public.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/skill.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/tool.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/transport.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/conversation/scope.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/index.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/observability/events.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/permissions/permission-policy.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/permissions/tool-policy.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/persistence/ports.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/adapter.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/capabilities.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/stream-parser.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/deadline.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/errors.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-budget.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-coordinator.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-state.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/skills/registry.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/tools/executor.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/agent-core/tools/registry.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-listing.tsx",
+      "presence": "EXISTS",
+      "sha256": "8de94fdcb82dfd382f323a1ab181fbf70de4bfb091588ec581ba42a2b19220b9",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-node-view.tsx",
+      "presence": "EXISTS",
+      "sha256": "6c07aa5e03a4f6cef4f45ab8cae3db0648e83f0b1dc36a0b248ecdad069c1d78",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/courses/components/course-lesson-view.tsx",
+      "presence": "EXISTS",
+      "sha256": "6566183b027b170de2aa354f6de43583b21aeed77f1c8a531e4542602a3d6b7e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-teaching-content.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/digital-textbook/api/service.ts",
+      "presence": "EXISTS",
+      "sha256": "f088a81b30d5d93a3ef182e5cdd8c5b0e49118e4382b21cd55bc264d2d1843db",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/digital-textbook/api/types.ts",
+      "presence": "EXISTS",
+      "sha256": "b62de7a344dda8d38f802a6f4ac89f6f1a4e42977c31fc7318c20ac8e8c150f4",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-entry.tsx",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-form.tsx",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+      "presence": "EXISTS",
+      "sha256": "34993ecfa5239cc037030175e5064504d9195978574c985877a343548c348148",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+      "presence": "EXISTS",
+      "sha256": "6b49bd44d478db2efbe6a729380b5353423854ef3217203f1af756e9ba609a9d",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx",
+      "presence": "EXISTS",
+      "sha256": "bd568969715e0734d7d418db7f1c2346aa43bf1fdc391df2cd375298f8e41263",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/columns.tsx",
+      "presence": "EXISTS",
+      "sha256": "2246feb95746cc5745b39a38d58e35a8007573c3de015abe0b8ca0d7fa1af117",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/index.tsx",
+      "presence": "EXISTS",
+      "sha256": "2f5e22b1a49a0cfc1daf880918e8186fcef33b2c17dd9246b4eaee2d14fc40f0",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "presence": "EXISTS",
+      "sha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "presence": "EXISTS",
+      "sha256": "df7780c231540f39e6126c28b94bb9bf0ed5bd108cbd2f3965c3d8350bc9e48c",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "presence": "EXISTS",
+      "sha256": "4d5ed49024f0fdd7481b21c222abfa86eff0e8155f9786b2c5057dc9d7af6b93",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-workspace.tsx",
+      "presence": "EXISTS",
+      "sha256": "0040a950ff3924d647a41586054e86d96880fb2d9d122a8e83cea58f6230790b",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/referenced-grammar-materials.tsx",
+      "presence": "EXISTS",
+      "sha256": "ddbdb48459dc2fb772bc6ddd1a41dc70059665d9c950de60fbd835a8299bdc91",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx",
+      "presence": "EXISTS",
+      "sha256": "68b92d889acbf30b0d4a2dd2982def9756d1995e2483c408b8065f00d3a43d6b",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+      "presence": "EXISTS",
+      "sha256": "23b3fb9380bf7d8bf48cd1b87bfad2b3ed1386831ddaf524fcdd9515d222ab48",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+      "presence": "EXISTS",
+      "sha256": "f2c72f69d0f8f0fd3b5cebed6faf5e6c165f3af6dc988c82bef31e7260e3d3be",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-toolbar.tsx",
+      "presence": "EXISTS",
+      "sha256": "e9a7e49fbe3fc6e816415e7b9fbbae03a10bf02f45c7a203a2ea10a9075423f7",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "presence": "EXISTS",
+      "sha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "mode": "0o644"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/learning-session-transport.ts",
+      "presence": "EXISTS",
+      "sha256": "67151fb0d2daef833c97b93b267612e27281719f3ab1a2051d80b56510e74402",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "presence": "EXISTS",
+      "sha256": "4a088e717b1c32f655d1f593a2a8ef4f365717069fae89d8b8148300354f0c3d",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-source.server.ts",
+      "presence": "EXISTS",
+      "sha256": "30510545b3ee3b052416cbcd3c22723e2ccba49b381bccda759d543df8ee737e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "presence": "EXISTS",
+      "sha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "presence": "EXISTS",
+      "sha256": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "mode": "0o644"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "presence": "EXISTS",
+      "sha256": "f80a150dd7893dcc4d6e016025c44393a99f9c1350388271c1a8e7aa6f79685f",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-history.server.ts",
+      "presence": "EXISTS",
+      "sha256": "c01f912ce56417e2e53c4b3d39a009fbb8e423b1bceceb7329607f6e9b5b61d4",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "presence": "EXISTS",
+      "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "presence": "EXISTS",
+      "sha256": "ba735ee9c69e2bd65e1412ce93946c8884dcaedbbfca50f62f832e3d82096b09",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "presence": "EXISTS",
+      "sha256": "16873eb09daab78afe03533de64ca23f613b8f7588315b46ddc61955f56cc31e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/ndjson-parser.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/selection-state.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/student-ai-teacher-client.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/use-student-ai-teacher-run.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/kim-persona.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/trace.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "presence": "EXISTS",
+      "sha256": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "presence": "EXISTS",
+      "sha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "presence": "EXISTS",
+      "sha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/access-rules.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/references.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/teaching-skill-contract.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/trace.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "presence": "EXISTS",
+      "sha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "presence": "EXISTS",
+      "sha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/active-run-abort-registry.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/rollout-policy.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/run-store.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/transport-config.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/procedure.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/lib/chapter-practice-binding.ts",
+      "presence": "EXISTS",
+      "sha256": "e14fbbfda9269acd3358bf0e9c6874734c6fb425d19648cdccd1444c018fcc47",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/lib/course-content-workflow.ts",
+      "presence": "EXISTS",
+      "sha256": "beb3859b87d10e9fa810b1eaa5bd8c79b8c217368798d54e63de50976829f172",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/lib/recording-domain-gateway.server.ts",
+      "presence": "EXISTS",
+      "sha256": "2cbfbdc75d925a4cb8a19ad871a29e4c00f6268b73024aa72f3219abb8c74107",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/chapter-one-shapes.server.ts",
+      "presence": "EXISTS",
+      "sha256": "693061f2b9467b46dcae1bddaeeda5b8583c7689f866f6732f3b174853aaab78",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/profile.server.ts",
+      "presence": "EXISTS",
+      "sha256": "2fbba0467a4b73e71397fc3e90793026a3cc43bdf245629f082dd23f45d531dd",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts",
+      "presence": "EXISTS",
+      "sha256": "e0747db2c7ae65b83825c5d863812c9bb84631c85a99f543e50808e20f3f5fa3",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "presence": "EXISTS",
+      "sha256": "297b78d598b430bcec99258e0630cabd4a5da68bc80be9e7eca25f5a293eb45e",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "presence": "EXISTS",
+      "sha256": "9c6b102ee18549e6f92bceddfaac92158ee7201bf795afb988a258676009c9f7",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "presence": "EXISTS",
+      "sha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "mode": "0o664"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "presence": "EXISTS",
+      "sha256": "09bfd8b6a0b4d67390258af1fa8d6cc149ddb25cee4009c6c254cb383cc9628a",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/native-publication.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "mode": null
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "presence": "EXISTS",
+      "sha256": "8e016f80f1a6bbd37b5ade6aef6817356bb655f714d36969e232ff95b7a5874a",
+      "mode": "0o600"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "presence": "EXISTS",
+      "sha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+      "mode": "0o664"
+    },
+    {
+      "path": "tsconfig.json",
+      "presence": "EXISTS",
+      "sha256": "da88b88bc74f29110c9f1bc48250ee521a2cc9a2b5f8db99937e7ba7fcff1641",
+      "mode": "0o664"
+    }
+  ],
+  "launcher": {
+    "path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "presence": true,
+    "sha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "mode": "0o600"
+  },
+  "runtimeConfigIdentityOnly": {
+    "path": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+    "presence": true,
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "mode": "0o600"
+  },
+  "privateConfigPresenceAndDigestsOnly": [
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/approval-b.json",
+      "presence": true,
+      "sha256": "afa84b6916a01b33309ed985bbc715cb3b22bf7b79da3a7cfd8d4ca9f5e6904a",
+      "mode": "0o600"
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/b3/dispatch-0.json",
+      "presence": true,
+      "sha256": "f271b57a82c78b10a71bbd52e92282118f5d0a94381e0de6f5a043e3cc16e3c1",
+      "mode": "0o600"
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/b3/dispatch-1.json",
+      "presence": true,
+      "sha256": "24901b4b7f103246ce7b6f7e59256e75fe7b56da2ae667328971a8d7a7a6ca28",
+      "mode": "0o600"
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/b3/execution-approval.json",
+      "presence": true,
+      "sha256": "4ba4e144e419e2b2176bd1f1c9922b663205d99db82c32d1f6d98b41e45f3497",
+      "mode": "0o600"
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/b3/scenario.json",
+      "presence": true,
+      "sha256": "136cdbf405eb8e6b14b99b00622ec602be62e6e8a49b718ed128599fc485f326",
+      "mode": "0o600"
+    }
+  ],
+  "package": {
+    "presence": "EXISTS",
+    "sha256": "3f86c618474619c4e3ad49ae619e096a602a0d32bb93b97b3597f18f84cc90f1",
+    "mode": "0o644"
+  },
+  "lockfile": {
+    "presence": "EXISTS",
+    "sha256": "32afe671ae11e981d3d889c546b4c6a8e240e95ce934be2aa9f76bc81c2e7a2d",
+    "mode": "0o644"
+  },
+  "dependencies": {
+    "treeSha256": "931b3b5177bdc0819ef2dc70819bfc15ce3fe379fd00c5011776f8936d3129b1",
+    "changes": 0
+  },
+  "publicTreeSha256": "d35d61b7d6b7c2bc361f18be9778c1f285bfec8527107a03eec8ba9dfa4db64c",
+  "beforeFirstV2Data": [
+    "Stop same process only",
+    "Restore exact previous .next and source paths",
+    "Delete only paths proven ABSENT by this manifest; no broad cleanup",
+    "Start same process; schema stays forward",
+    "Require no v2/artifact2 traffic/data before selecting old app"
+  ],
+  "afterFirstV2Data": "No automatic old-app rollback; version-aware forward fix. Never delete native rows or reinterpret as v1.",
+  "privateCredentialBackup": false,
+  "databaseRollbackOrCleanup": false
+}

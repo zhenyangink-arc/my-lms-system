@@ -1,0 +1,120 @@
+{
+  "status": "PASS",
+  "items": [
+    {
+      "proposalId": "S1",
+      "nodeNumber": 1,
+      "classification": "SHOULD_FIX",
+      "beforeHash": "547c1eb10b662be441ffddc5a52f0342b1ffdbf319623dc9dfb9de1985c04983",
+      "afterHash": "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "M1",
+      "nodeNumber": 2,
+      "classification": "MUST_FIX",
+      "beforeHash": "ddd6ce25baf90f498c3caeb6cf32821006156b23e3382e2e585bb81e5cee450e",
+      "afterHash": "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "M2",
+      "nodeNumber": 2,
+      "classification": "MUST_FIX",
+      "beforeHash": "ddd6ce25baf90f498c3caeb6cf32821006156b23e3382e2e585bb81e5cee450e",
+      "afterHash": "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "M3",
+      "nodeNumber": 6,
+      "classification": "MUST_FIX",
+      "beforeHash": "ec3853feb3bfe2f6e83379cc471f282e199cb0cea537a6d7b6f3bf4663b03f7f",
+      "afterHash": "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "S2",
+      "nodeNumber": 4,
+      "classification": "SHOULD_FIX",
+      "beforeHash": "509788099c7b362f8d31d21cd3f30ba7dc0d53b42a3263fb5c32c857990d33f0",
+      "afterHash": "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "S3",
+      "nodeNumber": 5,
+      "classification": "SHOULD_FIX",
+      "beforeHash": "b465ed53b874a6fda55bf46171dbcd0a8002ef5b572971a5dec5cdad308d9bc4",
+      "afterHash": "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "S4",
+      "nodeNumber": 8,
+      "classification": "SHOULD_FIX",
+      "beforeHash": "cc9ab470ee11179cf2becc619fa35d0e94ad364538d2465eb2008af17121c495",
+      "afterHash": "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b",
+      "applicationStatus": "APPLIED",
+      "verificationStatus": "RESOLVED",
+      "applied": true,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "O1",
+      "nodeNumber": 3,
+      "classification": "OPTIONAL",
+      "beforeHash": "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+      "afterHash": "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+      "applicationStatus": "NOT APPLIED — OPTIONAL",
+      "verificationStatus": "UNCHANGED",
+      "applied": false,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    },
+    {
+      "proposalId": "O2",
+      "nodeNumber": 7,
+      "classification": "OPTIONAL",
+      "beforeHash": "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+      "afterHash": "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+      "applicationStatus": "NOT APPLIED — OPTIONAL",
+      "verificationStatus": "UNCHANGED",
+      "applied": false,
+      "textAuthority": "R6E user-specified exact revision; CRLF/LF equivalent",
+      "r6dHistoricalEvidenceModified": false
+    }
+  ],
+  "mustFixResolved": 3,
+  "shouldFixResolved": 4,
+  "mustFixRemaining": 0,
+  "shouldFixRemaining": 0,
+  "optionalApplied": 0,
+  "optionalRemaining": 2,
+  "r6dOriginalAppliedFalsePreserved": true
+}

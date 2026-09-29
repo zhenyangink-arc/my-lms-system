@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T07:13:07.357Z",
+  "targetTitleVisible": true,
+  "chapterZeroVisible": true,
+  "orientationVisible": true,
+  "draftVersion1Visible": true,
+  "zeroNodesVisible": true,
+  "newNodeButtonVisible": true,
+  "newNodeButtonClicked": false,
+  "createButtonRemaining": 0,
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "savePublishRuntimeInvoked": false,
+  "chromeLeftOpen": true
+}

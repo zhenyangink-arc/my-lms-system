@@ -1,0 +1,82 @@
+{
+  "status": "LOCKED",
+  "migrations": [
+    {
+      "version": "202609140000",
+      "name": "agent_core_foundation",
+      "filename": "202609140000_agent_core_foundation.sql",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b"
+    },
+    {
+      "version": "202609140001",
+      "name": "agent_runtime_completion_evidence",
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b"
+    },
+    {
+      "version": "202609140002",
+      "name": "agent_run_cancel_request",
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62"
+    },
+    {
+      "version": "202609140003",
+      "name": "teaching_operations_reissue",
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794"
+    },
+    {
+      "version": "202609140004",
+      "name": "completion_policy_management_reissue",
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e"
+    },
+    {
+      "version": "202609140005",
+      "name": "student_teaching_content_isolation",
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674"
+    },
+    {
+      "version": "202609140006",
+      "name": "agent_run_reconciliation",
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a"
+    },
+    {
+      "version": "202609140007",
+      "name": "teaching_content_skeleton",
+      "filename": "202609140007_teaching_content_skeleton.sql",
+      "sha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4"
+    }
+  ],
+  "count": 8,
+  "orderExact": true,
+  "r5aMatch": true,
+  "runnerSha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+  "maintenanceTransportSha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+  "packageSha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+  "files": {
+    "scripts/teaching-agent-r5b/README.md": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+    "scripts/teaching-agent-r5b/candidate-browser.mjs": "7627154beae47767cc77f0f3bf6dbe960de549b70330a0695168df5ba4672f86",
+    "scripts/teaching-agent-r5b/cleanup.py": "92c9fd17581abe676bdc296cc36bf8b51e0b09407d395465fce6368c1142ecf9",
+    "scripts/teaching-agent-r5b/environment.py": "076183ca3a8ff136ed5dfa0f0ec8eff2d236a3833ee0fadbdc15507708e6b74c",
+    "scripts/teaching-agent-r5b/gateway.mjs": "aabaaa7aa52d4200d29e5eec2b8a489af9c6e449f7a8f0e2958b367086c5879e",
+    "scripts/teaching-agent-r5b/live-negative.py": "7679e254b22196239877541ac934497408a601343fc872c3b22fdd1f9b785e1d",
+    "scripts/teaching-agent-r5b/locked-package.json": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+    "scripts/teaching-agent-r5b/maintenance_transport.py": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+    "scripts/teaching-agent-r5b/network-guard.cjs": "6ddd3c5123718dec580adc1b39cd9274f82f13a2df2111c254cf59a53c681d19",
+    "scripts/teaching-agent-r5b/persist-artifact.py": "865cb4b58a752e94d0eec48c11748164bd7c0702dcae591173c0b49f59e136fc",
+    "scripts/teaching-agent-r5b/production-readonly.py": "625b25081ef60c294e9109c5d0d1803aee1952524ee432d5a3c6c4629bf628f9",
+    "scripts/teaching-agent-r5b/runner.py": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+    "scripts/teaching-agent-r5b/setup-services.py": "7a73a6c956a4aac41708690a7cc7bf7fd5e6f01ba399dc55301cc33de726f2bf",
+    "scripts/teaching-agent-r5b/start-candidate.py": "787df1f39131be42ac715ecc4920c910e69be0f02795c1d52b6cf453e1f87cf5",
+    "scripts/teaching-agent-r5b/synthetic-auth.mjs": "1f1cdedfc92abae5dda1b33d0874f83d6db2ac1390ce35b298710cd81c97bb21",
+    "scripts/teaching-agent-r5b/test_runner.py": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+    "scripts/teaching-agent-r5b/verify-integrity.py": "046ee026f1108952c90fcdb3bf0d6d310760dcab72808c213abd606a4e3089f8"
+  },
+  "frozenSourceInputCount": 1306,
+  "frozenSourceDigest": "48b8e7b979b0a158635c82e31e9e0f948742e0e5a0f2ca5e5bab553ec458708c",
+  "r3dSourceInputsUnchanged": true,
+  "candidateSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28"
+}

@@ -1,0 +1,28 @@
+{
+  "ledgerBefore": 449,
+  "ledgerAfter": 449,
+  "agentTablesBefore": 0,
+  "agentTablesAfter": 0,
+  "catalogExactEquality": true,
+  "ledgerDigest": "fee71bc1bdc2437ee3ef39902e5c5f560c76a51ce7f6ba2d853bc5c9a72f556c",
+  "productionWrites": 0,
+  "migration": "NOT APPLIED",
+  "agentRuns": 0,
+  "realStudentTraffic": 0,
+  "liveProviderRequests": 0,
+  "featureFlag": "OFF",
+  "allowlists": "EMPTY",
+  "configEvidence": "launcher reads runtime.json at startup; no live /proc secret env dump",
+  "productionRestart": false,
+  "productionDeploy": false,
+  "proxyConfigChange": false,
+  "process": {
+    "name": "uply-first-enable",
+    "pid": 1176676,
+    "status": "online",
+    "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "execMode": "fork_mode",
+    "instances": 1,
+    "killTimeoutMs": 15000
+  }
+}

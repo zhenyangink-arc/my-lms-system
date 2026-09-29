@@ -1,0 +1,18 @@
+{
+  "authority": "shared existing readValidatedRows, extracted without changing completion/submission rules",
+  "transaction": "one existing repository READ ONLY REPEATABLE READ snapshot per facts read",
+  "sameSnapshot": [
+    "attempt count",
+    "latest classification",
+    "node progress",
+    "completion receipt",
+    "state revision",
+    "asOf"
+  ],
+  "independentAuthorizationReads": "before/after, never spliced into returned metrics",
+  "observationMaxAgeMs": 30000,
+  "freshness": "new call nonce + observedAt within read interval/deadline; old durable completion timestamps allowed",
+  "targetPolicy": "two-attempt-development applies only to fixed development scenario",
+  "fixtures": "activity-completion/1 isolated-fixture rejected; unit read overrides simulate v2, actual isolated PostgreSQL tested separately",
+  "currentEvidence": "only pinned currentDatabaseTransport; current Tool acceptance pending deployment"
+}

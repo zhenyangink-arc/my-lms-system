@@ -1,0 +1,19 @@
+{
+  "status": "REFERENCE ONLY; CURRENT AUTH PARITY NOT VERIFIED",
+  "references": [
+    {
+      "url": "https://raw.githubusercontent.com/supabase/auth/v2.195.0/internal/api/admin.go",
+      "fact": "Admin create can apply ban in same transaction; user/identity/audit/metadata writes mean not one row total"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/supabase/auth/v2.195.0/internal/api/token.go",
+      "fact": "Password grant checks HasPassword and IsBanned before authentication/token issue"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/supabase/auth/v2.195.0/internal/api/verify.go",
+      "fact": "Email/SMS/magic-link verify paths check IsBanned before token validation/session issuance"
+    }
+  ],
+  "localReference": "scripts/teaching-agent-r5b/setup-services.py pins isolated GoTrue v2.195.0; not current production Auth version evidence",
+  "noAuthNetworkCalls": true
+}

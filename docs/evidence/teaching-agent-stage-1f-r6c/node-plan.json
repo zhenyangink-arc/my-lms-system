@@ -1,0 +1,108 @@
+{
+  "status": "EXECUTED / VERIFIED",
+  "target": "hangul-introduction / version1 draft",
+  "nodeCount": 8,
+  "nodes": [
+    {
+      "order": 1,
+      "logicalAliasReportOnly": "orientation-intro",
+      "titleZh": "今天认识韩文字母",
+      "nodeType": "opening",
+      "primaryScript": "안녕하세요.\n오늘은 한글의 기본 모양을 같이 배워요.\n한글은 자음과 모음으로 만들어요.\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\n천천히 하나씩 볼까요?",
+      "koreanScript": "안녕하세요.\n오늘은 한글의 기본 모양을 같이 배워요.\n한글은 자음과 모음으로 만들어요.\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\n천천히 하나씩 볼까요?",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "10f88e0fc6e43781c8e6aec95e7e5cb2a00f5d61e8fc2ae51935241b18b9c92c"
+    },
+    {
+      "order": 2,
+      "logicalAliasReportOnly": "hangul-structure",
+      "titleZh": "韩文字母怎么组成？",
+      "nodeType": "explanation",
+      "primaryScript": "한글에는 자음과 모음이 있어요.\n\n자음은 소리의 시작을 만들어요.\n모음은 그 소리를 이어 줘요.\n\n자음과 모음을 같이 쓰면\n한 글자가 돼요.\n\n예를 들어,\nㄱ과 ㅏ를 같이 쓰면\n“가”가 돼요.",
+      "koreanScript": "한글에는 자음과 모음이 있어요.\n\n자음은 소리의 시작을 만들어요.\n모음은 그 소리를 이어 줘요.\n\n자음과 모음을 같이 쓰면\n한 글자가 돼요.\n\n예를 들어,\nㄱ과 ㅏ를 같이 쓰면\n“가”가 돼요.",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "74ca4ac4fcb4a2f7720e7cc87e2fb7213505650b8e13a87bc20d64cc970a94da"
+    },
+    {
+      "order": 3,
+      "logicalAliasReportOnly": "basic-vowels",
+      "titleZh": "先认识基础元音",
+      "nodeType": "explanation",
+      "primaryScript": "먼저 모음을 볼까요?\n\nㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ\n\n지금은 전부 외우지 않아도 괜찮아요.\n모양과 소리를 천천히 같이 봐요.\n\nㅏ\nㅓ\nㅗ\nㅜ\nㅡ\nㅣ\n\n한 번 따라 읽어 보세요.",
+      "koreanScript": "먼저 모음을 볼까요?\n\nㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ\n\n지금은 전부 외우지 않아도 괜찮아요.\n모양과 소리를 천천히 같이 봐요.\n\nㅏ\nㅓ\nㅗ\nㅜ\nㅡ\nㅣ\n\n한 번 따라 읽어 보세요.",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "94b2259aef6ca636aefe2c7282f8a81081a217fd6fff6cc60f30e888782fb26a"
+    },
+    {
+      "order": 4,
+      "logicalAliasReportOnly": "basic-consonants",
+      "titleZh": "再认识基础辅音",
+      "nodeType": "explanation",
+      "primaryScript": "이번에는 자음을 볼게요.\n\nㄱ, ㄴ, ㄷ, ㄹ,\nㅁ, ㅂ, ㅅ, ㅇ\n\n모양을 먼저 천천히 보세요.\n\n지금은 완벽하게 외우는 것보다\n자음과 모음이 다르다는 것을 아는 게 중요해요.",
+      "koreanScript": "이번에는 자음을 볼게요.\n\nㄱ, ㄴ, ㄷ, ㄹ,\nㅁ, ㅂ, ㅅ, ㅇ\n\n모양을 먼저 천천히 보세요.\n\n지금은 완벽하게 외우는 것보다\n자음과 모음이 다르다는 것을 아는 게 중요해요.",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "7b5db3a93141f883175932b0045a421523217f3dbe526ceff90a3abdfeaa91f6"
+    },
+    {
+      "order": 5,
+      "logicalAliasReportOnly": "syllable-combination",
+      "titleZh": "把辅音和元音放在一起",
+      "nodeType": "example",
+      "primaryScript": "이제 자음과 모음을 같이 써 볼까요?\n\nㄱ + ㅏ = 가\n\nㄴ + ㅏ = 나\n\nㄷ + ㅏ = 다\n\nㅁ + ㅏ = 마\n\n이렇게 자음과 모음을 모아서\n한 글자를 만들어요.",
+      "koreanScript": "이제 자음과 모음을 같이 써 볼까요?\n\nㄱ + ㅏ = 가\n\nㄴ + ㅏ = 나\n\nㄷ + ㅏ = 다\n\nㅁ + ㅏ = 마\n\n이렇게 자음과 모음을 모아서\n한 글자를 만들어요.",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "b7b716eacc967fbec8586000b54faff1f1f60c96fc481c75f1c1f811970a7745"
+    },
+    {
+      "order": 6,
+      "logicalAliasReportOnly": "initial-medial-final",
+      "titleZh": "一个音节里面有什么？",
+      "nodeType": "explanation",
+      "primaryScript": "한글 한 글자에는\n자음과 모음이 들어가요.\n\n앞에 오는 자음을\n초성이라고 해요.\n\n가운데 모음을\n중성이라고 해요.\n\n아래에 자음이 하나 더 올 수도 있어요.\n이것을 종성이라고 해요.\n\n예를 들어\n“한”을 볼까요?\n\nㅎ은 초성,\nㅏ는 중성,\nㄴ은 종성이에요.",
+      "koreanScript": "한글 한 글자에는\n자음과 모음이 들어가요.\n\n앞에 오는 자음을\n초성이라고 해요.\n\n가운데 모음을\n중성이라고 해요.\n\n아래에 자음이 하나 더 올 수도 있어요.\n이것을 종성이라고 해요.\n\n예를 들어\n“한”을 볼까요?\n\nㅎ은 초성,\nㅏ는 중성,\nㄴ은 종성이에요.",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "7f588db7453c8a26c1a8f423ba76f97dfcecc3b792286a217b7924321fd12257"
+    },
+    {
+      "order": 7,
+      "logicalAliasReportOnly": "guided-practice",
+      "titleZh": "一起试一试",
+      "nodeType": "instruction",
+      "primaryScript": "练习1：\n下面哪一个是元音？\nA. ㄱ\nB. ㅏ\nC. ㄴ\n正确答案：B. ㅏ\n\n练习2：\nㄱ + ㅏ 组成什么？\nA. 가\nB. 나\nC. 다\n正确答案：A. 가\n\n教师反馈台词：\n잘했어요.\n자음과 모음을 잘 구분했어요.\n\n如果答错：\n괜찮아요.\n다시 천천히 볼까요?",
+      "koreanScript": "잘했어요.\n자음과 모음을 잘 구분했어요.\n\n괜찮아요.\n다시 천천히 볼까요?",
+      "interactionKind": "none",
+      "flowMode": "sequence",
+      "teacherMode": "legacy",
+      "contentSha256": "1656c671b94b3344c204d12810f357d3209f6ea2672672582a4491ac14d4e702"
+    },
+    {
+      "order": 8,
+      "logicalAliasReportOnly": "orientation-summary",
+      "titleZh": "今天学了什么？",
+      "nodeType": "summary",
+      "primaryScript": "오늘은 한글의 기본 구조를 배웠어요.\n\n한글에는\n자음과 모음이 있어요.\n\n자음과 모음을 모으면\n한 글자를 만들 수 있어요.\n\n그리고 한 글자에는\n초성, 중성,\n그리고 종성이 올 수 있어요.\n\n아주 잘했어요.\n\n다음에는 글자를 하나씩 더 자세히 배워 볼게요.",
+      "koreanScript": "오늘은 한글의 기본 구조를 배웠어요.\n\n한글에는\n자음과 모음이 있어요.\n\n자음과 모음을 모으면\n한 글자를 만들 수 있어요.\n\n그리고 한 글자에는\n초성, 중성,\n그리고 종성이 올 수 있어요.\n\n아주 잘했어요.\n\n다음에는 글자를 하나씩 더 자세히 배워 볼게요.",
+      "interactionKind": "none",
+      "flowMode": "end",
+      "teacherMode": "legacy",
+      "contentSha256": "ebb0d73a3cadc6b822773cc3af43b5ceeb93453ccc4741390d526009a074939b"
+    }
+  ],
+  "practiceMapping": "DRAFT_TEXT_ONLY",
+  "practiceMappingUserAccepted": true,
+  "answerCorrectnessRuntime": "DEFERRED",
+  "aliases": "REPORT ONLY; preserve generated readonly node_key",
+  "localeMapping": "Primary visible script_zh field stores supplied text verbatim; visible optional script_ko stores Korean lines; no hidden field mutation."
+}

@@ -1,0 +1,13 @@
+{
+  "status": "DRAFT_TEXT_ONLY",
+  "userApprovedMapping": true,
+  "logicalAlias": "guided-practice",
+  "nodeType": "instruction",
+  "questions": 2,
+  "choicesPerQuestion": 3,
+  "originalQuestionsChoicesAnswersAndFeedbackExact": true,
+  "correctnessRuntime": "DEFERRED",
+  "structuredInteractionCreated": false,
+  "privateAnswerSecretCreated": false,
+  "note": "Questions, choices, answer labels and both feedback cases are draft text; not runtime assessment. Korean locale contains the supplied Korean feedback lines only; full exercise preserved in primary content."
+}

@@ -1,0 +1,13 @@
+{
+  "snapshotStart": "2026-09-16T03:08:22.747139+00:00",
+  "exporterAlive": true,
+  "consistentArtifacts": [
+    "database.dump",
+    "schema.dump",
+    "migration-ledger.json",
+    "catalog-and-counts"
+  ],
+  "snapshotEnd": "2026-09-16T03:08:41.744578+00:00",
+  "snapshotExit": 0,
+  "valid": true
+}

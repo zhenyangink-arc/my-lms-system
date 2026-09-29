@@ -1,0 +1,19 @@
+{
+  "strategy": "DEVELOPMENT-FIRST",
+  "canonicalPolicy": "NEW AUTHORING CONTENT IS CANONICAL",
+  "targetAlias": "hangul-introduction",
+  "allowedWrites": "Explicit user-approved single retirement INSERT, then one official canonical draft creation through existing user-owned authenticated Chrome",
+  "noBrowserControlToolAvailable": false,
+  "userNormalPlatformOwnerLogin": "USER CONFIRMED",
+  "codexSessionAccess": "EXISTING_CHROME_CDP / AUTHENTICATED PLATFORM OWNER VERIFIED",
+  "sessionSecretsReadOrExported": false,
+  "providerAgentFeaturePinsPublication": "NOT AUTHORIZED",
+  "retirementApproval": "EXPLICITLY GRANTED FOR EXACT SNAPSHOT HASH ONLY",
+  "retirementExpectedChanges": {
+    "insert": 1,
+    "update": 0,
+    "delete": 0
+  },
+  "newBrowserOrProfileCreated": false,
+  "chromeClosed": false
+}

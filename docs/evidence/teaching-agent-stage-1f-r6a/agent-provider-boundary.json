@@ -1,0 +1,32 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentTables": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "productionAgentRuns": 0,
+  "agentAdmissionRequests": 0,
+  "liveProviderRequests": 0,
+  "providerScope": "Task operations only; no claim about unrelated global provider-account traffic",
+  "pinsGenerated": 0,
+  "definitionPublication": 0,
+  "scriptCreated": 0,
+  "scriptNodesCreated": 0,
+  "publish": 0,
+  "authWrites": 0,
+  "agentInfrastructureWrites": 0,
+  "authorizedTargetContentWrites": {
+    "officialSkeletonInsertRows": 5
+  },
+  "authorizedFenceRetirementWrites": {
+    "insert": 1,
+    "update": 0,
+    "delete": 0
+  },
+  "unauthorizedContentWrites": 0,
+  "stage1g": "NOT READY"
+}

@@ -1,0 +1,210 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "queries": [
+    {
+      "at": "2026-09-18T07:41:43.241577+00:00",
+      "sqlSha256": "1bf452112a89456a01fb1917462e67bc07fcc28e3e64cc8400ae3a6a7510eff3",
+      "transaction": "REPEATABLE READ READ ONLY",
+      "defaultTransactionReadOnly": true,
+      "ended": "ROLLBACK",
+      "credentialOutput": false,
+      "businessWrites": 0,
+      "authWrites": 0
+    },
+    {
+      "at": "2026-09-18T07:42:16.887538+00:00",
+      "sqlSha256": "376f225abc59c7c1a2724405b97a2008246196e3e01de104d2c677a20bd67501",
+      "transaction": "REPEATABLE READ READ ONLY",
+      "defaultTransactionReadOnly": true,
+      "ended": "ROLLBACK",
+      "credentialOutput": false,
+      "businessWrites": 0,
+      "authWrites": 0
+    }
+  ],
+  "target": {
+    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+    "owner": "postgres",
+    "config": [
+      "search_path=\"\""
+    ],
+    "schema": "public",
+    "language": "plpgsql",
+    "parallel": "u",
+    "leakproof": false,
+    "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "volatility": "v",
+    "explicit_acl": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "grantable": false,
+        "privilege": "EXECUTE"
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "grantable": false,
+        "privilege": "EXECUTE"
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "grantable": false,
+        "privilege": "EXECUTE"
+      }
+    ],
+    "public_execute": false,
+    "privilege_matrix": [
+      {
+        "role": "authenticated",
+        "owner": false,
+        "execute": true,
+        "inherits": true,
+        "bypassrls": false,
+        "superuser": false
+      },
+      {
+        "role": "anon",
+        "owner": false,
+        "execute": false,
+        "inherits": true,
+        "bypassrls": false,
+        "superuser": false
+      },
+      {
+        "role": "service_role",
+        "owner": false,
+        "execute": true,
+        "inherits": true,
+        "bypassrls": true,
+        "superuser": false
+      },
+      {
+        "role": "postgres",
+        "owner": true,
+        "execute": true,
+        "inherits": true,
+        "bypassrls": true,
+        "superuser": false
+      }
+    ],
+    "security_definer": true,
+    "definition_sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "identity_arguments": "p_app_id uuid, p_chapter_id uuid, p_expected_revision integer, p_expected_snapshot jsonb, p_enabled boolean"
+  },
+  "functionDefinition": "MATCH",
+  "expectedDefinitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+  "memberships": [
+    {
+      "role": "anon",
+      "member": "authenticator",
+      "grantor": "supabase_admin",
+      "admin_option": false
+    },
+    {
+      "role": "authenticated",
+      "member": "authenticator",
+      "grantor": "supabase_admin",
+      "admin_option": false
+    },
+    {
+      "role": "service_role",
+      "member": "authenticator",
+      "grantor": "supabase_admin",
+      "admin_option": false
+    },
+    {
+      "role": "anon",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "authenticated",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "service_role",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "authenticator",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "pg_monitor",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "pg_read_all_data",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "pg_signal_backend",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "pg_create_subscription",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": true
+    },
+    {
+      "role": "supabase_privileged_role",
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "admin_option": false
+    }
+  ],
+  "membershipInterpretation": "service_role, authenticated and anon have no parent roles in observed membership graph. authenticator membership permits role selection; it is not service_role inheriting authenticated. Target service_role permission is direct ACL. postgres has owner and explicit ACL rights (not superuser here).",
+  "PUBLIC": "Pseudo-role assessed using grantee OID 0 in effective ACL; not passed as a nonexistent pg_roles role to has_function_privilege.",
+  "targetFunctionInvocations": 0,
+  "businessOrAuthRowsRead": 0,
+  "ownerGuardDefinition": "CREATE OR REPLACE FUNCTION private.is_platform_owner()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.profiles as profile\n    where profile.id = (select auth.uid())\n      and profile.global_role = 'platform_owner'\n      and profile.role = 'platform_super_admin'\n      and coalesce(profile.status, 'active') = 'active'\n  );\n$function$\n",
+  "querySources": [
+    {
+      "sql": "WITH f AS (\n SELECT p.*,n.nspname,l.lanname,pg_get_userbyid(p.proowner) AS owner\n FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace JOIN pg_language l ON l.oid=p.prolang\n WHERE (n.nspname='public' AND p.proname IN ('review_chapter_practice_binding','read_chapter_practice_snapshots','review_teaching_script_source','approve_teaching_script_source')) OR (n.nspname='private' AND p.proname='is_platform_owner')\n), rows AS (\n SELECT f.oid::regprocedure::text AS signature,f.nspname AS schema,f.owner,f.lanname AS language,pg_get_function_identity_arguments(f.oid) AS identity_arguments,f.proacl::text AS acl,f.prosecdef AS security_definer,f.provolatile AS volatility,f.proleakproof AS leakproof,f.proparallel AS parallel,f.proconfig AS config,encode(sha256(convert_to(pg_get_functiondef(f.oid),'UTF8')),'hex') AS definition_sha256,\n (SELECT jsonb_agg(jsonb_build_object('grantee',CASE WHEN a.grantee=0 THEN 'PUBLIC' ELSE pg_get_userbyid(a.grantee) END,'grantor',pg_get_userbyid(a.grantor),'privilege',a.privilege_type,'grantable',a.is_grantable)) FROM aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a) AS explicit_acl,\n (SELECT jsonb_agg(jsonb_build_object('role',r.rolname,'execute',has_function_privilege(r.oid,f.oid,'EXECUTE'),'owner',r.oid=f.proowner,'superuser',r.rolsuper,'inherits',r.rolinherit,'bypassrls',r.rolbypassrls)) FROM pg_roles r WHERE r.rolname IN ('postgres','authenticated','service_role','anon')) AS privilege_matrix,\n EXISTS(SELECT 1 FROM aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a WHERE a.grantee=0 AND a.privilege_type='EXECUTE') AS public_execute\n FROM f\n) SELECT jsonb_build_object(\n 'functions',(SELECT jsonb_agg(to_jsonb(rows) ORDER BY signature) FROM rows),\n 'defaults',(SELECT jsonb_agg(jsonb_build_object('owner',pg_get_userbyid(d.defaclrole),'schema',CASE WHEN d.defaclnamespace=0 THEN 'GLOBAL' ELSE (SELECT nspname FROM pg_namespace WHERE oid=d.defaclnamespace) END,'object_type',d.defaclobjtype,'acl',d.defaclacl::text)) FROM pg_default_acl d WHERE d.defaclobjtype='f' AND (d.defaclnamespace=0 OR d.defaclnamespace='public'::regnamespace)),\n 'memberships',(SELECT jsonb_agg(jsonb_build_object('role',pg_get_userbyid(m.roleid),'member',pg_get_userbyid(m.member),'grantor',pg_get_userbyid(m.grantor),'admin_option',m.admin_option)) FROM pg_auth_members m),\n 'ownerGuardDefinition',pg_get_functiondef('private.is_platform_owner()'::regprocedure),\n 'readOnly',current_setting('transaction_read_only'))\n",
+      "executedAs": "REPEATABLE READ READ ONLY; ROLLBACK"
+    },
+    {
+      "sql": "WITH f AS (\n SELECT p.*,n.nspname,l.lanname,pg_get_userbyid(p.proowner) AS owner\n FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace JOIN pg_language l ON l.oid=p.prolang\n WHERE (n.nspname='public' AND p.proname IN ('review_chapter_practice_binding','read_chapter_practice_snapshots','get_teaching_script_source_review','confirm_teaching_script_source_review')) OR (n.nspname='private' AND p.proname='is_platform_owner')\n), rows AS (\n SELECT f.oid::regprocedure::text AS signature,f.nspname AS schema,f.owner,f.lanname AS language,pg_get_function_identity_arguments(f.oid) AS identity_arguments,f.proacl::text AS acl,f.prosecdef AS security_definer,f.provolatile AS volatility,f.proleakproof AS leakproof,f.proparallel AS parallel,f.proconfig AS config,encode(sha256(convert_to(pg_get_functiondef(f.oid),'UTF8')),'hex') AS definition_sha256,\n (SELECT jsonb_agg(jsonb_build_object('grantee',CASE WHEN a.grantee=0 THEN 'PUBLIC' ELSE pg_get_userbyid(a.grantee) END,'grantor',pg_get_userbyid(a.grantor),'privilege',a.privilege_type,'grantable',a.is_grantable)) FROM aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a) AS explicit_acl,\n (SELECT jsonb_agg(jsonb_build_object('role',r.rolname,'execute',has_function_privilege(r.oid,f.oid,'EXECUTE'),'owner',r.oid=f.proowner,'superuser',r.rolsuper,'inherits',r.rolinherit,'bypassrls',r.rolbypassrls)) FROM pg_roles r WHERE r.rolname IN ('postgres','authenticated','service_role','anon')) AS privilege_matrix,\n EXISTS(SELECT 1 FROM aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a WHERE a.grantee=0 AND a.privilege_type='EXECUTE') AS public_execute\n FROM f\n) SELECT jsonb_build_object(\n 'functions',(SELECT jsonb_agg(to_jsonb(rows) ORDER BY signature) FROM rows),\n 'defaults',(SELECT jsonb_agg(jsonb_build_object('owner',pg_get_userbyid(d.defaclrole),'schema',CASE WHEN d.defaclnamespace=0 THEN 'GLOBAL' ELSE (SELECT nspname FROM pg_namespace WHERE oid=d.defaclnamespace) END,'object_type',d.defaclobjtype,'acl',d.defaclacl::text)) FROM pg_default_acl d WHERE d.defaclobjtype='f' AND (d.defaclnamespace=0 OR d.defaclnamespace='public'::regnamespace)),\n 'memberships',(SELECT jsonb_agg(jsonb_build_object('role',pg_get_userbyid(m.roleid),'member',pg_get_userbyid(m.member),'grantor',pg_get_userbyid(m.grantor),'admin_option',m.admin_option)) FROM pg_auth_members m),\n 'ownerGuardDefinition',pg_get_functiondef('private.is_platform_owner()'::regprocedure),\n 'readOnly',current_setting('transaction_read_only'))\n",
+      "executedAs": "REPEATABLE READ READ ONLY; ROLLBACK"
+    }
+  ]
+}

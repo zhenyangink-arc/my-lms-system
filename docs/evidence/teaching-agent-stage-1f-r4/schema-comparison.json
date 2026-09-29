@@ -1,0 +1,12 @@
+{
+  "comparison": "R3D rehearsal snapshot application pg_dump object blocks; ignores archive timestamps/restrict markers, retains SQL/owner/ACL",
+  "oldSnapshotSHA256": "400050663a736a17449e6e8ee1d3ca4d521576866891fab6325299c7ee5be317",
+  "newSnapshotSHA256": "b834691101a59dd62dc1b3b6e597357417cb34148cf4adb514022e2bb770ea16",
+  "objectsBefore": 3565,
+  "objectsAfter": 3565,
+  "added": [],
+  "removed": [],
+  "changed": [],
+  "applicationSchemaDigest": "4551ce1bdaa84645e1c882cba57462bc87fc29af84e6e57f97c93deaea7c5bbe",
+  "unchanged": true
+}

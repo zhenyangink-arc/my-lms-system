@@ -1,0 +1,124 @@
+{
+  "nodes": [
+    {
+      "nodeNumber": 1,
+      "idHash": "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "今天认识韩文字母"
+      },
+      "formalType": "opening",
+      "sortOrder": 1,
+      "teacherScriptSha256": "24833c829d467754152209af506076f0def1dcf0df0bbc318a02b1d3fec157e4",
+      "mainSha256": "127fa2eee05eb65cd029b72b5fea11893574a088729cd2e27a336538a42c78c1",
+      "koKrSha256": "127fa2eee05eb65cd029b72b5fea11893574a088729cd2e27a336538a42c78c1",
+      "updatedAt": "2026-09-16T08:04:15.239303+00:00",
+      "rowSha256": "547c1eb10b662be441ffddc5a52f0342b1ffdbf319623dc9dfb9de1985c04983"
+    },
+    {
+      "nodeNumber": 2,
+      "idHash": "19e75a5c68c0704a1424cedb93823c4cc0cc691aafb598b94153d4428e23d5b8",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "韩文字母怎么组成？"
+      },
+      "formalType": "explanation",
+      "sortOrder": 2,
+      "teacherScriptSha256": "3527cdb73bc9fbfb80a38227a46e406a66ad4740b7c2dcb188ac2494d7e69bee",
+      "mainSha256": "15ff08ff61dbedbbf6d729914bb4d81bb0488ca5bb0c02333f816ca7a2f70228",
+      "koKrSha256": "15ff08ff61dbedbbf6d729914bb4d81bb0488ca5bb0c02333f816ca7a2f70228",
+      "updatedAt": "2026-09-16T08:05:05.726748+00:00",
+      "rowSha256": "ddd6ce25baf90f498c3caeb6cf32821006156b23e3382e2e585bb81e5cee450e"
+    },
+    {
+      "nodeNumber": 3,
+      "idHash": "e923e2b12ad3945b5f2ef93e4f005fee599452655709a96ae114f3ec7fd65e86",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "先认识基础元音"
+      },
+      "formalType": "explanation",
+      "sortOrder": 3,
+      "teacherScriptSha256": "3bf0063d23def3117b2ed5068cc9afdc6cd97489a0a58d6cc8e8de2464d84a25",
+      "mainSha256": "3ab836963b95416ec544e8f360571952b23c8d1d8ee99705b8a22425acc07ec1",
+      "koKrSha256": "3ab836963b95416ec544e8f360571952b23c8d1d8ee99705b8a22425acc07ec1",
+      "updatedAt": "2026-09-16T08:05:34.48572+00:00",
+      "rowSha256": "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71"
+    },
+    {
+      "nodeNumber": 4,
+      "idHash": "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "再认识基础辅音"
+      },
+      "formalType": "explanation",
+      "sortOrder": 4,
+      "teacherScriptSha256": "3b14635fa1f34b1469fbf15182c6695471b47587cb5b6eb1593337215f8ffb50",
+      "mainSha256": "3291afae395a3c3b9046d2f93e44e5257d3b70b93242412cb851a28133aa7ccd",
+      "koKrSha256": "3291afae395a3c3b9046d2f93e44e5257d3b70b93242412cb851a28133aa7ccd",
+      "updatedAt": "2026-09-16T08:06:02.583445+00:00",
+      "rowSha256": "509788099c7b362f8d31d21cd3f30ba7dc0d53b42a3263fb5c32c857990d33f0"
+    },
+    {
+      "nodeNumber": 5,
+      "idHash": "13aac7fe2ce19bc229f6c71484d2443451d8fca313d4f1d1934d29742379ff62",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "把辅音和元音放在一起"
+      },
+      "formalType": "example",
+      "sortOrder": 5,
+      "teacherScriptSha256": "4c997cd9597563c7f56469cf4d8d6d486261d007512124c1c73a549cc6149fe7",
+      "mainSha256": "5b4cafcabaf46884ed262c105030c8c4eaca0c57b91c1d67d817a8d771c81166",
+      "koKrSha256": "5b4cafcabaf46884ed262c105030c8c4eaca0c57b91c1d67d817a8d771c81166",
+      "updatedAt": "2026-09-16T08:06:16.922626+00:00",
+      "rowSha256": "b465ed53b874a6fda55bf46171dbcd0a8002ef5b572971a5dec5cdad308d9bc4"
+    },
+    {
+      "nodeNumber": 6,
+      "idHash": "d5a053756489e51339ea72e33f6484f8291089bd9043622769626de59ba0f096",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "一个音节里面有什么？"
+      },
+      "formalType": "explanation",
+      "sortOrder": 6,
+      "teacherScriptSha256": "4a12cf5ce768f8a17d64f7c658727876ae1030871428773f3778c884e8624eb1",
+      "mainSha256": "49d2c495f2fc18431b51f17f8f61371ecd87d3fed6174f79148645d75268fdbc",
+      "koKrSha256": "49d2c495f2fc18431b51f17f8f61371ecd87d3fed6174f79148645d75268fdbc",
+      "updatedAt": "2026-09-16T08:06:32.308588+00:00",
+      "rowSha256": "ec3853feb3bfe2f6e83379cc471f282e199cb0cea537a6d7b6f3bf4663b03f7f"
+    },
+    {
+      "nodeNumber": 7,
+      "idHash": "43b90695aa195bf4432f04cba8629b107e6f229e1854adeaed8293766fa3507a",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "一起试一试"
+      },
+      "formalType": "instruction",
+      "sortOrder": 7,
+      "teacherScriptSha256": "c4ba959b5a1c766644926dfd9dc8d9d999ca9e7bd60caa5756e90b06c307d882",
+      "mainSha256": "52368ef9d431b3a65e5be503fcb94474882658ef7650ba2bf63297b3b4af33d6",
+      "koKrSha256": "140a13b065fe98983e36809eb16aad829c4c16709c0c9db610da22229cc9c05d",
+      "updatedAt": "2026-09-16T08:06:46.149325+00:00",
+      "rowSha256": "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e"
+    },
+    {
+      "nodeNumber": 8,
+      "idHash": "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "今天学了什么？"
+      },
+      "formalType": "summary",
+      "sortOrder": 8,
+      "teacherScriptSha256": "acbf659c7e34ab6c1679e4cd6be9af932c97793ce10347097004dbc7cc2b7863",
+      "mainSha256": "f64d88f5b0abd9f4e4062bc3a5cf0cb089b6decf42004eec67b75df51d878c9d",
+      "koKrSha256": "f64d88f5b0abd9f4e4062bc3a5cf0cb089b6decf42004eec67b75df51d878c9d",
+      "updatedAt": "2026-09-16T08:07:01.111394+00:00",
+      "rowSha256": "cc9ab470ee11179cf2becc619fa35d0e94ad364538d2465eb2008af17121c495"
+    }
+  ]
+}

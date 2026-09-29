@@ -1,0 +1,32 @@
+{
+  "realNext": true,
+  "frames": [
+    {
+      "type": "run.started",
+      "atMs": 3
+    },
+    {
+      "type": "run.status",
+      "atMs": 180
+    },
+    {
+      "type": "tool.status",
+      "atMs": 361
+    },
+    {
+      "type": "tool.status",
+      "atMs": 541
+    },
+    {
+      "type": "answer.final",
+      "atMs": 724
+    },
+    {
+      "type": "run.completed",
+      "atMs": 724
+    }
+  ],
+  "cancelMs": 541,
+  "liveProviderRequests": 0,
+  "tempDirectory": "/tmp/uply-stage1d-next-vYpPOE"
+}

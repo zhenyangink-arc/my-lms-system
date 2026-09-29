@@ -1,0 +1,329 @@
+{
+  "relations": [
+    {
+      "identity": [
+        "public",
+        "student_learning_agent_script_nodes",
+        ""
+      ],
+      "before": null,
+      "after": {
+        "acl": [
+          "authenticated=r/postgres",
+          "postgres=arwdDxtm/postgres",
+          "service_role=arwdDxtm/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "v",
+        "name": "student_learning_agent_script_nodes",
+        "options": [
+          "security_barrier=true"
+        ],
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "n",
+        "rls": false,
+        "schema": "public"
+      }
+    }
+  ],
+  "functions": [
+    {
+      "identity": [
+        "private",
+        "can_read_published_teaching_module",
+        "p_module_id uuid"
+      ],
+      "before": null,
+      "after": {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_module_id uuid",
+        "identityArguments": "p_module_id uuid",
+        "name": "can_read_published_teaching_module",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    },
+    {
+      "identity": [
+        "private",
+        "can_read_published_textbook",
+        "p_textbook_id uuid"
+      ],
+      "before": null,
+      "after": {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_textbook_id uuid",
+        "identityArguments": "p_textbook_id uuid",
+        "name": "can_read_published_textbook",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    },
+    {
+      "identity": [
+        "private",
+        "student_script_segments",
+        "p_script jsonb, p_segments jsonb"
+      ],
+      "before": null,
+      "after": {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_script jsonb, p_segments jsonb",
+        "identityArguments": "p_script jsonb, p_segments jsonb",
+        "name": "student_script_segments",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": false
+      }
+    }
+  ],
+  "policies": [
+    {
+      "identity": [
+        "public",
+        "digital_textbook_chapters",
+        "authenticated read textbook chapters"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook chapters",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM (public.digital_textbook_versions version\n     JOIN public.digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((version.id = digital_textbook_chapters.version_id) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_chapters",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook chapters",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.digital_textbook_versions v\n  WHERE ((v.id = digital_textbook_chapters.version_id) AND (v.status = 'published'::text) AND private.can_read_published_textbook(v.textbook_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_chapters",
+        "with_check": null
+      }
+    },
+    {
+      "identity": [
+        "public",
+        "digital_textbook_modules",
+        "authenticated read textbook modules"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook modules",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM ((public.digital_textbook_chapters chapter\n     JOIN public.digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN public.digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((chapter.id = digital_textbook_modules.chapter_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_modules",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook modules",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR private.can_read_published_teaching_module(id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_modules",
+        "with_check": null
+      }
+    },
+    {
+      "identity": [
+        "public",
+        "digital_textbook_versions",
+        "authenticated read textbook versions"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook versions",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.digital_textbooks textbook\n  WHERE ((textbook.id = digital_textbook_versions.textbook_id) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_versions",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook versions",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND private.can_read_published_textbook(textbook_id)))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_versions",
+        "with_check": null
+      }
+    },
+    {
+      "identity": [
+        "public",
+        "digital_textbooks",
+        "authenticated read textbook catalog"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook catalog",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND private.current_user_can_read_student_app(student_app_id)))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbooks",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook catalog",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR private.can_read_published_textbook(id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbooks",
+        "with_check": null
+      }
+    },
+    {
+      "identity": [
+        "public",
+        "learning_agent_lessons",
+        "authenticated read published learning agent lessons"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent lessons",
+        "qual": "(status = 'published'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_lessons",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent lessons",
+        "qual": "((status = 'published'::text) AND private.can_read_published_teaching_module(module_id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_lessons",
+        "with_check": null
+      }
+    },
+    {
+      "identity": [
+        "public",
+        "learning_agent_script_nodes",
+        "authenticated read published learning agent script nodes"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script nodes",
+        "qual": "(EXISTS ( SELECT 1\n   FROM public.learning_agent_script_versions version\n  WHERE ((version.id = learning_agent_script_nodes.script_version_id) AND (version.status = 'published'::text))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_nodes",
+        "with_check": null
+      },
+      "after": null
+    },
+    {
+      "identity": [
+        "public",
+        "learning_agent_script_versions",
+        "authenticated read published learning agent script versions"
+      ],
+      "before": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script versions",
+        "qual": "(status = 'published'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_versions",
+        "with_check": null
+      },
+      "after": {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script versions",
+        "qual": "((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.learning_agent_lessons l\n  WHERE ((l.id = learning_agent_script_versions.lesson_id) AND (l.status = 'published'::text) AND private.can_read_published_teaching_module(l.module_id)))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_versions",
+        "with_check": null
+      }
+    }
+  ],
+  "views": [
+    {
+      "identity": [
+        "public",
+        "student_learning_agent_script_nodes",
+        ""
+      ],
+      "before": null,
+      "after": {
+        "definition": " SELECT n.id,\n    n.script_version_id,\n    n.updated_at,\n    n.sort_order,\n    ( SELECT COALESCE(jsonb_object_agg(e.key, e.value), '{}'::jsonb) AS \"coalesce\"\n           FROM jsonb_each(\n                CASE\n                    WHEN (jsonb_typeof(n.teacher_script) = 'object'::text) THEN n.teacher_script\n                    ELSE '{}'::jsonb\n                END) e(key, value)\n          WHERE ((e.key = ANY (ARRAY['zh-CN'::text, 'ko-KR'::text])) AND (jsonb_typeof(e.value) = 'string'::text))) AS teacher_script,\n    private.student_script_segments(n.teacher_script, (n.configuration -> 'scriptSegments'::text)) AS segments,\n        CASE\n            WHEN (((n.configuration -> 'teacherVideo'::text) ->> 'mode'::text) = 'video'::text) THEN 'video'::text\n            ELSE 'legacy'::text\n        END AS video_mode\n   FROM ((public.learning_agent_script_nodes n\n     JOIN public.learning_agent_script_versions v ON ((v.id = n.script_version_id)))\n     JOIN public.learning_agent_lessons l ON ((l.id = v.lesson_id)))\n  WHERE ((auth.uid() IS NOT NULL) AND (v.status = 'published'::text) AND (l.status = 'published'::text) AND private.can_read_published_teaching_module(l.module_id));",
+        "name": "student_learning_agent_script_nodes",
+        "schema": "public"
+      }
+    }
+  ]
+}

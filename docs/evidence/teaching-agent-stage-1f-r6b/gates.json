@@ -1,0 +1,169 @@
+{
+  "overall": "GO",
+  "scriptAuthoringStatus": "READY FOR SCRIPT NODE AUTHORING",
+  "stage1g": "NOT READY",
+  "gates": [
+    {
+      "id": "G-R6B-1",
+      "name": "Foundation Ready",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-2",
+      "name": "R6A Canonical Content Ready",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-3",
+      "name": "Authenticated Platform Owner",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-4",
+      "name": "Target Context Exact",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-5",
+      "name": "Duplicate Script Audit",
+      "status": "PASS",
+      "note": "Before0; after exactly1 initial draft version; no independent Script root table"
+    },
+    {
+      "id": "G-R6B-6",
+      "name": "Official Script Studio Workflow",
+      "status": "PASS",
+      "note": "Existing authenticated Chrome -> action -> installed official RPC"
+    },
+    {
+      "id": "G-R6B-7",
+      "name": "Single Create Attempt",
+      "status": "PASS",
+      "note": "Exactly one click/logical attempt; no retry"
+    },
+    {
+      "id": "G-R6B-8",
+      "name": "Teaching Script Created",
+      "status": "PASS",
+      "note": "Logical Script represented by version1; no fabricated root row"
+    },
+    {
+      "id": "G-R6B-9",
+      "name": "Teaching Lesson Association",
+      "status": "PASS",
+      "note": "Version FK matches exact R6A Teaching Lesson hash"
+    },
+    {
+      "id": "G-R6B-10",
+      "name": "Module Association",
+      "status": "PASS",
+      "note": "Existing module parent hash and row unchanged"
+    },
+    {
+      "id": "G-R6B-11",
+      "name": "Chapter Context",
+      "status": "PASS",
+      "note": "Chapter0 hash matches browser context and R6A"
+    },
+    {
+      "id": "G-R6B-12",
+      "name": "Script Draft State",
+      "status": "PASS",
+      "note": "status draft; published_at/by null"
+    },
+    {
+      "id": "G-R6B-13",
+      "name": "Initial Version Contract",
+      "status": "PASS",
+      "note": "Version1 draft, title={}, change_note empty; official UI has no naming field"
+    },
+    {
+      "id": "G-R6B-14",
+      "name": "Script Node Boundary",
+      "status": "PASS",
+      "note": "Nodes0; no automatic root/default node"
+    },
+    {
+      "id": "G-R6B-15",
+      "name": "No Teaching Node Authoring",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-16",
+      "name": "No Publish",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-17",
+      "name": "Canonical R6A Content Unchanged",
+      "status": "PASS",
+      "note": "Whole canonical row hashes including objectives unchanged"
+    },
+    {
+      "id": "G-R6B-18",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-19",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-20",
+      "name": "Agent Rows Zero",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-21",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-22",
+      "name": "Pins Zero",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-23",
+      "name": "Definition Publication Zero",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-24",
+      "name": "Auth Writes Zero",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-25",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-26",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "note": "Verified in final read-only evidence"
+    },
+    {
+      "id": "G-R6B-27",
+      "name": "Receipt Boundary",
+      "status": "PASS",
+      "note": "Safe hashes/status only; no raw resource UUID/session credentials"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "status": "PARTIAL",
+  "capabilities": {
+    "HTML5 video": "FOUND",
+    "media source": "FOUND",
+    "play": "FOUND",
+    "pause": "FOUND",
+    "currentTime": "FOUND",
+    "seek via controls/restore": "FOUND",
+    "ended": "FOUND",
+    "timeupdate": "FOUND",
+    "duration": "FOUND",
+    "poster": "PARTIAL — manifest posterRef, current TeacherVideoPlayer no poster binding",
+    "loading/error": "FOUND",
+    "native video renderer": "MISSING",
+    "timed cue scheduling": "MISSING",
+    "authoritative activity complete resume": "MISSING"
+  },
+  "currentPosition": "sessionStorage only; not authoritative progress",
+  "risk": "TeacherVideoPlayer text-continue fallback emits ended. New canonical media adapter must distinguish real ended, user skip and text acknowledgement; no false playback/completion evidence.",
+  "sources": [
+    "video",
+    "video-binding",
+    "manifest",
+    "renderer-registry"
+  ]
+}

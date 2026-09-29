@@ -1,0 +1,106 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "DESIGNED_PROPOSED_NOT_IMPLEMENTED",
+  "dispatcherOwner": "artifact.server.ts",
+  "legacy": {
+    "revision": "publish-foundation/1",
+    "publicationKindField": "ABSENT; do not retrofit",
+    "semanticKind": "legacy-chapter-one",
+    "validator": "Existing exact legacy certification",
+    "hashSemantics": "Unchanged normalization, profile, frozen identity/history, media annotations, private digest, seal and manifest hash interpretation"
+  },
+  "native": {
+    "revision": "publish-foundation/2",
+    "publicationKind": "canonical-native",
+    "privateContract": "canonical-native-publication/1",
+    "compilerVersion": "native-publication/1",
+    "manifestSchemaVersion": "1.0.0",
+    "runtimeContract": "uply-runtime/1",
+    "compatibility": {
+      "profile": "native",
+      "adapterRevision": null
+    },
+    "separateFrom": "activity-completion/3 is a different receipt namespace; publication v2 does not admit development completion v2."
+  },
+  "dispatch": "Strict revision/kind tuple -> one validator; never try native then legacy. Missing/unknown/contradictory discriminants fail closed.",
+  "typeStrategy": {
+    "PublicationBundle": "LegacyPublicationBundle | NativePublicationBundle",
+    "SnapshotPrivate/SnapshotResult": "Retain named legacy aliases; introduce separate native private types, not optional fake legacy fields",
+    "commonFields": [
+      "revision",
+      "snapshotId",
+      "scope",
+      "schemaVersion",
+      "runtimeContract",
+      "manifestDigest",
+      "sourceRevision",
+      "compilerVersion",
+      "manifest",
+      "privatePayload.dependencies",
+      "privateDigest",
+      "pins",
+      "seal"
+    ],
+    "nativePrivate": "contract + source projection + dependencies + result.manifest + result.report.sourceRevision + typed native bindings; no legacy services/tts/speech/capsules/history structures",
+    "legacyConsumerGuards": [
+      "loadPublishedRuntimeSnapshot explicitly narrows v1",
+      "createRuntimeLearningSessionResolver.resolve explicitly narrows v1"
+    ],
+    "downstreamReturnTypes": "Legacy shapes unchanged; generic repository and new native reader handle the union."
+  },
+  "initialNativeCapabilityScope": {
+    "purpose": "Canonical publication certification for read-only durable execution facts; not generalized media/player publication enablement",
+    "supported": "Native teaching text and single_choice Activity blocks using existing Manifest types, without fixed chapter number, script version1, activity alias, option count3 or attempts2 requirements. Exactly one completion-counted Activity per execution node for the initial validated node-progress projection; unsupported node aggregation fails closed. Multiple such nodes/Activities per chapter are permitted.",
+    "media": "Initial producer admits no required media/cue execution dependencies. Empty media sets are valid only for genuinely text/choice source. Authored required video/audio/speech/listening/cue or unsupported activity/config semantics must cause a compile rejection, never be silently dropped or filled with legacy fixtures. Future native media/cue certification is separately scoped.",
+    "manifestExecution": "Omit optional development native-execution/1; do not synthesize fixed Node5/Node7 or a fake video. Teaching source bindings remain private certified associations. current cursor remains unknown.",
+    "rationale": "The requested native facts/Skill prerequisite needs genuine source/binding certification, not an unapproved general video/media runtime redesign. This bounded capability choice is explicit in the new approval proposal."
+  },
+  "sourceAndAssociationRules": [
+    "One existing capture_runtime_publication_v1 result supplies all content, secrets and dependencies; producer does not refetch a different content graph.",
+    "Validate actual textbook -> version -> chapter -> modules -> execution nodes -> Activities graph and exact requested PublicationScope. Modules have no invented published flag: parent publication and membership are checked.",
+    "Require existing published textbook/version/chapter, teaching lesson/profile/script version states as applicable to unchanged StudentPolicy; one unambiguous published script per selected teaching lesson. Unknown states/ambiguous bindings fail.",
+    "Use learning_agent_script_nodes.reference_activity_id as the explicit source-teaching-node to Activity association, validate same captured lesson/module/chapter/version. Select the requested Activity from the verified source-node binding, never first Activity/title/question-text/alias inference. Duplicate or absent association is not authorization.",
+    "B1 authoring inserted node.content={} and activity.public_config={} and did not write source-node reference_activity_id. It is NOT permission to auto-publish B1 or infer Node7. Only new isolated published fixtures with genuine explicit captured associations are used; any future source authoring requires separate approval.",
+    "Distinguish catalog lessons.id (textbook.lesson_id), learning_agent_lessons.id and script version lesson_id. Catalog/enrollment/tenant authorization remains live StudentPolicy, not immutable publication evidence or a new capture table.",
+    "Validate public prompt/options projection, Activity type, max_attempts, completion participation, one actual grader secret per answer-graded Activity and matching node/source references. No answer, private definition digest or raw secret appears in public Manifest/Tool DTO.",
+    "Source revision/native pins derive deterministically from validated captured content and the native compiler contract, not Chapter One profile or history. Preserve exact captured dependency JSON for the DB fence; do not normalize it a second incompatible way.",
+    "Use existing generic Manifest structural validator with published=true plus native source-binding certification. Native blocks require compatibility.native, no compat capsules, no legacy media-admission exceptions, no unsupported external references.",
+    "Public contentDigest hashes safe semantic Manifest excluding snapshot metadata. Native snapshot ID is opaque server-generated publication identity, not an exposed answer-derived hash. Private capture/secret digest and outer seal stay server-private; native same-ID/different-payload publication is rejected by existing collision checks.",
+    "Always assert the exact stored dependency fence and current authoring/retirement eligibility before live facts admission. Historical parse/readability does not revive retired/expired/revoked sessions."
+  ],
+  "futureReadChain": [
+    "Verified Student Run + existing StudentPolicy/selection revalidation",
+    "server-resolved exact publication scope and source teaching node",
+    "one fixed verified DB transport READ ONLY snapshot",
+    "official publicationRepository.current on that snapshot",
+    "artifact revision/kind certification and dependency fence on same snapshot",
+    "canonical native Activity mapping",
+    "trusted durable repository read/projection on same snapshot",
+    "versioned Lesson Tool DTO/evidence",
+    "server-side Skill gate"
+  ],
+  "snapshotTransactionSeam": "Extend the official repository rpc-only client seam and approved durable repository read seam to share a single verified pg connection/snapshot. No second publication store/read authority. No publication session issue/request lease writes for a Tool read. The read is READ ONLY, retirement/fence checked, fresh observation-bound and revalidated; mutation-capable runtime request leases remain for existing write runtimes.",
+  "productionVsOperator": "Owner remains publication operator only. Student authority remains formal active self subject/tenant; service infrastructure credentials are not subject identity. No B2/dev/Owner issuer.",
+  "producerPolicy": "Same publisher module, explicit server-side producer choice. Preserve legacy write operations for now: repo/tests/history/rollback depend on them and live/external dependency deletion safety was not audited. Never select legacy as recovery from native failure."
+}

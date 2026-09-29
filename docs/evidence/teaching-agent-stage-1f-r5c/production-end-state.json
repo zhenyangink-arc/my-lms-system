@@ -1,0 +1,296 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T04:37:59.556448+00:00",
+  "database": {
+    "observedAt": "2026-09-16T04:37:59.076726+00:00",
+    "readOnly": "on",
+    "serverVersion": "17.6",
+    "databaseName": "postgres",
+    "databaseBytes": 58764435,
+    "schemaCountNonSystem": 14,
+    "tableCountNonSystem": 240,
+    "schemaTables": [
+      {
+        "schema": "agent_core_private",
+        "tables": 0
+      },
+      {
+        "schema": "auth",
+        "tables": 27
+      },
+      {
+        "schema": "extensions",
+        "tables": 0
+      },
+      {
+        "schema": "graphql",
+        "tables": 0
+      },
+      {
+        "schema": "graphql_public",
+        "tables": 0
+      },
+      {
+        "schema": "pgbouncer",
+        "tables": 0
+      },
+      {
+        "schema": "private",
+        "tables": 0
+      },
+      {
+        "schema": "public",
+        "tables": 180
+      },
+      {
+        "schema": "realtime",
+        "tables": 9
+      },
+      {
+        "schema": "recording_private",
+        "tables": 4
+      },
+      {
+        "schema": "runtime_publish_private",
+        "tables": 10
+      },
+      {
+        "schema": "storage",
+        "tables": 8
+      },
+      {
+        "schema": "supabase_migrations",
+        "tables": 1
+      },
+      {
+        "schema": "vault",
+        "tables": 1
+      }
+    ],
+    "extensions": [
+      {
+        "name": "btree_gist",
+        "version": "1.7"
+      },
+      {
+        "name": "pg_stat_statements",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "version": "1.1"
+      }
+    ],
+    "roleCount": 31,
+    "agentTables": 5,
+    "agentPrefixedTables": 5,
+    "clientTls": {
+      "diagnosticObserved": true,
+      "protocol": "TLSv1.3",
+      "cipher": "TLS_AES_256_GCM_SHA384",
+      "verifyFullConnectionSucceeded": true
+    },
+    "serverBackendTls": {
+      "ssl": false,
+      "version": null,
+      "bits": null
+    },
+    "migrationLedgerCount": 457,
+    "latestMigration": {
+      "version": "202609140007",
+      "name": "teaching_content_skeleton"
+    },
+    "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "projectMatchesRuntime": true,
+    "sslmode": "verify-full",
+    "clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+    "expectedStateMatches": false
+  },
+  "operations": {
+    "observedAt": "2026-09-16T04:37:59.377590+00:00",
+    "pm2": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789529555153,
+      "name": "uply-first-enable",
+      "pid": 934715
+    },
+    "runtime": {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+      "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+      "mode": "0o600",
+      "featureFlag": "OFF",
+      "allowlists": {
+        "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+        "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+        "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+      },
+      "necessaryVariables": {
+        "NEXT_PUBLIC_SUPABASE_URL": "SET",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "SET",
+        "SUPABASE_SERVICE_ROLE_KEY": "SET",
+        "DEEPSEEK_API_KEY": "SET"
+      }
+    },
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "tailscale": {
+      "canonicalSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+      "tcpPorts": [
+        "4000",
+        "443",
+        "8443"
+      ],
+      "bindings": [
+        {
+          "port": "4000",
+          "path": "/",
+          "targetAddress": "127.0.0.1",
+          "targetPort": 4000
+        },
+        {
+          "port": "443",
+          "path": "/",
+          "targetAddress": "127.0.0.1",
+          "targetPort": 3001
+        },
+        {
+          "port": "8443",
+          "path": "/",
+          "targetAddress": "127.0.0.1",
+          "targetPort": 3000
+        }
+      ],
+      "funnelEnabled": false
+    },
+    "otherPm2Apps": [
+      {
+        "name": "uply-dev",
+        "pid": 0,
+        "status": "stopped",
+        "restart_time": 0,
+        "pm_uptime": 1789289955750,
+        "pm_cwd": "/home/yangzhen/projects/my-lms-system",
+        "pm_exec_path": "/home/yangzhen/miniconda3/bin/npm"
+      },
+      {
+        "name": "cezar",
+        "pid": 1752,
+        "status": "online",
+        "restart_time": 0,
+        "pm_uptime": 1789289955755,
+        "pm_cwd": "/home/yangzhen/projects/my-lms-system",
+        "pm_exec_path": "/usr/bin/bash"
+      },
+      {
+        "name": "alphalens",
+        "pid": 1753,
+        "status": "online",
+        "restart_time": 0,
+        "pm_uptime": 1789289955763,
+        "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+        "pm_exec_path": "/home/yangzhen/miniconda3/bin/npm"
+      },
+      {
+        "name": "alphalens-api",
+        "pid": 1754,
+        "status": "online",
+        "restart_time": 0,
+        "pm_uptime": 1789289955763,
+        "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+        "pm_exec_path": "/home/yangzhen/AIresearch/AlphaLens/services/market_data/.venv/bin/uvicorn"
+      },
+      {
+        "name": "alphalens-worker",
+        "pid": 226755,
+        "status": "online",
+        "restart_time": 1,
+        "pm_uptime": 1789459220872,
+        "pm_cwd": "/home/yangzhen/AIresearch/AlphaLens",
+        "pm_exec_path": "/home/yangzhen/AIresearch/AlphaLens/services/market_data/.venv/bin/python"
+      },
+      {
+        "name": "siheung-volunteer",
+        "pid": 0,
+        "status": "stopped",
+        "restart_time": 59,
+        "pm_uptime": 1787128620551,
+        "pm_cwd": "/home/yangzhen/Dedication",
+        "pm_exec_path": "/home/yangzhen/Dedication/node_modules/wrangler/wrangler-dist/cli.js"
+      },
+      {
+        "name": "siheung-volunteer-test",
+        "pid": 1773,
+        "status": "online",
+        "restart_time": 0,
+        "pm_uptime": 1789289955777,
+        "pm_cwd": "/home/yangzhen/Dedication",
+        "pm_exec_path": "/home/yangzhen/Dedication/node_modules/wrangler/wrangler-dist/cli.js"
+      },
+      {
+        "name": "motion-studio",
+        "pid": 1775,
+        "status": "online",
+        "restart_time": 0,
+        "pm_uptime": 1789289955778,
+        "pm_cwd": "/home/yangzhen/projects/motion-studio",
+        "pm_exec_path": "/usr/bin/bash"
+      },
+      {
+        "name": "motion-studio-editor",
+        "pid": 3947,
+        "status": "online",
+        "restart_time": 42,
+        "pm_uptime": 1789289962441,
+        "pm_cwd": "/home/yangzhen/projects/motion-studio",
+        "pm_exec_path": "/home/yangzhen/miniconda3/bin/node"
+      }
+    ]
+  },
+  "checks": {
+    "serverVersion": true,
+    "projectIdentitySha256": true,
+    "hostIdentitySha256": true,
+    "runtime": true,
+    "launcherSha256": true,
+    "tailscale": true,
+    "otherPm2Apps": true,
+    "ledger457": true,
+    "latest007": true,
+    "agentTablesFive": true,
+    "appOnline": true,
+    "buildId": true
+  },
+  "approvedChanges": [
+    "ledger449-to457",
+    "lockedFoundationSchema",
+    "R3DapplicationFiles",
+    "namedAppPidAndStart",
+    "freshBackup",
+    "privateReceipts"
+  ],
+  "productionAgentRunsDuringTask": 0,
+  "liveProviderRequestsByTask": 0,
+  "productionContentWritesByTask": 0,
+  "reconcilerRuns": 0,
+  "persistentCancelCalls": 0,
+  "stage1g": "NOT AUTHORIZED / NOT READY"
+}

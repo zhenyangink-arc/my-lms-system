@@ -1,0 +1,120 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1D",
+  "recordedAt": "2026-09-20T01:47:04.655410+00:00",
+  "status": "BLOCKED_CAPTURE_TLS_REQUIRED",
+  "currentDBConnections": 1,
+  "currentDBAccessMode": "READ_ONLY",
+  "currentDBWrites": 0,
+  "authWrites": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "migrationInstall": 0,
+  "productionCredentialRuntimeAccess": "USED",
+  "credentialOutput": 0,
+  "credentialPersistenceOutsideExistingCredentialStore": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "operationalSourceChanges": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "planSeal": 0,
+  "installAuthorizationCreated": false,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "automaticRetry": false,
+  "overall": "BLOCKED",
+  "blockingCode": "BLOCKED_CAPTURE_TLS_REQUIRED",
+  "runnerState": "TARGET_IDENTITY_MISMATCH",
+  "captureAuthorization": "PASS",
+  "captureCommand": "FAIL",
+  "sessionReadOnly": "PASS",
+  "transaction": "REPEATABLE READ READ ONLY",
+  "transaction_read_only": "on",
+  "captureEnd": "ROLLBACK",
+  "queryOrderReached": [
+    "IDENTITY",
+    "SESSION",
+    "TLS_REJECTED"
+  ],
+  "ledgerQueries": 0,
+  "targetPreGateQueries": 0,
+  "targetDefinitionQueries": 0,
+  "protectedCatalogQueries": 0,
+  "ledgerCount": null,
+  "ledgerDuplicates": null,
+  "ledgerPrefixDigest": null,
+  "ledgerDescriptor": "NOT_CAPTURED",
+  "targetPreGate": "NOT_RUN",
+  "targetFunctionDefinition": "NOT_READ",
+  "effectivePrivileges": "NOT_READ",
+  "preGateVsCatalog": "NOT_RUN",
+  "targetIdentity": "BLOCKED_TLS_GATE",
+  "operationalPackageSha256": "65af9de2a1ffaef90cab6d5ca7865079fd77b003654d6db8a137f7544b3ffe11",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "pm2": "online",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3": "DISABLED",
+  "backupCapability": "READY",
+  "candidateArtifactHashes": "ALL MATCH",
+  "planSealApproval": "BLOCKED_NOT_GENERATED",
+  "planSealExecution": "NOT_AUTHORIZED",
+  "000Install": "NOT_AUTHORIZED",
+  "001Install": "NOT_AUTHORIZED",
+  "002Install": "NOT_AUTHORIZED",
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "stopDecision": "No retry, no bypass, no baseline substitution, no plan seal proposal. TLS guard mismatch requires separately scoped diagnosis.",
+  "evidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-current-ledger.json",
+      "sha256": "1012f55258d3a975527c7723bfee412eb42e469daa85cd0675471473f3a09c44"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-ledger-prefix-digest.json",
+      "sha256": "54d175bc8d9cacb23e8998a23d33068d4646e592008130ca6e39b1869130824f"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-target-function.json",
+      "sha256": "771a0cd54b43346323e224f6406a1f3c86128e5c3999d98e6f252b6323661c26"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-effective-privileges.json",
+      "sha256": "18e4fa67003d81860404de6f8c245bdba7424461878e09a77b61e74c46e150af"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-role-defaults.json",
+      "sha256": "3e0c0b0bda066f673c7cfb66dfa6f46ae3821502cadbc6213c1136548596abf6"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-protected-catalog.json",
+      "sha256": "6adcb30f641ba1bc20c8704f98967b27e03e02e3c9cdc869941ee24de5ef9d46"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-target-identity.json",
+      "sha256": "f0283e93a1ef7a732875fd6fb37bb8eba9e3dcebfb022b2f8e3eef6d0e2d5994"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-readonly-receipt.json",
+      "sha256": "b48fecc18aa5a48eb21ef51837197ea0592995c4896d39330fdfbae2c79a5e11"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-package-lock.json",
+      "sha256": "fac88ef1f01ee1668004c703bdd48be031a8953393b1a20ef76f612103b8633a"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-backup-capability.json",
+      "sha256": "dca2c1763bd9b2a84d070952cc3cad25af9b8ae03b1745e1d00f710c12c185f4"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "environments": [
+    {
+      "privateDirectoryRemoved": true,
+      "databaseContainerRemoved": true,
+      "volumeRemoved": true,
+      "servicesRemoved": 2,
+      "networkRemoved": true,
+      "ownedProcessesStopped": 0,
+      "temporaryCredentialsRemoved": true
+    },
+    {
+      "privateDirectoryRemoved": true,
+      "databaseContainerRemoved": true,
+      "volumeRemoved": true,
+      "servicesRemoved": 0,
+      "networkRemoved": true,
+      "ownedProcessesStopped": 0,
+      "temporaryCredentialsRemoved": true
+    },
+    {
+      "privateDirectoryRemoved": true,
+      "databaseContainerRemoved": true,
+      "volumeRemoved": true,
+      "servicesRemoved": 0,
+      "networkRemoved": true,
+      "ownedProcessesStopped": 0,
+      "temporaryCredentialsRemoved": true
+    }
+  ],
+  "persistentArtifactRetained": true,
+  "r4dBackupRetained": true,
+  "sharedNodeModulesRetained": true,
+  "productionChanges": 0,
+  "supervisorToolSessionClosed": true,
+  "supervisorCloseMethod": "Explicit interrupt of owned candidate session; exit130; finally signals both child process groups",
+  "directProcessInspection": "Host PIDs not visible across tool sandbox; proc-missing not used as sole completion evidence",
+  "remainingDockerResourcesWithStageLabel": 0
+}

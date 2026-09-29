@@ -1,0 +1,77 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D4",
+  "recordedAt": "2026-09-20T04:35:22.532744+00:00",
+  "mode": "LOCAL_SCOPE_AUDIT_AND_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "riskArtifact": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+    "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957"
+  },
+  "runtimeRiskBinding": {
+    "productionAuthorizationVersions": [
+      "readonly-baseline-capture-authorization/2",
+      "exact-single-operator-authorization/2"
+    ],
+    "newStrictField": "transportRiskAcceptance",
+    "fields": [
+      "contractId",
+      "riskAcceptanceId",
+      "riskArtifactSha256",
+      "scope",
+      "releaseId",
+      "stageActive",
+      "completionObserved"
+    ],
+    "constants": {
+      "contractId": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+      "riskAcceptanceId": "r7d-c3b-pooled-transport-risk-acceptance/1",
+      "scope": "R7D-C3B_ONLY",
+      "releaseId": "R7D-C3B",
+      "stageActive": true,
+      "completionObserved": false
+    },
+    "inheritExistingChecks": "All existing plan/raw/body/source/target/UID/nonce/900-second/mode/static guards remain. Risk binding does not supply baseline data, backup freshness, READY status or operation approval.",
+    "beforeCredentials": true,
+    "approvedFalseArtifact": "A proposal file alone is insufficient. A trusted operator must attest the explicit risk decision in the separately authorized operation receipt. No automatic conversion of approved=false to execution authority.",
+    "fixtureCompatibility": "Existing owned authorization/1 may remain only on the explicitly isolated fixture branch so fixtures need not change; production accepts only the new strict version. Test that fixture/v1 cannot authorize production.",
+    "futureCaptureApproval": "approval-r7d-c3b-runner-controlled-preflight-v4.json only after implemented safety validation; v3 rejected by new source. No v4 artifact now.",
+    "closure": {
+      "perInvocation": "Future strict operator authorization binds risk ID/raw artifact hash, C3B release ID, stageActive=true, completionObserved=false and existing <=900-second window. No operator authorization generated now.",
+      "closedMarker": "Fixed receiptRoot/R7D-C3B.release-completed.json, if present (including malformed/unsafe entries), denies subsequent operations; never automatically delete or overwrite.",
+      "operatorBoundary": "The trusted release operator must publish the closure receipt at completion/revocation and must not mint stage-active authorizations afterward. The runner cannot infer business-stage completion from ledger count alone. Future release approval must include closure as a completion prerequisite.",
+      "additionalGuards": "Existing current-build/runtime locks remain; candidate deployment changes the locked build. Completion/revocation always wins over an unexpired short authorization.",
+      "checks": "Before credential access, before each client process/session, existing precommit authorize hook, and before backup acceptance. Expiry triggers rollback/STOP under existing engine rules, not down migration."
+    }
+  },
+  "profileDesign": {
+    "profileIdUnchanged": "uply-canonical-maintenance/1",
+    "existingFields": "Do not change endpoint/project/runtime/build/image identity or credential paths.",
+    "newExplicitObject": "transportSecurity containing contract ID, raw risk proposal ref/hash, fixed port 5432 and C3B closure marker policy. Strictly validate exact fields.",
+    "versioning": "The security contract has its own explicit version. Profile identity/address remains stable so the immutable existing draft and registry are untouched; new profile bytes remain part of package_hashes. Historical old source package remains reproducible from its evidence.",
+    "noCircularHashes": "Risk artifact binds stable stage/migration/endpoint identities, not future package hash. Future profile pins risk artifact; future short authorization pins both new package and risk."
+  },
+  "future001002": "Risk scope covers their transport only. Existing rejection of unregistered production 001/002 plans is preserved. Separate plan authoring/approval/registration remains required; no hidden enabling in this change."
+}

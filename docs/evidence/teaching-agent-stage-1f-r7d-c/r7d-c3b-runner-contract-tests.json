@@ -1,0 +1,468 @@
+{
+  "stage": "R7D-C3B-RUNNER-I1",
+  "recordedAt": "2026-09-18T13:42:58.888611+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "realBackup": 0,
+  "credentialAccess": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "historicalEvidenceModified": false,
+  "result": "PASS",
+  "planned": 51,
+  "executed": 51,
+  "passed": 51,
+  "failed": 0,
+  "skipped": 0,
+  "safetyCriticalSkips": 0,
+  "cases": [
+    {
+      "id": "RUNNER-D1-01",
+      "group": "CONTRACT",
+      "case": "exact registered plan accepted; all required check set present",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-02",
+      "group": "CONTRACT",
+      "case": "unknown plan/version/status/extra properties rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-03",
+      "group": "CONTRACT",
+      "case": "wrong raw plan or migration SHA rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-04",
+      "group": "CONTRACT",
+      "case": "arbitrary file/path traversal/symlink/SQL CLI/module injection rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-05",
+      "group": "CONTRACT",
+      "case": "wrong version/name/path tuple or body-offset/body SHA rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-06",
+      "group": "CONTRACT",
+      "case": "missing or mismatched approval artifact/operator/window rejected before apply connection",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-07",
+      "group": "CONTRACT",
+      "case": "mutated registry/engine/check module hash rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-08",
+      "group": "CONTRACT",
+      "case": "DRAFT/null full prefix/fixture production plan rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-09",
+      "group": "CONTRACT",
+      "case": "invalid nested transaction/psql command/unsafe top-level statement rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-10",
+      "group": "CONTRACT",
+      "case": "three exact outer envelopes retain identical body bytes; quoted PLpgSQL BEGIN is accepted",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-11",
+      "group": "LEDGER",
+      "case": "wrong count rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-12",
+      "group": "LEDGER",
+      "case": "same count different version/name/statements prefix rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-13",
+      "group": "LEDGER",
+      "case": "duplicate version or missing/wrong PK/columns/triggers rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-14",
+      "group": "LEDGER",
+      "case": "already installed rejected; verify-only distinct",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-15",
+      "group": "LEDGER",
+      "case": "unexpected missing earlier pending migration rejects; later plans never auto-dispatched",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-16",
+      "group": "LEDGER",
+      "case": "null statements versus empty arrays and all string escapes deterministic",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-17",
+      "group": "POSTGRES",
+      "case": "precondition mismatch => zero target and ledger mutation",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-18",
+      "group": "POSTGRES",
+      "case": "000 historical458 -> exact body/ACL success459; protected defaults/overloads/other functions unchanged",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-19",
+      "group": "POSTGRES",
+      "case": "wrong body/owner/config/ACL/effective membership drift rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-20",
+      "group": "POSTGRES",
+      "case": "migration SQL failure rolls back partial ACL/DDL and zero ledger",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-21",
+      "group": "POSTGRES",
+      "case": "ledger insert failure after body rolls back body; ledger unchanged",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-22",
+      "group": "POSTGRES",
+      "case": "precommit postcondition failure rolls back body and ledger",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-23",
+      "group": "POSTGRES",
+      "case": "committed then independent postcheck drift => forward-fix state; never auto rollback",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-24",
+      "group": "POSTGRES",
+      "case": "concurrent two invocations shared advisory+ledger lock => at most one dispatch",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-25",
+      "group": "POSTGRES",
+      "case": "preflight-to-apply ledger/ACL drift detected under lock",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-26",
+      "group": "POSTGRES",
+      "case": "three independently authorized fixtures000/001/002, separate invocations/backups/receipts:458->459->460->461",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-27",
+      "group": "POSTGRES",
+      "case": "001/002 raw ledger source exact; completion CAS/fencing/cancel and publication v1/fence/constraint metadata preserved per existing isolated cases",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-28",
+      "group": "POSTGRES",
+      "case": "history449 metadata +9 real incrementals fixture is explicitly not a current DB clone",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-29",
+      "group": "TRANSPORT",
+      "case": "wrong DB/project/host/TLS/database role/client image/expiry rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-30",
+      "group": "TRANSPORT",
+      "case": "isolated marker or spoofed identity cannot select production profile",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-31",
+      "group": "TRANSPORT",
+      "case": "preflight/verify READ ONLY enforce SQL mutation rejection",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-32",
+      "group": "TRANSPORT",
+      "case": "no arbitrary execute-SQL API; environment host/service override ignored/rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-33",
+      "group": "TRANSPORT",
+      "case": "fixture/credentials absent from production plan/client evidence",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-34",
+      "group": "BACKUP",
+      "case": "missing receipt/artifact rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-35",
+      "group": "BACKUP",
+      "case": "expired/future-dated backup rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-36",
+      "group": "BACKUP",
+      "case": "wrong target/ledger/prefix/hash/restore failure rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-37",
+      "group": "BACKUP",
+      "case": "wrong modes/UID/symlinks/traversal rejected",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-38",
+      "group": "BACKUP",
+      "case": "owned snapshot full/schema/roles capture and exact restore/seal pass",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-39",
+      "group": "BACKUP",
+      "case": "exporter death/capture exit nonzero/changed membership/expired snapshot aborts gate",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-40",
+      "group": "BACKUP",
+      "case": "roles capture non-atomic disclosure; stable role hashes required",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-41",
+      "group": "BACKUP",
+      "case": "no credential config in archive/receipt; no-password roles; private outputs0600",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-42",
+      "group": "BACKUP",
+      "case": "cleanup verifies IDs/labels/image/network-none/mounts and removes only owned container/volume",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/backup-final.log"
+    },
+    {
+      "id": "RUNNER-D1-43",
+      "group": "PROTOCOL",
+      "case": "missing/bad commit ACK/connection drop/timeout => UNKNOWN; no retry",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-44",
+      "group": "PROTOCOL",
+      "case": "crash after commit before receipt => consumed attempt remains; verify only",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-45",
+      "group": "PROTOCOL",
+      "case": "write/fsync failure before dispatch prevents mutation",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-46",
+      "group": "PROTOCOL",
+      "case": "write failure after dispatch preserves unknown/committed state without replay",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-47",
+      "group": "PROTOCOL",
+      "case": "rollback requires acknowledged rollback and independent unchanged-state proof",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-48",
+      "group": "PROTOCOL",
+      "case": "success ends with nextMigrationAllowed=false",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    },
+    {
+      "id": "RUNNER-D1-49",
+      "group": "REGRESSION",
+      "case": "R5B runner/transport/package and F1 test/helper hashes remain unchanged",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-50",
+      "group": "REGRESSION",
+      "case": "000/001/002,1337 product files and candidate archives remain byte-identical",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/contract-final.log"
+    },
+    {
+      "id": "RUNNER-D1-51",
+      "group": "REGRESSION",
+      "case": "F1 contract39 leaf tests and related existing publication/completion/security subset rerun without old expected edits",
+      "status": "PASS",
+      "executed": true,
+      "evidence": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-i1-validation/postgres-final.log"
+    }
+  ],
+  "unitContractCases": 16,
+  "postgresAndProtocolCases": 26,
+  "backupCases": 9,
+  "regression": {
+    "existingNodeTests": {
+      "passed": 155,
+      "failed": 0,
+      "skipped": 0
+    },
+    "historicalR5BUnitTests": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "totalPassed": 172,
+    "oldExpectationsChanged": false,
+    "historicalReplay": "R5B byte-identical scripts in disposable original eight-migration tree; original receipts unchanged"
+  },
+  "logHashes": {
+    "postgres-final.log": "2f5347bd8a706236f15b58602db0beee74036288339c69b2d2d3f1431f6c80ef",
+    "contract-final.log": "3524ead255d117af1598b4e3256f6f52d19fdfe979f40cb0bdd7e1d13787dcc2",
+    "backup-final.log": "18756f7ad2bf1f79d8fa8de3ff7d08a7c9b40c44789b27eaf4e7aec237d7ee39",
+    "r5b-historical-unit.log": "1eb64d36d8cb054d88baa8852853d0672c986474825b129e51ecde4d18e2b392",
+    "existing-regression.log": "3e273f60efa08a0698e6d367fdb8610908a8fb881db91c89e8d19418f3eb3fb5"
+  }
+}

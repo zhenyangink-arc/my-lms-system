@@ -1,0 +1,8 @@
+{
+  "baselineFresh": true,
+  "baselineNeverInstalledOnUpgradePath": true,
+  "beforeAndAfterCompared": true,
+  "normalizedApplicationDifferences": [],
+  "success": true,
+  "targetUpgrade": true
+}

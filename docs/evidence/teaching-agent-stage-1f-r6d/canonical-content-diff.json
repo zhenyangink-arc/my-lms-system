@@ -1,0 +1,96 @@
+{
+  "status": "UNCHANGED",
+  "before": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "after": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "scriptVersionUnchanged": true,
+  "nodeFullRowHashesUnchanged": true,
+  "nodeUpdatedAtUnchanged": true,
+  "auditLogsUnchanged": true,
+  "objectivesProtectedByFullRowHash": true
+}

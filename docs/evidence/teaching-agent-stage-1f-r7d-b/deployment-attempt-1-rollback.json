@@ -1,0 +1,13 @@
+{
+  "status": "ROLLED_BACK",
+  "operations": "/home/yangzhen/operations/uply/teaching-agent/r7d-b/20260918T020717Z",
+  "rollback": "/home/yangzhen/operations/uply/teaching-agent/r7d-b/20260918T020717Z/rollback",
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "files": 8,
+  "dbWrites": 0,
+  "scope": "DISABLED",
+  "pm2Target": "uply-first-enable",
+  "startedAt": "2026-09-18T02:07:18.542226+00:00",
+  "failure": ""
+}

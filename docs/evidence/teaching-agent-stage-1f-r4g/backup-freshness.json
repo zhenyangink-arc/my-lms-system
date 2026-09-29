@@ -1,0 +1,16 @@
+{
+  "checkedAtUtc": "2026-09-15T07:59:38.888706+00:00",
+  "snapshotAtUtc": "2026-09-15T06:31:24.914920+00:00",
+  "source": "docs/evidence/teaching-agent-stage-1f-r4d/snapshot-summary.json",
+  "verifiedBackupPath": "/home/yangzhen/backups/uply/20260915T063124Z/",
+  "ageSeconds": 5293.974,
+  "ageMinutes": 88.233,
+  "maximumChangeWindowAgeSeconds": 900,
+  "goLiveBackupFreshness": "STALE FOR <=15m CHANGE-WINDOW RPO",
+  "r4dBackupTechnicalReadiness": "READY",
+  "goLiveRule": "RECHECK REQUIRED — fresh recovery point or explicit RPO exception",
+  "newBackupsCreated": 0,
+  "restoresExecuted": 0,
+  "offHost": "NOT CONFIRMED — required before broader rollout",
+  "scope": "Read-only age calculation from verified R4D snapshot evidence; no new seal or restore verification"
+}

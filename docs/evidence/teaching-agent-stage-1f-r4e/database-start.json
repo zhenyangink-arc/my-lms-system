@@ -1,0 +1,115 @@
+{
+  "observedAt": "2026-09-15T06:53:35.895639+00:00",
+  "readOnly": "on",
+  "serverVersion": "17.6",
+  "databaseName": "postgres",
+  "databaseBytes": 58125459,
+  "schemaCountNonSystem": 13,
+  "tableCountNonSystem": 230,
+  "schemaTables": [
+    {
+      "schema": "auth",
+      "tables": 23
+    },
+    {
+      "schema": "extensions",
+      "tables": 0
+    },
+    {
+      "schema": "graphql",
+      "tables": 0
+    },
+    {
+      "schema": "graphql_public",
+      "tables": 0
+    },
+    {
+      "schema": "pgbouncer",
+      "tables": 0
+    },
+    {
+      "schema": "private",
+      "tables": 0
+    },
+    {
+      "schema": "public",
+      "tables": 174
+    },
+    {
+      "schema": "realtime",
+      "tables": 9
+    },
+    {
+      "schema": "recording_private",
+      "tables": 4
+    },
+    {
+      "schema": "runtime_publish_private",
+      "tables": 10
+    },
+    {
+      "schema": "storage",
+      "tables": 8
+    },
+    {
+      "schema": "supabase_migrations",
+      "tables": 1
+    },
+    {
+      "schema": "vault",
+      "tables": 1
+    }
+  ],
+  "extensions": [
+    {
+      "name": "btree_gist",
+      "version": "1.7"
+    },
+    {
+      "name": "pg_stat_statements",
+      "version": "1.11"
+    },
+    {
+      "name": "pgcrypto",
+      "version": "1.3"
+    },
+    {
+      "name": "plpgsql",
+      "version": "1.0"
+    },
+    {
+      "name": "supabase_vault",
+      "version": "0.3.1"
+    },
+    {
+      "name": "uuid-ossp",
+      "version": "1.1"
+    }
+  ],
+  "roleCount": 31,
+  "agentTables": 0,
+  "agentPrefixedTables": 0,
+  "clientTls": {
+    "diagnosticObserved": true,
+    "protocol": "TLSv1.3",
+    "cipher": "TLS_AES_256_GCM_SHA384",
+    "verifyFullConnectionSucceeded": true
+  },
+  "serverBackendTls": {
+    "ssl": false,
+    "version": null,
+    "bits": null
+  },
+  "migrationLedgerCount": 449,
+  "latestMigration": {
+    "version": "202609130003",
+    "name": "runtime_authoring_nonretryable_error"
+  },
+  "ledgerSha256": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+  "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+  "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+  "projectMatchesRuntime": true,
+  "sslmode": "verify-full",
+  "clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "expectedStateMatches": true
+}

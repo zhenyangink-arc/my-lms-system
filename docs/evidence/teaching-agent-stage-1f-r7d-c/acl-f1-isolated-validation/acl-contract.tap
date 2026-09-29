@@ -1,0 +1,251 @@
+TAP version 13
+# Subtest: ACL-F1 approved contract cases
+    # Subtest: ACL-D2-01 historical precondition is explicit and exact
+    ok 1 - ACL-D2-01 historical precondition is explicit and exact
+      ---
+      duration_ms: 3150.735586
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-02 real CREATE/defaults -> anon repair -> replacement lifecycle
+    ok 2 - ACL-D2-02 real CREATE/defaults -> anon repair -> replacement lifecycle
+      ---
+      duration_ms: 4161.014265
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-03 historical and desired baseline are separate; exact only-ACL delta
+    ok 3 - ACL-D2-03 historical and desired baseline are separate; exact only-ACL delta
+      ---
+      duration_ms: 3436.821987
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-04 service-role without subject denied before fix
+    ok 4 - ACL-D2-04 service-role without subject denied before fix
+      ---
+      duration_ms: 56.732356
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-05 non-owner/inactive subjects denied before fix
+    ok 5 - ACL-D2-05 non-owner/inactive subjects denied before fix
+      ---
+      duration_ms: 220.832679
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-06 service-role with synthetic owner claims can reach guarded writes before fix
+    ok 6 - ACL-D2-06 service-role with synthetic owner claims can reach guarded writes before fix
+      ---
+      duration_ms: 114.34682
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-07 service-role denied even with owner claims after fix
+    ok 7 - ACL-D2-07 service-role denied even with owner claims after fix
+      ---
+      duration_ms: 55.410531
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-08 authenticated Owner enable/disable remains functional
+    ok 8 - ACL-D2-08 authenticated Owner enable/disable remains functional
+      ---
+      duration_ms: 212.003339
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-09 authenticated wrong/absent/inactive subject denied
+    ok 9 - ACL-D2-09 authenticated wrong/absent/inactive subject denied
+      ---
+      duration_ms: 276.820464
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-10 wrong application/published graph rejected
+    ok 10 - ACL-D2-10 wrong application/published graph rejected
+      ---
+      duration_ms: 220.254783
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-11 revision/source/grammar conflict does not change approved binding
+    ok 11 - ACL-D2-11 revision/source/grammar conflict does not change approved binding
+      ---
+      duration_ms: 333.103743
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-12 missing target
+    ok 12 - ACL-D2-12 missing target
+      ---
+      duration_ms: 3326.278421
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-12 wrong overload only
+    ok 13 - ACL-D2-12 wrong overload only
+      ---
+      duration_ms: 3276.396992
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong body
+    ok 14 - ACL-D2-13 wrong body
+      ---
+      duration_ms: 3351.420968
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong owner
+    ok 15 - ACL-D2-13 wrong owner
+      ---
+      duration_ms: 3477.797192
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 security invoker
+    ok 16 - ACL-D2-13 security invoker
+      ---
+      duration_ms: 3438.27504
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong search path
+    ok 17 - ACL-D2-13 wrong search path
+      ---
+      duration_ms: 3496.931453
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong volatility
+    ok 18 - ACL-D2-13 wrong volatility
+      ---
+      duration_ms: 3328.009746
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong parallel
+    ok 19 - ACL-D2-13 wrong parallel
+      ---
+      duration_ms: 3490.989524
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-13 wrong leakproof
+    ok 20 - ACL-D2-13 wrong leakproof
+      ---
+      duration_ms: 3355.212647
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-14 extra grantee
+    ok 21 - ACL-D2-14 extra grantee
+      ---
+      duration_ms: 3453.002619
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-14 grant option
+    ok 22 - ACL-D2-14 grant option
+      ---
+      duration_ms: 3478.951481
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-14 unexpected grantor
+    ok 23 - ACL-D2-14 unexpected grantor
+      ---
+      duration_ms: 3508.536988
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-14 missing authenticated
+    ok 24 - ACL-D2-14 missing authenticated
+      ---
+      duration_ms: 3455.362337
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-15 PUBLIC
+    ok 25 - ACL-D2-15 PUBLIC
+      ---
+      duration_ms: 3466.748995
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-15 anon inherited
+    ok 26 - ACL-D2-15 anon inherited
+      ---
+      duration_ms: 3503.627391
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-16 service-role already absent
+    ok 27 - ACL-D2-16 service-role already absent
+      ---
+      duration_ms: 3324.983868
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-17 postcondition failure rolls back REVOKE (inherited service privilege)
+    ok 28 - ACL-D2-17 postcondition failure rolls back REVOKE (inherited service privilege)
+      ---
+      duration_ms: 3466.75647
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-16 second application FAILS; ledger skip is external, no silent success
+    ok 29 - ACL-D2-16 second application FAILS; ledger skip is external, no silent success
+      ---
+      duration_ms: 3492.638276
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-16 installed checksum skips SQL; changed checksum fails
+    ok 30 - ACL-D2-16 installed checksum skips SQL; changed checksum fails
+      ---
+      duration_ms: 3832.482602
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-17 postcondition error rolls back runner ledger and target ACL
+    ok 31 - ACL-D2-17 postcondition error rolls back runner ledger and target ACL
+      ---
+      duration_ms: 3513.650682
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-18 overload/defaults/peer ACL and schema objects untouched
+    ok 32 - ACL-D2-18 overload/defaults/peer ACL and schema objects untouched
+      ---
+      duration_ms: 3513.200703
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-18 public/Auth fixture table contents unchanged
+    ok 33 - ACL-D2-18 public/Auth fixture table contents unchanged
+      ---
+      duration_ms: 3549.758717
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-21 exact tracked order with checksum ledger
+    ok 34 - ACL-D2-21 exact tracked order with checksum ledger
+      ---
+      duration_ms: 4015.30066
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-19 historical ->000 ->0001 compatibility
+    ok 35 - ACL-D2-19 historical ->000 ->0001 compatibility
+      ---
+      duration_ms: 3387.844542
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-20 historical ->000 ->0002 compatibility
+    ok 36 - ACL-D2-20 historical ->000 ->0002 compatibility
+      ---
+      duration_ms: 3415.523073
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-21 historical ->000 ->0001 ->0002 compatibility
+    ok 37 - ACL-D2-21 historical ->000 ->0001 ->0002 compatibility
+      ---
+      duration_ms: 3693.181953
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-22 unchanged 001/002 hashes, strict order and narrow mutation
+    ok 38 - ACL-D2-22 unchanged 001/002 hashes, strict order and narrow mutation
+      ---
+      duration_ms: 1.387508
+      type: 'test'
+      ...
+    # Subtest: ACL-D2-23 full immutable app bootstrap + incrementals ->000
+    ok 39 - ACL-D2-23 full immutable app bootstrap + incrementals ->000
+      ---
+      duration_ms: 5503.602754
+      type: 'test'
+      ...
+    1..39
+ok 1 - ACL-F1 approved contract cases
+  ---
+  duration_ms: 112412.118483
+  type: 'test'
+  ...
+1..1
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 112559.467527

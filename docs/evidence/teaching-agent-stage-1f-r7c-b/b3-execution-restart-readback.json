@@ -1,0 +1,49 @@
+{
+  "phase": "restart",
+  "at": "2026-09-17T13:39:58.492562+00:00",
+  "source": "CURRENT_DEVELOPMENT_DB",
+  "connection": "NEW INDEPENDENT READ ONLY",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "freeze": "MATCH",
+  "actorSafety": "PASS",
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "journal": {
+    "directory": true,
+    "approval": true,
+    "scenario": true,
+    "dispatch0": true,
+    "dispatch1": true,
+    "disabled": true
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "correct": false,
+      "score": 0.0,
+      "createdAt": "2026-09-17T13:37:44.048635+00:00",
+      "requestHash": "6f54e9cba9bf217a57d46aa881f508536ce317850d9a5d0bb44712c4580b5a1e"
+    },
+    {
+      "number": 2,
+      "correct": true,
+      "score": 100.0,
+      "createdAt": "2026-09-17T13:39:16.72588+00:00",
+      "requestHash": "65d681a4427188ab437b8eac05b61f602071cb322a90e8517d75e80b03548dc9"
+    }
+  ],
+  "progress": [
+    {
+      "status": "completed",
+      "completionPercent": 100,
+      "masteryScore": 100,
+      "attemptCount": 2,
+      "xmin": "2431359"
+    }
+  ],
+  "pageProgress": 0
+}

@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-09-13T03:18:06.533Z",
+  "windowStart": "2026-09-13T03:13:06.533Z",
+  "readOnly": true,
+  "error": "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW",
+  "groups": [
+    {
+      "pid": "2139928",
+      "code": "40001",
+      "application": "PostgREST 14.5",
+      "errors": 1801,
+      "firstSeen": "2026-09-13T03:13:06.583000",
+      "lastSeen": "2026-09-13T03:18:01.935000"
+    },
+    {
+      "pid": "2139754",
+      "code": "40001",
+      "application": "PostgREST 14.5",
+      "errors": 1800,
+      "firstSeen": "2026-09-13T03:13:06.698000",
+      "lastSeen": "2026-09-13T03:18:01.854000"
+    }
+  ],
+  "remoteWrites": false
+}

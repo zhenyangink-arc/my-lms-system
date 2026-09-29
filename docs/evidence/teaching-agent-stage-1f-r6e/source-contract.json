@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "sourceFiles": [
+    {
+      "path": "docs/teaching-agent-stage-1f-r6d-teaching-script-review.md",
+      "sha256": "7307c69e12947d29fc16c9f45d578146ea48c66df502dbe1ad41f168012e5f61"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6d/revision-proposal.json",
+      "sha256": "181db1069fabe7fb4f86269a430aeac3a9e64132dd0ea4f5c30da1f9e3abc63e"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+      "sha256": "b18a3e20ac75be2a55bb0c46029f24aa06575dddc588d5f4db9c9bcd4d1e231e"
+    },
+    {
+      "path": "src/app/dashboard/admin/teaching-scripts/actions.ts",
+      "sha256": "4ef9669971974df7bcf3aba27dd65ad558653c390bee00fc26c0658e8ce734c9"
+    },
+    {
+      "path": "supabase/migrations/202609070001_teaching_script_atomic_video.sql",
+      "sha256": "b059740a02633afe7fe5c15e7a30f9c766f972f4826d537d937f5cad20c6683c"
+    }
+  ],
+  "rpcBodyMatchesMigration": true,
+  "rpcBodySha256": "13729f86d298a3eb77e78301f0ce2354d76d3f67e9316080f49c79390fbe049c",
+  "updatedAtCAS": true,
+  "autosaveMs": 1800,
+  "officialAudit": "update_node",
+  "manualSqlWrites": false
+}

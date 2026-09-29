@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "rubric": {
+    "Grammar Accuracy": "PASS",
+    "Natural Korean": "PASS",
+    "Simple Vocabulary": "PASS",
+    "Short Sentences": "PASS",
+    "Polite Style": "PASS",
+    "Beginner Comprehension": "PASS",
+    "Pedagogical Clarity": "PASS"
+  },
+  "scope": "Zero-beginner introductory exposure text, with examples; no claim of unaided listening comprehension",
+  "evidence": [
+    "Node1存在句替换自然",
+    "Node4短句解除嵌套句负担",
+    "Node5一次跟读指令常用且自然",
+    "Node6必要术语逐条定义并给局部例子",
+    "Node8终声可选句与已讲内容一致"
+  ],
+  "style": "해요체为主，보세요/볼까요等礼貌教学引导可用；无반말",
+  "audioProsodyVerified": false,
+  "numericRatingUsed": false
+}

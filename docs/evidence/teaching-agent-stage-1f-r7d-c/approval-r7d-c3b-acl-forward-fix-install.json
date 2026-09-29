@@ -1,0 +1,182 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "status": "READY_AWAITING_EXPLICIT_INSTALL_APPROVAL",
+  "approved": false,
+  "executionAuthorized": false,
+  "approvalKind": "EXACT_TARGET_FORWARD_ACL_MIGRATION_INSTALL",
+  "migration": {
+    "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+    "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+  },
+  "expectedCurrentLedger": 458,
+  "expectedAfterLedger": 459,
+  "expectedMigrationAbsent": "202609180000",
+  "expected001Absent": true,
+  "expected002Absent": true,
+  "precondition": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": true,
+    "noOtherOverloadAffected": true
+  },
+  "postcondition": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": false,
+    "noOtherOverloadAffected": true,
+    "authenticatedEffectiveExecute": true,
+    "postgresEffectiveExecute": true,
+    "definitionUnchanged": true,
+    "ownerUnchanged": true,
+    "defaultPrivilegesUnchanged": true,
+    "otherFunctionAclsUnchanged": true,
+    "otherOverloadsUnchanged": true
+  },
+  "allOtherAclsAndDefaultPrivileges": "UNCHANGED",
+  "expectedCurrentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "requiredBeforeInstall": [
+    "fresh read-only exact body/metadata/ACL/effective permission/role-membership/ledger preflight",
+    "000/001/002 and candidate hash locks match",
+    "exact backup/recovery receipt",
+    "fresh no-supported-service-role-caller evidence",
+    "separate explicit user install approval"
+  ],
+  "transactionAndLedger": "Apply exact000 once with runner transaction and honest ledger record; no db push all. Verify target, defaults, peer/overload ACL and ledger459 immediately. Any failure STOP; never fake ledger success.",
+  "idempotency": "SQL second application FAILS. Runner may skip only an already-installed exact-checksum version after fresh actual state verification; absence of service_role alone is not success.",
+  "rollbackForwardPolicy": "Uncommitted failure rolls back atomically. If a committed discrepancy occurs, STOP for separately approved forward fix; no automatic GRANT/down migration, no ledger deletion and no body replacement.",
+  "futureMigrationOrder": [
+    "202609180000_chapter_practice_binding_acl.sql",
+    "202609180001_agent_durable_skill_completion.sql",
+    "202609180002_native_publication_contract.sql"
+  ],
+  "futureLedger": [
+    458,
+    459,
+    460,
+    461
+  ],
+  "releaseOrder": [
+    "fresh historical ACL/body/roles/ledger458 preflight",
+    "backup/recovery preparation",
+    "install000 ONLY after separate approval",
+    "verify000 ACL/body/defaults/other objects andledger459",
+    "install001 after release approval",
+    "verify001 andledger460",
+    "install002 after release approval",
+    "verify002 andledger461",
+    "deploy sealed KeQ6bud_Us1ED6hnG7YB8 after release approval",
+    "safe health; STOP"
+  ],
+  "scopeOnly000Install": true,
+  "excluded": [
+    "001/002 install absent separate release authorization",
+    "application deploy/PM2",
+    "business/Auth writes",
+    "global ACL/default changes",
+    "other function ACL changes",
+    "Agent/Provider/Publish/acceptance provisioning"
+  ],
+  "validation": {
+    "plannedCategories": 23,
+    "executedCategories": 23,
+    "passedCategories": 23,
+    "failedCategories": 0,
+    "skippedCategories": 0,
+    "executedLeafTests": 39,
+    "passedLeafTests": 39,
+    "failedLeafTests": 0,
+    "skippedLeafTests": 0,
+    "nodeTestRunnerTotalIncludingParent": 40,
+    "negativeLeafTests": 26
+  },
+  "regression": {
+    "pass": 126,
+    "skip": 3,
+    "fail": 0
+  },
+  "regressionSkipDisclosure": "Three pre-existing PGlite tests unavailable; replacement target authorization coverage runs in actual owned PG. See detailed regression evidence.",
+  "reconciledBaseline": "r7d-c3b-acl-reconciled-preflight-baseline-v2.json"
+}

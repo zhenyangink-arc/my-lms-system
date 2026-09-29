@@ -1,0 +1,43 @@
+{
+  "baseline": "Approved B1 start snapshot",
+  "approvedNewFiles": [
+    "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+    "src/features/digital-textbook/api/create-native-activity.ts",
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+    "src/features/digital-textbook/components/create-native-activity-form.tsx",
+    "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx",
+    "tests/teaching-agent-r7cb-authoring.test.mjs",
+    "tests/teaching-agent-r7cb-authoring-db.test.mjs",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs"
+  ],
+  "changedPaths": [
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/authorization-scope-before-approved-b1.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/authorization-scope.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-implementation-readback.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-owner-dev-access.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-source-lock.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-test-results.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/build-results.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/canonical-write-receipt.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/db-write-boundary.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/gates-before-approved-b1.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/gates.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/lint-baseline.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/production-end-state-before-approved-b1.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/production-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/r7c-b1-approval-package.json",
+    "docs/teaching-agent-stage-1f-r7c-b-canonical-activity-binding.md",
+    "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx",
+    "src/features/digital-textbook/api/create-native-activity.ts",
+    "src/features/digital-textbook/components/create-native-activity-form.tsx",
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+    "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+    "tests/teaching-agent-r7cb-authoring-db.test.mjs",
+    "tests/teaching-agent-r7cb-authoring.test.mjs"
+  ],
+  "deletedPaths": [],
+  "unexpectedPaths": [],
+  "preexistingChangesPreserved": true,
+  "noGitMutations": true
+}

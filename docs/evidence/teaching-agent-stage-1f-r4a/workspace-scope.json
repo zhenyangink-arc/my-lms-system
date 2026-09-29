@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "existingFilesAtStart": 3122,
+  "existingFilesUnchanged": 3120,
+  "modifiedExisting": [
+    {
+      "file": "scripts/teaching-agent-r3d/author-browser.mjs",
+      "before": "e41835a00f02b1b4bc60aea94837b6d06f8fdca8da3af7aa2e430398790411fd",
+      "after": "f7da32ef98a0a187a7621cee2d1278140baa854dc358ded732bd0a0e6f49e39a"
+    },
+    {
+      "file": "supabase/bootstrap/baseline-manifest.json",
+      "before": "c2fd640518563bfb293f7601fe709f8f3b0a870a99ac93e8783144765e5eeb8c",
+      "after": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6"
+    }
+  ],
+  "removedExisting": [],
+  "newFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4a/baseline-manifest.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/baseline-unit.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/browser-static-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/browser-syntax.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/definition-manifest.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/generation-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/generator-regression.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/migration-static-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/node-regressions.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/release-integrity.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/release-metadata-manifest.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/reviewed-inputs.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/scoped-lint.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/typescript.json",
+    "docs/evidence/teaching-agent-stage-1f-r4a/validation-result.json",
+    "docs/teaching-agent-stage-1f-r4a-release-metadata-closure.md",
+    "tests/teaching-agent-release-metadata.test.mjs",
+    "docs/evidence/teaching-agent-stage-1f-r4a/workspace-scope.json"
+  ],
+  "newFileSha256": {
+    "docs/evidence/teaching-agent-stage-1f-r4a/baseline-manifest.json": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+    "docs/evidence/teaching-agent-stage-1f-r4a/baseline-unit.json": "8cb4d15223b823352ce0b6c1f25af87d5daeb96a95c1c061b5d9ef745afeb43b",
+    "docs/evidence/teaching-agent-stage-1f-r4a/browser-static-result.json": "45c092d63c25c7591a5f5750177c5e59f64a404298b445a11ee92b497e5efb0a",
+    "docs/evidence/teaching-agent-stage-1f-r4a/browser-syntax.json": "84a03d57d26d7fa350588e642fc6a3ac08d783681adbcb61c4d425f9bcbcd0b2",
+    "docs/evidence/teaching-agent-stage-1f-r4a/definition-manifest.json": "725549a32944687d6b45bcbca22ebd6d446d1ff23ac94f3416f15930fc94725a",
+    "docs/evidence/teaching-agent-stage-1f-r4a/generation-result.json": "0e53fc2649906c84b8c619ef85ba53f593fa9fc87b6e6b0f7bdfe36a1061f5d2",
+    "docs/evidence/teaching-agent-stage-1f-r4a/generator-regression.json": "f2e85731fb710fae57b2e23681aed0d90687107bc9c546e554c615e364a0eca2",
+    "docs/evidence/teaching-agent-stage-1f-r4a/migration-static-result.json": "33da42af002c209dfcd38caccdf1c142d5cfa03c060e9158431f68ed69eb8458",
+    "docs/evidence/teaching-agent-stage-1f-r4a/node-regressions.json": "b6b24bef0360f168beb5bf09a5bb2793deb937deedd285612734c5cc7629e407",
+    "docs/evidence/teaching-agent-stage-1f-r4a/production-safety.json": "0bdde1cd9bef9484bb5eeb785aacf7fb1275f379e23c69ff7def91e56cea04b6",
+    "docs/evidence/teaching-agent-stage-1f-r4a/release-integrity.json": "95953e965c12e68c28fb140c3b6e6b3628e5004f21842214f514f89a475892f0",
+    "docs/evidence/teaching-agent-stage-1f-r4a/release-metadata-manifest.json": "d724728896067d00126651364e2a1bac682f0ee7b76c0362c494d450dfbca7e1",
+    "docs/evidence/teaching-agent-stage-1f-r4a/reviewed-inputs.json": "1d3320aa29efe1475411a04db5e601197289d80cdfbb728eece5c41185667c56",
+    "docs/evidence/teaching-agent-stage-1f-r4a/scoped-lint.json": "e6624ee1523732ec7f0a6430b67cb74b12eec5869ac30ecb5eedb94367f19182",
+    "docs/evidence/teaching-agent-stage-1f-r4a/typescript.json": "d2e37852ca2215d8e381271ec7c502bfcbc0ae835d462e118cbac42d66dfd665",
+    "docs/evidence/teaching-agent-stage-1f-r4a/validation-result.json": "5b5be5fb5f56b758a2fc80b242719690f49c0302da013a7a87ff5236e9e8aaca",
+    "docs/teaching-agent-stage-1f-r4a-release-metadata-closure.md": "360c5c453449456c9489e21a5e932829e6ae04a822989a1aa30030a2417f48b8",
+    "tests/teaching-agent-release-metadata.test.mjs": "a6015078e5db42088dc535a6451a78b505227320845f3799a361af0799a3a906"
+  },
+  "selfHashExcluded": true,
+  "historicalR3DAndR4Unchanged": true,
+  "allMigrationSqlUnchanged": true,
+  "baselineSqlAndLedgerUnchanged": true,
+  "productConfigDependenciesUnchanged": true,
+  "secretScan": "PASS (patterns and actual runtime secret values; values not disclosed)",
+  "metadataDigestReverified": true,
+  "reportSections": 21,
+  "reportGates": 23,
+  "gitDiffCheck": "PASS",
+  "gitStatus": " M src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/HangulInteractiveBook.tsx\n M src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx\n M src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx\n M src/features/digital-textbook/components/digital-textbook-listing.tsx\n M src/features/growth-toolbox/components/growth-toolbox-listing.tsx\n M src/features/growth-toolbox/components/toolbox-items-table/columns.tsx\n M src/features/growth-toolbox/components/toolbox-items-table/index.tsx\n M src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx\n M src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx\n M src/features/learning-agent-script-studio/TeachingScriptStudio.tsx\n D supabase/migrations/202609080004_teaching_operations.sql\n D supabase/migrations/202609080005_completion_policy_management.sql\n M tests/completion-policy-management-db.test.mjs\n M tests/fixtures/mounted-recording-4a12.mjs\n M tests/fixtures/published-chapter-one.mjs\n M tests/learning-agent-script-studio.test.mjs\n M tests/smart-textbook-runtime-4a14-browser.test.mjs\n M tests/teaching-operations-db.test.mjs\n M tsconfig.json\n?? .next-learning-insights-e2e/\n?? docs/AUTHORING_PREVIEW_CONSISTENCY.md\n?? docs/AUTHORING_PREVIEW_CONSISTENCY.patch\n?? docs/AUTHORING_RESPONSIBILITIES.patch\n?? docs/AUTHORING_RESPONSIBILITIES_REORGANIZATION.md\n?? docs/CHAPTER_ONE_AUTHORING_CLOSURE_AUDIT.md\n?? docs/SYSTEM_ARCHITECTURE_OVERVIEW.md\n?? docs/TEACHING_SCRIPT_WORKSPACE_CLEANUP.md\n?? docs/TEACHING_SCRIPT_WORKSPACE_CLEANUP.patch\n?? docs/TEXTBOOK_DATA_AND_AUTHORING_WORKFLOW_AUDIT.md\n?? docs/TEXTBOOK_GRAMMAR_CONSISTENCY.patch\n?? docs/TEXTBOOK_GRAMMAR_CONSISTENCY_IMPLEMENTATION.md\n?? docs/TEXTBOOK_GRAMMAR_DEPLOYMENT_PREFLIGHT.md\n?? docs/TEXTBOOK_GRAMMAR_DEPLOYMENT_RESULT.md\n?? docs/TEXTBOOK_GRAMMAR_DEPLOYMENT_STATUS.md\n?? docs/TEXTBOOK_GRAMMAR_RETRY_FIX.patch\n?? docs/TOOLBOX_WORKSPACE_REORGANIZATION.md\n?? docs/TOOLBOX_WORKSPACE_REORGANIZATION.patch\n?? docs/assistant-current-state-audit.md\n?? docs/evidence/authoring-preview-consistency-20260913/\n?? docs/evidence/authoring-responsibilities-20260913/\n?? docs/evidence/chapter-one-authoring-closure-20260913/\n?? docs/evidence/teaching-agent-stage-1f-r1/\n?? docs/evidence/teaching-agent-stage-1f-r1b/\n?? docs/evidence/teaching-agent-stage-1f-r2/\n?? docs/evidence/teaching-agent-stage-1f-r2a/\n?? docs/evidence/teaching-agent-stage-1f-r3/\n?? docs/evidence/teaching-agent-stage-1f-r3a/\n?? docs/evidence/teaching-agent-stage-1f-r3b/\n?? docs/evidence/teaching-agent-stage-1f-r3c/\n?? docs/evidence/teaching-agent-stage-1f-r3d/\n?? docs/evidence/teaching-agent-stage-1f-r4/\n?? docs/evidence/teaching-agent-stage-1f-r4a/\n?? docs/evidence/teaching-script-workspace-20260913/\n?? docs/evidence/textbook-data-audit-20260913/\n?? docs/evidence/textbook-grammar-consistency-20260913/\n?? docs/evidence/toolbox-workspace-20260913/\n?? docs/teaching-agent-architecture-v1.md\n?? docs/teaching-agent-hangul-content-owner-checklist.md\n?? docs/teaching-agent-pilot-content-preparation.md\n?? docs/teaching-agent-pilot-operations-roles.md\n?? docs/teaching-agent-provider-policy-approval.md\n?? docs/teaching-agent-stage-0a-verification.md\n?? docs/teaching-agent-stage-0b-foundation.md\n?? docs/teaching-agent-stage-1a-student-domain.md\n?? docs/teaching-agent-stage-1b-tools-skills.md\n?? docs/teaching-agent-stage-1c-runtime.md\n?? docs/teaching-agent-stage-1d-transport.md\n?? docs/teaching-agent-stage-1e-student-ui.md\n?? docs/teaching-agent-stage-1f-production-readiness.md\n?? docs/teaching-agent-stage-1f-r1-release-blockers.md\n?? docs/teaching-agent-stage-1f-r1b-baseline-bootstrap.md\n?? docs/teaching-agent-stage-1f-r2-full-supabase-staging.md\n?? docs/teaching-agent-stage-1f-r2a-rls-regression-closure.md\n?? docs/teaching-agent-stage-1f-r3-production-operations-gate.md\n?? docs/teaching-agent-stage-1f-r3a-run-reconciliation.md\n?? docs/teaching-agent-stage-1f-r3b-pilot-readiness.md\n?? docs/teaching-agent-stage-1f-r3c-pilot-content-closure.md\n?? docs/teaching-agent-stage-1f-r3d-authoring-workflow-closure.md\n?? docs/teaching-agent-stage-1f-r4-production-authorization-gate.md\n?? docs/teaching-agent-stage-1f-r4a-release-metadata-closure.md\n?? docs/teaching-agent-tailscale-verification-request.md\n?? scripts/build-supabase-app-baseline.py\n?? scripts/supabase-baseline-catalog.sql\n?? scripts/supabase_baseline_lib.py\n?? scripts/teaching-agent-r2/\n?? scripts/teaching-agent-r3/\n?? scripts/teaching-agent-r3a/\n?? scripts/teaching-agent-r3b/\n?? scripts/teaching-agent-r3c/\n?? scripts/teaching-agent-r3d/\n?? scripts/verify-supabase-baseline.py\n?? scripts/verify-teaching-agent-release-migrations.py\n?? scripts/verify-teaching-script-workspace.mjs\n?? scripts/verify-toolbox-workspace.mjs\n?? src/app/api/teaching-agent/\n?? src/features/agent-core/\n?? src/features/digital-textbook/api/create-teaching-content.ts\n?? src/features/digital-textbook/components/create-teaching-content-entry.tsx\n?? src/features/digital-textbook/components/create-teaching-content-form.tsx\n?? src/features/growth-toolbox/components/growth-toolbox-workspace.tsx\n?? src/features/teaching-agent/\n?? supabase/bootstrap/\n?? supabase/migrations/202609100003_runtime_admission_control.sql\n?? supabase/migrations/202609100004_runtime_single_version_authoring.sql\n?? supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql\n?? supabase/migrations/202609110001_allow_evidence_graded_roleplay_publication.sql\n?? supabase/migrations/202609110002_restore_single_version_publish_wrapper.sql\n?? supabase/migrations/202609130001_textbook_grammar_authoring.sql\n?? supabase/migrations/202609130002_textbook_grammar_practice_binding.sql\n?? supabase/migrations/202609130003_runtime_authoring_nonretryable_error.sql\n?? supabase/migrations/202609140000_agent_core_foundation.sql\n?? supabase/migrations/202609140001_agent_runtime_completion_evidence.sql\n?? supabase/migrations/202609140002_agent_run_cancel_request.sql\n?? supabase/migrations/202609140003_teaching_operations_reissue.sql\n?? supabase/migrations/202609140004_completion_policy_management_reissue.sql\n?? supabase/migrations/202609140005_student_teaching_content_isolation.sql\n?? supabase/migrations/202609140006_agent_run_reconciliation.sql\n?? supabase/migrations/202609140007_teaching_content_skeleton.sql\n?? tests/agent-core-database.test.mjs\n?? tests/agent-core-foundation.test.mjs\n?? tests/fixtures/agent-core/\n?? tests/fixtures/teaching-agent/\n?? tests/teaching-agent-page-rollout.test.mjs\n?? tests/teaching-agent-release-metadata.test.mjs\n?? tests/teaching-agent-release-migrations.test.mjs\n?? tests/teaching-agent-rls-surface.test.mjs\n?? tests/teaching-agent-student-domain.test.mjs\n?? tests/teaching-agent-student-rollout.test.mjs\n?? tests/teaching-agent-student-runtime-live.test.mjs\n?? tests/teaching-agent-student-runtime.test.mjs\n?? tests/teaching-agent-student-tools-skills.test.mjs\n?? tests/teaching-agent-student-transport-database.test.mjs\n?? tests/teaching-agent-student-transport-next.test.mjs\n?? tests/teaching-agent-student-transport.test.mjs\n?? tests/teaching-agent-student-ui-browser.test.mjs\n?? tests/teaching-agent-student-ui.test.mjs\n?? tests/test_supabase_baseline.py\n?? tests/test_teaching_agent_r2_staging.py\n"
+}

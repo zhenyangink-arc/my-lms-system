@@ -1,0 +1,48 @@
+{
+  "targetedNodeTests": {
+    "total": 36,
+    "pass": 36,
+    "fail": 0,
+    "skip": 0,
+    "files": [
+      "tests/learning-agent-script-studio.test.mjs",
+      "tests/teaching-agent-rls-surface.test.mjs",
+      "tests/teaching-agent-release-migrations.test.mjs",
+      "tests/teaching-agent-student-rollout.test.mjs",
+      "tests/teaching-agent-page-rollout.test.mjs"
+    ]
+  },
+  "authoringAction": {
+    "assertions": 11,
+    "status": "PASS",
+    "scope": "Actual compiled Action; stub Auth/RPC/cache ports, no network"
+  },
+  "reconciler": {
+    "assertions": 18,
+    "status": "PASS",
+    "scope": "Owned network-none PostgreSQL; not Full Supabase/JWT proof"
+  },
+  "typescript": "PASS --noEmit --incremental false",
+  "lint": {
+    "status": "FAIL",
+    "errors": 1,
+    "file": "scripts/teaching-agent-r3d/author-browser.mjs",
+    "line": 41,
+    "rule": "@next/next/no-assign-module-variable",
+    "productFilesErrors": 0,
+    "changeMade": false
+  },
+  "manifestVersionListConsistency": "FAIL: detail inventory 8 / version index 7, missing 202609140007",
+  "fullSupabaseRerun": false,
+  "liveProviderRequests": 0,
+  "rebuild": "NOT REQUIRED: product inputs, definition, migrations, artifact unchanged since R3D",
+  "operationalInputHashes": {
+    "supabase/bootstrap/baseline-manifest.json": "c2fd640518563bfb293f7601fe709f8f3b0a870a99ac93e8783144765e5eeb8c",
+    "supabase/bootstrap/app-schema-baseline.sql": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "supabase/bootstrap/migration-ledger-baseline.json": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+    "scripts/teaching-agent-r3a/reconcile-command.py": "de6524fe53813e64ded6c9d4844233cd0fea462170fb0261ab7d19778a5eef10",
+    "scripts/teaching-agent-r3a/operator-reconcile.sql": "7c7c06fd0d00f9bb42efd8b3d611bccb31ebc324921617eb4a09d87bda90eddc",
+    "scripts/teaching-agent-r3a/operator-monitor.sql": "da5824a96fe9a5b4b3d5ea7f02c410cc4ee0a7c1a61c9f33f48d99cba040aa02",
+    "scripts/teaching-agent-r3a/README.md": "e71c334c611cc32aab18aab81856343091a7b9a5652e5bcb6a3e469271a1274c"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED DESIGN; enforcement pending C2 and production prerequisites",
+  "reuseFields": {
+    "evidenceRequirements": {
+      "mandatory": [
+        {
+          "name": "get_current_lesson_execution_facts",
+          "version": "1.0.0"
+        }
+      ],
+      "optional": []
+    }
+  },
+  "claimsRequiringDurableEvidence": [
+    "Activity completion",
+    "ever attempted",
+    "attempt count",
+    "latest correctness classification",
+    "progress status",
+    "completion percent",
+    "mastery",
+    "durable execution state"
+  ],
+  "explainInvariant": "Original lesson-context mandatory evidence remains. Durable receipt never satisfies lesson context or original sentence evidence.",
+  "receiptAuthority": "Private server ledger accepts only actual results returned by existing Core executor; no public import/set-receipt API.",
+  "receiptBindings": [
+    "runId",
+    "skillRunId",
+    "selected Skill name/version",
+    "exact Tool name/version",
+    "toolCallId",
+    "modelCallId",
+    "opaque server authority identity",
+    "subject/tenant scope binding",
+    "lesson/version/Activity/execution-node/source-node binding",
+    "content snapshot/revision",
+    "verified evidence storage/source",
+    "tool read start/completion time",
+    "observedAt/asOf",
+    "Run deadline/authority expiry"
+  ],
+  "checks": [
+    "Receipt belongs to current private ledger and selected Skill.",
+    "Exact Tool version is mandatory and allowed in current intersection.",
+    "Successful bounded result from same-snapshot read; UNKNOWN/partial durable evidence cannot satisfy completed claims.",
+    "Revalidate authority/content binding at Tool execution and final gate.",
+    "Snapshot and receipt revision match authorized content.",
+    "asOf >= current call read start and current Run start; not future; age <= 30 seconds and within Run/authority deadlines.",
+    "Result storage matches trusted transport authorization; request cannot pick source.",
+    "Private ledger rejects duplicate call IDs/concurrent dispatch and copied handles.",
+    "New failed/stale/unavailable call invalidates earlier receipt for that Tool."
+  ],
+  "evidenceRef": "Server-generated safe reference tied to actual receipt; model-written refs have no authority. Raw identifiers/private definition digests never reach output.",
+  "outputContract": {
+    "source": "validated existing Lesson Facts DTO; no copied raw rows",
+    "authoritativeFacts": "server-projected only, not model-generated numbers/prose",
+    "allowed": [
+      "completionStatus",
+      "attemptCount",
+      "latestResult",
+      "nodeProgress status/completionPercent/masteryScore/attemptCount",
+      "safe content refs",
+      "safe evidence source/revision/asOf"
+    ],
+    "currentPosition": "null/unavailable remains unavailable; sourceTeachingNodeRef is provenance only",
+    "prohibited": [
+      "answer/answer_key",
+      "secret row",
+      "private or reversible answer digest",
+      "raw attempt response",
+      "actor/tenant UUID",
+      "credential/token",
+      "unsupported authoritative free-text execution claims"
+    ]
+  },
+  "existingExplainLimitation": "Existing regex catches certain state-write claims; it is not a proof against every paraphrased unsupported execution claim. New summary must not rely on that regex. Cross-skill free-text semantic guarantees need explicit future output-contract work before claiming universal enforcement.",
+  "fixtureBoundary": "Isolated evidence can satisfy isolated test assertions only; must never satisfy production or current-DB acceptance authority."
+}

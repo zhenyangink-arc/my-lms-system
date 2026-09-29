@@ -1,0 +1,70 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "report": "docs/teaching-agent-stage-1f-r7d-c-skill-tool-binding-audit.md",
+  "priorSha256": "ada83a910172d1fda7643d8026852201137de53623364c3af32ae2f249078071",
+  "newSha256": "9e35fc9bccbe88c72081c7bcb0e5ee0378d8b50b4c7870208376ae9c4e358a65",
+  "appendOnly": true,
+  "priorApplicationAndAcceptancePackagesPreservedIn": "release-c3a/history",
+  "migrationPackagesUnmodified": [
+    {
+      "kind": "completion",
+      "approval": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-completion-migration-install.json",
+        "sha256": "28d85da2e13c057cf1a369a667298ea5983ee5507a16fd400a95814245d4f4dc",
+        "bytes": 3561
+      },
+      "migration": {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+        "mode": "0o664",
+        "bytes": 23761
+      },
+      "hashMatch": true,
+      "status": "READY_FOR_SEPARATE_INSTALL_APPROVAL",
+      "packageModified": false,
+      "originalExpectedHistoricalLedger": 458,
+      "freshCurrentLedgerRead": false,
+      "releaseOrderBinding": "completion001 then publication002, with exact approved prior-migration check. Count assumptions stop on drift; never db push.",
+      "rollback": "Forward-only schema; existing package rules retained."
+    },
+    {
+      "kind": "publication",
+      "approval": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-publication-migration-install.json",
+        "sha256": "4f467630f0c4c8ea56c4b64df8690b44cb490c697244177afbc4ab43257acbdc",
+        "bytes": 3953
+      },
+      "migration": {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+        "mode": "0o664",
+        "bytes": 13366
+      },
+      "hashMatch": true,
+      "status": "READY_FOR_SEPARATE_INSTALL_APPROVAL",
+      "packageModified": false,
+      "originalExpectedHistoricalLedger": 458,
+      "freshCurrentLedgerRead": false,
+      "releaseOrderBinding": "completion001 then publication002, with exact approved prior-migration check. Count assumptions stop on drift; never db push.",
+      "rollback": "Forward-only schema; existing package rules retained."
+    }
+  ]
+}

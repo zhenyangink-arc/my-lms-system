@@ -1,0 +1,228 @@
+▲ Next.js 16.2.10 (webpack)
+- Experiments (use with caution):
+  · serverActions
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 16.3s
+  Running TypeScript ...
+  Finished TypeScript in 51s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/29) ...
+  Generating static pages using 11 workers (7/29) 
+  Generating static pages using 11 workers (14/29) 
+  Generating static pages using 11 workers (21/29) 
+✓ Generating static pages using 11 workers (29/29) in 428ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[space]
+├ ƒ /[space]/apps/english
+├ ƒ /[space]/apps/korean
+├ ƒ /[space]/apps/korean/announcements
+├ ƒ /[space]/apps/korean/assignments
+├ ƒ /[space]/apps/korean/assignments/[assignmentId]
+├ ƒ /[space]/apps/korean/assignments/korean
+├ ƒ /[space]/apps/korean/assignments/korean/[testSlug]
+├ ƒ /[space]/apps/korean/conversation-practice
+├ ƒ /[space]/apps/korean/conversation-practice/[scenarioId]
+├ ƒ /[space]/apps/korean/conversation-practice/ai-experience
+├ ƒ /[space]/apps/korean/conversation-practice/ai-experience/practice
+├ ƒ /[space]/apps/korean/conversation-practice/ai-experience/quick
+├ ƒ /[space]/apps/korean/conversation-practice/course
+├ ƒ /[space]/apps/korean/courses
+├ ƒ /[space]/apps/korean/courses/[categorySlug]
+├ ƒ /[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]
+├ ƒ /[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]
+├ ƒ /[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]
+├ ƒ /[space]/apps/korean/grades
+├ ƒ /[space]/apps/korean/grades/completion
+├ ƒ /[space]/apps/korean/help
+├ ƒ /[space]/apps/korean/help/tickets/[ticketId]
+├ ƒ /[space]/apps/korean/library
+├ ƒ /[space]/apps/korean/practice
+├ ƒ /[space]/apps/korean/practice/course
+├ ƒ /[space]/apps/korean/practice/course/[courseKey]/[chapterSlug]
+├ ƒ /[space]/apps/korean/practice/review
+├ ƒ /[space]/apps/korean/practice/skills
+├ ƒ /[space]/apps/korean/practice/skills/[skill]
+├ ƒ /[space]/apps/korean/practice/skills/vocabulary
+├ ƒ /[space]/apps/korean/progress
+├ ƒ /[space]/apps/korean/records
+├ ƒ /[space]/apps/korean/toolbox
+├ ƒ /[space]/apps/korean/toolbox/[skill]
+├ ƒ /[space]/apps/korean/toolbox/vocabulary
+├ ƒ /[space]/apps/korean/training/[skill]/[courseSlug]/[lessonSlug]/[chapterSlug]
+├ ƒ /[space]/apps/math
+├ ƒ /[space]/apps/study-abroad
+├ ƒ /[space]/apps/study-abroad/announcements
+├ ƒ /[space]/apps/study-abroad/courses
+├ ƒ /[space]/apps/study-abroad/courses/[categorySlug]
+├ ƒ /[space]/apps/study-abroad/courses/[categorySlug]/[subcategorySlug]
+├ ƒ /[space]/apps/study-abroad/courses/[categorySlug]/[subcategorySlug]/[courseSlug]
+├ ƒ /[space]/apps/study-abroad/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]
+├ ƒ /[space]/apps/study-abroad/documents
+├ ƒ /[space]/apps/study-abroad/help
+├ ƒ /[space]/apps/study-abroad/help/tickets/[ticketId]
+├ ƒ /[space]/apps/study-abroad/universities
+├ ƒ /[space]/apps/study-abroad/universities/comparison
+├ ƒ /[space]/apps/study-abroad/universities/library
+├ ƒ /[space]/apps/study-abroad/universities/library/[universityId]
+├ ƒ /[space]/apps/study-abroad/universities/targets
+├ ƒ /[space]/apps/study-abroad/visa
+├ ƒ /[space]/apps/university
+├ ƒ /[space]/dashboard
+├ ƒ /[space]/dashboard/admin
+├ ƒ /[space]/dashboard/admin/accounts
+├ ƒ /[space]/dashboard/admin/accounts/[profileId]
+├ ƒ /[space]/dashboard/admin/agents
+├ ƒ /[space]/dashboard/admin/announcements
+├ ƒ /[space]/dashboard/admin/apps
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/[section]
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/analytics
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/assessments
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/assignments/[assignmentId]
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/class-today
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/class-today/[studentId]
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/completion-review
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/content
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/conversation
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/conversation/scenarios
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/documents
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/grades
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/learning-plans
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/practice-center
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/practice-center/[courseChapterId]
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/practice-insights
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/records
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/settings
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/students
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/teaching-scripts
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/preview
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/textbooks
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/toolbox
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/universities
+├ ƒ /[space]/dashboard/admin/apps/[appSlug]/visa
+├ ƒ /[space]/dashboard/admin/assignments
+├ ƒ /[space]/dashboard/admin/assignments/[assignmentId]
+├ ƒ /[space]/dashboard/admin/assignments/chapter-tests
+├ ƒ /[space]/dashboard/admin/assignments/exam
+├ ƒ /[space]/dashboard/admin/assignments/homework
+├ ƒ /[space]/dashboard/admin/conversation-practice
+├ ƒ /[space]/dashboard/admin/conversation-practice/[scenarioId]
+├ ƒ /[space]/dashboard/admin/courses
+├ ƒ /[space]/dashboard/admin/development-execution
+├ ƒ /[space]/dashboard/admin/development-execution/runtime
+├ ƒ /[space]/dashboard/admin/development-execution/runtime/media
+├ ƒ /[space]/dashboard/admin/digital-textbook
+├ ƒ /[space]/dashboard/admin/documents
+├ ƒ /[space]/dashboard/admin/documents/[studentId]
+├ ƒ /[space]/dashboard/admin/grades
+├ ƒ /[space]/dashboard/admin/grades/[itemId]
+├ ƒ /[space]/dashboard/admin/growth-toolbox
+├ ƒ /[space]/dashboard/admin/help
+├ ƒ /[space]/dashboard/admin/help/tickets/[ticketId]
+├ ƒ /[space]/dashboard/admin/home-tree
+├ ƒ /[space]/dashboard/admin/library
+├ ƒ /[space]/dashboard/admin/my-students
+├ ƒ /[space]/dashboard/admin/permissions
+├ ƒ /[space]/dashboard/admin/profile
+├ ƒ /[space]/dashboard/admin/question-bank
+├ ƒ /[space]/dashboard/admin/records
+├ ƒ /[space]/dashboard/admin/student-assignments
+├ ƒ /[space]/dashboard/admin/tenants
+├ ƒ /[space]/dashboard/admin/tenants/[tenantId]
+├ ƒ /[space]/dashboard/admin/tenants/history
+├ ƒ /[space]/dashboard/admin/token-usage
+├ ƒ /[space]/dashboard/admin/universities
+├ ƒ /[space]/dashboard/admin/visa
+├ ƒ /[space]/dashboard/admin/visa/[studentId]
+├ ƒ /[space]/dashboard/announcements
+├ ƒ /[space]/dashboard/assignments
+├ ƒ /[space]/dashboard/assignments/[assignmentId]
+├ ƒ /[space]/dashboard/assignments/korean
+├ ƒ /[space]/dashboard/assignments/korean/[testSlug]
+├ ƒ /[space]/dashboard/conversation-practice
+├ ƒ /[space]/dashboard/conversation-practice/[scenarioId]
+├ ƒ /[space]/dashboard/conversation-practice/ai-experience
+├ ƒ /[space]/dashboard/conversation-practice/ai-experience/practice
+├ ƒ /[space]/dashboard/conversation-practice/ai-experience/quick
+├ ƒ /[space]/dashboard/conversation-practice/course
+├ ƒ /[space]/dashboard/documents
+├ ƒ /[space]/dashboard/grades
+├ ƒ /[space]/dashboard/help
+├ ƒ /[space]/dashboard/help/tickets/[ticketId]
+├ ƒ /[space]/dashboard/library
+├ ƒ /[space]/dashboard/live/[sessionId]
+├ ƒ /[space]/dashboard/profile
+├ ƒ /[space]/dashboard/progress
+├ ƒ /[space]/dashboard/records
+├ ƒ /[space]/dashboard/settings
+├ ƒ /[space]/dashboard/toolbox
+├ ƒ /[space]/dashboard/toolbox/[skill]
+├ ƒ /[space]/dashboard/toolbox/vocabulary
+├ ƒ /[space]/dashboard/universities
+├ ƒ /[space]/dashboard/universities/comparison
+├ ƒ /[space]/dashboard/universities/library
+├ ƒ /[space]/dashboard/universities/library/[universityId]
+├ ƒ /[space]/dashboard/universities/targets
+├ ƒ /[space]/dashboard/visa
+├ ƒ /[space]/live/[sessionId]
+├ ○ /access-denied
+├ ƒ /account-disabled
+├ ƒ /api/admin/model-usage/learning-agent-model
+├ ƒ /api/agent-chat
+├ ƒ /api/assignments/[assignmentId]/draft
+├ ƒ /api/assignments/[assignmentId]/recordings/[questionId]
+├ ƒ /api/assignments/[assignmentId]/start
+├ ƒ /api/assignments/recordings/[evidenceId]
+├ ƒ /api/conversation-practice/ai-experience/chat
+├ ƒ /api/conversation-practice/ai-experience/qwen-chat
+├ ƒ /api/conversation-practice/ai-experience/ws-ticket
+├ ƒ /api/course-assets/[kind]/[entityId]
+├ ƒ /api/digital-textbook/audio/[activityId]
+├ ƒ /api/digital-textbook/recordings/[activityId]
+├ ƒ /api/digital-textbook/transcript/[activityId]
+├ ƒ /api/ebook-progress
+├ ƒ /api/learning-agent/blackboard-media
+├ ƒ /api/learning-agent/characters/[pose]
+├ ƒ /api/learning-agent/companions/[companion]
+├ ƒ /api/learning-agent/events
+├ ƒ /api/learning-agent/preview-event
+├ ƒ /api/learning-agent/preview-respond
+├ ƒ /api/learning-agent/respond
+├ ƒ /api/learning-agent/speech/[assetId]
+├ ƒ /api/learning-agent/teacher-video
+├ ƒ /api/lesson-questions/[questionId]/mark-read
+├ ƒ /api/lesson-resources/[resourceId]/download
+├ ƒ /api/library/[resourceId]/download
+├ ƒ /api/live-class/[sessionId]/voice
+├ ƒ /api/smart-textbook-runtime-audit/character
+├ ƒ /api/smart-textbook-runtime-audit/learning
+├ ƒ /api/smart-textbook-runtime-audit/listening
+├ ƒ /api/smart-textbook-runtime-audit/pattern-audio
+├ ƒ /api/smart-textbook-runtime-audit/recording
+├ ƒ /api/smart-textbook-runtime-audit/speech
+├ ƒ /api/smart-textbook-runtime-audit/teacher
+├ ƒ /api/teaching-agent/runs
+├ ƒ /api/teaching-agent/runs/[runId]
+├ ƒ /api/teaching-agent/runs/[runId]/cancel
+├ ƒ /dashboard
+├ ƒ /dashboard/[...rest]
+├ ƒ /dev-preview/profile
+├ ○ /login
+├ ƒ /login/redirect
+├ ○ /manifest.webmanifest
+└ ○ /register
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

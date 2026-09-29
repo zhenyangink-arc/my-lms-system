@@ -1,0 +1,65 @@
+{
+  "status": "PROPOSAL ONLY",
+  "role": "PEDAGOGICAL AUTHORING LAYER",
+  "mappingCardinality": "A node may map to several blocks/activities/cues. Step IDs must not be equated with node IDs: current runtime step generally maps to module; native projection must bind node, segment and execution target explicitly.",
+  "nodes": [
+    {
+      "node": 1,
+      "type": "opening",
+      "title": "今天认识韩文字母",
+      "proposedExecution": "teacher explanation; optional future video",
+      "sourceChanged": false
+    },
+    {
+      "node": 2,
+      "type": "explanation",
+      "title": "韩文字母怎么组成？",
+      "proposedExecution": "text/visual letter assembly block for 가",
+      "sourceChanged": false
+    },
+    {
+      "node": 3,
+      "type": "explanation",
+      "title": "先认识基础元音",
+      "proposedExecution": "teacher explanation plus six-vowel visual",
+      "sourceChanged": false
+    },
+    {
+      "node": 4,
+      "type": "explanation",
+      "title": "再认识基础辅音",
+      "proposedExecution": "teacher explanation plus eight-consonant visual",
+      "sourceChanged": false
+    },
+    {
+      "node": 5,
+      "type": "example",
+      "title": "把辅音和元音放在一起",
+      "proposedExecution": "examples/optional future video; no audio correctness claim",
+      "sourceChanged": false
+    },
+    {
+      "node": 6,
+      "type": "explanation",
+      "title": "一个音节里面有什么？",
+      "proposedExecution": "role/position visual for 가, 고, 한",
+      "sourceChanged": false
+    },
+    {
+      "node": 7,
+      "type": "instruction",
+      "title": "一起试一试",
+      "proposedExecution": "two future existing single_choice Activities; text stays frozen",
+      "sourceChanged": false
+    },
+    {
+      "node": 8,
+      "type": "summary",
+      "title": "今天学了什么？",
+      "proposedExecution": "teacher summary text or future media",
+      "sourceChanged": false
+    }
+  ],
+  "frozenContent": "UNCHANGED",
+  "objectsCreated": 0
+}

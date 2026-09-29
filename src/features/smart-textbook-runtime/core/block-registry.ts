@@ -7,10 +7,10 @@ export const rendererRegistry = Object.freeze(Object.fromEntries(blockTypes.map(
   type, capability:blockRegistryV1[type].capability,
   // Chapter-one compatibility implementation evidence precedes promotion;
   // teacher-readiness additionally requires strict mounted integration proof.
-  rendererStatus:(['text','multiple_choice','compat.learning.v1','compat.teacher.v1'].includes(type)?'implemented':'unsupported') as 'implemented'|'unsupported',
-  inspectable:['text','multiple_choice','compat.learning.v1','compat.teacher.v1'].includes(type),
+  rendererStatus:(['text','video','multiple_choice','compat.learning.v1','compat.teacher.v1'].includes(type)?'implemented':'unsupported') as 'implemented'|'unsupported',
+  inspectable:['text','video','multiple_choice','compat.learning.v1','compat.teacher.v1'].includes(type),
 }])) as Record<BlockTypeV1,{type:BlockTypeV1;capability:string;rendererStatus:'implemented'|'unsupported';inspectable:boolean}>);
-export const executableCapabilities = Object.freeze(['layout.v1','navigation.linear.v1','progress.server.v1',...blockTypes.filter(t=>rendererRegistry[t].rendererStatus==='implemented').map(t=>rendererRegistry[t].capability)]);
+export const executableCapabilities = Object.freeze(['layout.v1','navigation.linear.v1','progress.server.v1','timeline.cue.v1',...blockTypes.filter(t=>rendererRegistry[t].rendererStatus==='implemented').map(t=>rendererRegistry[t].capability)]);
 export function validateRuntimeActivation(manifest:unknown){return validateLessonManifestV1(manifest,{supportedCapabilities:executableCapabilities});}
 export function runtimeReadiness(manifest:LessonManifestV1,nonUiRuntimeReady:boolean){
   const validation=validateRuntimeActivation(manifest);

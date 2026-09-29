@@ -1,0 +1,478 @@
+{
+  "stage": "R7D-C Native Compiler Identifier Contract Correction",
+  "recordedAt": "2026-09-18T04:18:38.995523+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_SCHEMA_DIAGNOSTIC",
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationFilesCreated": 0,
+  "testsImplemented": 0,
+  "fullImplementationTestsExecuted": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstall": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "publish": 0,
+  "browserProductionRequests": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "NAMING_CORRECTION_VERIFIED_SCOPE34_RESTORED_FOR_APPROVAL",
+  "oldProposedCompilerVersion": "native-publication/1",
+  "newCompilerVersion": "native-publication-1",
+  "oldAccepted": false,
+  "newAccepted": true,
+  "oldIdentifierStatus": "UNIMPLEMENTED_SUPERSEDED_DESIGN_IDENTIFIER",
+  "productSchemaChangeRequired": false,
+  "stableIdSchemaChanged": false,
+  "historicalContractChanged": false,
+  "reason": "new unimplemented identifier corrected to existing Manifest grammar",
+  "search": {
+    "search": "byte substring plus gzip decompressed stream; includes ignored/hidden build and config files; no content values exported",
+    "excluded": [
+      ".git metadata",
+      "node_modules third-party dependencies",
+      "symlinks outside traversal"
+    ],
+    "scannedFiles": 8195,
+    "gzipStreamsScanned": 137,
+    "matches": [
+      "docs/teaching-agent-stage-1f-r7d-c-skill-tool-binding-audit.md",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-production-prerequisites-expanded.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-native-publication-versioning-design.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-native-compiler-version-scope-blocker.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-production-prerequisites-expanded-35.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-expanded-implementation-result.json"
+    ],
+    "gzipMatches": [],
+    "errors": [],
+    "onlyDocumentationMatches": true
+  },
+  "searchConclusion": "No local runtime, migration, authority fixture, production config, external-wire implementation or generated artifact dependency found. No current DB or external system was queried.",
+  "diagnostic": {
+    "kind": "PURE_LOCAL_EXISTING_SCHEMA_DIAGNOSTIC",
+    "cases": [
+      {
+        "schema": "snapshot.compilerVersion",
+        "value": "native-publication-1",
+        "expected": true,
+        "accepted": true
+      },
+      {
+        "schema": "snapshot.compilerVersion",
+        "value": "native-publication/1",
+        "expected": false,
+        "accepted": false
+      },
+      {
+        "schema": "snapshot.compilerVersion",
+        "value": "native/publication/1",
+        "expected": false,
+        "accepted": false
+      },
+      {
+        "schema": "snapshot.compilerVersion",
+        "value": "unknown/value",
+        "expected": false,
+        "accepted": false
+      },
+      {
+        "schema": "snapshot.compilerVersion",
+        "value": "phase-3a-fixture-v1",
+        "expected": true,
+        "accepted": true
+      },
+      {
+        "schema": "idSchema",
+        "value": "activity/1",
+        "expected": false,
+        "accepted": false
+      },
+      {
+        "schema": "idSchema",
+        "value": "node/1",
+        "expected": false,
+        "accepted": false
+      }
+    ],
+    "passed": 7,
+    "fullHistoricalManifestStructureAccepted": true,
+    "compilerFieldSubstitutionStructureAccepted": true,
+    "limitations": "In-memory grammar diagnostic only. No native publication certification or production fixture created. The historical fixture on disk is unchanged.",
+    "currentDBReads": 0,
+    "currentDBWrites": 0
+  },
+  "compilerVersionSemantics": {
+    "meaning": "Opaque stable compiler identifier; no slash-version namespace parser found.",
+    "sourceAudit": [
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+        "lines": [
+          5,
+          10,
+          82
+        ],
+        "role": "Compiler identifier uses unchanged stable idSchema."
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/targets.ts",
+        "lines": [
+          3
+        ],
+        "role": "Stable ID grammar rejects slash; unchanged."
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+        "lines": [
+          35
+        ],
+        "role": "Official reader parses unchanged Manifest structure."
+      },
+      {
+        "path": "src/lib/smart-textbook-legacy-adapter/adapter.server.ts",
+        "lines": [
+          53
+        ],
+        "role": "Legacy writer assigns its adapter constant, not a parsed slash namespace."
+      },
+      {
+        "path": "src/lib/smart-textbook-legacy-adapter/readiness.server.ts",
+        "lines": [
+          130
+        ],
+        "role": "Legacy writer assigns readiness constant unchanged."
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+        "lines": [
+          36,
+          37
+        ],
+        "role": "Legacy appends .media1 and includes compiler identity in legacy snapshot ID hash; untouched."
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+        "lines": [
+          15
+        ],
+        "role": "Development fixture uses native-frozen-v1; unchanged and not a production publisher."
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "lines": [
+          56,
+          65,
+          69,
+          73,
+          75,
+          81,
+          83
+        ],
+        "role": "Envelope copies Manifest compiler identity; string schema, full Manifest validation, exact equality, seal/private/pin association checks."
+      },
+      {
+        "path": "tests/smart-textbook-publication-closure.test.mjs",
+        "lines": [
+          114
+        ],
+        "role": "Historical test appends .isolated-release2 to identity; no slash protocol required."
+      },
+      {
+        "path": "tests/fixtures/smart-textbook-runtime-v1/chapter-one.legacy.json",
+        "lines": [
+          18
+        ],
+        "role": "Historical legal compiler identifier remains accepted."
+      }
+    ],
+    "nativeEqualityContract": {
+      "envelope.compilerVersion": "native-publication-1",
+      "manifest.snapshot.compilerVersion": "native-publication-1",
+      "mismatch": "REJECT"
+    },
+    "dispatch": "revision + publicationKind only; compiler identifier is a certification pin, never a fallback discriminator",
+    "normalization": "FORBIDDEN",
+    "runtimeAliasForOldName": false,
+    "digestImpact": "No persisted native artifact exists in local evidence. Use corrected literal consistently in future compiler-derived pins/seals/private associations. Existing semantic Manifest digest excludes snapshot metadata; legacy byte/hash interpretation and code remain unchanged."
+  },
+  "unchangedVersionContracts": {
+    "revision": "publish-foundation/2",
+    "publicationKind": "canonical-native",
+    "privateContract": "canonical-native-publication/1",
+    "manifestSchemaVersion": "1.0.0",
+    "runtimeContract": "uply-runtime/1",
+    "completionReceipt": "activity-completion/3",
+    "tool": "get_current_lesson_execution_facts@1.1.0",
+    "skill": "summarize-current-lesson-execution@1.1.0",
+    "output": "student-execution-summary@1.1.0"
+  },
+  "scope": {
+    "productCount": 34,
+    "existingCount": 30,
+    "newCount": 4,
+    "freshExistingHashes": "30/30 MATCH",
+    "newPaths": "4/4 ABSENT",
+    "boundaryLocks": "24/24 MATCH",
+    "contractsTs": "UNCHANGED_BOUNDARY",
+    "sourceChecks": [
+      {
+        "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/tools/contracts.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/agent-core/contracts/server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/agent-core/observability/trace.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+        "match": true
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+        "match": true
+      },
+      {
+        "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+        "match": true
+      },
+      {
+        "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/transport/production.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+        "match": true
+      },
+      {
+        "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "match": true
+      }
+    ],
+    "assessment": "Prior publication/runtime/agent/persistence dependency design retained; compiler naming correction removes the demonstrated 35th-file requirement. Implementation and isolated validation remain future work under STOP rules.",
+    "responsibilityCoverage": {
+      "nativePublication": "Original artifact/capture/publisher/repository/legacy consumers + native-publication.server.ts",
+      "productionProvenance": "Published native read authority + production binding + execution contracts",
+      "toolSkillVersions": "Original Tool/read-port/Skill output/evidence files",
+      "persistedEvidence": "Original Core artifact/trace/repositories/guard plus separate completion migration",
+      "coordinatorRegistryPermission": "Original selected-skill coordinator/factory/definition/profile/registries/policy"
+    }
+  },
+  "migrationFilenameLocks": {
+    "completion": "202609180001_agent_durable_skill_completion.sql",
+    "publication": "202609180002_native_publication_contract.sql",
+    "status": "LOCKED_NOT_CREATED",
+    "reference": "r7d-c-publication-migration-filename-lock.json",
+    "responsibilitiesChanged": false
+  },
+  "historicalEvidencePreserved": [
+    {
+      "path": "r7d-c-native-compiler-version-scope-blocker.json",
+      "sha256": "e93fa87c507d72e3a3c3661a52f2fa1165888a4a09f74b550540f8f6d9b2e200",
+      "status": "UNCHANGED_HISTORICAL"
+    },
+    {
+      "path": "approval-r7d-c-production-prerequisites-expanded-35.json",
+      "sha256": "8b14d24c1e6e294fde295a14bde957d4840cc6fa8bc138e1d3fdb2df0ccb88e6",
+      "status": "UNCHANGED_HISTORICAL"
+    },
+    {
+      "path": "approval-r7d-c-production-prerequisites-expanded.json",
+      "sha256": "3ab79ff304f17438144269bded8c2aea1c484a942672a311bcd7e0e33ed6eeb9",
+      "status": "UNCHANGED_HISTORICAL"
+    }
+  ],
+  "limitations": [
+    "Schema compatibility is not native artifact certification or migration validation.",
+    "No persisted production state was inspected; absence of implemented native product dependencies is based on local repository audit and the supplied unimplemented baseline.",
+    "35-file proposal remains unapproved historical diagnostic; no product file is added to scope by this correction alone."
+  ]
+}

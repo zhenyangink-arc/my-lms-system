@@ -53,7 +53,7 @@ test('actual React Renderer in Chromium: layouts, 8 Steps, MC server roundtrip, 
       await page.getByRole('button',{name:selected.steps[0].title['zh-CN'],exact:true}).click();
       sceneImage=false;
     });
-    await t.test('strict Runtime refuses genuinely unsupported video; minimal native Runtime activates',async()=>{
+    await t.test('strict Runtime refuses video without a bound native execution service; minimal native Runtime activates',async()=>{
       selected=blockManifest('video');
       await page.goto(url+'/?mode=strict');await page.getByRole('alert').waitFor();assert.match(await page.locator('body').innerText(),/暂不能激活/);
       selected=minimalManifest();await page.reload();await page.locator('.lesson-runtime').waitFor();assert.equal(await page.locator('nav').count(),1);selected=structuredClone(manifest);

@@ -119,3 +119,10 @@
 .runtime-teacher-controls button {min-height:44px;}
 .runtime-teacher-caption {white-space:pre-line;}
 @media(max-width:640px){.runtime-teacher-figure{left:var(--teacher-narrow-x);top:var(--teacher-narrow-y);transform:translateX(-50%) scale(var(--teacher-narrow-scale));}.runtime-teacher-board{right:20%;left:0;}.runtime-teacher-stage{min-height:310px;}}
+
+.runtime-native-video video{display:block;width:100%;max-height:50vh;background:#111;}
+.runtime-media-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-block:12px;}
+.runtime-media-controls button{min-height:44px;}
+.runtime-media-controls label{display:flex;align-items:center;gap:8px;}
+.lesson-runtime[data-presentation="learning"] .runtime-classroom{grid-template-columns:minmax(0,1fr) minmax(0,2fr);}
+@media(max-width:767px){.lesson-runtime[data-presentation="learning"] .runtime-classroom{grid-template-columns:minmax(0,1fr);}.runtime-media-controls label{width:100%;}}

@@ -1,0 +1,86 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "result": "READY",
+  "candidateBuildId": "KeQ6bud_Us1ED6hnG7YB8",
+  "classification": "PRODUCTION_COMPATIBLE_DEPLOYMENT_CANDIDATE",
+  "deploymentCandidate": true,
+  "checks": {
+    "typegen": 0,
+    "typescript": 0,
+    "build": 0
+  },
+  "artifacts": [
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "bytes": 338632
+    },
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "bytes": 14333921
+    },
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "bytes": 7823101
+    }
+  ],
+  "fullSourceFiles": 1360,
+  "deploymentSourceClosure": 143,
+  "productDeploymentFiles": 142,
+  "buildConfigurationFiles": 1,
+  "fullNext": "Includes compiled server/client/font/static assets and rebuilt existing B3 child/media; excludes only regenerable build cache. Child never executed.",
+  "requiredUnchangedRuntimeFiles": {
+    "package": {
+      "presence": "EXISTS",
+      "sha256": "3f86c618474619c4e3ad49ae619e096a602a0d32bb93b97b3597f18f84cc90f1",
+      "mode": "0o644"
+    },
+    "lockfile": {
+      "presence": "EXISTS",
+      "sha256": "32afe671ae11e981d3d889c546b4c6a8e240e95ce934be2aa9f76bc81c2e7a2d",
+      "mode": "0o644"
+    },
+    "publicTree": "d35d61b7d6b7c2bc361f18be9778c1f285bfec8527107a03eec8ba9dfa4db64c",
+    "dependencyTree": "931b3b5177bdc0819ef2dc70819bfc15ce3fe379fd00c5011776f8936d3129b1",
+    "launcher": {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "presence": true,
+      "sha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+      "mode": "0o600"
+    },
+    "runtimeConfig": {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+      "presence": true,
+      "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+      "mode": "0o600"
+    }
+  },
+  "sourceLock": "release-c3a/candidate-full-source-lock.json",
+  "closureManifest": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-deployment-closure-audit.json",
+  "routeSetUnchanged": true,
+  "previousValidationBuildPreserved": "dtQUY4hWv780Fx52x8nXq",
+  "previousValidationArtifactNotPromoted": true,
+  "productionFactsConfigCurrentlyAbsent": true,
+  "featureOffDeploymentSafe": true,
+  "readonlyExecutionReady": false
+}

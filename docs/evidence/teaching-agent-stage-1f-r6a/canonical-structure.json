@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "actualCounts": {
+    "lessons": 1,
+    "digital_textbooks": 1,
+    "digital_textbook_versions": 1,
+    "digital_textbook_chapters": 1,
+    "digital_textbook_modules": 1,
+    "digital_textbook_nodes": 0,
+    "digital_textbook_activities": 0,
+    "learning_agent_lessons": 1,
+    "learning_agent_steps": 0,
+    "learning_agent_script_versions": 0,
+    "learning_agent_script_nodes": 0
+  },
+  "parentChainAndProfilePass": true,
+  "textbookCount": 1,
+  "chains": [
+    {
+      "textbookHash": "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525",
+      "textbookStatus": "draft",
+      "versionHash": "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b",
+      "versionStatus": "draft",
+      "versionNumber": 1,
+      "versionPublishedAt": null,
+      "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+      "chapterStatus": "draft",
+      "chapterNumber": 0,
+      "chapterSlug": "preparation",
+      "chapterTitle": {
+        "zh-CN": "韩文字母入门"
+      },
+      "moduleHash": "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1",
+      "moduleCode": "orientation",
+      "moduleOrder": 1,
+      "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+      "teachingLessonStatus": "draft",
+      "revision": 1,
+      "objectives": {
+        "zh-CN": [
+          "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+          "能辨认并朗读基础元音和常用基础辅音。",
+          "理解初声、中声、终声组成韩语音节的基本方式。",
+          "能将基础辅音与元音组合成简单韩语音节。"
+        ]
+      },
+      "profileHash": "880a3c837b835647cac8de9167f70625b9c0e88f848d072d94a418cbc1492148",
+      "profileCode": "uply-korean-teacher",
+      "profileStatus": "published",
+      "profileShared": true,
+      "appMatches": true,
+      "createdAtUtc": "2026-09-16T06:42:38.037548+00:00",
+      "scriptVersions": 0,
+      "scriptNodes": 0
+    }
+  ]
+}

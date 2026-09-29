@@ -1,0 +1,51 @@
+{
+  "attemptedAt": "2026-09-15T14:12:56+09:00",
+  "exit": 0,
+  "owned": true,
+  "serveAfterAdd": {
+    "TCP": {
+      "443": {
+        "HTTPS": true
+      },
+      "4000": {
+        "HTTPS": true
+      },
+      "8443": {
+        "HTTPS": true
+      },
+      "9443": {
+        "HTTPS": true
+      }
+    },
+    "Web": {
+      "kmgwak-system-product-name.taila18cd5.ts.net:4000": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:4000"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3001"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:8443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3000"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:9443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:43183"
+          }
+        }
+      }
+    }
+  }
+}

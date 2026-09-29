@@ -1,0 +1,131 @@
+{
+  "status": "MAPPED FOR ISOLATED PROBE; NOT CURRENT DB AUTHORIZATION",
+  "authVersion": "v2.197.0",
+  "currentTriggersMatch": [
+    {
+      "table": "auth.users",
+      "name": "on_auth_user_created",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "auth.users",
+      "name": "z_sync_auth_registration_metadata",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.account_management_audit_logs",
+      "name": "account_management_audit_logs_tenant_scope",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.profiles",
+      "name": "enforce_profile_self_service_fields_trigger",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.profiles",
+      "name": "profiles_audit_management_change",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.profiles",
+      "name": "profiles_set_management_timestamps",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.profiles",
+      "name": "profiles_sync_bootstrap_membership",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "name": "tenant_memberships_audit_change",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "name": "tenant_memberships_enforce_integrity",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "name": "tenant_memberships_set_updated_at",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenants",
+      "name": "tenants_seed_learning_grading_comments",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenants",
+      "name": "tenants_seed_student_apps",
+      "definitionMatch": true,
+      "enabled": "O"
+    },
+    {
+      "table": "public.tenants",
+      "name": "tenants_set_updated_at",
+      "definitionMatch": true,
+      "enabled": "O"
+    }
+  ],
+  "tenantProbe": [
+    {
+      "table_name": "public.learning_grading_comments",
+      "operation": "INSERT",
+      "count": 4
+    },
+    {
+      "table_name": "public.tenant_student_apps",
+      "operation": "INSERT",
+      "count": 5
+    },
+    {
+      "table_name": "public.tenants",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "deactivateProfileBeforeMembership": [
+    {
+      "table_name": "public.profiles",
+      "operation": "UPDATE",
+      "count": 1
+    }
+  ],
+  "createSuspendedMembership": [
+    {
+      "table_name": "public.tenant_membership_audit_logs",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.tenant_memberships",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "finalCounts": {
+    "actorRows": 1,
+    "tenantRows": 1,
+    "profileInactive": 1,
+    "membershipSuspended": 1,
+    "authSessions": 0,
+    "refreshTokens": 0,
+    "actorForeignKeyValid": true
+  },
+  "method": "Only schema-only isolated PG. Tenant exact INSERT body and profile/membership repository DML used as trigger probes; NOT an end-to-end Owner UI provisioning workflow. No Auth/RLS trigger disabled. App catalog5 rows cloned as setup references, excluded from tenant delta. No attempts or progress executed.",
+  "currentDbWrites": 0
+}

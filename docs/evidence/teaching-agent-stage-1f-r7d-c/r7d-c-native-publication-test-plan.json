@@ -1,0 +1,230 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "PLANNED_ONLY",
+  "tests": [
+    {
+      "id": "P01",
+      "case": "Legacy snapshot validates with identical serialized bytes, hashes and meaning",
+      "executed": false
+    },
+    {
+      "id": "P02",
+      "case": "Native real text/choice captured fixture compiles and validates without legacy data",
+      "executed": false
+    },
+    {
+      "id": "P03",
+      "case": "Missing/extra/unbound required dependency rejects",
+      "executed": false
+    },
+    {
+      "id": "P04",
+      "case": "Native does not require historical pages/repeat/listening/navigation/75-media proofs",
+      "executed": false
+    },
+    {
+      "id": "P05",
+      "case": "Native artifact relabeled v1 rejects",
+      "executed": false
+    },
+    {
+      "id": "P06",
+      "case": "Legacy artifact relabeled v2 rejects",
+      "executed": false
+    },
+    {
+      "id": "P07",
+      "case": "Unknown/missing/null revision-kind tuple rejects in TS and SQL",
+      "executed": false
+    },
+    {
+      "id": "P08",
+      "case": "Dependency capture and stored fence equality required",
+      "executed": false
+    },
+    {
+      "id": "P09",
+      "case": "CAS absent-pointer and concurrent expected-generation conflicts preserved",
+      "executed": false
+    },
+    {
+      "id": "P10",
+      "case": "Seal/manifest/source/private digest mismatch rejects",
+      "executed": false
+    },
+    {
+      "id": "P11",
+      "case": "Wrong lesson/textbook/version/chapter/module association rejects",
+      "executed": false
+    },
+    {
+      "id": "P12",
+      "case": "Wrong Activity/execution/source-node binding rejects",
+      "executed": false
+    },
+    {
+      "id": "P13",
+      "case": "Historical records/fences/history unchanged after forward migration",
+      "executed": false
+    },
+    {
+      "id": "P14",
+      "case": "Native producer through same publisher/repository -> native reader passes",
+      "executed": false
+    },
+    {
+      "id": "P15",
+      "case": "Native -> old loader/session rejects before legacy projection",
+      "executed": false
+    },
+    {
+      "id": "P16",
+      "case": "Legacy -> native facts reader rejects",
+      "executed": false
+    },
+    {
+      "id": "P17",
+      "case": "Missing/ambiguous explicit source reference rejects; no Node7 inference",
+      "executed": false
+    },
+    {
+      "id": "P18",
+      "case": "Multiple valid attempt histories supported; no global attempts2 rule",
+      "executed": false
+    },
+    {
+      "id": "P19",
+      "case": "Native multiple-counted-Activity node/unsupported semantics fail closed",
+      "executed": false
+    },
+    {
+      "id": "P20",
+      "case": "Required media/cue/unsupported source cannot be silently omitted",
+      "executed": false
+    },
+    {
+      "id": "P21",
+      "case": "Single verified READ ONLY snapshot across publication/fence/attempt/progress/receipt",
+      "executed": false
+    },
+    {
+      "id": "P22",
+      "case": "Publication pointer or authoring-revision drift classified stale; no mixed snapshots",
+      "executed": false
+    },
+    {
+      "id": "P23",
+      "case": "Active student/self tenant/published policy remains unchanged; B2/Owner/development issuer rejects",
+      "executed": false
+    },
+    {
+      "id": "P24",
+      "case": "Edit-window drain/request leases/retirement behavior preserved",
+      "executed": false
+    },
+    {
+      "id": "P25",
+      "case": "Retired snapshot remains audit-readable; live resolve/rollback rejection unchanged",
+      "executed": false
+    },
+    {
+      "id": "P26",
+      "case": "Historical pinned session remains pinned only where existing validity rules allow",
+      "executed": false
+    },
+    {
+      "id": "P27",
+      "case": "Native roleplay/legacy secret waiver unavailable; v1 exception preserved",
+      "executed": false
+    },
+    {
+      "id": "P28",
+      "case": "Mutation rollback leaves snapshot/bindings/pointer/history/fence atomic",
+      "executed": false
+    },
+    {
+      "id": "P29",
+      "case": "Public/authenticated/base bypass RPC permissions rejected",
+      "executed": false
+    },
+    {
+      "id": "P30",
+      "case": "Public Manifest/Tool/logs omit private answers/digests/Auth IDs and credentials",
+      "executed": false
+    },
+    {
+      "id": "P31",
+      "case": "Old legacy compiler/digest normalizers and media exception results unchanged",
+      "executed": false
+    },
+    {
+      "id": "P32",
+      "case": "No native failure fallback, no producer selection from model input",
+      "executed": false
+    },
+    {
+      "id": "P33",
+      "case": "Different native chapters/script versions/aliases/options do not inherit frozen dev literals",
+      "executed": false
+    },
+    {
+      "id": "P34",
+      "case": "Publication migration and completion migration independently validated in owned PG",
+      "executed": false
+    },
+    {
+      "id": "P35",
+      "case": "Old readonly/development receipt version cannot satisfy production Tool1.1/Skill1.1",
+      "executed": false
+    },
+    {
+      "id": "P36",
+      "case": "Typed multi-requirement completion evidence, CAS/fence/cancel/Explain regression per original production test plan",
+      "executed": false
+    }
+  ],
+  "newTestFilesProposed": [
+    "tests/teaching-agent-r7d-native-publication.test.mjs",
+    "tests/teaching-agent-r7d-native-publication-db.test.mjs",
+    "tests/fixtures/teaching-agent-r7d-production/native-publication-fixture.mjs",
+    "tests/teaching-agent-r7d-production-binding.test.mjs",
+    "tests/teaching-agent-r7d-production-provenance.test.mjs",
+    "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+    "tests/fixtures/teaching-agent-r7d-production/published-fixture.mjs"
+  ],
+  "existingTestsToRetain": [
+    "tests/smart-textbook-publish-foundation.test.mjs",
+    "tests/smart-textbook-publication-closure.test.mjs",
+    "tests/smart-textbook-legacy-adapter.test.mjs",
+    "tests/teaching-agent-r7d-c-skill-binding.test.mjs",
+    "tests/teaching-agent-r7d-c-evidence-gate.test.mjs",
+    "tests/teaching-agent-r7d-c-planning-boundary.test.mjs",
+    "existing C2 related238 and R7D/R7C/B3/Student/Core/persistence regressions"
+  ],
+  "fixtureGap": "Existing publicationPostgres installs foundation only; publishedChapterFixture installs only the two initial publication migrations. Neither alone validates latest single-version/roleplay/restored-wrapper/semantic-normalizer/PT409 chain. New owned isolated helper must replay relevant historical chain and then new forward migrations; never modify old tests to hide behavior changes.",
+  "isolatedEnvironment": "Owned disposable PostgreSQL, no host/current credentials or current DB, network none, exact owned resources teardown. Historical golden snapshots seeded before forward migration and byte/digest checked afterward. No real Agent/Provider/current Tool invocation.",
+  "testHelpersAllowed": true,
+  "productHelperOutsideScope": "STOP_AND_REAPPROVE",
+  "build": "Validation-only local font/fake-env build allowed after implementation approval; cannot be deployment artifact."
+}

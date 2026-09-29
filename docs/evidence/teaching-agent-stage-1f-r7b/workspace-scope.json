@@ -1,0 +1,169 @@
+{
+  "status": "PASS",
+  "changedFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r7b/activity-completion-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/answer-leakage-scan.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/authorization-scope.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/autoplay-test.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/build-results.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/completion-readback.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/cue-dedupe-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/cue-validator.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/db-write-boundary.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/frozen-content-verification.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/gates.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/implementation-plan.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/implementation-plan.md",
+    "docs/evidence/teaching-agent-stage-1f-r7b/manifest-validation.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/media-error-test.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/native-projection.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/preflight.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/production-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/public-private-boundary.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/refresh-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/runtime-facts-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/runtime-facts-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/runtime-state-machine.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/seek-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/source-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/stale-generation-test.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/test-results.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/timeline-cue-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/user-pause-test.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/video-renderer.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/workspace-before.json",
+    "docs/evidence/teaching-agent-stage-1f-r7b/workspace-scope.json",
+    "docs/teaching-agent-stage-1f-r7b-lesson-execution-mvp.md",
+    "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/choice-block.tsx",
+    "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+    "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+    "src/features/smart-textbook-runtime/components/runtime.css",
+    "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/video-block.tsx",
+    "src/features/smart-textbook-runtime/core/block-registry.ts",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "src/features/smart-textbook-runtime/core/services.ts",
+    "src/features/smart-textbook-runtime/core/target-registry.ts",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+    "src/lib/smart-textbook-runtime-v1/contracts.ts",
+    "src/lib/smart-textbook-runtime-v1/execution.ts",
+    "src/lib/smart-textbook-runtime-v1/registry.ts",
+    "src/lib/smart-textbook-runtime-v1/validator.ts",
+    "tests/fixtures/teaching-agent-r7b/README.md",
+    "tests/fixtures/teaching-agent-r7b/browser.tsx",
+    "tests/fixtures/teaching-agent-r7b/create-video.mjs",
+    "tests/fixtures/teaching-agent-r7b/fixture.server.mjs",
+    "tests/fixtures/teaching-agent-r7b/server.mjs",
+    "tests/fixtures/teaching-agent-r7b/start.mjs",
+    "tests/fixtures/teaching-agent-r7b/video.webm",
+    "tests/smart-textbook-runtime-4a-browser.test.mjs",
+    "tests/smart-textbook-runtime-4a.test.mjs",
+    "tests/smart-textbook-runtime-4a14.test.mjs",
+    "tests/teaching-agent-r7b-browser.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-projection.test.mjs"
+  ],
+  "unexpectedChanges": [],
+  "preexistingChangesPreserved": true,
+  "gitDiffCheck": "PASS",
+  "jsonParse": "PASS",
+  "scriptSyntax": "PASS",
+  "checkedScripts": [
+    "tests/teaching-agent-r7b-projection.test.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/teaching-agent-r7b-browser.test.mjs",
+    "tests/fixtures/teaching-agent-r7b/fixture.server.mjs",
+    "tests/fixtures/teaching-agent-r7b/server.mjs",
+    "tests/fixtures/teaching-agent-r7b/start.mjs",
+    "tests/fixtures/teaching-agent-r7b/create-video.mjs"
+  ],
+  "secretScan": "PASS",
+  "secretFindings": [],
+  "gitStaging": false,
+  "gitCommit": false,
+  "gitResetCleanCheckout": false,
+  "productFileHashes": [
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/registry.ts",
+      "sha256": "4d41f360ec4b6ba625effb6780087f1f283d05bf6d77fb875ec1b4221430b0e8"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/block-registry.ts",
+      "sha256": "600a4b117eed6b2c3ec43f91d13130aa944ba34d55d809353d61864dd9ffcd8c"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/services.ts",
+      "sha256": "2cd89f50ca480c9707c8ad994b5f611db2d855ee9b94892b48d1141605797eca"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/target-registry.ts",
+      "sha256": "364b9e0d12e8074a1ef0b55b71f244f93bef19d3b96fbdc14a1c8d5448c7ccd6"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+      "sha256": "2c8d263571a8e6566a4123040a5ebc4ef7c8867f8ee9d5a8fdde42d4f6910a73"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+      "sha256": "0d1b8b801d3840477352acfb9d5d6665e262e225f607cd39330d8a52b99991b8"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+      "sha256": "7f69309e478945b68f248952152424ce89f206f1acad390a9a0d6433f2899334"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+      "sha256": "13cae3a99198ba27126d922d9922afb3faa1dd54ad7e8bd7ff0842513347c876"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/choice-block.tsx",
+      "sha256": "13aac266efcb230883f9dacc8d16f3b34a8b6a8ff0550c953da3cbcb26130001"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+      "sha256": "4521c6b7fa991d4a886d0ea0058521a23debf0eb6d62a186d0238f1b97d2817e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime.css",
+      "sha256": "508cf0301f8a15b9e5e99e5462596d72971d370a919658690b6ffee5805df303"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "317c92ebb71a5176306d043789adf8e564b62f714293970cbaaf8c625588e79e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "sha256": "9bc7b1903d18d7b24078dabc620f747456b83f307b75bffe170a0d3499d66a90"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+      "sha256": "d432597846f6e5f0d37cd8a5d4eda802a8aa2b6fc998f45466440fc4cad89e29"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+      "sha256": "2cd01320a50da86739936ea627fccaf06e1ab2f0bf60428557aade39120a75d3"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/video-block.tsx",
+      "sha256": "967743a3fa1610055063caa2292486548e26efb4dd842d30b5afe43cd91cd042"
+    }
+  ]
+}

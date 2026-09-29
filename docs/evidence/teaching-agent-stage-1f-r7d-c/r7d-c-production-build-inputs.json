@@ -1,0 +1,90 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "candidateDirectory": "/tmp/uply-r7dc3a-production-candidate",
+  "publicSettings": {
+    "NEXT_PUBLIC_SUPABASE_URL": {
+      "present": true,
+      "sha256": "ff8db3ba3da8be9b994619fb66af48143c9ea9236e6454d2c59705d7b3279ea3"
+    },
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": {
+      "present": true,
+      "sha256": "d1df0d1217cb8615b6683d2c5136757cf9b67609fcf0042ceacef6fc54314690"
+    },
+    "SMART_TEXTBOOK_RELEASE_ORIGIN": {
+      "present": true,
+      "sha256": "a0f09fca05141ccaa52e6fb8163433059fc31e33dc1e418943b01c38ecd69b50"
+    },
+    "R2_ACCOUNT_ID": {
+      "present": true,
+      "sha256": "4f9cbd027560f59982bbc7b4a2a1821a2b92bf013328e8b388bde9de51c8b2cd"
+    }
+  },
+  "productionPublicSettingsSource": "Existing protected live runtime.json; only necessary non-secret public keys, origin and R2 account identity passed in memory",
+  "secretEnvironmentPassedToBuild": false,
+  "fontBehavior": "Official unchanged next/font/google; no mocked responses/local font substitution",
+  "nextConfigIdentity": {
+    "presence": "EXISTS",
+    "sha256": "83b091cf0f756d1d5761ef1abcf0778eac5e3c259c43c381b3b472bfddf44555",
+    "mode": "0o600"
+  },
+  "tsconfigIdentity": {
+    "presence": "EXISTS",
+    "sha256": "d40bf56fe9fbf99ddbd04ede6358871e5f84b3a4351db2159315ae1ed4cf4537",
+    "mode": "0o600"
+  },
+  "tsconfigNote": "Exact previously deployed R7D-B sealed build input; excludes docs/evidence. Live source lacked that existing exclusion; included explicitly as the one build-configuration deployment path.",
+  "node": {
+    "path": "/home/yangzhen/miniconda3/bin/node",
+    "version": "v26.5.0",
+    "sameAsPM2Interpreter": true
+  },
+  "dependencyIdentity": {
+    "root": "/home/yangzhen/releases/uply-first-enable-20260910/source/node_modules",
+    "treeSha256": "931b3b5177bdc0819ef2dc70819bfc15ce3fe379fd00c5011776f8936d3129b1",
+    "files": 56443,
+    "verifiedUnchangedAfterBuild": true
+  },
+  "package": {
+    "presence": "EXISTS",
+    "sha256": "3f86c618474619c4e3ad49ae619e096a602a0d32bb93b97b3597f18f84cc90f1",
+    "mode": "0o644"
+  },
+  "lockfile": {
+    "presence": "EXISTS",
+    "sha256": "32afe671ae11e981d3d889c546b4c6a8e240e95ce934be2aa9f76bc81c2e7a2d",
+    "mode": "0o644"
+  },
+  "dependencyChanges": 0,
+  "dependencyInstall": 0,
+  "fakePublicKey": false,
+  "localhostFixture": false,
+  "networkDenyOrFontMockBuildInput": false,
+  "fixtureTransport": false,
+  "StudentFeature": "OFF",
+  "productionFactsPrivateConfigurationPassed": false,
+  "existingChildBuildTool": {
+    "esbuildVersion": "0.25.4",
+    "entrySha256": "65d0d94eb0e3944040f808c81f597c014f65c0c8d5a7a3d4f749f18dbccb0b5f",
+    "sameAsLiveInstalledTool": true,
+    "childExecuted": false
+  }
+}

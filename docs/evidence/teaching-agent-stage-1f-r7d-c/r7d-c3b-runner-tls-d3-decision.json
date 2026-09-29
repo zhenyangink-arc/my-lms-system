@@ -1,0 +1,421 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "overall": "EXTERNAL_EVIDENCE_REQUIRED",
+  "eligibleOutcome": "EXTERNAL_EVIDENCE_REQUIRED",
+  "currentBlocker": "BLOCKED_CAPTURE_TLS_REQUIRED",
+  "optionAStatus": "BLOCKED",
+  "optionBStatus": "BLOCKED",
+  "historicalObservationReconciled": true,
+  "backendTrustProven": false,
+  "newEvidenceGained": [
+    "Official explicit session affinity and maintenance support reviewed.",
+    "Historical real exported-snapshot backup/restore and atomic migration receipts distinguished from current security acceptance.",
+    "Project CLI and approved ops config both identify only the same session pooler.",
+    "Existing browser profile redirects to Supabase sign-in; browser discovery stopped.",
+    "Host has no public IPv6 address, no public unicast IPv6 route and no IPv6 default route; runner uses host networking."
+  ],
+  "missingEvidence": {
+    "A": [
+      {
+        "id": "A3",
+        "exactFactNeeded": "Actual managed session-pooler upstream transport, authentication, encryption or alternative protection, private-network boundary and tenant isolation; applicability to this project/service.",
+        "whoCanSupply": "Supabase support/security/architecture owner",
+        "likelyLocation": "Attributable support answer or official managed-service architecture statement",
+        "evidenceClass": "PROVIDER_SUPPORT",
+        "futureProbeNeeded": "NO: backend SQL cannot establish hidden provider infrastructure controls."
+      },
+      {
+        "id": "A3-A4",
+        "exactFactNeeded": "Provider explanation of why client TLSv1.3 and backend ssl=false are expected or anomalous for this topology, reconciled with general transit encryption assurances.",
+        "whoCanSupply": "Supabase support/security",
+        "likelyLocation": "Same support response referencing the safe historical observations",
+        "evidenceClass": "PROVIDER_SUPPORT",
+        "futureProbeNeeded": "NO_DATABASE_PROBE_REQUIRED_FOR_THE_QUESTION"
+      },
+      {
+        "id": "A6",
+        "exactFactNeeded": "Reviewable backup policy binding TLS/identity proof to each psql, pg_dump and pg_dumpall process; accepted proof type and no substitution by a separate handshake.",
+        "whoCanSupply": "Project security/operator reviewer, informed by official libpq guarantees",
+        "likelyLocation": "Forward transport contract review",
+        "evidenceClass": "LOCAL_POLICY_AND_PUBLIC_DOCUMENTATION",
+        "futureProbeNeeded": "OWNED_VALIDATION_LATER; no production backup/probe now."
+      },
+      {
+        "id": "A5-A6-CAPACITY",
+        "exactFactNeeded": "Sufficient pool/database capacity and timeout policy for one exporter plus one sequential dump connection, including roles dump; snapshot sessions route to the same primary.",
+        "whoCanSupply": "Project operator and Supabase support",
+        "likelyLocation": "Project connection settings/metrics export and provider workflow statement",
+        "evidenceClass": "PROJECT_CONFIG_AND_PROVIDER_SUPPORT",
+        "futureProbeNeeded": "MAY_REQUIRE_SEPARATELY_APPROVED_READONLY_OBSERVATION; not inferred from historical successes."
+      }
+    ],
+    "B": [
+      {
+        "id": "B1",
+        "exactFactNeeded": "Exact direct hostname, port, DIRECT label, project binding and address-family/add-on state.",
+        "whoCanSupply": "Authenticated project operator",
+        "likelyLocation": "Dashboard Connect safe field export; existing trusted provider export",
+        "evidenceClass": "PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "NO: supply safe metadata first; do not synthesize hostname."
+      },
+      {
+        "id": "B2",
+        "exactFactNeeded": "Applicable direct server CA identity and verify-full hostname contract for that exact endpoint.",
+        "whoCanSupply": "Project operator / Supabase",
+        "likelyLocation": "Database SSL settings and authoritative CA metadata",
+        "evidenceClass": "PROJECT_CONFIG_AND_PUBLIC_DOCUMENTATION",
+        "futureProbeNeeded": "OPTIONAL_FUTURE_TLS_HANDSHAKE_AFTER_ENDPOINT_AND_CA_ARE_LOCKED"
+      },
+      {
+        "id": "B3",
+        "exactFactNeeded": "Usable host and host-network Docker route to the confirmed direct endpoint; this host currently lacks public IPv6 address/default route. If IPv4 direct exists, its applicability must be established.",
+        "whoCanSupply": "Network operator / project operator",
+        "likelyLocation": "Network configuration and existing IPv4 add-on evidence",
+        "evidenceClass": "LOCAL_AND_PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "YES_LATER_SEPARATE_DNS_TCP_TLS_PROBE; no network changes or probes now."
+      },
+      {
+        "id": "B4",
+        "exactFactNeeded": "Existing maintenance database-password identity is applicable to direct postgres login; pooler username is not reusable literally.",
+        "whoCanSupply": "Credential owner / Supabase support",
+        "likelyLocation": "Non-secret credential provenance attestation and direct role mapping",
+        "evidenceClass": "OPERATOR_OR_PROVIDER_ATTESTATION",
+        "futureProbeNeeded": "IF_NOT_RESOLVED_BY_ATTESTATION: separately approved READONLY_IDENTITY_PROBE after network proof; no passwords shared."
+      },
+      {
+        "id": "B5",
+        "exactFactNeeded": "Project connection limits and reserved maintenance headroom/timeouts for migration and two-connection exported-snapshot workflow.",
+        "whoCanSupply": "Project operator / Supabase support",
+        "likelyLocation": "Compute/connection settings or safe project metrics export",
+        "evidenceClass": "PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "MAY_REQUIRE_SEPARATE_READONLY_OBSERVATION; general documentation cannot supply a project limit."
+      }
+    ]
+  },
+  "nextApproval": "NONE",
+  "implementationApproval": "NONE",
+  "supportQuestionPackage": "r7d-c3b-runner-tls-d3-provider-support-question.md",
+  "supportQuestionSent": false,
+  "sourceLocks": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "match": true
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "sha256": "f02e882d614dbcb6a16b6064d63c0dd45a8195f103220f38c2a3b5773a14d587",
+      "match": true
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "match": true
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "sha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "sha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "sha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "sha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "match": true
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "sha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "match": true
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "sha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "match": true
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "sha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "match": true
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "match": true
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "match": true
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "match": true
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "match": true
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "match": true
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "match": true
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "match": true
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "sha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "sha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "match": true
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "match": true
+    }
+  ],
+  "runtimePackageSha256": "65af9de2a1ffaef90cab6d5ca7865079fd77b003654d6db8a137f7544b3ffe11",
+  "v3Rule": "Source-compatible now; P1D remains blocked and no retry is authorized. Any future security/transport source change requires v4; no dual authority.",
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "historicalRecordsPreserved": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-result.json",
+      "sha256": "fa8de8a42ee4dd6fcb802b05ba0d9be21954631a1245212f06b1f54c722b5128"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-decision.json",
+      "sha256": "654e673af72e1e21f4d39f884e7a467c74a32742b8c885f0caa3c1dfb0ddf5bb"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-decision.json",
+      "sha256": "a84094668213d8202cb18f976a8d86ecd8fdc1b61f643f6dfedc2f26e7b9c919"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "sha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee"
+    }
+  ],
+  "validation": {
+    "existingFilesRehashedUnchanged": 3974,
+    "evidenceAdded": 9,
+    "supportDraftAdded": 1,
+    "supportDraftSha256": "3f7ec931de4ac7e5e852db82f3a543c0a037e510148b8f2abd0fc68e5fc60f59",
+    "implementationFilesAdded": 0,
+    "existingFilesChanged": 0,
+    "jsonParse": "PASS",
+    "secretPatternScan": "PASS",
+    "scopeApprovalGenerated": false,
+    "testsRun": false,
+    "testsReason": "Evidence-only stage; no source changes or DB execution."
+  }
+}

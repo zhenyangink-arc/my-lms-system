@@ -1,0 +1,80 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "items": [
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "role": "HISTORICAL_FIXED_EIGHT_RUNNER",
+      "reuse": "DESIGN_REFERENCE_ONLY",
+      "restriction": "Do not edit, import its internal transaction builder into new installer, change VERSIONS, relax old plan or449 locks."
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "role": "HISTORICAL_FOUNDATION_TRANSPORT",
+      "reuse": "GUARD_DESIGN_REFERENCE_ONLY",
+      "restriction": "Old stage authorization and backup449 remain exact."
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "role": "ISOLATED_TEST_MODEL",
+      "reuse": "REGRESSION_AND_TEST_CASE_REFERENCE",
+      "restriction": "track() never promoted/copied as production installer."
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "role": "STAGE_BOUND_BACKUP_ORCHESTRATOR",
+      "reuse": "EXISTING_PG_DUMP_RESTORE_PROCEDURE_AND_MANIFEST_SEMANTICS",
+      "restriction": "Do not run stage entrypoint, monkey-patch class/constants, or claim449 guard accepts458."
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "role": "OLD_READONLY_INVENTORY",
+      "reuse": "CATALOG_QUERY_AND_REDACTION_DESIGN",
+      "restriction": "No call to stage-bound database()/operations() this turn."
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "role": "FIXED_OLD_OBJECT_VERIFIER",
+      "reuse": "CATALOG_SHAPE_REFERENCE",
+      "restriction": "Do not treat35 old functions as complete current baseline."
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "role": "OID_INDEPENDENT_APP_CATALOG",
+      "reuse": "QUERY_SEMANTICS_REFERENCE",
+      "restriction": "New checks must include agent_core_private and global default ACL; existing query scopes alone are insufficient."
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "role": "HISTORICAL_ATOMIC_SINGLE_INSTALL_RECEIPT",
+      "reuse": "EVIDENCE_ONLY",
+      "restriction": "Receipt is not an available reusable executor."
+    }
+  ],
+  "legacyCleanupCandidates": 0,
+  "fallback": "FORBIDDEN"
+}

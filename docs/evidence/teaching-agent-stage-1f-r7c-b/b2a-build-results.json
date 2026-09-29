@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "currentBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "candidateBuild": "vZokoJqpKDRZxnpQcQpah",
+  "candidateDirectory": "/tmp/uply-r7cb-b2a-candidate",
+  "sourceHashes": {
+    "src/app/[space]/dashboard/admin/development-execution/page.tsx": "2a978a00b562a9d0f7854b4986f483d4928aeff2c4462a4b9a43cecfe2f7a20b",
+    "src/features/development-execution/components/provisioning-form.tsx": "8da7cfae914e33acb6eaf30653e8d464002880cabed6b471ded0821047257696",
+    "src/features/development-execution/server/provisioning-composition.server.ts": "867463a756258fedf1579cd0832ee256f0c0bf6d137aa08a6475ab11b1d3c3ca",
+    "src/features/development-execution/server/provisioning-contract.ts": "179430f5d6ca8357d4c76e2b7998efd8fd5df9a3e8d8fc423afd2a3bd9570a7c",
+    "src/features/development-execution/server/provisioning-entrypoint.server.ts": "0240919fa05428120dbc212413d66c73cc009fdecf8b1c533943837d27bbde0f",
+    "src/features/development-execution/server/provisioning-journal.server.ts": "4996f6c2ba58a88ebe21c5c709f5081e58916a9338265475d1431e4914f3a21c",
+    "src/features/development-execution/server/provisioning-readback.server.ts": "6951f0cbde04bd5f40e330dba94b2a57071833f2b0fa150c9a79a1a7caa944f8",
+    "src/features/development-execution/server/provisioning-transport.server.ts": "36ef141239b704c5e91f43a4ca9000ceb2974e758f69f0b0e57af4fe9503917a",
+    "src/features/development-execution/server/provisioning.actions.ts": "6e6ae7b35171207df98f4f8e4e2010bf7075ad6ef8ac4522f5a7e343051547de",
+    "src/features/development-execution/server/provisioning.service.ts": "1ae76d4cf31d5e0cd57559dc1122e70aa98fd81e8922bc2e30045bf19821c055",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts": "fc11bc041ddfec9e348e11a12450c3a20f85eb0d5438c914410db8687b8d325a"
+  },
+  "productFilesRelativeToLive": [
+    "src/app/[space]/dashboard/admin/development-execution/page.tsx",
+    "src/features/development-execution/components/provisioning-form.tsx",
+    "src/features/development-execution/server/provisioning-composition.server.ts",
+    "src/features/development-execution/server/provisioning-contract.ts",
+    "src/features/development-execution/server/provisioning-entrypoint.server.ts",
+    "src/features/development-execution/server/provisioning-journal.server.ts",
+    "src/features/development-execution/server/provisioning-readback.server.ts",
+    "src/features/development-execution/server/provisioning-transport.server.ts",
+    "src/features/development-execution/server/provisioning.actions.ts",
+    "src/features/development-execution/server/provisioning.service.ts",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts"
+  ],
+  "archive": "/tmp/uply-r7cb-b2a-candidate/candidate-build.tar.gz",
+  "archiveSha256": "8e024240a714efe88a60d5a5e83a06d128cbfca7baf96c5f4da6d958a815da4c",
+  "typeScript": "PASS",
+  "routePresent": true,
+  "serverActionPresent": true,
+  "environmentGate": "REQUIRED; config absent/invalid fails closed",
+  "publicBundleSecretHits": 0,
+  "deploy": 0,
+  "migration": 0,
+  "logSha256": "c77bcd5533ceec3e32e4db1d3c25f670cee65ccab447e8c100d402d843dd9bdb"
+}

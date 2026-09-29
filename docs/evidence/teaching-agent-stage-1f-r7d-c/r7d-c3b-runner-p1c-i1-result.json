@@ -1,0 +1,80 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I1",
+  "recordedAt": "2026-09-19T07:14:40.111500+00:00",
+  "status": "BLOCKED_BEFORE_SOURCE_EDIT",
+  "blockingCode": "BLOCKED_CAPTURE_V3_APPROVAL_REFERENCE_SCOPE_MISMATCH",
+  "implementationAuthorizationRecognized": true,
+  "operationalModified": 0,
+  "testsModified": 0,
+  "addedImplementationFiles": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "testsExecuted": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateArtifactHashes": "ALL_MATCH",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "Stage1G": "NOT_READY",
+  "overall": "BLOCKED",
+  "reason": {
+    "source": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+    "sourceSha256": "bbccf9220f219104d1c94f142dc4f4333d3cc92b28543cc8d6cb0d785e04d31b",
+    "referenceConstantLine": 183,
+    "referenceValidationLines": [
+      236,
+      237
+    ],
+    "artifactHashValidationLines": [
+      238,
+      239
+    ],
+    "currentAcceptedReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+    "requiredNewReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+    "actualGuard": "Exact reference mismatch raises APPROVAL_MISSING / CAPTURE_APPROVAL_REFERENCE before credential access; a new hash supplied with the old reference raises CAPTURE_APPROVAL_HASH.",
+    "currentInstructionConflict": "Section 52 disallows v2 as authority for changed source and requires v3; sections 2/24/53 prohibit changing plan_contract.py or a fourth implementation path.",
+    "previousDesignDistinction": "P1C design explicitly retained the fixed v2 reference as historical lineage plus fresh source/operator approval. That assumption cannot be used to bypass the current instruction requiring v3 authority.",
+    "queryOrderFixAloneFitsApprovedThreePaths": true,
+    "fullRequestedReadinessRequiresAdditionalPath": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+    "bypassesRejected": [
+      "edit old v2 evidence",
+      "place v3 content under old v2 filename",
+      "monkey patch authorization from checks.py",
+      "pretend generating a v3 document makes it accepted",
+      "treat v2 as the new production execution authority"
+    ]
+  },
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i1-source-lock.json",
+    "sha256": "769ae0ce98375c2ce5eea2600a191783d4cd7e0a196767a097af9a1f96de9679"
+  },
+  "controlledPreflightV3Approval": "BLOCKED_NOT_GENERATED",
+  "v3ExecutableAuthorizationCreated": false,
+  "queryOrderFix": "NOT_IMPLEMENTED",
+  "freshLocalChecks": "PASS",
+  "nextRequiredApproval": "A separate scope decision covering the fixed capture approval-reference upgrade in plan_contract.py; do not implement within the current 3-file scope.",
+  "minimumPotentialExpandedScope": {
+    "operationalModify": 2,
+    "testModify": 2,
+    "totalModify": 4,
+    "add": 0,
+    "approved": false
+  },
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED"
+}

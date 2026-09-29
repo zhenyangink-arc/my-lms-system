@@ -1,0 +1,14 @@
+{
+  "operator": "杨震",
+  "standby": "TBD — NOT ASSIGNED",
+  "dataPolicyApprover": "TBD — APPROVAL REQUIRED",
+  "retentionMinimumDays": 7,
+  "deleteBeforeStableStage1gPilot": false,
+  "automaticDeletion": false,
+  "notBefore": "2026-09-22T06:31:24.914920+00:00",
+  "rpoTargetSecondsAtActualApprovedProductionChange": 900,
+  "rtoInitialTargetSeconds": 3600,
+  "offHost": "NOT CONFIRMED",
+  "offHostRequiredForR4d": false,
+  "offHostRequiredBeforeBroaderRollout": true
+}

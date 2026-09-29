@@ -1,0 +1,27 @@
+{
+  "status": "NOT EXECUTED",
+  "entrypoint": "/platform/dashboard/admin/development-execution/lesson-facts",
+  "operator": "existing normally logged-in Platform Owner session",
+  "noImpersonation": true,
+  "prePostFingerprint": [
+    "digital_textbook_attempts",
+    "digital_textbook_node_progress",
+    "digital_textbook_activity_page_progress",
+    "actor-scoped auth/session/refresh",
+    "tenant/profile/membership",
+    "frozen content",
+    "canonical Activity/secret",
+    "Agent/Provider/Publish/Pins tables"
+  ],
+  "expected": {
+    "attempts": 2,
+    "latestResult": "CORRECT",
+    "status": "completed",
+    "completionPercent": 100,
+    "masteryScore": 100,
+    "evidenceStorage": "CURRENT_DEVELOPMENT_DB"
+  },
+  "writes": 0,
+  "scope": "DISABLED",
+  "ownerAuthCaveat": "Fingerprint actor-scoped Auth separately; do not mistake normal Owner token activity for subject writes. Report any global delta explicitly."
+}

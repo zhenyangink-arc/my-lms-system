@@ -1,0 +1,106 @@
+{
+  "stage": "R7D-C Production Prerequisite Implementation",
+  "recordedAt": "2026-09-18T03:25:56.356499+00:00",
+  "status": "BLOCKED_BEFORE_PRODUCT_EDIT",
+  "authority": "LOCAL_SOURCE_AUDIT_ONLY",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "productChangesThisTurn": 0,
+  "migrationChangesThisTurn": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveStateRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "blockingCode": "CANONICAL_PUBLISHED_SNAPSHOT_CONTRACT_OUTSIDE_APPROVED_27_FILES",
+  "findings": [
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "lines": [
+        5,
+        14,
+        19,
+        33
+      ],
+      "finding": "Official current/publication/session reads validate the bundle through assertPublishableSnapshot.",
+      "sha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "lines": [
+        4,
+        6,
+        10,
+        11,
+        17,
+        20,
+        22,
+        43,
+        79,
+        85,
+        94
+      ],
+      "finding": "Bundle/private payload and source pins use the Chapter One compiler, fixed identity history/profile, and unconditional legacy readiness validation.",
+      "sha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "lines": [
+        14,
+        15,
+        16,
+        20,
+        21,
+        38,
+        40
+      ],
+      "finding": "Validator requires certified fixed historical pages/repeats, exactly three listening aliases/playback targets, and Chapter One chapter-test navigation. A standalone native Activity snapshot cannot omit them.",
+      "sha256": "48c710f2bbe109a0898f813ddb7f8131d2a3cf1c27b779532df6810525c76d8d"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "lines": [
+        17,
+        19,
+        20,
+        21
+      ],
+      "finding": "Existing publisher compiles the fixed Chapter One capture/identity/history; no separate canonical native publication producer was found in the audited source paths.",
+      "sha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "lines": [
+        4,
+        5,
+        35,
+        40
+      ],
+      "finding": "Official publication capture projection invokes legacy source/service readers.",
+      "sha256": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "lines": [
+        8,
+        10
+      ],
+      "finding": "Existing publication domain authority includes a durable dependency fence; a native read adapter must preserve it rather than just inspect a published flag.",
+      "sha256": "e3c4734c292fe389a1fcc6435a764a65db1d41fd2308b1c89546fe89d49e76ec"
+    }
+  ],
+  "rejectedWorkarounds": [
+    "Do not fabricate required Chapter One historical data for native published fixtures.",
+    "Do not bypass official publication semantic certification with only published status and hash checks.",
+    "Do not introduce a second publication authority inside the new Lesson Tool adapter.",
+    "Do not publish current Draft content or use development/Owner authority."
+  ],
+  "minimumAdditionalProductContract": "src/lib/smart-textbook-publishing/artifact.server.ts",
+  "implementation": "NOT_STARTED"
+}

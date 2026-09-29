@@ -1,0 +1,107 @@
+{
+  "reference": "docs/architecture/uply-smart-textbook-interactive-video-architecture-v2.md",
+  "sha256": "9e634f485c42acebdaabe4b49deca2676b06faecc32f1aad6a59ee360fab8fa1",
+  "status": "COMPLETE",
+  "priority": "CURRENT CODE / DB / TEACHING AGENT INVARIANTS FIRST",
+  "items": [
+    {
+      "topic": "主线 / V2 §21 P9、§23–24",
+      "currentReality": "Teaching Agent已有受控Skill/Tool/Run；整课执行尚未接通",
+      "v2Proposal": "AI Teacher在视频执行阶段之后加入",
+      "gap": "不能把既有Agent降为独立播放器的最后插件",
+      "recommendedTarget": "主线始终Teaching Agent；先补Lesson execution确定性合同，Provider调用后置，不重做Agent Foundation"
+    },
+    {
+      "topic": "Manifest / V2 §23",
+      "currentReality": "LessonManifestV1、digest/validator/private binding/publication bundle已存在",
+      "v2Proposal": "Manifest → Lesson Runtime",
+      "gap": "缺的是native frozen-script编译和target binding，不是Manifest这个抽象",
+      "recommendedTarget": "复用既有合同与publication seal；不另建Manifest编辑器/数据库/发布状态"
+    },
+    {
+      "topic": "Layer / V2 §3–5、§10",
+      "currentReality": "Teaching Script Node与digital_textbook_node是不同实体；当前Step通常对应module",
+      "v2Proposal": "Chapter/Lesson → Step/Module → Blocks/Activities",
+      "gap": "V2略过Teaching Lesson/Script Version/Node来源；不能把每个Node当成DBBlock",
+      "recommendedTarget": "补Frozen pedagogy来源和明确多对多执行映射；已有Activity FK仍须满足"
+    },
+    {
+      "topic": "Runtime / V2 §16、§22",
+      "currentReality": "已有features/smart-textbook-runtime/RuntimeRoot、StepController、target registry",
+      "v2Proposal": "新components/lesson-runtime目录和TimelineEngine示意",
+      "gap": "照目录重新搭建会制造第二套Runtime",
+      "recommendedTarget": "保留现有目录和唯一运行组合；在现有runtime owner下补time-cue能力"
+    },
+    {
+      "topic": "Video / V2 §4、§21 P1",
+      "currentReality": "TeacherVideoPlayer可play/pause/timeupdate；manifest video type已声明但native renderer unsupported",
+      "v2Proposal": "video block用src，播放器统一",
+      "gap": "示例src不是正式媒体授权合同；native接线缺失",
+      "recommendedTarget": "沿用mediaRef/版本绑定/私有媒体授权；补原registry中的video实现，旧player只借用行为，不带旧Agent fallback"
+    },
+    {
+      "topic": "Activity / V2 §3、§20",
+      "currentReality": "single_choice等已有domain/renderer；pronunciation、role_play原生renderer不支持",
+      "v2Proposal": "图上列出七类活动",
+      "gap": "类型列出不代表均可执行或接入统一完成",
+      "recommendedTarget": "R7B只用已有single_choice；其它分别FOUND/PARTIAL，未来同体系扩展"
+    },
+    {
+      "topic": "Completion / V2 §7",
+      "currentReality": "ActivityResult/onResult和server progress存在，但不直接通知时间Cue",
+      "v2Proposal": "activity_complete → play",
+      "gap": "回调成功不等于正式完成，缺session/revision/重复响应处理",
+      "recommendedTarget": "服务端completion确认+关联receipt；保持用户暂停；未完成或UNKNOWN不resume"
+    },
+    {
+      "topic": "Director / V2 §9",
+      "currentReality": "shot modes及split/learning/teaching存在，template有split/stack",
+      "v2Proposal": "可直接复用teacher_focus/split/learning_focus/scenario_focus",
+      "gap": "命名不是当前真实enum；未验证统一动态状态",
+      "recommendedTarget": "显式映射前三种，scenario后置；只有一个layout owner"
+    },
+    {
+      "topic": "Cue persistence / V2 §10–11、§21 P4",
+      "currentReality": "未发现独立通用时间Cue表/合同；已有TeacherRuntimeCue是另一概念",
+      "v2Proposal": "新增lesson_events或block_cues",
+      "gap": "不能因为设计示意就新建表/再造事件库",
+      "recommendedTarget": "R7B用内存mock投影；后续需持久化时另行评估现有编排metadata与版本封存合同，本次不选择DDL"
+    },
+    {
+      "topic": "Cue actions / V2 §12–13",
+      "currentReality": "现有target commands需能力/step/generation校验",
+      "v2Proposal": "示例含hide、AI dialogue、scenario等扩展",
+      "gap": "第一版动作过多会混入业务/AI决策",
+      "recommendedTarget": "仅show_activity/show_block/change_layout；不把答案、prompt、Provider/adaptation放入Cue"
+    },
+    {
+      "topic": "Progress / V2 §14、§21 P5",
+      "currentReality": "digital_textbook_attempts/node_progress/page_progress等真实存在；script session存编排位置",
+      "v2Proposal": "通称student_attempts/lesson_progress/activity_progress",
+      "gap": "不能据通称新建第二套表；完成authority不能等P5才定义",
+      "recommendedTarget": "复用真实表/RPC；R7B就定义正式completion读取，video位置只作观察"
+    },
+    {
+      "topic": "Dedupe / V2 §18",
+      "currentReality": "generation lease与abort已存在，video位置sessionStorage",
+      "v2Proposal": "triggeredCueIds Set；初版刷新仅恢复lesson/step/time",
+      "gap": "Set丢失或forward seek可能跳过未完成活动",
+      "recommendedTarget": "scope化Cue identity；重建completion/waiting并验证snapshot；只恢复video time不足以签完整MVP"
+    },
+    {
+      "topic": "Lesson Studio / V2 §19–22",
+      "currentReality": "正式Authoring与冻结内容存在",
+      "v2Proposal": "未来timeline authoring UI",
+      "gap": "不得另建题目编辑器或把冻结Node自动改成视频脚本",
+      "recommendedTarget": "Runtime稳定后复用官方Activity authoring与绑定；R7A/R7B不做完整后台"
+    },
+    {
+      "topic": "AI access / V2 §14、§24",
+      "currentReality": "Lesson Tool只提供已发布选句和最近保存位置",
+      "v2Proposal": "AI读取学生看到哪里、答错题、口语等并作决策",
+      "gap": "不能直接扩成Agent任意表/学生画像读取",
+      "recommendedTarget": "受控Domain Port/Tool只返回当次授权最小事实、来源和允许呈现动作；grading/progression仍属domain"
+    }
+  ],
+  "implementation": false
+}

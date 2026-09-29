@@ -1,0 +1,9 @@
+{
+  "status": "TECHNICALLY VERIFIED / STALE FOR <=15m RPO",
+  "snapshotStart": "2026-09-15T06:31:24.914920+00:00",
+  "observedAtUtc": "2026-09-15T11:06:58.336683+00:00",
+  "ageSeconds": 16533.422,
+  "freshBackupCreated": false,
+  "futureWindowFreshBackup": "REQUIRED",
+  "maxAgeSecondsAtFirstMigration": 900
+}

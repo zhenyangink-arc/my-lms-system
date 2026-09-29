@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-09-13T03:43:58.905Z",
+  "mode": "isolated-migrate",
+  "atomicBatch": true,
+  "entries": [
+    {
+      "version": "202609130001",
+      "name": "textbook_grammar_authoring",
+      "sha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a"
+    },
+    {
+      "version": "202609130002",
+      "name": "textbook_grammar_practice_binding",
+      "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8"
+    },
+    {
+      "version": "202609130003",
+      "name": "runtime_authoring_nonretryable_error",
+      "sha256": "0c5a16609d3c7196284f86cecb96f250988d2ff78834a92d8e0cce5966edd73d"
+    }
+  ],
+  "nodeCountUnchanged": true,
+  "attemptCountUnchanged": true,
+  "teachingVersionCountUnchanged": true,
+  "fenceAclUnchanged": true,
+  "nonretryable": true,
+  "allOverridesEmpty": true
+}

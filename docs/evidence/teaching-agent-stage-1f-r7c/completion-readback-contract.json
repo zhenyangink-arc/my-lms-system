@@ -1,0 +1,25 @@
+{
+  "status": "PASS — TEST DB VERIFIED",
+  "repository": "durable-activity-repository.server.ts",
+  "transaction": "Fresh REPEATABLE READ READ ONLY connection",
+  "scope": [
+    "trusted tenant",
+    "trusted synthetic actor",
+    "version",
+    "node",
+    "activity",
+    "session/snapshot/step/media/cue binding",
+    "private definition digest"
+  ],
+  "completed": "Correct durable attempt for pinned execution/content with consistent matching node-progress evidence",
+  "incomplete": "Successful current authorized read without any correct attempt",
+  "unknown": [
+    "read unavailable",
+    "content or binding changed",
+    "missing/inconsistent progress",
+    "invalid persisted response evidence"
+  ],
+  "submitReceiptIsAuthority": false,
+  "nodeProgressIsLessonCompletion": false,
+  "videoPositionIsAuthority": false
+}

@@ -1,0 +1,392 @@
+{
+  "source": "Current DB catalog only; no Auth business rows read",
+  "authTriggerFunctions": [
+    {
+      "schema": "public",
+      "name": "handle_new_user",
+      "bodySha256": "5a9d6214c2c70743480dfe1e598c8d0833b944657e66b353be6a429a15030d71"
+    },
+    {
+      "schema": "public",
+      "name": "sync_auth_registration_metadata",
+      "bodySha256": "0ee62b1e248ba7beeab5e7ae16ad5cf1d9f222c5b12f091ca7cb9c6a006e44d1"
+    },
+    {
+      "schema": "public",
+      "name": "enforce_profile_self_service_fields",
+      "bodySha256": "48d67b86fc1a2a7f68a24f5e670aad1bfea2b1085c3c4c328ce8eec04425f814"
+    },
+    {
+      "schema": "public",
+      "name": "audit_profile_management_change",
+      "bodySha256": "eb47f4d5530e209a486a06788bd34c2b3ea330c7bc67bc41d1e84830546a757c"
+    },
+    {
+      "schema": "public",
+      "name": "set_profile_management_timestamps",
+      "bodySha256": "66d062d3e6db77257c633979cadb5806b383fd07794f973f2f9b1ac01814b9f6"
+    },
+    {
+      "schema": "private",
+      "name": "sync_profile_to_bootstrap_membership",
+      "bodySha256": "5a0dc8397dbb486fbf67c0bf2762f08a87998786e2fa578bfd7dbe604c0563f2"
+    }
+  ],
+  "tenantCreateFunctions": [
+    {
+      "name": "create_tenant",
+      "bodySha256": "548a071bb72103b3f3a0cc1556527f8916857a9a2883d86c7c81085551bdccd8"
+    }
+  ],
+  "identityColumns": [
+    {
+      "table": "profiles",
+      "column": "id",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "full_name",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "role",
+      "type": "text",
+      "default": "'student'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "avatar_url",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    },
+    {
+      "table": "profiles",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    },
+    {
+      "table": "profiles",
+      "column": "status",
+      "type": "text",
+      "default": "'active'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "deactivated_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "deactivated_by",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "deactivate_reason",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "email",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "registered_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "registration_source",
+      "type": "text",
+      "default": "'email'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "last_active_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "profile_completed_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "gender",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "birth_date",
+      "type": "date",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "avatar_path",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "address_province",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "address_city",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "education_level",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "education_status",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "education_completion_month",
+      "type": "date",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "academic_average",
+      "type": "numeric",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "gaokao_has_score",
+      "type": "boolean",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "gaokao_score",
+      "type": "numeric",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "english_level",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "math_level",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "has_korean",
+      "type": "boolean",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "topik_level",
+      "type": "smallint",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "has_work_experience",
+      "type": "boolean",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "profile_data_version",
+      "type": "text",
+      "default": "'2026-07'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "membership_tier",
+      "type": "text",
+      "default": "'normal'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "membership_updated_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "membership_updated_by",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "login_id",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "global_role",
+      "type": "text",
+      "default": "'member'::text"
+    },
+    {
+      "table": "profiles",
+      "column": "motto",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "profiles",
+      "column": "interest_tags",
+      "type": "ARRAY",
+      "default": "'{}'::text[]"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "tenant_id",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "user_id",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "role",
+      "type": "text",
+      "default": "'student'::text"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "status",
+      "type": "text",
+      "default": "'active'::text"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "membership_tier",
+      "type": "text",
+      "default": "'normal'::text"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "is_default",
+      "type": "boolean",
+      "default": "false"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "invited_by",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "joined_at",
+      "type": "timestamp with time zone",
+      "default": null
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    },
+    {
+      "table": "tenant_memberships",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    },
+    {
+      "table": "tenants",
+      "column": "id",
+      "type": "uuid",
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "tenants",
+      "column": "slug",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "tenants",
+      "column": "name",
+      "type": "text",
+      "default": null
+    },
+    {
+      "table": "tenants",
+      "column": "status",
+      "type": "text",
+      "default": "'active'::text"
+    },
+    {
+      "table": "tenants",
+      "column": "plan_key",
+      "type": "text",
+      "default": "'starter'::text"
+    },
+    {
+      "table": "tenants",
+      "column": "settings",
+      "type": "jsonb",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "tenants",
+      "column": "created_by",
+      "type": "uuid",
+      "default": null
+    },
+    {
+      "table": "tenants",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    },
+    {
+      "table": "tenants",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "default": "now()"
+    }
+  ],
+  "executed": false
+}

@@ -1,0 +1,19 @@
+{
+  "versionCount": 1,
+  "versions": [
+    {
+      "idSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "lessonSha256": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+      "versionNumber": 1,
+      "status": "draft",
+      "title": {},
+      "publishedAt": null,
+      "createdAt": "2026-09-16T07:11:49.544966+00:00"
+    }
+  ],
+  "nodeCount": 0,
+  "logs": {
+    "create_draft": 1
+  },
+  "activeInconsistentFences": 0
+}

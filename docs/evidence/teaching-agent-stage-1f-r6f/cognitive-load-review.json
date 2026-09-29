@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "level": "EXPOSURE / RECOGNITION",
+  "notRequired": "ONE-SESSION MASTERY / MEMORIZATION",
+  "inventory": {
+    "vowels": 6,
+    "consonantsInFirstList": 8,
+    "structureTerms": 3,
+    "practiceQuestions": 2
+  },
+  "reason": "8节点分段，Node3/4明确无需全背；Node5分两组各读一次；Node6必要的三角色以短句和例字分解。较长的Node6没有长嵌套句。实际呈现停顿、音频节奏和学生接受程度未测试。",
+  "pacingPerformance": "NOT TESTED"
+}

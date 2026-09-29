@@ -1,0 +1,40 @@
+{
+  "stage": "R7D-B2",
+  "classification": "OBSERVED_AND_ALLOWED",
+  "subjectClass": "EXISTING_PLATFORM_OWNER",
+  "isDevelopmentSubject": false,
+  "attribution": "existing_browser_session_maintenance",
+  "allowedUnder": "R7D_READ_ONLY_BUSINESS_DOMAIN/1 Gate C",
+  "evidenceWindow": {
+    "before": "2026-09-18T02:08:39.573220+00:00",
+    "after": "2026-09-18T02:10:37.466404+00:00"
+  },
+  "observedEffects": {
+    "newRefreshRows": 1,
+    "preexistingRefreshRowsUpdated": 1,
+    "sessionRowsUpdated": 1,
+    "userRowsUpdated": 1
+  },
+  "observedTables": [
+    "auth.refresh_tokens",
+    "auth.sessions",
+    "auth.users"
+  ],
+  "basis": [
+    "existing normal Owner browser acceptance, one document request/no replay",
+    "timestamp-based affected subject classification: platform_owner, not B2 actor",
+    "auth.users total unchanged; auth.identities fingerprint unchanged",
+    "public tenant/profile/membership/permission and measured business fingerprints unchanged",
+    "deployed Tool read path has no Auth Admin/login/refresh mutation call",
+    "no explicit re-login/impersonation/new identity or deliberate token refresh"
+  ],
+  "causalEvidenceLimit": "Reasonable attribution from saved time-window/role/fingerprint and invocation evidence; not a full SQL statement audit. Counts are observations, never an allowance threshold.",
+  "rejectUnknownSubjectOrUnattributableChange": true,
+  "newAuthActivityThisStage": 0,
+  "references": {
+    "owner-auth-refresh-delta.json": "a0326eb0eea33b66ded286a27faadc57010d34a895ffd0c36ccfa9bfee293771",
+    "r7d-current-db-zero-write-receipt.json": "044d76379d23fcee25db9866bf955e6bb1c64ec29bfd7299c70be01c8fae5021",
+    "r7d-current-db-tool-readback.json": "342007d5d859320efa055452192dd8ff40555c530fe2c0c2783a2d9b21751cb5",
+    "deploy-authorization-scope.json": "7fef921c0f909fe7273c98caa35d478dac43d30b38d8b41804c4ede3917e2dbc"
+  }
+}

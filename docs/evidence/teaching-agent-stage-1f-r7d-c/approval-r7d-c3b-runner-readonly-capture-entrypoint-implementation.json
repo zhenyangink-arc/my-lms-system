@@ -1,0 +1,142 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1",
+  "recordedAt": "2026-09-19T05:03:13.074562+00:00",
+  "status": "DRAFT_AWAITING_EXPLICIT_IMPLEMENTATION_APPROVAL",
+  "blockingCode": "BLOCKED_DRAFT_PRODUCTION_READONLY_CAPTURE_ENTRYPOINT_UNAVAILABLE",
+  "authorization": "EXPLICIT_USER_READ_ONLY_CAPTURE_APPROVAL_RECOGNIZED",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "authWrites": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "migrationInstall": 0,
+  "realBackup": 0,
+  "restoreExecution": 0,
+  "credentialAccess": 0,
+  "operationalChanges": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildFreshlyObserved": false,
+  "feature": "OFF_LAST_KNOWN_NOT_REOBSERVED",
+  "allowlists": "EMPTY_LAST_KNOWN_NOT_REOBSERVED",
+  "B3Scope": "DISABLED_LAST_KNOWN_NOT_REOBSERVED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "approved": false,
+  "requestType": "SEPARATE_READ_ONLY_BASELINE_CAPTURE_ENTRYPOINT_IMPLEMENTATION_AND_OWNED_VALIDATION",
+  "reason": "BLOCKED_DRAFT_PRODUCTION_READONLY_CAPTURE_ENTRYPOINT_UNAVAILABLE",
+  "scopeCounts": {
+    "existingOperationalModify": 4,
+    "existingTestsModify": 2,
+    "existingDocumentationModify": 1,
+    "addImplementationFiles": 0,
+    "productFiles": 0,
+    "migrationFiles": 0
+  },
+  "exactModifyPaths": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a5efb5e778178f9cb79132476fdb97371e3b2c85771e7c2afe20ea0dbe76a45f",
+      "mode": "0o664",
+      "responsibility": "Add a distinct finite capture command; keep existing preflight/apply/backup/verify READY guards unchanged."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "18cc080bf1e564954d1351c96d28e05bbf9df09da1c5992838e0876fb809a7c6",
+      "mode": "0o664",
+      "responsibility": "Add a separate strict READ_ONLY_BASELINE_CAPTURE authorization contract bound to the immutable DRAFT raw hash, package and fixed target. It must not require the not-yet-captured digests or produce READY/apply authorization."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "a6d818f207afa1bcaccc2cccc0a17e95354912889fcffdbe948718a50c996616",
+      "mode": "0o664",
+      "responsibility": "Add a separately authorized read-only capture construction path within the same production transport; fixed profile/runtime/TLS checks retained, mutation session and backup tools unavailable to capture authority."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "cbce3e27fef1d03d3d6298ebfd15e332693e84a43b7862c2e0422d7a583b7c9e",
+      "mode": "0o664",
+      "responsibility": "Add fixed ledger-first capture queries and exact target function-definition capture; reject ledger mismatch before protected-catalog capture, and never accept raw SQL or caller-selected identifiers."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "sha256": "dc2ddbe489c52267907edd45ab16d0a8750b34f25acf24b38ccb7a2a18b84f06",
+      "mode": "0o664",
+      "responsibility": "Add capture-specific permission/schema/path/DRAFT tests; preserve all historical apply/no-bypass assertions."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "sha256": "21d4076ec2c2c37693ba7508f72b6aa0be068c9bd0f774ae18ea92a01c13e501",
+      "mode": "0o664",
+      "responsibility": "Add owned PG17 capture integration, ledger-first stop, forced READ ONLY and no-write assertions using existing fixture."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "sha256": "75fe7d86dc57bbaf884ebcbcc649db80b2d614cc02744530f1db731a92e22c8b",
+      "mode": "0o664",
+      "responsibility": "Document the separate capture authorization and review-only receipt, preserving seal/backup/install separation."
+    }
+  ],
+  "exactAddPaths": [],
+  "exactDeletePaths": [],
+  "unchangedBoundaries": [
+    "transaction.py",
+    "backup_adapter.py",
+    "receipts.py",
+    "plan_registry.json",
+    "target_profiles.json",
+    "plans/acl-000-v1.json",
+    "all existing fixtures",
+    "all historical ops",
+    "000/001/002",
+    "all product sources"
+  ],
+  "futureContract": "Read-only capture authorization is separate from sealed migration authorization. Capture can inspect a hash-locked DRAFT without changing it; it has no mutation/backup/restore/seal/apply capability. Plan sealing still requires a separate approval.",
+  "testsRequired": [
+    "DRAFT capture without explicit capture authorization denied before credentials",
+    "explicit capture authorization accepts immutable DRAFT without READY",
+    "all existing DRAFT apply/backup/verify/preflight rejection tests preserved",
+    "capture authority cannot open mutation session or run dump/restore",
+    "one REPEATABLE READ READ ONLY session, transaction_read_only=on and ROLLBACK",
+    "full source ledger descriptor/prefix captured from owned PG17",
+    "ledger count/presence/duplicates mismatch stops before protected-catalog family",
+    "target function/ACL/effective-role mismatch stops without writes",
+    "no baseline/fixture hash substitution; actual same-count ledger statement drift changes digest",
+    "fixed target/TLS/package/raw draft checks retained",
+    "safe private/public receipt separation without credentials/raw statements in public evidence",
+    "rerun 51 historical runner cases and source-lock regression"
+  ],
+  "implementationExecutionLimits": {
+    "currentDBConnections": 0,
+    "productionCredentials": 0,
+    "productionBackup": 0,
+    "migrationInstall": 0,
+    "deployment": 0
+  },
+  "excluded": [
+    "current-turn implementation",
+    "current DB connection via bypass",
+    "migration install",
+    "DDL/DML/ACL/ledger change",
+    "plan READY/executable seal",
+    "operator apply authorization",
+    "production backup or restore",
+    "arbitrary SQL/path/DSN",
+    "candidate rebuild/deploy",
+    "PM2",
+    "Agent/Provider/Publish",
+    "feature/allowlist/B3 changes"
+  ],
+  "newSourceLocksRequiredAfterFutureApproval": true,
+  "historicalI1LocksMustRemainEvidence": true
+}

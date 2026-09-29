@@ -1,0 +1,224 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "optionA": {
+    "contract": "POOLED_VERIFY_FULL_PROVIDER_TRUST",
+    "status": "BLOCKED",
+    "gates": {
+      "A1": {
+        "status": "PASS_HISTORICAL",
+        "claim": "Client TLSv1.3 and verify-full historical evidence; no fresh handshake this stage."
+      },
+      "A2": {
+        "status": "PASS",
+        "claim": "Same locally pinned endpoint/project identities; not a new server attestation."
+      },
+      "A3": {
+        "status": "NOT_PROVEN",
+        "claim": "No applicable managed upstream trust statement found."
+      },
+      "A4": {
+        "status": "PASS_OBSERVATIONAL_RECONCILIATION",
+        "claim": "TLS terminates at pooler; backend reports another connection. Does not establish upstream security."
+      },
+      "A5": {
+        "status": "PARTIAL",
+        "claim": "Session-affinity and historical atomic migration operations supported; current limits/security acceptance not established."
+      },
+      "A6": {
+        "status": "NOT_PROVEN",
+        "claim": "Historical backup/restore success plus documented session-mode support; full per-tool trust/capacity contract not approved."
+      }
+    },
+    "missingEvidence": [
+      {
+        "id": "A3",
+        "exactFactNeeded": "Actual managed session-pooler upstream transport, authentication, encryption or alternative protection, private-network boundary and tenant isolation; applicability to this project/service.",
+        "whoCanSupply": "Supabase support/security/architecture owner",
+        "likelyLocation": "Attributable support answer or official managed-service architecture statement",
+        "evidenceClass": "PROVIDER_SUPPORT",
+        "futureProbeNeeded": "NO: backend SQL cannot establish hidden provider infrastructure controls."
+      },
+      {
+        "id": "A3-A4",
+        "exactFactNeeded": "Provider explanation of why client TLSv1.3 and backend ssl=false are expected or anomalous for this topology, reconciled with general transit encryption assurances.",
+        "whoCanSupply": "Supabase support/security",
+        "likelyLocation": "Same support response referencing the safe historical observations",
+        "evidenceClass": "PROVIDER_SUPPORT",
+        "futureProbeNeeded": "NO_DATABASE_PROBE_REQUIRED_FOR_THE_QUESTION"
+      },
+      {
+        "id": "A6",
+        "exactFactNeeded": "Reviewable backup policy binding TLS/identity proof to each psql, pg_dump and pg_dumpall process; accepted proof type and no substitution by a separate handshake.",
+        "whoCanSupply": "Project security/operator reviewer, informed by official libpq guarantees",
+        "likelyLocation": "Forward transport contract review",
+        "evidenceClass": "LOCAL_POLICY_AND_PUBLIC_DOCUMENTATION",
+        "futureProbeNeeded": "OWNED_VALIDATION_LATER; no production backup/probe now."
+      },
+      {
+        "id": "A5-A6-CAPACITY",
+        "exactFactNeeded": "Sufficient pool/database capacity and timeout policy for one exporter plus one sequential dump connection, including roles dump; snapshot sessions route to the same primary.",
+        "whoCanSupply": "Project operator and Supabase support",
+        "likelyLocation": "Project connection settings/metrics export and provider workflow statement",
+        "evidenceClass": "PROJECT_CONFIG_AND_PROVIDER_SUPPORT",
+        "futureProbeNeeded": "MAY_REQUIRE_SEPARATELY_APPROVED_READONLY_OBSERVATION; not inferred from historical successes."
+      }
+    ]
+  },
+  "optionB": {
+    "contract": "DIRECT_POSTGRES_VERIFY_FULL",
+    "status": "BLOCKED",
+    "gates": {
+      "B1": {
+        "status": "NOT_PROVEN"
+      },
+      "B2": {
+        "status": "NOT_PROVEN_PROJECT_SPECIFIC",
+        "genericPolicy": "PROVEN"
+      },
+      "B3": {
+        "status": "NOT_PROVEN",
+        "ipv6": "LOCAL_IPV6_NOT_READY",
+        "ipv4DirectAvailability": "UNKNOWN"
+      },
+      "B4": {
+        "status": "NOT_PROVEN"
+      },
+      "B5": {
+        "status": "NOT_PROVEN_PROJECT_SPECIFIC",
+        "genericMaintenanceUse": "PROVEN"
+      }
+    },
+    "missingEvidence": [
+      {
+        "id": "B1",
+        "exactFactNeeded": "Exact direct hostname, port, DIRECT label, project binding and address-family/add-on state.",
+        "whoCanSupply": "Authenticated project operator",
+        "likelyLocation": "Dashboard Connect safe field export; existing trusted provider export",
+        "evidenceClass": "PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "NO: supply safe metadata first; do not synthesize hostname."
+      },
+      {
+        "id": "B2",
+        "exactFactNeeded": "Applicable direct server CA identity and verify-full hostname contract for that exact endpoint.",
+        "whoCanSupply": "Project operator / Supabase",
+        "likelyLocation": "Database SSL settings and authoritative CA metadata",
+        "evidenceClass": "PROJECT_CONFIG_AND_PUBLIC_DOCUMENTATION",
+        "futureProbeNeeded": "OPTIONAL_FUTURE_TLS_HANDSHAKE_AFTER_ENDPOINT_AND_CA_ARE_LOCKED"
+      },
+      {
+        "id": "B3",
+        "exactFactNeeded": "Usable host and host-network Docker route to the confirmed direct endpoint; this host currently lacks public IPv6 address/default route. If IPv4 direct exists, its applicability must be established.",
+        "whoCanSupply": "Network operator / project operator",
+        "likelyLocation": "Network configuration and existing IPv4 add-on evidence",
+        "evidenceClass": "LOCAL_AND_PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "YES_LATER_SEPARATE_DNS_TCP_TLS_PROBE; no network changes or probes now."
+      },
+      {
+        "id": "B4",
+        "exactFactNeeded": "Existing maintenance database-password identity is applicable to direct postgres login; pooler username is not reusable literally.",
+        "whoCanSupply": "Credential owner / Supabase support",
+        "likelyLocation": "Non-secret credential provenance attestation and direct role mapping",
+        "evidenceClass": "OPERATOR_OR_PROVIDER_ATTESTATION",
+        "futureProbeNeeded": "IF_NOT_RESOLVED_BY_ATTESTATION: separately approved READONLY_IDENTITY_PROBE after network proof; no passwords shared."
+      },
+      {
+        "id": "B5",
+        "exactFactNeeded": "Project connection limits and reserved maintenance headroom/timeouts for migration and two-connection exported-snapshot workflow.",
+        "whoCanSupply": "Project operator / Supabase support",
+        "likelyLocation": "Compute/connection settings or safe project metrics export",
+        "evidenceClass": "PROJECT_CONFIGURATION",
+        "futureProbeNeeded": "MAY_REQUIRE_SEPARATE_READONLY_OBSERVATION; general documentation cannot supply a project limit."
+      }
+    ]
+  },
+  "eligibleOutcome": "EXTERNAL_EVIDENCE_REQUIRED",
+  "automaticSelection": false,
+  "historicalObservationReconciled": true,
+  "backendTrustProven": false,
+  "futureProbeDesigns": [
+    {
+      "name": "DIRECT_ENDPOINT_NETWORK_PROBE",
+      "status": "DESIGN_ONLY_NOT_APPROVED_NOT_READY",
+      "preconditions": [
+        "Operator-supplied exact official direct hostname/port and project identity",
+        "Reviewed CA/hostname contract and fixed target",
+        "Separate explicit approval"
+      ],
+      "allowed": [
+        "DNS only for the supplied endpoint",
+        "bounded TCP connection and PostgreSQL SSLRequest/TLS handshake only",
+        "certificate CA/hostname validation and safe protocol/cipher metadata"
+      ],
+      "forbidden": [
+        "PostgreSQL StartupMessage/authentication/password",
+        "SQL of any kind",
+        "ledger/catalog reads",
+        "capture retry",
+        "configuration changes",
+        "fallback to pooler or alternate hostname"
+      ],
+      "clientBoundary": "Stop after TLS handshake and close; no credential store mounted/read. An SSLRequest negotiates TLS but must not become a DB authentication session.",
+      "networkContext": "Use the same approved host-network context and pinned runtime when separately authorized.",
+      "whyNotNow": "Endpoint and CA provenance are missing; it is not merely a reachability-only gap."
+    },
+    {
+      "name": "DIRECT_DB_READONLY_IDENTITY_PROBE",
+      "status": "SEPARATE_LATER_DESIGN_NOT_APPROVED",
+      "preconditions": [
+        "Network/TLS proof succeeds",
+        "Existing credential owner authorizes runtime use",
+        "Fixed endpoint/role and separately reviewed bounded implementation/approval"
+      ],
+      "allowed": [
+        "One database session",
+        "REPEATABLE READ READ ONLY with transaction_read_only confirmed",
+        "current_database/session_user/current_user/server version/inet connection identity/backend TLS safe fields",
+        "ROLLBACK"
+      ],
+      "forbidden": [
+        "Business/auth/ledger/catalog/function reads",
+        "DDL/DML",
+        "backup",
+        "capture",
+        "migration",
+        "automatic retry"
+      ],
+      "purpose": "Verify direct role/credential applicability if a sufficient non-secret operator/provider attestation is unavailable."
+    }
+  ],
+  "nextApproval": "NONE",
+  "implementationApproval": "NONE"
+}

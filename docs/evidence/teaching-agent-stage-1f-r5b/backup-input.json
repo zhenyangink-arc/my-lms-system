@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "path": "/home/yangzhen/backups/uply/20260915T063124Z",
+  "databaseDumpSha256": "41dfcc96b933b0893df3457d9c9c0c16ba82fdd58cb7d848b4ca7f7719a2aaa4",
+  "manifestSha256": "b947bf1ac84634ce45ad5c6dd668bbc6b6651c714914ce433e5cec01bf2f2150",
+  "sealSha256": "14ddee8e98662de7d09d8182e4f22d067e6573563fa0bb1f4a68311ab1f696f2",
+  "sealedFilesVerified": 79,
+  "snapshotStart": "2026-09-15T06:31:24.914920+00:00",
+  "newBackupCreated": false,
+  "backupModified": false
+}

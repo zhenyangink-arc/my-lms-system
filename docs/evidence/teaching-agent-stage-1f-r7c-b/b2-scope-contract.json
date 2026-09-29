@@ -1,0 +1,57 @@
+{
+  "contract": "development-domain-execution/1",
+  "status": "DESIGN ONLY; ISSUER NOT IMPLEMENTED/LOADED",
+  "scopeFields": [
+    "scenarioId",
+    "environmentIdentityHash",
+    "databaseIdentityHash",
+    "privateActorReference",
+    "privateTenantReference",
+    "targetLesson",
+    "targetActivity",
+    "scriptVersionAndFreezeBinding",
+    "startedAt",
+    "expiresAt",
+    "writeBudget",
+    "scopeState"
+  ],
+  "lifecycle": [
+    "DISABLED",
+    "ACTIVE",
+    "CLOSED",
+    "EXPIRED",
+    "RETIRED"
+  ],
+  "provisioningInitialState": "DISABLED; no attempt allowance",
+  "activateRequires": "Separate exact durable scenario approval after provisioning acceptance",
+  "ttlMinutes": 30,
+  "issuer": "Standalone server-only controlled domain integration composition; no production Next/StudentPolicy/Agent Tool composition import",
+  "environmentBinding": "Verify canonical DB identity and :8443 source/build/schema locks independently; NODE_ENV flag alone insufficient",
+  "actorChecks": [
+    "Exact registry-owned subject/tenant",
+    "initial ban active beyond TTL+24h",
+    "profile inactive, nonprivileged role",
+    "suspended non-default membership in exact dev tenant only",
+    "sessions=0/refresh=0/provider identities exactly expected",
+    "frozen script and canonical Activity unchanged"
+  ],
+  "writeChecks": [
+    "Server chooses bound IDs; no browser arbitrary targets",
+    "All mutations through existing grader/trusted transaction seam; no naked RPC or PGRST202 fallback",
+    "Lease + expiry + budget checked transactionally before write; one active scenario per actor/activity",
+    "Restart requires persisted valid scope record and durable domain readback; memory loss never grants scope"
+  ],
+  "registryStorage": "Proposed private filesystem durable journal with exclusive lease/atomic persistence for single controlled service. No identity/attempt/progress database. If multi-process coordination needed, STOP and review existing lock mechanism; do not infer implementation here.",
+  "neverStore": [
+    "answers",
+    "grader config",
+    "correctness truth",
+    "completion truth",
+    "progress truth",
+    "cookies",
+    "JWT"
+  ],
+  "factsAuthority": "Existing attempt/progress projections; sourceRevision, student-state evidence, runtime generation remain distinct",
+  "roleSeparation": "Service-side database transport may use existing service privileges; actor itself remains non-privileged ID/FK. No actor JWT minting or interactive impersonation.",
+  "FVerification": "Isolated auth.users -> profile -> tenant membership FK checked. New issuer enforcement not yet implemented or tested."
+}

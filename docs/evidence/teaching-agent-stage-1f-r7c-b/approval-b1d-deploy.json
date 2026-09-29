@@ -1,0 +1,90 @@
+{
+  "approval": "B1D-Deploy",
+  "approved": true,
+  "status": "APPROVED AND EXECUTED — B1 COMPLETE",
+  "stage": "R7C-B1D",
+  "targetEnvironment": "canonical UPLY :8443",
+  "targetAlias": "hangul-introduction",
+  "rootCause": "OWNER_DRAFT_LESSON_PREFLIGHT_RLS_MISMATCH",
+  "changedProductFiles": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "changedProductFileSha256": "4d2c1cd058f5fa2ba5b58ceae60c4fa2d8442a7a3508996fd2b0ec9432b5f3f3",
+  "testFiles": [
+    "tests/teaching-agent-r7cb-authoring.test.mjs",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+    "tests/fixtures/teaching-agent-r7cb/preflight-harness.mjs",
+    "tests/teaching-agent-r7cb-owner-preflight.test.mjs"
+  ],
+  "migration": "NONE",
+  "ledger": 458,
+  "expectedLedgerAfter": 458,
+  "installedRpc": "UNCHANGED",
+  "dbSchemaWrites": 0,
+  "rlsModified": false,
+  "studentPolicyModified": false,
+  "expectedBusinessWritesBeforeUI": 0,
+  "expectedCanonicalUICreateWrites": {
+    "digital_textbook_nodes": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_secrets": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "frozenContentWrites": 0,
+  "scriptVersionWrites": 0,
+  "objectiveWrites": 0,
+  "authWrites": 0,
+  "attemptWrites": 0,
+  "progressWrites": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "currentBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "candidateBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "candidateArchive": "/tmp/uply-r7cb-b1d-candidate-20260917T064420Z/candidate-build.tar.gz",
+  "candidateArchiveSha256": "2e5f143ad34b0c664e866a89a4adaf545fdb4d7fe54b737990a2c6798c540c47",
+  "candidateSourceSha256": "15b032f346a93327c6692546ad3f9c47c3ba8d5cb9e32e722d9d6a56d6d08d77",
+  "candidateSourceDirectory": "/tmp/uply-r7cb-b1d-candidate-20260917T064420Z",
+  "artifactMemberLock": "b1d-artifact-lock.json",
+  "pm2Target": "uply-first-enable",
+  "deployMethod": "Recheck candidate/live/source hashes, freeze, ledger458, function/ACL and empty binding; copy sealed candidate to private operations directory; stop only existing uply-first-enable, preserve previous .next plus exactly1 existing server file, install candidate .next plus that1 file, start same PM2 entry; no second instance",
+  "unchanged": [
+    "runtime.json",
+    "launcher",
+    "Tailscale/HTTPS routing",
+    "public",
+    "package/lock/dependencies",
+    "migration/RPC/RLS",
+    "form/Server Action",
+    "other live product source",
+    "other PM2 processes"
+  ],
+  "rollback": "Stop same target; preserve failed artifact, restore previous .next (Build YEYLRN3hvVg2OY0NJ9NO9) and previous native-activity-authoring.server.ts from private rollback directory; start same PM2 entry. No SQL rollback, no canonical row deletion.",
+  "operationsRoot": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1d/<approval-UTC>",
+  "ownerUI": "Existing normal Owner Chrome at8443; no login, cookie/token transfer or impersonation. Confirm target/version1 Draft/8 frozen nodes/binding0 and button enabled.",
+  "create": "ONE logical create attempt, authenticated Owner Server Action/RPC only; never privileged admin create. UNKNOWN=>STOP, independent READ ONLY readback, no blind retry.",
+  "postCreate": "Independent READ ONLY node1/activity1/secret1/parent/public-private/duplicate/freeze verification. Question1 only; published wording remains approved RPC payload; no frozen text edits.",
+  "B2": "NOT APPROVED / NOT INCLUDED",
+  "currentDbDurableE2E": "BLOCKED BY TEST IDENTITY",
+  "R7D": "NOT ENTERED",
+  "Stage1G": "NOT READY",
+  "currentTurnDeploy": 1,
+  "currentTurnUiCreate": 1,
+  "approvedAt": "2026-09-17T07:12:26.024664+00:00",
+  "approvalSource": "Latest user message: explicit B1D-Deploy and one conditional canonical UI create",
+  "closedAt": "2026-09-17T07:19:33.148346+00:00"
+}

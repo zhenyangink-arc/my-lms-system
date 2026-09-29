@@ -1,0 +1,30 @@
+{
+  "receiptVersion": "r6b-script-draft-v1",
+  "operator": "杨震",
+  "createdAtUtc": "2026-09-16T07:11:49.544966+00:00",
+  "targetContentAlias": "hangul-introduction",
+  "targetScriptAlias": "hangul-introduction-prelesson",
+  "creationMethod": "OFFICIAL SCRIPT STUDIO WORKFLOW",
+  "scriptResult": "PASS",
+  "scriptVersionResult": "1 DRAFT",
+  "scriptNodeCount": 0,
+  "draftStatus": "DRAFT",
+  "publishCount": 0,
+  "safeVersionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "safeTeachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+  "logicalCreateAttempts": 1,
+  "blindRetries": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": 0,
+  "providerRequests": 0,
+  "uiResult": "SUCCESS_VISIBLE",
+  "title": {},
+  "proposedDisplayName": "韩文字母入门 · 课前导航 (logical designation only; no input supported)",
+  "writeSummary": {
+    "scriptVersionInsert": 1,
+    "createDraftLogInsert": 1,
+    "update": 0,
+    "delete": 0
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "version": "202609140000",
+  "sourceSha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+  "commitState": "CONFIRMED",
+  "ledgerVerification": "PASS",
+  "objectsStatus": "PASS",
+  "objectChecks": {
+    "prefixFunctionBodiesOwnerSecurity": true,
+    "fiveAgentRlsTables": true,
+    "threeUsagePolicies": true,
+    "cancelColumns": true,
+    "assessmentTable": true,
+    "safeView": true,
+    "reconcileIndex": true,
+    "rawNodePolicy": true
+  },
+  "expectedLedger": 450,
+  "startedAtUtc": "2026-09-16T03:11:23.930093+00:00",
+  "backupAgeSeconds": 181.182954,
+  "privateReceiptSha256": "c3e41446cb344293c77572cfb656fcc6559b6fcda47191614250f1ec4c5ce808",
+  "privateReceiptPath": "/home/yangzhen/operations/uply/teaching-agent/foundation-install/20260916T025809Z/migration-receipts/202609140000.json"
+}

@@ -1,0 +1,7 @@
+{
+  "status": "NOT EXECUTED",
+  "scope": "R7C-B current development DB",
+  "reason": "CURRENT-DB TEST IDENTITY BLOCKER",
+  "dbWrites": 0,
+  "noResultClaimed": true
+}

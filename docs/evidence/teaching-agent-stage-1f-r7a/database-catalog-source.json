@@ -1,0 +1,2397 @@
+{
+  "status": "READ ONLY",
+  "relations": [
+    {
+      "schema": "public",
+      "table": "agent_conversations",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_code",
+          "type": "text"
+        },
+        {
+          "name": "app_id",
+          "type": "text"
+        },
+        {
+          "name": "scope_kind",
+          "type": "text"
+        },
+        {
+          "name": "scope_ref",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "agent_definition_versions",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_code",
+          "type": "text"
+        },
+        {
+          "name": "version",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "manifest",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "agent_messages",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "conversation_id",
+          "type": "uuid"
+        },
+        {
+          "name": "run_id",
+          "type": "uuid"
+        },
+        {
+          "name": "role",
+          "type": "text"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "state",
+          "type": "text"
+        },
+        {
+          "name": "origin",
+          "type": "text"
+        },
+        {
+          "name": "source_refs",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "agent_run_events",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "run_id",
+          "type": "uuid"
+        },
+        {
+          "name": "seq",
+          "type": "bigint"
+        },
+        {
+          "name": "kind",
+          "type": "text"
+        },
+        {
+          "name": "model_call_id",
+          "type": "uuid"
+        },
+        {
+          "name": "tool_call_id",
+          "type": "text"
+        },
+        {
+          "name": "skill_run_id",
+          "type": "uuid"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "agent_runs",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "conversation_id",
+          "type": "uuid"
+        },
+        {
+          "name": "input_message_id",
+          "type": "uuid"
+        },
+        {
+          "name": "definition_id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_code",
+          "type": "text"
+        },
+        {
+          "name": "profile_version",
+          "type": "text"
+        },
+        {
+          "name": "skill_ref",
+          "type": "jsonb"
+        },
+        {
+          "name": "scope_ref",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "idempotency_key",
+          "type": "text"
+        },
+        {
+          "name": "request_digest",
+          "type": "text"
+        },
+        {
+          "name": "budget",
+          "type": "jsonb"
+        },
+        {
+          "name": "deadline_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "lease_expires_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "state_version",
+          "type": "integer"
+        },
+        {
+          "name": "fencing_token",
+          "type": "uuid"
+        },
+        {
+          "name": "execution_attempt",
+          "type": "integer"
+        },
+        {
+          "name": "retry_of_run_id",
+          "type": "uuid"
+        },
+        {
+          "name": "context_metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "terminal_reason",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "ended_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "cancel_requested_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "public_event_seq",
+          "type": "bigint"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "conversation_practice_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "scenario_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "practice_count",
+          "type": "integer"
+        },
+        {
+          "name": "confidence",
+          "type": "integer"
+        },
+        {
+          "name": "reflection",
+          "type": "text"
+        },
+        {
+          "name": "first_practiced_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "last_practiced_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "course_ebook_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "test_slug",
+          "type": "text"
+        },
+        {
+          "name": "current_page",
+          "type": "integer"
+        },
+        {
+          "name": "total_pages",
+          "type": "integer"
+        },
+        {
+          "name": "progress_percent",
+          "type": "integer"
+        },
+        {
+          "name": "last_read_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "read_pages",
+          "type": "integer[]"
+        },
+        {
+          "name": "reading_seconds",
+          "type": "integer"
+        },
+        {
+          "name": "student_app_id",
+          "type": "uuid"
+        },
+        {
+          "name": "completion_source",
+          "type": "text"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_activities",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_key",
+          "type": "text"
+        },
+        {
+          "name": "activity_type",
+          "type": "text"
+        },
+        {
+          "name": "sort_order",
+          "type": "integer"
+        },
+        {
+          "name": "prompt",
+          "type": "jsonb"
+        },
+        {
+          "name": "instruction",
+          "type": "jsonb"
+        },
+        {
+          "name": "options",
+          "type": "jsonb"
+        },
+        {
+          "name": "public_config",
+          "type": "jsonb"
+        },
+        {
+          "name": "max_attempts",
+          "type": "integer"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "counts_toward_completion",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_activity_page_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "page_index",
+          "type": "integer"
+        },
+        {
+          "name": "item_indices",
+          "type": "jsonb"
+        },
+        {
+          "name": "response",
+          "type": "jsonb"
+        },
+        {
+          "name": "results",
+          "type": "jsonb"
+        },
+        {
+          "name": "answers",
+          "type": "jsonb"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_activity_secrets",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "answer_key",
+          "type": "jsonb"
+        },
+        {
+          "name": "explanation",
+          "type": "jsonb"
+        },
+        {
+          "name": "transcript_ko",
+          "type": "text"
+        },
+        {
+          "name": "audio_object_key",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "audio_status",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_attempts",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "attempt_number",
+          "type": "integer"
+        },
+        {
+          "name": "response",
+          "type": "jsonb"
+        },
+        {
+          "name": "is_correct",
+          "type": "boolean"
+        },
+        {
+          "name": "score",
+          "type": "numeric(5,2)"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "meets_completion_requirements",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_chapters",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "chapter_test_id",
+          "type": "uuid"
+        },
+        {
+          "name": "slug",
+          "type": "text"
+        },
+        {
+          "name": "chapter_number",
+          "type": "integer"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "scenario",
+          "type": "jsonb"
+        },
+        {
+          "name": "goal",
+          "type": "jsonb"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "production_status",
+          "type": "text"
+        },
+        {
+          "name": "editorial_status",
+          "type": "text"
+        },
+        {
+          "name": "native_review_status",
+          "type": "text"
+        },
+        {
+          "name": "audio_status",
+          "type": "text"
+        },
+        {
+          "name": "image_status",
+          "type": "text"
+        },
+        {
+          "name": "source_revision",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_guided_repeat_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "practice_key",
+          "type": "text"
+        },
+        {
+          "name": "track_index",
+          "type": "integer"
+        },
+        {
+          "name": "segment_index",
+          "type": "integer"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_listening_tracks",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "page_index",
+          "type": "integer"
+        },
+        {
+          "name": "transcript_ko",
+          "type": "text"
+        },
+        {
+          "name": "audio_object_key",
+          "type": "text"
+        },
+        {
+          "name": "audio_status",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_media_assets",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "asset_key",
+          "type": "text"
+        },
+        {
+          "name": "media_type",
+          "type": "text"
+        },
+        {
+          "name": "purpose",
+          "type": "text"
+        },
+        {
+          "name": "object_key",
+          "type": "text"
+        },
+        {
+          "name": "production_status",
+          "type": "text"
+        },
+        {
+          "name": "alt_text",
+          "type": "jsonb"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_modules",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "chapter_id",
+          "type": "uuid"
+        },
+        {
+          "name": "module_code",
+          "type": "text"
+        },
+        {
+          "name": "sort_order",
+          "type": "integer"
+        },
+        {
+          "name": "accent_role",
+          "type": "text"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "description",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_node_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "completion_percent",
+          "type": "integer"
+        },
+        {
+          "name": "mastery_score",
+          "type": "integer"
+        },
+        {
+          "name": "attempt_count",
+          "type": "integer"
+        },
+        {
+          "name": "last_activity_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "module_id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_code",
+          "type": "text"
+        },
+        {
+          "name": "node_type",
+          "type": "text"
+        },
+        {
+          "name": "sort_order",
+          "type": "integer"
+        },
+        {
+          "name": "estimated_minutes",
+          "type": "integer"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "content",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "authoring_grammar_identities",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_preferences",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "interface_locale",
+          "type": "text"
+        },
+        {
+          "name": "support_mode",
+          "type": "text"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_speaking_evidence",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "object_key",
+          "type": "text"
+        },
+        {
+          "name": "byte_size",
+          "type": "bigint"
+        },
+        {
+          "name": "mime_type",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "consumed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "consumed_attempt_number",
+          "type": "integer"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_versions",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_number",
+          "type": "integer"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "release_notes",
+          "type": "text"
+        },
+        {
+          "name": "published_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbooks",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "slug",
+          "type": "text"
+        },
+        {
+          "name": "level_code",
+          "type": "text"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "student_app_id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_blackboard_layout_templates",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "name",
+          "type": "text"
+        },
+        {
+          "name": "background",
+          "type": "text"
+        },
+        {
+          "name": "elements",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_character_style_templates",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "name",
+          "type": "text"
+        },
+        {
+          "name": "virtual_character_position",
+          "type": "text"
+        },
+        {
+          "name": "character_x",
+          "type": "numeric"
+        },
+        {
+          "name": "character_y",
+          "type": "numeric"
+        },
+        {
+          "name": "character_scale",
+          "type": "numeric"
+        },
+        {
+          "name": "dialogue_x",
+          "type": "numeric"
+        },
+        {
+          "name": "dialogue_y",
+          "type": "numeric"
+        },
+        {
+          "name": "blackboard_x",
+          "type": "numeric"
+        },
+        {
+          "name": "blackboard_y",
+          "type": "numeric"
+        },
+        {
+          "name": "blackboard_scale",
+          "type": "numeric"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "split_character_x",
+          "type": "numeric"
+        },
+        {
+          "name": "split_character_y",
+          "type": "numeric"
+        },
+        {
+          "name": "split_character_scale",
+          "type": "numeric"
+        },
+        {
+          "name": "split_dialogue_x",
+          "type": "numeric"
+        },
+        {
+          "name": "split_dialogue_y",
+          "type": "numeric"
+        },
+        {
+          "name": "narrow_character_x",
+          "type": "numeric"
+        },
+        {
+          "name": "narrow_character_y",
+          "type": "numeric"
+        },
+        {
+          "name": "narrow_character_scale",
+          "type": "numeric"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_lessons",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "module_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "revision",
+          "type": "integer"
+        },
+        {
+          "name": "objectives",
+          "type": "jsonb"
+        },
+        {
+          "name": "guardrails",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_messages",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "session_id",
+          "type": "uuid"
+        },
+        {
+          "name": "role",
+          "type": "text"
+        },
+        {
+          "name": "intent",
+          "type": "text"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "action",
+          "type": "jsonb"
+        },
+        {
+          "name": "provider",
+          "type": "text"
+        },
+        {
+          "name": "model",
+          "type": "text"
+        },
+        {
+          "name": "input_tokens",
+          "type": "integer"
+        },
+        {
+          "name": "output_tokens",
+          "type": "integer"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_model_change_logs",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        },
+        {
+          "name": "changed_by",
+          "type": "uuid"
+        },
+        {
+          "name": "previous_provider",
+          "type": "text"
+        },
+        {
+          "name": "previous_model",
+          "type": "text"
+        },
+        {
+          "name": "next_provider",
+          "type": "text"
+        },
+        {
+          "name": "next_model",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_node_attempts",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "session_id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "response",
+          "type": "jsonb"
+        },
+        {
+          "name": "is_correct",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_node_interaction_secrets",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "correct_option_index",
+          "type": "smallint"
+        },
+        {
+          "name": "correct_feedback",
+          "type": "jsonb"
+        },
+        {
+          "name": "incorrect_feedback",
+          "type": "jsonb"
+        },
+        {
+          "name": "evaluation",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_profile_secrets",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        },
+        {
+          "name": "system_prompt",
+          "type": "text"
+        },
+        {
+          "name": "provider",
+          "type": "text"
+        },
+        {
+          "name": "model",
+          "type": "text"
+        },
+        {
+          "name": "reply_policy",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_profiles",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "agent_code",
+          "type": "text"
+        },
+        {
+          "name": "subject_code",
+          "type": "text"
+        },
+        {
+          "name": "display_name",
+          "type": "jsonb"
+        },
+        {
+          "name": "description",
+          "type": "jsonb"
+        },
+        {
+          "name": "access_feature",
+          "type": "text"
+        },
+        {
+          "name": "capabilities",
+          "type": "jsonb"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_publish_logs",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "action",
+          "type": "text"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "details",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_script_audio_assets",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "locale",
+          "type": "text"
+        },
+        {
+          "name": "segment_index",
+          "type": "integer"
+        },
+        {
+          "name": "content_hash",
+          "type": "text"
+        },
+        {
+          "name": "object_key",
+          "type": "text"
+        },
+        {
+          "name": "duration_ms",
+          "type": "integer"
+        },
+        {
+          "name": "cue_timeline",
+          "type": "jsonb"
+        },
+        {
+          "name": "voice_manifest",
+          "type": "jsonb"
+        },
+        {
+          "name": "production_status",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_script_nodes",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_key",
+          "type": "text"
+        },
+        {
+          "name": "node_type",
+          "type": "text"
+        },
+        {
+          "name": "sort_order",
+          "type": "integer"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "teacher_script",
+          "type": "jsonb"
+        },
+        {
+          "name": "configuration",
+          "type": "jsonb"
+        },
+        {
+          "name": "reference_activity_id",
+          "type": "uuid"
+        },
+        {
+          "name": "action_type",
+          "type": "text"
+        },
+        {
+          "name": "next_node_key",
+          "type": "text"
+        },
+        {
+          "name": "remediation_node_key",
+          "type": "text"
+        },
+        {
+          "name": "is_required",
+          "type": "boolean"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_script_versions",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_number",
+          "type": "integer"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "title",
+          "type": "jsonb"
+        },
+        {
+          "name": "change_note",
+          "type": "text"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid"
+        },
+        {
+          "name": "published_by",
+          "type": "uuid"
+        },
+        {
+          "name": "published_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_sessions",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "locale",
+          "type": "text"
+        },
+        {
+          "name": "support_mode",
+          "type": "text"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "current_step_key",
+          "type": "text"
+        },
+        {
+          "name": "last_action",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "agent_profile_id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "current_node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "teaching_state",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_steps",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "step_key",
+          "type": "text"
+        },
+        {
+          "name": "sort_order",
+          "type": "integer"
+        },
+        {
+          "name": "content",
+          "type": "jsonb"
+        },
+        {
+          "name": "action_type",
+          "type": "text"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_agent_task_events",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "session_id",
+          "type": "uuid"
+        },
+        {
+          "name": "script_version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "node_id",
+          "type": "uuid"
+        },
+        {
+          "name": "event_type",
+          "type": "text"
+        },
+        {
+          "name": "target_key",
+          "type": "text"
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "learning_assignment_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "assignment_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "progress_state",
+          "type": "text"
+        },
+        {
+          "name": "latest_submission_id",
+          "type": "uuid"
+        },
+        {
+          "name": "attempts_used",
+          "type": "integer"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "lesson_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid"
+        },
+        {
+          "name": "course_id",
+          "type": "uuid"
+        },
+        {
+          "name": "lesson_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "progress_percent",
+          "type": "integer"
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "last_viewed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        }
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "student_chapter_practice_progress",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "student_id",
+          "type": "uuid"
+        },
+        {
+          "name": "practice_unit_id",
+          "type": "uuid"
+        },
+        {
+          "name": "status",
+          "type": "text"
+        },
+        {
+          "name": "progress_percent",
+          "type": "numeric(5,2)"
+        },
+        {
+          "name": "mastery_percent",
+          "type": "numeric(5,2)"
+        },
+        {
+          "name": "completed_block_ids",
+          "type": "uuid[]"
+        },
+        {
+          "name": "last_block_id",
+          "type": "uuid"
+        },
+        {
+          "name": "correct_count",
+          "type": "integer"
+        },
+        {
+          "name": "attempt_count",
+          "type": "integer"
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "last_practiced_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "admission_control",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "singleton",
+          "type": "boolean"
+        },
+        {
+          "name": "enabled",
+          "type": "boolean"
+        },
+        {
+          "name": "revision",
+          "type": "bigint"
+        },
+        {
+          "name": "cohort",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "authoring_control",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "state",
+          "type": "text"
+        },
+        {
+          "name": "revision",
+          "type": "bigint"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "bindings",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "snapshot_id",
+          "type": "text"
+        },
+        {
+          "name": "payload",
+          "type": "jsonb"
+        },
+        {
+          "name": "digest",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "dependency_fences",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "snapshot_id",
+          "type": "text"
+        },
+        {
+          "name": "scope",
+          "type": "jsonb"
+        },
+        {
+          "name": "capture",
+          "type": "jsonb"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "history",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "bigint"
+        },
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "chapter_id",
+          "type": "uuid"
+        },
+        {
+          "name": "from_snapshot",
+          "type": "text"
+        },
+        {
+          "name": "to_snapshot",
+          "type": "text"
+        },
+        {
+          "name": "generation",
+          "type": "bigint"
+        },
+        {
+          "name": "operation",
+          "type": "text"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "pointers",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "chapter_id",
+          "type": "uuid"
+        },
+        {
+          "name": "snapshot_id",
+          "type": "text"
+        },
+        {
+          "name": "generation",
+          "type": "bigint"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "retired_snapshots",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "snapshot_id",
+          "type": "text"
+        },
+        {
+          "name": "retired_by",
+          "type": "uuid"
+        },
+        {
+          "name": "at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "runtime_requests",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "finished_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "sessions",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "actor_id",
+          "type": "uuid"
+        },
+        {
+          "name": "tenant_id",
+          "type": "uuid"
+        },
+        {
+          "name": "snapshot_id",
+          "type": "text"
+        },
+        {
+          "name": "locale",
+          "type": "text"
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "revoked",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "snapshots",
+      "kind": "r",
+      "rls": true,
+      "columns": [
+        {
+          "name": "id",
+          "type": "text"
+        },
+        {
+          "name": "textbook_id",
+          "type": "uuid"
+        },
+        {
+          "name": "version_id",
+          "type": "uuid"
+        },
+        {
+          "name": "chapter_id",
+          "type": "uuid"
+        },
+        {
+          "name": "document",
+          "type": "jsonb"
+        },
+        {
+          "name": "created_by",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        }
+      ]
+    }
+  ]
+}

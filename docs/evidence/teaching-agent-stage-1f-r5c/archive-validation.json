@@ -1,0 +1,28 @@
+{
+  "database": {
+    "exit": 0,
+    "header": {
+      "Archive created at": "2026-09-16 03:08:22 UTC",
+      "Dump Version": "1.16-0",
+      "Format": "CUSTOM",
+      "Compression": "gzip",
+      "Dumped from database version": "17.6",
+      "Dumped by pg_dump version": "17.6"
+    },
+    "tocEntries": 4367,
+    "tableDataEntries": 233
+  },
+  "schema": {
+    "exit": 0,
+    "header": {
+      "Archive created at": "2026-09-16 03:08:32 UTC",
+      "Dump Version": "1.16-0",
+      "Format": "CUSTOM",
+      "Compression": "gzip",
+      "Dumped from database version": "17.6",
+      "Dumped by pg_dump version": "17.6"
+    },
+    "tocEntries": 4111,
+    "tableDataEntries": 0
+  }
+}

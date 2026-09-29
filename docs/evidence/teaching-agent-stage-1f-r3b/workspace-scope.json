@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "baselineFiles": 3009,
+  "preexistingFilesChanged": [],
+  "addedFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r3b/course-inventory.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/release-integrity.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/targeted-reconcile-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/validation-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/verification-build-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r3b/workspace-scope.json",
+    "docs/teaching-agent-pilot-content-preparation.md",
+    "docs/teaching-agent-pilot-operations-roles.md",
+    "docs/teaching-agent-provider-policy-approval.md",
+    "docs/teaching-agent-stage-1f-r3b-pilot-readiness.md",
+    "docs/teaching-agent-tailscale-verification-request.md",
+    "scripts/teaching-agent-r3b/production-inventory.sql",
+    "scripts/teaching-agent-r3b/targeted-reconcile.mjs",
+    "scripts/teaching-agent-r3b/verify-build.py"
+  ],
+  "unexpectedFiles": [],
+  "productFilesChanged": 0,
+  "oldR3R3AReportsEvidenceChanged": 0,
+  "gitDiffCheck": "PASS",
+  "reportSections": 19,
+  "r3Gates": 35,
+  "r3bGates": 20,
+  "artifactCredentialPatternScan": "PASS",
+  "boundary": "Pattern scan plus manual metadata allowlist review; no secrets or student content intentionally exported."
+}

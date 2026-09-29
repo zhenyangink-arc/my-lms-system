@@ -1,0 +1,156 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "proposalOnly": true,
+  "migrationFilenameProposal": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+  "fileCreated": false,
+  "ordering": "BEFORE_001",
+  "inventoryCollision": false,
+  "neighborFiles": [
+    "202609170001_teaching_lesson_activity_binding.sql",
+    "202609180001_agent_durable_skill_completion.sql",
+    "202609180002_native_publication_contract.sql"
+  ],
+  "inventoryCount": 460,
+  "inventorySha256": "600b051207e8713fd9ebb0449798c109d147564cc0710c85243d18d66311fa70",
+  "versionWidth": 12,
+  "orderingEvidence": [
+    {
+      "path": "scripts/supabase_baseline_lib.py",
+      "sha256": "75e88f293ee12abe8f65758c3df6f7923c5a291b7e3d57cc20b470180ce9851f",
+      "lines": [
+        144,
+        150,
+        151,
+        156
+      ]
+    },
+    {
+      "path": "scripts/teaching-agent-r3a/rehearse-migrations.py",
+      "sha256": "3ffdd5a0a63277ca02ed87d2a2cd6d93212db315203d8f15ea78d6ee09fbc7e0",
+      "lines": [
+        43,
+        67,
+        69,
+        71,
+        77,
+        79
+      ]
+    },
+    {
+      "path": "scripts/teaching-agent-r3/release-manifest.mjs",
+      "sha256": "705c754a888c221a1c9e42ef4123fecc03701f53eba9dc52dc72294dc1ab3e0b",
+      "lines": [
+        14
+      ]
+    }
+  ],
+  "runnerSemantics": "Repository release/rehearsal enumerates sorted filenames, parses numeric prefix, rejects duplicates and advances ledger after exact migration execution. All current names use equal 12-digit prefixes: 170001 < 180000 < 180001 < 180002. Do not db push all.",
+  "cliInspection": "Installed npm package metadata says Supabase2.109.1; version command attempted telemetry file write and failed EROFS. No CLI migration operation ran. Ordering conclusion uses actual local release/rehearsal implementation and inventory, not an unverified CLI version output.",
+  "expectedCurrent": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": true,
+    "noOtherOverloadAffected": true
+  },
+  "desired": {
+    "aclRoles": [
+      "postgres",
+      "authenticated"
+    ],
+    "authenticatedExecute": true,
+    "postgresExecute": true,
+    "serviceRoleExecute": false,
+    "PUBLICExecute": false,
+    "anonExecute": false
+  },
+  "onlyPrivilegeMutation": "REVOKE EXECUTE ON FUNCTION public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean) FROM service_role RESTRICT;",
+  "transactionDesign": [
+    "Begin single transaction; bounded lock and statement timeouts. No persistent helper functions or new tables.",
+    "Resolve exact signature; assert definition hash, owner, security metadata and exact normalized ACL tuples INCLUDING grantor/grant option. Verify service-role inheritance cannot retain EXECUTE.",
+    "Only the one exact REVOKE statement. No CASCADE.",
+    "Postcheck exact desired ACL and has_function_privilege=false for service_role/anon; PUBLIC absent. Recheck body/owner/config unchanged; abort whole transaction on any mismatch.",
+    "Standard reviewed installer records this exact version only after successful exact SQL; ledger and DDL atomic in controlled transaction. No repair/mark-applied without execution."
+  ],
+  "idempotency": "Strict unapplied install: requires historical three-role ACL, so already-desired ACL with missing ledger is unexpected and STOP. Installed exact version: runner skips only after checksum/desired-state verification. No blind IF EXISTS, no ignored revoke warning, no forced ledger insertion.",
+  "noChanges": [
+    "function body",
+    "owner",
+    "search_path",
+    "global or schema defaults",
+    "unrelated RPC ACL",
+    "role memberships",
+    "business rows",
+    "001",
+    "002"
+  ],
+  "futureReleaseOrder": [
+    "Separate approval for authoring + isolated tests",
+    "Separate exact-hash current-install approval and updated baseline packages",
+    "Targeted ACL preflight validates historical ACL, ledger458 and001/002 absent; backup/recovery evidence",
+    "Install000 only; verify desired contract and ledger459; STOP unless separate release execution authorization includes next steps",
+    "Fresh release preflight against reconciled desired-contract baseline",
+    "Install001 and verify ledger460",
+    "Install002 and verify ledger461",
+    "Deploy same sealed application candidate only under renewed release approval; health; STOP"
+  ],
+  "ledgerAssumptions": "458 is last verified C3B ledger, not reread this turn. Every future install must fresh-check; drift invalidates plan.",
+  "originalReleaseApproval": "Does not authorize000 or silently changed ledger expectations/order. Reissue new approval metadata, preserve historical packages.",
+  "forwardOnly": "No down migration or automatic regrant. Failure before commit rolls back own transaction; failure after committed change requires diagnosis/forward approval. Application rollback does not restore unnecessary target EXECUTE."
+}

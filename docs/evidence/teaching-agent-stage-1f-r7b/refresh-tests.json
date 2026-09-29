@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "waiting": "restored from same bound fixture server state and remains paused",
+  "completed": "restores completion; no repeated activity",
+  "bindingMismatch": "fail closed",
+  "storage": "existing server attempt/progress semantics emulated in isolated in-process fixture",
+  "serverRestartDurability": "NOT PROVIDED / NOT PRODUCTION",
+  "videoPosition": "not required for correctness; observed position is not progress"
+}

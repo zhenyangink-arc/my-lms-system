@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "test_supabase_baseline.BaselineTests.test_deterministic_regeneration_and_source_race_guard",
+    "-v"
+  ],
+  "exit": 0,
+  "durationSeconds": 2.516,
+  "stdout": "",
+  "stderr": "test_deterministic_regeneration_and_source_race_guard (test_supabase_baseline.BaselineTests.test_deterministic_regeneration_and_source_race_guard) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.447s\n\nOK\n"
+}

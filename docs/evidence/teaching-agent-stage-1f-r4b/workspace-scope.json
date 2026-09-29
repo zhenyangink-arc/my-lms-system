@@ -1,0 +1,32 @@
+{
+  "existingFileCount": 3142,
+  "modifiedExisting": [
+    {
+      "path": "docs/teaching-agent-tailscale-verification-request.md",
+      "before": "e477d04b789a16d705cc8b7e00cc675c65e07a0ceb54943eff2366860a6dcc1d",
+      "after": "4df2d46a7a812c9da2077dbac1f5cc552453c3c42f721749180a3bb5861830c5"
+    }
+  ],
+  "addedFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4b/binding-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/cleanup-result.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/cli-evidence.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/config-comparison.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/probe-integrity.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/probe-source.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/server-events.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/transport-results.json",
+    "docs/teaching-agent-stage-1f-r4b-tailscale-transport-verification.md",
+    "docs/evidence/teaching-agent-stage-1f-r4b/preflight.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/assessment.json",
+    "docs/evidence/teaching-agent-stage-1f-r4b/workspace-scope.json"
+  ],
+  "productFilesUnchanged": true,
+  "oldReportsUnchanged": true,
+  "scopeCheck": "PASS",
+  "gitDiffCheck": "PASS",
+  "secretPatternScan": "PASS",
+  "markdownCheck": "PASS",
+  "snapshotTiming": "Before execution; preflight.json had already been created and is unchanged"
+}

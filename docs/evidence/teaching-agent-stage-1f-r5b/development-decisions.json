@@ -1,0 +1,13 @@
+{
+  "recordedAtUtc": "2026-09-15T11:06:58.336683+00:00",
+  "basis": "Explicit Stage1F-R5B user instruction, not an execution approval",
+  "developmentStrategy": "FORWARD-ONLY",
+  "oldAppCompatibility": "NOT REQUIRED BY USER",
+  "singleOperatorDevelopmentException": "ACCEPTED BY 杨震",
+  "independentStandby": "DEFERRED UNTIL REAL PILOT / EXTERNAL USER ROLLOUT",
+  "window": "TBD",
+  "providerPolicy": "DEFERRED UNTIL LIVE AI / REAL USER TESTING; no approval granted",
+  "productionContentPins": "DEFERRED UNTIL FOUNDATION INSTALLED",
+  "productionAuthorization": "NOT GRANTED",
+  "stage1g": "NOT READY"
+}

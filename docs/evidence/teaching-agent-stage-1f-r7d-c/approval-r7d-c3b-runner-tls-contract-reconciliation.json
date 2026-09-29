@@ -1,0 +1,118 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "READY_AWAITING_EXPLICIT_TLS_CONTRACT_RECONCILIATION_APPROVAL",
+  "approved": false,
+  "executionAuthorized": false,
+  "approvalType": "TLS_TRANSPORT_CONTRACT_RECONCILIATION_DESIGN_ONLY",
+  "diagnosis": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-decision.json",
+    "sha256": "654e673af72e1e21f4d39f884e7a467c74a32742b8c885f0caa3c1dfb0ddf5bb"
+  },
+  "securityContract": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-security-contract.json",
+    "sha256": "688baca2449becfb769f4c19c0acdff0f9cf0dc0fda36d7d537b3ed1fb6e80b7"
+  },
+  "currentSourceLocks": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "mode": "0o664"
+    }
+  ],
+  "proposedWork": [
+    "Reconcile original pooled verify-full contract with client TLS proof and separately recorded backend SSL facts.",
+    "Evaluate provider-internal trust requirements versus a separately approved direct TCP TLS alternative; choose neither automatically.",
+    "Produce exact future implementation/test scope and new authority/version requirements; preserve historical P1D/v3 evidence."
+  ],
+  "allowedChanges": "New design/evidence proposals only; implementation MODIFY 0 ADD 0",
+  "prohibited": [
+    "current DB connection",
+    "production credential access",
+    "capture retry",
+    "TLS guard/config/source changes",
+    "plan seal",
+    "backup/restore",
+    "migration install",
+    "deploy",
+    "PM2 mutation",
+    "Agent/Provider/Publish"
+  ],
+  "acceptanceCriteria": [
+    "Explicitly identify and validate client and backend hops separately.",
+    "No accepting backend false solely to pass preflight.",
+    "Provider trust gaps remain blockers until documented/approved.",
+    "Any future probe gets its own limited read-only approval and reviewed entrypoint.",
+    "Exact implementation scope requires subsequent explicit approval."
+  ]
+}

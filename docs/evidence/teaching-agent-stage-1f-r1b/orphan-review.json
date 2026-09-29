@@ -1,0 +1,50 @@
+[
+  {
+    "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080004_teaching_operations.sql",
+    "decision": "REISSUE_POST_BASELINE",
+    "newFilename": "202609140003_teaching_operations_reissue.sql",
+    "newSha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+    "originalFilename": "202609080004_teaching_operations.sql",
+    "originalSha256": "0d43d2bb14bc3b43457dcf5671b615e2a046b7aaa5845a6421d481e1cdff368d",
+    "reason": "Current curriculum plan service/actions require get_curriculum_execution and dispatch_curriculum_plan_exam; objects absent from cutover snapshot; no superseding migration.",
+    "status": "REISSUED_POST_BASELINE",
+    "cutoverDefinedFunctionsFound": [],
+    "checkedFunctions": [
+      "guard_curriculum_learning_source",
+      "guard_curriculum_learning_publication",
+      "staff_has_curriculum_template",
+      "dispatch_curriculum_plan_exam",
+      "guard_curriculum_exam_roster",
+      "guard_curriculum_exam_cancellation",
+      "get_curriculum_execution"
+    ],
+    "supersedingMigrationFound": false,
+    "tests": "2 isolated PGlite suites PASS; target clone five-step apply PASS",
+    "authorizationReview": "Tenant, active enrollment, app, assigned students and teacher relationship; idempotent dispatch, future schedule, roster/cancel guards. All SECURITY DEFINER use empty search_path, revoke anon/public, explicit authenticated grants.",
+    "existingConstraintDefinitions": [
+      "CHECK ((activity_type = ANY (ARRAY['course'::text, 'listening'::text, 'speaking'::text, 'reading'::text, 'writing'::text, 'vocabulary'::text, 'grammar'::text, 'chapter_test'::text, 'stage_exam'::text, 'final_exam'::text, 'review'::text])))",
+      "CHECK ((source_type = ANY (ARRAY['lesson'::text, 'chapter'::text, 'specialized_practice'::text, 'chapter_test'::text, 'assessment_paper'::text, 'manual'::text])))"
+    ],
+    "constraintReview": "Both replacements are strict supersets of old allowed values (add chapter_practice); existing valid values remain valid. New triggers are prospective; no existing rows updated."
+  },
+  {
+    "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080005_completion_policy_management.sql",
+    "decision": "REISSUE_POST_BASELINE",
+    "newFilename": "202609140004_completion_policy_management_reissue.sql",
+    "newSha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+    "originalFilename": "202609080005_completion_policy_management.sql",
+    "originalSha256": "44079b7845187ef97e189262c4f603d458e16901da5dc77f6c31bb0bdca6edf5",
+    "reason": "Current policy-actions require draft/publish/refresh RPCs; all four absent from cutover snapshot; no superseding migration.",
+    "status": "REISSUED_POST_BASELINE",
+    "cutoverDefinedFunctionsFound": [],
+    "checkedFunctions": [
+      "save_completion_policy_draft",
+      "publish_completion_policy_draft",
+      "get_completion_refresh_health",
+      "retry_failed_completion_refresh"
+    ],
+    "supersedingMigrationFound": false,
+    "tests": "2 isolated PGlite suites PASS; target clone five-step apply PASS",
+    "authorizationReview": "All four RPCs require authenticated platform owner; course Korean/platform scope, valid requirements, advisory locking, immutable published policy and atomic replacement preserved; anon/public EXECUTE revoked."
+  }
+]

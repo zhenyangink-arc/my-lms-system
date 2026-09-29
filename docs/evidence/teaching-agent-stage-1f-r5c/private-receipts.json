@@ -1,0 +1,47 @@
+{
+  "status": "COMPLETE",
+  "rootPath": "/home/yangzhen/operations/uply/teaching-agent/foundation-install/20260916T025809Z",
+  "rootMode": "0700",
+  "receiptMode": "0600",
+  "requiredFiles": [
+    {
+      "name": "user-authorization-summary.json",
+      "sha256": "0135534ffe184596599a0d89a886cfaa117095b6b4509d57549f809609a6e390"
+    },
+    {
+      "name": "execution-authorization.json",
+      "sha256": "758a24583dd96918b08f1b4c8f715ac0f987b4c28db5bb9ee252644ca62001d4"
+    },
+    {
+      "name": "fresh-backup.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+    },
+    {
+      "name": "fresh-backup-restore.json",
+      "sha256": "7a55c361f5f08d2ab3573f18fc5029179f634bed52d9e22c16f56a904cdc6eec"
+    },
+    {
+      "name": "migration-final.json",
+      "sha256": "de02731673999fb7465b1d1ae05838bc7ec7267c7fb39d1d932b8a2c67dd44ed"
+    },
+    {
+      "name": "deployment.json",
+      "sha256": "c8f3b7d5285476a1c839885cb55d50e9d3ece090e5f35e9b82c12695542580e9"
+    },
+    {
+      "name": "pm2-stop.json",
+      "sha256": "7e6958bd12afb3e558d91bea5c9fe539b76c41f90dccefef7b9a79195cffc0df"
+    },
+    {
+      "name": "pm2-start.json",
+      "sha256": "25ed4e6bf02686047f9d7bff69dcaecdb8fc12f5b17558d95bacc1053f851c29"
+    },
+    {
+      "name": "verification-receipt.json",
+      "sha256": "186a1c16fa24e8ac122b73d4e7772d29f96676545c3d782d556d964ed11c8efa"
+    }
+  ],
+  "migrationReceiptCount": 8,
+  "temporaryCredentialsRemoved": true,
+  "retention": "No automatic deletion; fresh backup minimum7days AND through stable Stage1G Pilot"
+}

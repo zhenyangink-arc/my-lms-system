@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "sourceContractChecks": {
+    "all35FunctionBodiesAndSecurity": true,
+    "privateAgentAcl": true,
+    "agentRpcServiceOnly": true,
+    "skeletonAcl": true,
+    "agentTablesRlsNoBrowser": true,
+    "agentServiceTableAcl": true,
+    "sixIndexesValid": true,
+    "sevenTriggersEnabled": true,
+    "constraintCountsAndValidation": true,
+    "twoDeferredInputMessageFks": true,
+    "usageBoundariesRestrictive": true,
+    "rawNodeBroadPolicyRemoved": true,
+    "staffPolicies": true,
+    "safeView": true,
+    "exactNewColumns": true,
+    "usageNewColumns": true,
+    "cancelSequenceShape": true,
+    "agentRowsZero": true
+  },
+  "r5cFullRecordCategoryMatches": {
+    "functions": true,
+    "columns": true,
+    "constraints": true,
+    "indexes": true,
+    "rls": true,
+    "policies": true,
+    "view": true,
+    "triggers": true,
+    "agentRows": true
+  },
+  "canonicalCategoryDigests": {
+    "functions": "4750d914e890c87104d64812238792b3f22275140453eaac4ab3787ae2aa26da",
+    "columns": "701dc6b8b048b0fc1d21a27fe9355e2a35d29b79db0fd5e8dd37cc5284abdbe5",
+    "constraints": "89acb719f9e47619323313af8823f6f9dd728a7b4a3090a456c342aa8226b11d",
+    "indexes": "3122019ed14ccf26f505061013c787c71dd737b63bb8499e1d4af1b09d0e8078",
+    "rls": "cd6ad6a79d4b1b26bb70040bb917143fc6073b3fcc02e154cf571c87bb917f5e",
+    "policies": "56cfa3041b0c8e0a16ee4c4c7769bd4aac8603c7246e89379498e3a44100f95d",
+    "view": "fbacd21e2f58b88dc2757a1713e9771de8e44a834d9da61f3309586de54dd5fe",
+    "triggers": "0e5ea17c439184cf70b1f9fe70bb9905e24e16bee0b10c82ca0a933d3dd14325",
+    "agentRows": "87d142e3c221095bca685aa0990801bf20bbdb3347afa3c95d672a9c9b3798fe"
+  },
+  "functionCount": 35,
+  "tableCount": 6,
+  "comparison": "Full records including signatures, owner, security definer, search_path, bodies, ACL, policies; unordered catalog arrays sorted for comparison only"
+}

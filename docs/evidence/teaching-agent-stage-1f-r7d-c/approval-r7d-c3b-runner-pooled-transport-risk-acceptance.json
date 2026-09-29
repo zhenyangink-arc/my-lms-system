@@ -1,0 +1,120 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D4",
+  "recordedAt": "2026-09-20T04:35:22.532744+00:00",
+  "mode": "LOCAL_SCOPE_AUDIT_AND_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "stage-scoped-transport-risk-acceptance/1",
+  "riskAcceptanceId": "r7d-c3b-pooled-transport-risk-acceptance/1",
+  "transportContract": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+  "status": "RECORDED_EXPLICIT_USER_RISK_DECISION_SCOPE_ONLY",
+  "approved": false,
+  "executionAuthorized": false,
+  "scope": "R7D-C3B_ONLY",
+  "clientHop": "TLS_VERIFY_FULL_REQUIRED",
+  "providerHop": "PROVIDER_MANAGED_UNVERIFIED",
+  "acceptance": "EXPLICITLY_ACCEPTED_FOR_R7D_C3B_ONLY",
+  "knownObservation": {
+    "backendPgStatSsl": false,
+    "basis": "HISTORICAL_ONLY_NOT_REOBSERVED",
+    "clientTls": "TLSv1.3_HISTORICAL",
+    "interpretation": "Separate hops; not proof of provider-hop encryption."
+  },
+  "externalEvidence": "NOT_REQUIRED_FOR_THIS_STAGE_BY_EXPLICIT_USER_DECISION",
+  "expiresAfter": "C3B_RELEASE_COMPLETION",
+  "permanentPolicy": false,
+  "explicitUserDecision": {
+    "source": "Current R7D-C3B-RUNNER-TLS-D4 user instruction",
+    "decisionRecorded": true,
+    "meaning": "Accept provider-managed unverified upstream risk and capacity/timeout operational residual risk for C3B only; request design/approval proposal, not implementation or execution.",
+    "proposalBooleans": "approved=false and executionAuthorized=false are retained. They do not deny the recorded user decision and do not grant operation authority."
+  },
+  "allowedRiskScope": [
+    "controlled read-only capture",
+    "independently approved 000 ACL migration",
+    "independently approved 001 completion migration",
+    "independently approved 002 publication migration",
+    "release-required controlled backup and verification"
+  ],
+  "allowedMigrationLocks": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "expectedSha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "expectedSha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "expectedSha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "match": true
+    }
+  ],
+  "target": {
+    "profile": "uply-canonical-maintenance/1",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "port": 5432,
+    "database": "postgres",
+    "role": "postgres",
+    "poolMode": "SESSION",
+    "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f"
+  },
+  "operationalResidualRisk": "OPERATIONAL_RESIDUAL_RISK_ACCEPTED_FOR_C3B",
+  "conditions": [
+    "Actual client TLS proof required separately for each psql/pg_dump/pg_dumpall invocation.",
+    "TLS verify-full with hostname and trusted CA verification remains mandatory; no profile/host/port override.",
+    "Keep backend observation as true/false/unavailable without converting it into client TLS authority.",
+    "Preserve existing snapshot/restore validation, finite plans, atomic migration/ledger and no automatic retry.",
+    "Risk acceptance does not approve a migration, backup, capture retry, plan seal, deployment or future maintenance."
+  ],
+  "nonClaims": [
+    "PROVEN_SECURE",
+    "TLS_CONFIRMED_FOR_PROVIDER_HOP",
+    "PERMANENT_SECURITY_APPROVAL",
+    "PROVIDER_GUARANTEED_CAPACITY_OR_TIMEOUTS"
+  ],
+  "expiryEnforcementDesign": {
+    "perInvocation": "Future strict operator authorization binds risk ID/raw artifact hash, C3B release ID, stageActive=true, completionObserved=false and existing <=900-second window. No operator authorization generated now.",
+    "closedMarker": "Fixed receiptRoot/R7D-C3B.release-completed.json, if present (including malformed/unsafe entries), denies subsequent operations; never automatically delete or overwrite.",
+    "operatorBoundary": "The trusted release operator must publish the closure receipt at completion/revocation and must not mint stage-active authorizations afterward. The runner cannot infer business-stage completion from ledger count alone. Future release approval must include closure as a completion prerequisite.",
+    "additionalGuards": "Existing current-build/runtime locks remain; candidate deployment changes the locked build. Completion/revocation always wins over an unexpired short authorization.",
+    "checks": "Before credential access, before each client process/session, existing precommit authorize hook, and before backup acceptance. Expiry triggers rollback/STOP under existing engine rules, not down migration."
+  },
+  "excluded": [
+    "other projects/providers/transports",
+    "general future maintenance",
+    "automatic install approval for 001/002",
+    "automatic capture retry",
+    "new credential/network configuration",
+    "TLS downgrade"
+  ]
+}

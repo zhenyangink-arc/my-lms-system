@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checks": [
+    "authentication denial precedes RPC",
+    "invalid locator does not write",
+    "over-budget objectives do not write",
+    "caller-scoped RPC payload ignores browser authority overrides",
+    "successful result continues to existing editor",
+    "safe mapped error AUTHORING_FORBIDDEN",
+    "safe mapped error AUTHORING_CONTENT_EXISTS",
+    "safe mapped error AUTHORING_RESOURCE_CHANGED",
+    "safe mapped error AUTHORING_PROFILE_UNAVAILABLE",
+    "safe mapped error SYNTHETIC_RAW_SQL_DETAIL",
+    "unexpected result fails closed"
+  ],
+  "assertions": 11,
+  "boundary": "Actual Server Action compiled with Auth/RPC/cache ports stubbed; no database/HTTP/Provider. Dynamic atomicity and JWT evidence remains unchanged R3D Full Supabase results.",
+  "productionWrites": 0
+}

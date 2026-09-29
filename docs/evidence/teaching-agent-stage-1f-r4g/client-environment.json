@@ -1,0 +1,19 @@
+{
+  "observedAtUtc": "2026-09-15T07:59:38.888706+00:00",
+  "hostNativePsql": "NOT AVAILABLE",
+  "hostCheck": "command -v psql: exit 1; no path; native psql --version not executable",
+  "approvedCandidateClient": "PostgreSQL 17.6 Docker client",
+  "status": "TECHNICALLY AVAILABLE",
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "versionCommand": "docker run --rm --pull=never --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --entrypoint /usr/lib/postgresql/bin/psql public.ecr.aws/supabase/postgres:17.6.1.159 --version",
+  "versionOutput": "psql (PostgreSQL) 17.6",
+  "versionExitCode": 0,
+  "versionProbeDatabaseConnections": 0,
+  "imagePulled": false,
+  "installedClient": false,
+  "cliProductionClientAdapter": "NOT PREPARED / NOT APPROVED",
+  "productionMaintenanceCredentials": "NOT APPROVED",
+  "productionExecutionApproved": false,
+  "observationNote": "Metadata recorded after the read-only version commands; this is not a production CLI invocation"
+}

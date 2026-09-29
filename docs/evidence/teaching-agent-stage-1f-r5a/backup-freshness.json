@@ -1,0 +1,15 @@
+{
+  "observedAtUtc": "2026-09-15T10:09:07.514305+00:00",
+  "snapshotStartUtc": "2026-09-15T06:31:24.914920+00:00",
+  "ageSeconds": 13062.599,
+  "currentR4dRecoveryPoint": "TECHNICALLY VERIFIED",
+  "goLiveFreshness": "STALE",
+  "maxAgeSecondsAtFirstMigration": 900,
+  "freshRecoveryPointAtExecutionWindow": "REQUIRED",
+  "rpoException": "NOT GRANTED",
+  "newBackupCreated": false,
+  "backupPath": "/home/yangzhen/backups/uply/20260915T063124Z/",
+  "archiveSha256": "41dfcc96b933b0893df3457d9c9c0c16ba82fdd58cb7d848b4ca7f7719a2aaa4",
+  "restoreVerificationReference": "docs/teaching-agent-stage-1f-r4d-backup-recovery-verification.md",
+  "restoreExecutedThisStage": false
+}

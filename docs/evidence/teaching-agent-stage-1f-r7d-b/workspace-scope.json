@@ -1,0 +1,21 @@
+{
+  "productFileHashes": {
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+    "src/features/teaching-agent/server/domain-ports/index.ts": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+    "src/features/teaching-agent/server/tools/contracts.ts": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts": "ad2738084be110615c65c4d841e8668f41647d6a57b53fb59a6aa8093d145bf6",
+    "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx": "c57d67687f691605d6bd63658a6b5d3491964b2c1359f02ca498134d59cc2e19"
+  },
+  "sourceBefore": "source-before.json",
+  "extraPageJustification": "scope-extension.json",
+  "otherWorkspaceChanges": "pre-existing, excluded from candidate",
+  "packageChangesThisStage": 0,
+  "migrationChangesThisStage": 0,
+  "liveProductFilesChanged": 0,
+  "pm2Operations": 0,
+  "dbWrites": 0,
+  "candidateBase": "all files verified against B3A sealed allCandidateSources plus exact eight R7D overlays"
+}

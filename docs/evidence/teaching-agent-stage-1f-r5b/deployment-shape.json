@@ -1,0 +1,33 @@
+{
+  "status": "READY",
+  "archiveSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "artifactMemberHashesUnchangedAfterServing": true,
+  "verifiedFiles": 1394,
+  "requiredServerFilesCount": 19,
+  "requiredServerFilesAllPresent": true,
+  "nextVersion": "16.2.10",
+  "nodeVersion": "v26.5.0",
+  "dependencyLockSha256": "a6d94389cf839487432b5bab35fe9b8481a22ea5abbe4388076359a1085afc48",
+  "nodeModulesSource": "/home/yangzhen/projects/my-lms-system/node_modules",
+  "components": [
+    ".next",
+    "public",
+    "package.json",
+    "next.config.ts",
+    "existing compatible node_modules"
+  ],
+  "npmInstall": false,
+  "rebuild": false,
+  "productionDeploy": false,
+  "networkGuard": {
+    "rewrittenToIsolated": 340,
+    "blockedExternal": 0,
+    "providerRequests": 0
+  },
+  "gatewayStats": {
+    "auth": 238,
+    "rest": 91,
+    "denied": 0,
+    "upstreamErrors": 0
+  }
+}

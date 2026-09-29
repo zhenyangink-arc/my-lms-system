@@ -1,0 +1,64 @@
+{
+  "status": "ISOLATED VERIFIED / CURRENT DB PLANNED",
+  "effects": {
+    "digital_textbook_attempts": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 1,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "course_ebook_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "other_lesson_progress_or_aggregates": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "audit_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth_tables": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "tenants_profiles_memberships": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "frozen_content": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "canonical_activity_and_secret": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "rowTotals": {
+    "INSERT": 1,
+    "UPDATE": 1,
+    "DELETE": 0
+  },
+  "attempt_number": 2,
+  "readback": "COMPLETED",
+  "runtime": "RESUME_READY -> PLAYING only after independent readback and if user pause intent permits",
+  "answerValuesIncluded": false
+}

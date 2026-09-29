@@ -1,0 +1,36 @@
+{
+  "broad": {
+    "files": 62,
+    "tests": 1146,
+    "pass": 1135,
+    "fail": 0,
+    "skip": 11
+  },
+  "optInCoreThrough1E": {
+    "tests": 199,
+    "pass": 199,
+    "fail": 0,
+    "skip": 0
+  },
+  "blackboard": {
+    "pass": 8,
+    "fail": 0
+  },
+  "baselineUnit": {
+    "tests": 10,
+    "pass": 7,
+    "skip": 3
+  },
+  "stagingGuards": {
+    "pass": 4
+  },
+  "tsc": "PASS",
+  "scopedLint": "PASS",
+  "build": "PASS",
+  "realJWTChecks": 138,
+  "replay": "PASS",
+  "deadlineReadTail": "PASS",
+  "productionTimeoutSimulation": "FAIL: expected adverse operational finding, not swallowed",
+  "liveProviderRequests": 0,
+  "note": "Suites overlap; totals not added. No claim of full-repository lint or production latency."
+}

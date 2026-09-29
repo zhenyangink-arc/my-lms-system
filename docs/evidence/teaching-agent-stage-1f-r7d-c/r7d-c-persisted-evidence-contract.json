@@ -1,0 +1,42 @@
+{
+  "stage": "R7D-C Production Prerequisite Implementation",
+  "recordedAt": "2026-09-18T03:25:56.356499+00:00",
+  "status": "BLOCKED_BEFORE_PRODUCT_EDIT",
+  "authority": "LOCAL_SOURCE_AUDIT_ONLY",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "productChangesThisTurn": 0,
+  "migrationChangesThisTurn": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveStateRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "implementation": "NOT_STARTED",
+  "auditedExistingChain": [
+    "public.transition_agent_run_v1: cancel/CAS/fence wrapper (202609140002)",
+    "agent_core_private.transition_agent_run_evidence_v1: v1 segment evidence gate (202609140001)",
+    "agent_core_private.transition_agent_run_base_v1: existing CAS transition"
+  ],
+  "requiredPreservation": [
+    "Explain v1",
+    "CAS",
+    "fencing",
+    "cancellation",
+    "server revalidation"
+  ],
+  "newRequirements": [
+    "typed Activity evidence instead of Activity-as-segmentRef",
+    "full mandatory requirement set",
+    "exact v1.1 Tool/Skill and v3 published provenance",
+    "versioned artifact and strict trace"
+  ],
+  "migrationWritten": false,
+  "migrationScope": "Existing completion evidence only; publication contract changes are not silently included."
+}

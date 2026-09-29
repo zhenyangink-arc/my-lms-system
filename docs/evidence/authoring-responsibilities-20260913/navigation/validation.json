@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "四板块单一导航；切换第二章后全部跳转携带第二章；不冒充支持第二章工作台",
+    "第一章单一工作台入口随制作/发布上下文改名；章节测试功能仍分区保留",
+    "职责说明可键盘聚焦、Escape退出；复用统一提示组件",
+    "375/768/1440宽度无页面溢出；深色渲染；无JS异常"
+  ],
+  "productionAccess": false,
+  "scope": "Real components with isolated Next navigation transport; not authenticated application E2E"
+}

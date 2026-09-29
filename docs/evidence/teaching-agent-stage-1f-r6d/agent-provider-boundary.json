@@ -1,0 +1,13 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentFiveTableRows": 0,
+  "agentRunsInTask": 0,
+  "providerRequestsInTask": 0,
+  "pinsCreated": 0,
+  "definitionPublication": 0,
+  "authWrites": 0,
+  "runtimeExecution": 0,
+  "nodeWrites": 0,
+  "noLiveProviderOrAgentTest": true
+}

@@ -1,0 +1,158 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A2",
+  "contract": "authorization-lifecycle-implementation/1",
+  "recordedAt": "2026-09-20T07:47:51.655151+00:00",
+  "overall": "BLOCKED",
+  "implementationState": "DRAFT_IMPLEMENTED_VALIDATION_INCOMPLETE",
+  "implementationApproval": "EXPLICIT_USER_APPROVAL_RECORDED",
+  "selectedLifecycle": "FORMAL_ROTATE_AND_MINT",
+  "designAuthority": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a1-authorization-lifecycle-design.json",
+    "sha256": "e7dc5fe109ad11841402288360afa12bb6f6a70fc8a471dab4c6f88c171b9f70"
+  },
+  "implementationProposal": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-authorization-lifecycle-implementation.json",
+    "sha256": "8364664ed4092211b0b0a7851d48c23603e0d1d8981df96b622639f758b5a440"
+  },
+  "modifiedExistingFiles": 5,
+  "addedImplementationFiles": 1,
+  "unexpectedImplementationPaths": 0,
+  "implementationPaths": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "operation": "MODIFY",
+      "preSha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "postSha256": "55a80580e31b76038495a23648bd1efb928de86e29aef5a18c355171ca1230af",
+      "responsibility": "Capture authorization boundary enters lifecycle context; consume claim precedes CaptureTransport construction; finalization precedes SUCCESS."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "operation": "MODIFY",
+      "preSha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+      "postSha256": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+      "responsibility": "Add lifecycle module to package hashes; sole future capture source authority advances to v5. Other bytes verified by inverse-change hash."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "operation": "MODIFY",
+      "preSha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+      "postSha256": "c70db40cc9d8322eac271f827196c56e47f63517ccd8b1df9af118937e782016",
+      "responsibility": "36 owned lifecycle cases and authorized source-authority adaptations."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "operation": "MODIFY",
+      "preSha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+      "postSha256": "4fdfa3516b451bc91ae711628314c9b45b36997c2b284862074014d400cde449",
+      "responsibility": "4 owned lifecycle integration cases, owned capture setup adaptation, exclusive A2 output routing."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "operation": "MODIFY",
+      "preSha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+      "postSha256": "599acfedfaa5a9947c253b18d5e1e08127e97069a82f93f607f1b97b85266862",
+      "responsibility": "Official lifecycle interface, approval boundary, claims, state machine, crash STOP policy and v5 requirement."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/capture_authorization.py",
+      "operation": "ADD",
+      "preSha256": null,
+      "postSha256": "8451bc6b17c7fbc30236138e62f2fc4ac420f4cf431e518f620a7c06af311e77",
+      "responsibility": "Local rotate/mint, private filesystem, flock, durable claims/phase chain, READY, runner consume context, exact archive and outcome; no production invocation performed."
+    }
+  ],
+  "authorizationContract": {
+    "contract": "readonly-baseline-capture-authorization/2",
+    "schemaStatus": "UNCHANGED",
+    "evidence": "plan_contract.py reverse only the authorized package list and v4->v5 reference edits reproduces exact pre-edit SHA.",
+    "integrationValidation": "INCOMPLETE"
+  },
+  "captureReceiptContract": {
+    "contract": "readonly-baseline-capture/2",
+    "schemaStatus": "UNCHANGED",
+    "evidence": "checks.py, maintenance_transport.py and receipts.py hashes unchanged.",
+    "integrationValidation": "NOT_RUN"
+  },
+  "runnerDbSemantics": {
+    "implementationChange": "NONE",
+    "lifecycleBoundaryChanged": true,
+    "integrationValidation": "NOT_RUN"
+  },
+  "querySemantics": {
+    "implementationChange": "NONE",
+    "expectedOrder": [
+      "LEDGER",
+      "TARGET_PREGATE",
+      "TARGET_DEFINITION",
+      "PROTECTED_CATALOG"
+    ],
+    "integrationValidation": "NOT_RUN"
+  },
+  "tests": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-tests.json",
+    "sha256": "d4e3a865328efc70f82a613f8f2f3266f4a5a4314e3621b523d65a8f4a21bc0e"
+  },
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-source-lock.json",
+    "sha256": "95c477b4c48744189e08575a4392a5cafe8586285a8133aeecb7e341a6bee731"
+  },
+  "stopReason": {
+    "code": "BLOCKED_REQUIRED_VALIDATION_ERROR",
+    "testId": "AUTH-LIFECYCLE-35",
+    "classification": "VALIDATION_WRAPPER_PATH_RELATIVIZATION_ERROR",
+    "exceptionType": "ValueError",
+    "originPath": "/tmp/uply-p1e-a2-validate.py",
+    "originLine": 24,
+    "originSha256": "394ef58b96d62de18ee2632462ee91d2e36d23d8f4dc8eba58b0290b374993eb",
+    "explanation": "The temporary validation wrapper calls path.relative_to(real_repository_root) after the test deliberately substitutes an owned temporary ROOT. That temporary path is outside the real repository, causing ValueError before this case completes. This is not a passing result and does not establish correctness of the remaining implementation.",
+    "stopAuthority": "Current user stage A2 section 54: any required test fail -> STOP",
+    "sourceChangedAfterError": false,
+    "wrapperChangedAfterError": false,
+    "retryPerformed": false,
+    "remainingValidation": "NOT_RUN_AFTER_REQUIRED_TEST_ERROR",
+    "historicalEvidenceOverwrite": false,
+    "autoRepairPerformed": false
+  },
+  "productionAuthorization": {
+    "status": "UNCHANGED",
+    "rawSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "pathOwnerModeInodeMtimeCtimeContentUnchanged": true,
+    "moved": false,
+    "copied": false,
+    "archived": false,
+    "reused": false,
+    "productionRuntimeTreeUnchanged": true
+  },
+  "productionBoundaries": {
+    "productionAuthorizationMint": 0,
+    "productionCredentialAccess": 0,
+    "productionCredentialUse": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionCapture": 0,
+    "productionBackup": 0,
+    "productionRestore": 0,
+    "planSeal": 0,
+    "migrationInstall": 0,
+    "deployment": 0,
+    "pm2Mutation": 0,
+    "providerExecution": 0,
+    "agentRuns": 0,
+    "publish": 0,
+    "migrationChanges": 0,
+    "productChanges": 0,
+    "dependencyChanges": 0,
+    "legacyCleanupCandidates": 0,
+    "safeDeletions": 0
+  },
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArchivesContainNewSource": "NOT_CLAIMED",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "v4": "HISTORICAL_ONLY",
+  "v5Required": true,
+  "v5Generated": false,
+  "next": "BLOCKED_REQUIRED_VALIDATION_ERROR",
+  "futureEvidencePolicy": "STRICT_IMMUTABLE_RETAINED"
+}

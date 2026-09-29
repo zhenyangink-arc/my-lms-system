@@ -1,0 +1,17 @@
+{
+  "mode": "regression",
+  "code": 0,
+  "durationSeconds": 479.471,
+  "privateConfigInjected": false,
+  "log": "/tmp/uply-grammar-final-regression.log",
+  "summary": [
+    "ℹ tests 1221",
+    "ℹ suites 0",
+    "ℹ pass 1217",
+    "ℹ fail 0",
+    "ℹ cancelled 0",
+    "ℹ skipped 4",
+    "ℹ todo 0",
+    "ℹ duration_ms 479373.707207"
+  ]
+}

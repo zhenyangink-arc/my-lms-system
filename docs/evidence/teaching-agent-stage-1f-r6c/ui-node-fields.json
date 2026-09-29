@@ -1,0 +1,37 @@
+{
+  "status": "SOURCE AND LIVE UI AUDITED",
+  "addButtonImmediatelyWrites": true,
+  "addButtonClicked": true,
+  "nodeTypes": [
+    "opening",
+    "explanation",
+    "example",
+    "question",
+    "instruction",
+    "summary"
+  ],
+  "visibleFields": [
+    "小节名称/title_zh",
+    "台词/script_zh",
+    "韩语版台词/script_ko",
+    "没听懂时的提示/hint_zh",
+    "再举一个例子/example_zh",
+    "小节类型/node_type",
+    "完成后的去向/flow_mode",
+    "老师呈现方式/video or legacy"
+  ],
+  "systemKeyReadonly": true,
+  "notesField": false,
+  "durationField": false,
+  "sort": "official ordered insert; existing reorder action not needed",
+  "oneStructuredQuestionPerNode": true,
+  "autosaveMs": 1800,
+  "CAS": "node_updated_at; atomic save RPC",
+  "saveFailurePolicy": "STOP; readonly DB verify; no duplicate add or blind save retry",
+  "sourceFiles": [
+    "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+    "src/app/dashboard/admin/teaching-scripts/actions.ts",
+    "supabase/migrations/202609070001_teaching_script_atomic_video.sql"
+  ],
+  "actualDomEvidence": "actual-node-ui-fields.json"
+}

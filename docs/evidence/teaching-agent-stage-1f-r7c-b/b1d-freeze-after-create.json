@@ -1,0 +1,16 @@
+{
+  "status": "VERIFIED",
+  "nodes": 8,
+  "scriptVersion": "1 DRAFT",
+  "objectives": 4,
+  "fullRowsExact": true,
+  "canonicalParents": "UNCHANGED",
+  "schemaRpcRls": "UNCHANGED",
+  "unrelatedBusinessMetadata": "UNCHANGED",
+  "allowedBusinessCountDeltas": {
+    "digital_textbook_nodes": 1,
+    "digital_textbook_activities": 1
+  },
+  "secretCountDelta": 1,
+  "frozenWrites": 0
+}

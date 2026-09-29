@@ -2,9 +2,9 @@ import 'server-only';
 import { requireActiveUser } from '../auth';
 import { createAdminClient } from '../supabase/admin';
 import { canUseStudentFeature, normalizeMembershipTier } from '../student-permissions';
-import { publicationRepository } from './repository.server';
-import { scopeSchema, type PublicationScope } from './artifact.server';
-import { assertPublishedDomainDependencies } from './domain-guard.server';
+import { publicationRepository } from './repository.server.ts';
+import { scopeSchema, requireLegacyPublication, type PublicationScope } from './artifact.server.ts';
+import { assertPublishedDomainDependencies } from './domain-guard.server.ts';
 
 /** Trusted server course resolution default: only the certified Chapter 1.
  * No browser snapshot/draft/history selector. Future routing may pass a resolved
@@ -22,7 +22,8 @@ export async function authorizePublishedCourse(scope:PublicationScope){
  * A single SQL join captures pointer+artifact+bindings; no cache/live compilation. */
 export async function loadPublishedRuntimeSnapshot(scope:PublicationScope=chapterOnePublicationScope){
   const authority=await authorizePublishedCourse(scope);
-  const publication=await publicationRepository(authority.admin).current(scope);
+  const current=await publicationRepository(authority.admin).current(scope);
+  const publication={...current,bundle:requireLegacyPublication(current.bundle)};
   await assertPublishedDomainDependencies(authority.admin,publication.bundle);
   return {...authority,...publication,data:{admin:authority.admin,...publication.bundle.privatePayload}};
 }

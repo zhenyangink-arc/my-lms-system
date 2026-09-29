@@ -1,0 +1,233 @@
+{
+  "browser": "Chromium",
+  "route": "/r2-lesson",
+  "realAuth": true,
+  "realRuntime": true,
+  "providerFixtureOnly": true,
+  "runs": [
+    {
+      "sample": 1,
+      "ms": 1478,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 247
+        },
+        {
+          "type": "run.status",
+          "atMs": 269
+        },
+        {
+          "type": "run.status",
+          "atMs": 555
+        },
+        {
+          "type": "tool.status",
+          "atMs": 688
+        },
+        {
+          "type": "tool.status",
+          "atMs": 959
+        },
+        {
+          "type": "run.status",
+          "atMs": 1094
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1478
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1478
+        }
+      ]
+    },
+    {
+      "sample": 2,
+      "ms": 1387,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 202
+        },
+        {
+          "type": "run.status",
+          "atMs": 214
+        },
+        {
+          "type": "run.status",
+          "atMs": 479
+        },
+        {
+          "type": "tool.status",
+          "atMs": 605
+        },
+        {
+          "type": "tool.status",
+          "atMs": 875
+        },
+        {
+          "type": "run.status",
+          "atMs": 1010
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1387
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1387
+        }
+      ]
+    },
+    {
+      "sample": 3,
+      "ms": 1381,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 212
+        },
+        {
+          "type": "run.status",
+          "atMs": 226
+        },
+        {
+          "type": "run.status",
+          "atMs": 479
+        },
+        {
+          "type": "tool.status",
+          "atMs": 606
+        },
+        {
+          "type": "tool.status",
+          "atMs": 863
+        },
+        {
+          "type": "run.status",
+          "atMs": 998
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1381
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1381
+        }
+      ]
+    }
+  ],
+  "negative": [
+    {
+      "case": "A2",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "B1",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "TA",
+      "post": 403
+    },
+    {
+      "case": "AA",
+      "post": 403
+    },
+    {
+      "case": "PO",
+      "post": 403
+    },
+    {
+      "case": "EX",
+      "post": 403
+    },
+    {
+      "case": "IN",
+      "post": 403
+    },
+    {
+      "case": "A2 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "B1 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "index",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "revision",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "draft",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherLesson",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherNode",
+      "status": 403,
+      "providerCalls": 0
+    }
+  ],
+  "errors": [],
+  "off": {
+    "buttons": 0,
+    "postStatus": 404,
+    "providerCalls": 0
+  },
+  "noAuthStatus": 401,
+  "ui": {
+    "completed": true,
+    "sourceBadge": 1,
+    "ms": 1845,
+    "privateLeak": false
+  },
+  "replay": {
+    "sameRun": true,
+    "replayed": true,
+    "extraProviderCalls": 0
+  },
+  "ownerStatus": "completed",
+  "cancel": {
+    "status": 200,
+    "terminal": "run.cancelled",
+    "ms": 130,
+    "persisted": "cancelled",
+    "offNew": 404,
+    "offOwnerGet": 200
+  },
+  "deadline": {
+    "ms": 45068,
+    "providerCalls": 1,
+    "terminal": "run.failed",
+    "code": "DEADLINE_EXCEEDED",
+    "lateProviderCalls": 0,
+    "lateDomainReads": 0
+  },
+  "offRecoveryHidden": true,
+  "liveProviderRuns": 0,
+  "liveProviderRequests": 0,
+  "liveProviderTokens": 0,
+  "fixtureProviderCalls": 10
+}

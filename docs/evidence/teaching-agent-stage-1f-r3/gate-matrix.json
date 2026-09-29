@@ -1,0 +1,212 @@
+[
+  {
+    "id": "G-R3-1",
+    "name": "Real Course Inventory",
+    "status": "PASS",
+    "evidence": "19lesson只读aggregate"
+  },
+  {
+    "id": "G-R3-2",
+    "name": "Policy-Compatible Pilot Candidate",
+    "status": "FAIL",
+    "evidence": "0现有candidate"
+  },
+  {
+    "id": "G-R3-3",
+    "name": "Published Script Coverage",
+    "status": "FAIL",
+    "evidence": "1/132且父lesson锁不支持"
+  },
+  {
+    "id": "G-R3-4",
+    "name": "Real Pilot Selection Pin Feasibility",
+    "status": "BLOCKED",
+    "evidence": "真实可授权pins未成立"
+  },
+  {
+    "id": "G-R3-5",
+    "name": "Formal Classroom Synthetic Route",
+    "status": "PASS",
+    "evidence": "formal route真实Auth/Next/Tool"
+  },
+  {
+    "id": "G-R3-6",
+    "name": "Formal Classroom Regression",
+    "status": "PASS",
+    "evidence": "广泛课堂+1E无失败"
+  },
+  {
+    "id": "G-R3-7",
+    "name": "Actual Tailscale Path Identified",
+    "status": "PASS",
+    "evidence": "8443→3000已确认"
+  },
+  {
+    "id": "G-R3-8",
+    "name": "Actual Tailscale Streaming",
+    "status": "BLOCKED",
+    "evidence": "需独立获准binding"
+  },
+  {
+    "id": "G-R3-9",
+    "name": "Origin / Host / Scheme",
+    "status": "BLOCKED",
+    "evidence": "下游request.url/forwarded scheme未知"
+  },
+  {
+    "id": "G-R3-10",
+    "name": "Compression / Buffering",
+    "status": "BLOCKED",
+    "evidence": "实际NDJSON未测"
+  },
+  {
+    "id": "G-R3-11",
+    "name": "Disconnect Behavior",
+    "status": "BLOCKED",
+    "evidence": "实际proxy断连未测"
+  },
+  {
+    "id": "G-R3-12",
+    "name": "Migration Inventory Locked",
+    "status": "PASS",
+    "evidence": "6份exact SHA"
+  },
+  {
+    "id": "G-R3-13",
+    "name": "Target Schema Migration Rehearsal",
+    "status": "PASS",
+    "evidence": "最新schema-only双路径"
+  },
+  {
+    "id": "G-R3-14",
+    "name": "Ordered Migration Verification",
+    "status": "PASS",
+    "evidence": "每步对象/ACL/ledger"
+  },
+  {
+    "id": "G-R3-15",
+    "name": "Migration Failure Stop",
+    "status": "PASS",
+    "evidence": "失败不继续不mark"
+  },
+  {
+    "id": "G-R3-16",
+    "name": "Definition Publication Rehearsal",
+    "status": "PASS",
+    "evidence": "exact pin+DB坏digest拒绝"
+  },
+  {
+    "id": "G-R3-17",
+    "name": "Exact Production Build Artifact",
+    "status": "PASS",
+    "evidence": "原始完整build固定；ON功能另fixture构建"
+  },
+  {
+    "id": "G-R3-18",
+    "name": "Release Candidate Manifest",
+    "status": "PASS",
+    "evidence": "1303输入/版本/摘要"
+  },
+  {
+    "id": "G-R3-19",
+    "name": "Kill New Admission",
+    "status": "PASS",
+    "evidence": "单worker替换OFF新POST404；drain另FAIL"
+  },
+  {
+    "id": "G-R3-20",
+    "name": "Existing Run Recovery While OFF",
+    "status": "PASS",
+    "evidence": "ownerGET/cancel200"
+  },
+  {
+    "id": "G-R3-21",
+    "name": "Drain Procedure",
+    "status": "FAIL",
+    "evidence": "15秒强杀后超期running"
+  },
+  {
+    "id": "G-R3-22",
+    "name": "Application Rollback Exercise",
+    "status": "PASS",
+    "evidence": "旧release源码staging重建回滚PASS"
+  },
+  {
+    "id": "G-R3-23",
+    "name": "Agent Data Preservation",
+    "status": "PASS",
+    "evidence": "15/25/15/200四表counts原样保留"
+  },
+  {
+    "id": "G-R3-24",
+    "name": "Operator Run Lookup",
+    "status": "PASS",
+    "evidence": "四Run+跨tenant/role负向"
+  },
+  {
+    "id": "G-R3-25",
+    "name": "Monitoring Signals",
+    "status": "PARTIAL",
+    "evidence": "selection耗时未持久，值守未落实"
+  },
+  {
+    "id": "G-R3-26",
+    "name": "Stop Conditions",
+    "status": "PASS",
+    "evidence": "触发/行动/禁止启用明确"
+  },
+  {
+    "id": "G-R3-27",
+    "name": "Provider Data Minimization",
+    "status": "PASS",
+    "evidence": "当前safe projections已核，不代替政策"
+  },
+  {
+    "id": "G-R3-28",
+    "name": "Provider Policy Approval",
+    "status": "BLOCKED",
+    "evidence": "无责任方批准证据"
+  },
+  {
+    "id": "G-R3-29",
+    "name": "RLS Security Regression",
+    "status": "PASS",
+    "evidence": "138 real JWT checks"
+  },
+  {
+    "id": "G-R3-30",
+    "name": "Teaching Domain Zero Writes",
+    "status": "PASS",
+    "evidence": "79表指纹无变化"
+  },
+  {
+    "id": "G-R3-31",
+    "name": "Production Ledger Unchanged",
+    "status": "PASS",
+    "evidence": "449→449 exact"
+  },
+  {
+    "id": "G-R3-32",
+    "name": "Production Writes Zero",
+    "status": "PASS",
+    "evidence": "本任务生产DML0"
+  },
+  {
+    "id": "G-R3-33",
+    "name": "Production Feature Flag OFF",
+    "status": "PASS",
+    "evidence": "startup config OFF，三名单EMPTY"
+  },
+  {
+    "id": "G-R3-34",
+    "name": "Pilot Allowlist Plan",
+    "status": "PARTIAL",
+    "evidence": "3名单技术支持；1lesson尚无可证明范围"
+  },
+  {
+    "id": "G-R3-35",
+    "name": "First Enable Runbook",
+    "status": "PASS",
+    "evidence": "完整顺序+STOP规则，执行前置明确受阻"
+  }
+]

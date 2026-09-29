@@ -1,0 +1,72 @@
+{
+  "existingPolicies": 277,
+  "afterPolicies": 280,
+  "existingPoliciesChanged": 0,
+  "rpc": [
+    {
+      "name": "admit_agent_run_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "append_agent_run_event_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "record_agent_usage_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "append_agent_run_event_v2",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "get_student_agent_run_status_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "request_agent_run_cancel_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "check_agent_run_cancel_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    },
+    {
+      "name": "transition_agent_run_v1",
+      "definer": true,
+      "path": [
+        "search_path=\"\""
+      ],
+      "browserExecute": false
+    }
+  ],
+  "productionLedgerUnchanged": true
+}

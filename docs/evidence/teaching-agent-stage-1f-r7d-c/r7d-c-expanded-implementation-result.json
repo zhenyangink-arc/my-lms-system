@@ -1,0 +1,52 @@
+{
+  "stage": "R7D-C Expanded Production Prerequisite Implementation",
+  "recordedAt": "2026-09-18T04:08:59.461563+00:00",
+  "status": "BLOCKED_BEFORE_PRODUCT_EDIT",
+  "blockingCode": "NATIVE_COMPILER_VERSION_REJECTED_BY_MANIFEST_SCHEMA_OUTSIDE_APPROVED_34_FILES",
+  "evidenceKind": "LOCAL_SOURCE_AND_SCHEMA_DIAGNOSTIC_ONLY",
+  "implementationPerformed": false,
+  "productChanges": 0,
+  "migrationFilesCreated": 0,
+  "testsExecuted": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "overall": "BLOCKED",
+  "priorWork": {
+    "B1": "COMPLETE",
+    "B2": "COMPLETE",
+    "B3": "COMPLETE",
+    "R7DToolFoundation": "COMPLETE",
+    "C2": "IMPLEMENTED_VERIFIED_BASELINE_NOT_RERUN"
+  },
+  "freshPreEdit": {
+    "existing": "30/30 MATCH",
+    "new": "4/4 ABSENT"
+  },
+  "diagnosticCases": 3,
+  "diagnosticConfirmed": true,
+  "reason": "Approved native-publication/1 contains slash. The official Manifest compilerVersion schema is idSchema, which excludes slash. This file is also explicitly locked unchanged by the approved package.",
+  "stopRule": "User sections 3 and 54: STOP before a 35th product file or extra runtime DTO change.",
+  "notWorkarounds": [
+    "Do not rename the locked compiler version",
+    "Do not encode a second compiler name in the Manifest",
+    "Do not sanitize before certification",
+    "Do not bypass or fork the official Manifest validator"
+  ],
+  "scopeRevisionProposal": "approval-r7d-c-production-prerequisites-expanded-35.json",
+  "futureInstallDeployAcceptanceApprovals": "BLOCKED; not generated as ready"
+}

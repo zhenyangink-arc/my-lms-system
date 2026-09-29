@@ -1,0 +1,66 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "currentFunctionDefaults": [
+    {
+      "acl": "{postgres=X/supabase_admin,anon=X/supabase_admin,authenticated=X/supabase_admin,service_role=X/supabase_admin}",
+      "owner": "supabase_admin",
+      "schema": "public",
+      "object_type": "f"
+    },
+    {
+      "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "schema": "public",
+      "object_type": "f"
+    }
+  ],
+  "historicalSerializedDefaults": {
+    "path": "supabase/bootstrap/app-schema-baseline.sql",
+    "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "lines": [
+      48187,
+      48190,
+      48191,
+      48192,
+      48193
+    ]
+  },
+  "mechanism": "PROVEN_CAPABLE_OF_PRODUCING_EXPLICIT_SERVICE_ROLE_EXECUTE_ON_NEW_POSTGRES_PUBLIC_FUNCTION",
+  "causalAttribution": "INCONCLUSIVE_FOR_ORIGINAL_TARGET_CREATE",
+  "reason": "Current pg_default_acl and post-creation snapshots do not date default privilege installation or record the DDL event responsible for this existing proacl item. A manual/historical grant before earliest evidence cannot be uniquely ruled out.",
+  "noGlobalFunctionDefaultAclRowObserved": true,
+  "PUBLICDefaultNote": "Absent global override retains built-in PUBLIC EXECUTE default. Explicit target PUBLIC revoke removes that; schema-role grants survive. 202608160006 per-schema PUBLIC revoke alone does not change global default.",
+  "semantics": [
+    {
+      "url": "https://www.postgresql.org/docs/17/sql-createfunction.html",
+      "fact": "CREATE OR REPLACE preserves ownership and permissions when replacing an existing function; on absence it creates a new function."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/sql-alterdefaultprivileges.html",
+      "fact": "Creator current-role defaults apply on creation; schema defaults add to global defaults; per-schema REVOKE cannot remove global/PUBLIC defaults."
+    }
+  ]
+}

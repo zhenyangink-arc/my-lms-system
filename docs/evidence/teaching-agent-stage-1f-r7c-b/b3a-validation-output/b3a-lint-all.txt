@@ -1,0 +1,55 @@
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/choice-block.tsx
+  20:116  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/choice-block.tsx:20:116
+  18 |   useEffect(()=>{
+  19 |     if(drafts.has(block.id)||!restored)return;
+> 20 |     if(restored.selectedOptionId&&!activity?.publicPresentation.options.some(o=>o.id===restored.selectedOptionId)){setError('历史选项无法安全恢复。');return;}
+     |                                                                                                                    ^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |     setSelection(restored.selectedOptionId??'');setResult(restored.result);
+  22 |   },[restored,block.id,drafts,activity]);
+  23 |   useEffect(()=>{  react-hooks/set-state-in-effect
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/region-renderer.tsx
+  10:59  error  Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `setOpen`, but the source dependencies were []. Inferred dependency not present in source.
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/region-renderer.tsx:10:59
+   8 |
+   9 | function SupportDrawer({children}:{children:ReactNode}){
+> 10 |   const [open,setOpen]=useState(false),reveal=useCallback(()=>setOpen(true),[]);
+     |                                                           ^^^^^^^^^^^^^^^^^ Could not preserve existing manual memoization
+  11 |   return <RevealBoundary reveal={reveal}><details open={open} onToggle={event=>setOpen(event.currentTarget.open)}><summary>辅助内容</summary>{children}</details></RevealBoundary>;
+  12 | }
+  13 |  react-hooks/preserve-manual-memoization
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/runtime-context.tsx
+  39:48   warning  The ref value 'lifetime.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'lifetime.current' to a variable inside the effect, and use that variable in the cleanup function                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+  49:43   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/components/runtime-context.tsx:49:43
+  47 |     setServer(next);steps.serverCompletion(next.completedStepIds);
+  48 |   };
+> 49 |   useEffect(()=>{if(services.refresh)void refresh().catch(()=>{/* Keep last verified state; never fabricate completion. */});},[services,steps]);
+     |                                           ^^^^^^^ Avoid calling setState() directly within an effect
+  50 |   return <LearningContext.Provider value={{nativeMedia,steps,targets,server,drafts,activePart,setActivePart,refresh,playbackOwner,setPlaybackOwner}}>{children}</LearningContext.Provider>;
+  51 | }
+  52 | export function useLearningState(){const value=useContext(LearningContext);if(!value)throw Error('Missing LearningStateProvider');return value;}  react-hooks/set-state-in-effect
+  49:128  warning  React Hook useEffect has a missing dependency: 'refresh'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+✖ 5 problems (3 errors, 2 warnings)
+

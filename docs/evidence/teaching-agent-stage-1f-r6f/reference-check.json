@@ -1,0 +1,17 @@
+{
+  "source": "国立国语院：한글의 구성",
+  "url": "https://www.korean.go.kr/hangeul/principle/001.html",
+  "accessedAtUtc": "2026-09-17T01:34:03.115627+00:00",
+  "status": "READ",
+  "supports": [
+    "Consonant and vowel letters are assembled by syllable",
+    "Onset ㅇ occupies a position without sound",
+    "Medial position is filled by vowel letters"
+  ],
+  "application": "Node2字形块、Node5아中的ㅇ、Node6中声角色；教学难度与冻结决定为本次独立审稿判断。",
+  "notExpandedIntoLesson": [
+    "full consonant/vowel inventories",
+    "complex finals",
+    "phonological rules"
+  ]
+}

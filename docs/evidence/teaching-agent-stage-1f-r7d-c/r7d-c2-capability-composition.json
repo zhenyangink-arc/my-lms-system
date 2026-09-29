@@ -1,0 +1,55 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "PASS",
+  "scope": "isolated-test-db only; fixed exact Skill and Tool factory; not imported by application routes/registries",
+  "pipeline": [
+    "existing Skill registry",
+    "existing Profile/Skill/Tool/policy intersection",
+    "existing Core executor through fixed shared bridge",
+    "actual Lesson Tool",
+    "existing Domain Port / facts issuer",
+    "existing durable validated read projection",
+    "private ledger",
+    "evidence gate",
+    "server-bounded output"
+  ],
+  "admission": [
+    "strict isolation literal",
+    "isolated storage only",
+    "same synthetic subject/tenant",
+    "student role in isolated context",
+    "exact Skill ref and intent",
+    "opaque issuer handle revalidation",
+    "exact permission intersection"
+  ],
+  "finalChecks": [
+    "issuer revalidation",
+    "current permission intersection",
+    "private receipt identity",
+    "run/skill/version/deadline/authority",
+    "bound content equality",
+    "safe evidence ref equality",
+    "source/storage consistency",
+    "asOf/observedAt inside this read and max age30s"
+  ],
+  "notProductionStudentAdmission": "Synthetic harness is not VerifiedStudentBinding and never enters production StudentPolicy. Inactive/suspended/Draft production rejection tested separately.",
+  "noCoordinator": true,
+  "noProvider": true,
+  "errorCodes": [
+    "REQUIRED_EVIDENCE_MISSING",
+    "SKILL_OUTPUT_INVALID"
+  ],
+  "stateMachineChanges": 0
+}

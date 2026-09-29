@@ -1,0 +1,53 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1D",
+  "recordedAt": "2026-09-20T01:40:55.732572+00:00",
+  "status": "READY",
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "credentialAccessAtCapabilityCheck": 0,
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "pg_dumpVersion": "pg_dump (PostgreSQL) 17.6",
+  "pg_restoreVersion": "pg_restore (PostgreSQL) 17.6",
+  "versionProbe": "network none; no credentials or mounts; --version only",
+  "backupRoot": {
+    "path": "/home/yangzhen/backups/uply",
+    "exists": true,
+    "mode": "0o700"
+  },
+  "dependencies": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f"
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964"
+    }
+  ],
+  "futureRequirement": {
+    "freshnessSeconds": 900,
+    "targetIdentityRequired": true,
+    "ledgerPrefixRequired": true,
+    "protectedCatalogRequired": true,
+    "archiveHashRequired": true,
+    "ownedRestoreEvidenceRequired": true,
+    "productionBackupRequiresSeparateApproval": true
+  },
+  "runtimeObservation": {
+    "buildId": "PjpaYHAz0asyvwh0G-lBo",
+    "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "B3": "DISABLED",
+    "B3DisabledMarkerSha256": "67577853f9e62465bd81604b8e26d3e06c047debf73209c53d2fad0b4f2aba01",
+    "pm2": "online",
+    "pm2Name": "uply-first-enable",
+    "pm2Mutation": 0
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "observedAtUTC": "2026-09-15T06:57:55.108270+00:00",
+  "currentAccount": "yangzhen",
+  "psqlOnPath": false,
+  "python3OnPath": true,
+  "existingReadOnlyClientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "productionReconcilerCredentialValidated": false,
+  "operatorHumanApprovalEnforcedByScript": false,
+  "productionTenantScopeApproved": false,
+  "futureInterface": "python3 scripts/teaching-agent-r3a/reconcile-command.py --service <approved-service> --tenant <approved-tenant-uuid> --limit 50 --execute",
+  "interfaceStatus": "DOCUMENTATION ONLY; BLOCKED FOR PRODUCTION",
+  "eightMigrations": [
+    {
+      "version": "202609140000",
+      "matches": true
+    },
+    {
+      "version": "202609140001",
+      "matches": true
+    },
+    {
+      "version": "202609140002",
+      "matches": true
+    },
+    {
+      "version": "202609140003",
+      "matches": true
+    },
+    {
+      "version": "202609140004",
+      "matches": true
+    },
+    {
+      "version": "202609140005",
+      "matches": true
+    },
+    {
+      "version": "202609140006",
+      "matches": true
+    },
+    {
+      "version": "202609140007",
+      "matches": true
+    }
+  ]
+}

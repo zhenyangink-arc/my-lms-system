@@ -1,0 +1,61 @@
+{
+  "pm2Before": {
+    "name": "uply-first-enable",
+    "pid": 1176676,
+    "pm_id": 9,
+    "status": "online",
+    "restart_time": 0,
+    "pm_uptime": 1789294455603,
+    "execPath": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000
+  },
+  "pm2After": {
+    "name": "uply-first-enable",
+    "pid": 1176676,
+    "pm_id": 9,
+    "status": "online",
+    "restart_time": 0,
+    "pm_uptime": 1789294455603,
+    "execPath": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000
+  },
+  "pm2Unchanged": true,
+  "runtimeBefore": {
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    }
+  },
+  "runtimeAfter": {
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    }
+  },
+  "runtimeUnchanged": true,
+  "productionAgentRuns": 0,
+  "productionAgentRunsScope": "This task initiated no Agent requests; production database was not contacted",
+  "productionMigration": "NOT APPLIED",
+  "productionMigrationScope": "No migration issued in this task; historical 449 ledger was not queried again",
+  "productionDatabaseRequests": 0,
+  "liveProviderRequests": 0,
+  "productionConfigWrites": 0,
+  "productionDeploys": 0,
+  "allowlistWrites": 0,
+  "featureFlag": "OFF",
+  "allowlists": "EMPTY",
+  "tailscaleMutations": {
+    "addApproved9443": 1,
+    "removeOwned9443": 1,
+    "other": 0
+  },
+  "productionChangesExceptApprovedTemporaryBinding": 0,
+  "probeCredentialsLoaded": false,
+  "privilegedProductionRuntimeReadByProbe": false
+}

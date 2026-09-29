@@ -1,0 +1,46 @@
+{
+  "status": "VERIFIED",
+  "nodeTable": "digital_textbook_node_progress",
+  "key": "tenant + actor + node + version",
+  "wrong": {
+    "status": "in_progress",
+    "completion_percent": 0,
+    "mastery_score": 0,
+    "attempt_count": 1
+  },
+  "correct": {
+    "status": "completed",
+    "completion_percent": 100,
+    "mastery_score": 100,
+    "attempt_count": 2
+  },
+  "timestampWrites": "wrong INSERT last_activity_at/updated_at = transaction now; correct UPSERT update same fields; BEFORE trigger modifies NEW.updated_at, no extra UPDATE statement",
+  "afterTrigger": "private.sync_smart_textbook_chapter_completion",
+  "chapterTestIsNull": true,
+  "chapterNodeCount": 1,
+  "aggregateWrites": 0,
+  "aggregateReason": "NULL chapter_test_id prevents joining a published chapter_test; trigger returns before course_ebook_progress INSERT/UPDATE. One node also does not meet fixed eight-node condition. Both facts pinned for B3.",
+  "activityPageProgress": "NOT USED for this single_choice native binding; INSERT0 UPDATE0 DELETE0",
+  "completionMarkerNote": "7-param RPC uses is_correct for required objective Activity; meets_completion_requirements default false is not this completion authority",
+  "otherProgressSystem": "NOT CREATED",
+  "triggers": [
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "definition": "CREATE TRIGGER digital_textbook_activity_page_progress_set_updated_at BEFORE UPDATE ON public.digital_textbook_activity_page_progress FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "function": "CREATE OR REPLACE FUNCTION private.set_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  new.updated_at := now();\n  return new;\nend;\n$function$\n",
+      "enabled": "O"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "definition": "CREATE TRIGGER digital_textbook_node_progress_set_updated_at BEFORE UPDATE ON public.digital_textbook_node_progress FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "function": "CREATE OR REPLACE FUNCTION private.set_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  new.updated_at := now();\n  return new;\nend;\n$function$\n",
+      "enabled": "O"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "definition": "CREATE TRIGGER sync_smart_textbook_chapter_completion AFTER INSERT OR UPDATE OF status, completion_percent ON public.digital_textbook_node_progress FOR EACH ROW EXECUTE FUNCTION private.sync_smart_textbook_chapter_completion()",
+      "function": "CREATE OR REPLACE FUNCTION private.sync_smart_textbook_chapter_completion()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_chapter_id uuid;\n  v_test_slug text;\n  v_student_app_id uuid;\n  v_total_nodes integer;\n  v_completed_nodes integer;\n  v_total_activities integer;\n  v_completed_activities integer;\nbegin\n  if new.status <> 'completed' or new.completion_percent < 100 then\n    return new;\n  end if;\n\n  select chapter.id, test.slug, test.student_app_id\n  into v_chapter_id, v_test_slug, v_student_app_id\n  from public.digital_textbook_nodes as node\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  join public.digital_textbook_chapters as chapter on chapter.id = module.chapter_id\n  join public.chapter_tests as test on test.id = chapter.chapter_test_id\n  where node.id = new.node_id\n    and chapter.version_id = new.version_id\n    and test.status = 'published';\n\n  if v_chapter_id is null then return new; end if;\n\n  select count(*) into v_total_nodes\n  from public.digital_textbook_nodes as node\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id;\n\n  select count(*) into v_completed_nodes\n  from public.digital_textbook_node_progress as progress\n  join public.digital_textbook_nodes as node on node.id = progress.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id\n    and progress.tenant_id = new.tenant_id\n    and progress.student_id = new.student_id\n    and progress.version_id = new.version_id\n    and progress.status = 'completed'\n    and progress.completion_percent = 100;\n\n  if v_total_nodes <> 8 or v_completed_nodes <> v_total_nodes then\n    return new;\n  end if;\n\n  select count(*) into v_total_activities\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_nodes as node on node.id = activity.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id\n    and activity.counts_toward_completion;\n\n  select count(distinct activity.id) into v_completed_activities\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_nodes as node on node.id = activity.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  join public.digital_textbook_attempts as attempt\n    on attempt.activity_id = activity.id\n   and attempt.tenant_id = new.tenant_id\n   and attempt.student_id = new.student_id\n   and attempt.version_id = new.version_id\n   and (\n     attempt.is_correct is true\n     or (\n       activity.activity_type in ('speaking', 'writing', 'self_check')\n       and attempt.is_correct is null\n     )\n   )\n  where module.chapter_id = v_chapter_id\n    and activity.counts_toward_completion;\n\n  if v_total_activities = 0 or v_completed_activities <> v_total_activities then\n    return new;\n  end if;\n\n  insert into public.course_ebook_progress (\n    tenant_id, student_id, student_app_id, test_slug,\n    current_page, total_pages, progress_percent, read_pages,\n    reading_seconds, completion_source, last_read_at, updated_at\n  ) values (\n    new.tenant_id, new.student_id, v_student_app_id, v_test_slug,\n    0, 32, 0, '{}'::integer[], 0, 'smart_textbook', now(), now()\n  )\n  on conflict (tenant_id, student_id, test_slug) do nothing;\n\n  update public.course_ebook_progress as progress\n  set\n    progress_percent = 100,\n    completion_source = case\n      when progress.completion_source = 'both' then 'both'\n      when progress.completion_source = 'ebook'\n        and progress.progress_percent >= 100\n        and progress.reading_seconds >= 600 then 'both'\n      else 'smart_textbook'\n    end,\n    updated_at = now()\n  where progress.tenant_id = new.tenant_id\n    and progress.student_id = new.student_id\n    and progress.test_slug = v_test_slug;\n\n  return new;\nend;\n$function$\n",
+      "enabled": "O"
+    }
+  ]
+}

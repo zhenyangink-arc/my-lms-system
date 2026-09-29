@@ -1,0 +1,395 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "peerCount": 7,
+  "peers": [
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "confirm_teaching_script_source_review(uuid,integer,jsonb,text)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "f5140ffc44ff9d5cdc678e34d71bd72ca8fec86d308188110b2fb48b0f0eb660",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + exact source/token/revision + locks",
+      "callerChain": "confirmScriptSourceReview -> requirePlatformOwner -> authenticated cookie client",
+      "source": {
+        "path": "src/features/learning-agent-script-studio/source-review-actions.ts",
+        "sha256": "90f02518568afa6ce30d6d212514f537fbfa98b1bfc137c6be3daa064d5dbb00"
+      },
+      "aclPattern": "HISTORICAL_SERVICE_ROLE_RETAINED"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "create_teaching_content_skeleton(uuid,timestamp with time zone,text,text[])",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": false
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "63ad985d00a437768a8aefb7a61b369faac0bafd627b4f7ad2107fa47e73d4ce",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + not tenant-provisioned + exact catalog revision + empty existing tree",
+      "callerChain": "requirePlatformOwner -> returned authenticated client",
+      "source": {
+        "path": "src/features/digital-textbook/api/create-teaching-content.ts",
+        "sha256": "21243818972d06397a98784f68734e012814f9ef78ebb9f7d4069a04df3582a2"
+      },
+      "aclPattern": "EXPLICIT_SERVICE_ROLE_EXCLUDED",
+      "liveSourceCaveat": "Local product action exists; path absent in live source tree. This is not a new production execution claim."
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "create_teaching_lesson_activity_binding(jsonb,jsonb)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": false
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "460027e2168e9a7713d1f837ad91a70e561a82d5cfbfa3814d00dba97f3599c8",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + not tenant-provisioned + frozen content and canonical Activity checks",
+      "callerChain": "requirePlatformOwner -> createCanonicalBinding(supabase) -> exact RPC on supplied user client",
+      "source": {
+        "path": "src/features/digital-textbook/api/create-native-activity.ts",
+        "sha256": "162d588e4e001f599768f3dc5e18b900fefa411ef5e3ff55ea8dcd159ac23bbc"
+      },
+      "aclPattern": "EXPLICIT_SERVICE_ROLE_EXCLUDED"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "get_teaching_script_source_review(uuid)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "21a70e53393d2d088d1ed9feea80a9637bd019d9a7a840c7e1421f879151c551",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + source existence",
+      "callerChain": "loadScriptSourceReview -> requirePlatformOwner -> authenticated cookie client",
+      "source": {
+        "path": "src/features/learning-agent-script-studio/source-review-actions.ts",
+        "sha256": "90f02518568afa6ce30d6d212514f537fbfa98b1bfc137c6be3daa064d5dbb00"
+      },
+      "aclPattern": "HISTORICAL_SERVICE_ROLE_RETAINED"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "list_teaching_script_source_review_status(uuid)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "fc614d71d1beff945bfca22bbd93d50d31599c70115cb253bfe9f5d3ef874f3f",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + app/script/content joins",
+      "callerChain": "getTeachingScriptStudioData -> requirePlatformOwner caller; separate admin client is not used for this RPC",
+      "source": {
+        "path": "src/features/learning-agent-script-studio/service.ts",
+        "sha256": "981966048e3362eec5e98c055f67cce2668559546e94a77746a85351d785bce2"
+      },
+      "aclPattern": "HISTORICAL_SERVICE_ROLE_RETAINED"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "publish_completion_policy_draft(uuid)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "3a145c9fc1a04b7b44464d1342c0a7d2436a9624bb9360db61f6905e406c259a",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + existing draft + course advisory lock",
+      "callerChain": "owner management access -> createClient cookie session",
+      "source": {
+        "path": "src/features/course-completion/policy-actions.ts",
+        "sha256": "117b7ade30534e753274c59ad1c9fc4af32020e30233c8d61c4f23f4d26fe0ae"
+      },
+      "aclPattern": "HISTORICAL_SERVICE_ROLE_RETAINED"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres,authenticated=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "save_completion_policy_draft(uuid,uuid,text,jsonb)",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "d022ef9d1b9f363836f7484736b6d7dc0851b0d4c91d7d968b912cca20836e70",
+      "productServiceRoleCaller": "NO_CURRENT_CALLER_FOUND",
+      "authenticatedCaller": "YES_SOURCE_CONFIRMED",
+      "internalAuthorization": "SELF_GUARDED",
+      "guard": "Owner + Korean platform course + requirements + draft lock",
+      "callerChain": "owner management access -> createClient cookie session",
+      "source": {
+        "path": "src/features/course-completion/policy-actions.ts",
+        "sha256": "117b7ade30534e753274c59ad1c9fc4af32020e30233c8d61c4f23f4d26fe0ae"
+      },
+      "aclPattern": "HISTORICAL_SERVICE_ROLE_RETAINED"
+    }
+  ],
+  "peerRpcPattern": "MIXED",
+  "legacyServiceRoleAllowed": 5,
+  "explicitServiceRoleExcluded": 2,
+  "interpretation": "Legacy peers share inherited grants despite no service caller. New closest authoring creation/binding contracts explicitly revoke service_role and use authenticated Owner clients. Peer count is not a security vote; explicit need and guard model decide.",
+  "liveSourceCrossCheck": [
+    {
+      "path": "src/features/learning-agent-script-studio/source-review-actions.ts",
+      "livePresent": true,
+      "liveHash": "90f02518568afa6ce30d6d212514f537fbfa98b1bfc137c6be3daa064d5dbb00",
+      "sourceSame": true
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/service.ts",
+      "livePresent": true,
+      "liveHash": "981966048e3362eec5e98c055f67cce2668559546e94a77746a85351d785bce2",
+      "sourceSame": true
+    },
+    {
+      "path": "src/features/course-completion/policy-actions.ts",
+      "livePresent": true,
+      "liveHash": "117b7ade30534e753274c59ad1c9fc4af32020e30233c8d61c4f23f4d26fe0ae",
+      "sourceSame": true
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-teaching-content.ts",
+      "livePresent": false,
+      "liveHash": null,
+      "sourceSame": false
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-native-activity.ts",
+      "livePresent": true,
+      "liveHash": "162d588e4e001f599768f3dc5e18b900fefa411ef5e3ff55ea8dcd159ac23bbc",
+      "sourceSame": true
+    },
+    {
+      "path": "src/lib/admin.ts",
+      "livePresent": true,
+      "liveHash": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d",
+      "sourceSame": true
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "livePresent": true,
+      "liveHash": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+      "sourceSame": true
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "livePresent": true,
+      "liveHash": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+      "sourceSame": true
+    }
+  ],
+  "backendCounterexample": "policy-actions.ts imports createAdminClient for process_course_completion_refresh_tasks ONLY, a different dedicated worker RPC; save/publish target peers use authenticated createClient. No blanket inference from an admin-client import."
+}

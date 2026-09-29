@@ -1,0 +1,111 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1",
+  "recordedAt": "2026-09-20T05:16:20.467266+00:00",
+  "mode": "IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "overall": "BLOCKED",
+  "blockingCode": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+  "runnerImplementation": "PASS_OWNED_VALIDATION",
+  "selectedContract": "POOLED_VERIFY_FULL_PROVIDER_MANAGED_UNVERIFIED",
+  "scope": "R7D-C3B_ONLY",
+  "riskAcceptance": "BOUND",
+  "permanentSecurityApproval": false,
+  "operationalModified": 5,
+  "testsModified": 3,
+  "readmeModified": 1,
+  "implementationAdded": 0,
+  "unexpectedHistoricalEvidenceChanges": 1,
+  "clientTlsContract": "VERIFY_FULL",
+  "psqlActualSessionProof": "PASS",
+  "pgDumpActualInvocationProof": "PASS",
+  "pgDumpallActualInvocationProof": "PASS",
+  "borrowedHandshake": "FORBIDDEN",
+  "backendObservation": "PRESERVED",
+  "backendFalse": "RECORDED_AND_ALLOWED_ONLY_WITH_VALID_RISK",
+  "clientTlsFalse": "REJECT",
+  "wrongCA": "REJECT",
+  "wrongHostname": "REJECT",
+  "wrongPort": "REJECT",
+  "wrongProfile": "REJECT",
+  "riskMissing": "REJECT",
+  "riskExpired": "REJECT",
+  "closureMarkerPresent": "REJECT",
+  "backupPerToolProof": "PASS",
+  "backupManifestProofBinding": "PASS",
+  "proofReplay": "REJECT",
+  "immutableBoundaries": "ALL_MATCH",
+  "migrations000001002": "UNCHANGED",
+  "existingTests": {
+    "passed": 98,
+    "total": 98
+  },
+  "newTests": {
+    "passed": 36,
+    "total": 36
+  },
+  "totalTests": {
+    "passed": 134,
+    "total": 134,
+    "failed": 0,
+    "skipped": 0
+  },
+  "regression": {
+    "passed": 172,
+    "failed": 0,
+    "skipped": 0
+  },
+  "safetyCriticalSkips": 0,
+  "candidateArtifactHashes": "ALL_MATCH",
+  "operationalPackageDigest": "6584a2f7d1be58cb065fb904fd06afa365b8c485b535afec03fcc9bbfaf417ad",
+  "currentV3": "HISTORICAL_ONLY_AFTER_SOURCE_CHANGE",
+  "controlledPreflightV4": "BLOCKED_NOT_GENERATED",
+  "implementationEvidence": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+    "sha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51"
+  },
+  "testEvidence": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+    "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72"
+  },
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+    "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae"
+  },
+  "historyPreservation": "FAIL",
+  "recoveryRequired": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "expectedSha256": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+      "actualSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a"
+    }
+  ],
+  "C3BRelease": "BLOCKED",
+  "R7D-C3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "install000": "NOT_AUTHORIZED",
+  "install001": "NOT_AUTHORIZED",
+  "install002": "NOT_AUTHORIZED"
+}

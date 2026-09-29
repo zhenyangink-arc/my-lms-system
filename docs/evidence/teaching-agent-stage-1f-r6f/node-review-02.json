@@ -1,0 +1,27 @@
+{
+  "nodeNumber": 2,
+  "title": "韩文字母怎么组成？",
+  "formalType": "explanation",
+  "purpose": "明确同一合体字形内的组合。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "先介绍两类字母，再明确한 글자 안에 모아 써요；가是同一字形而非分开的ㄱㅏ。左右两句紧随“가”를 보세요，仅解释该例，后续Node6提供下置元音反例。删除原声音开头/延续定义，没有误导性概括或新增难术语。",
+  "resolvedItems": [
+    "M1",
+    "M2"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+  "teacherScriptSha256": "b25b2429c150b276b89cd0385919820db65aa66ae402d7eebd4b0082663fd248",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

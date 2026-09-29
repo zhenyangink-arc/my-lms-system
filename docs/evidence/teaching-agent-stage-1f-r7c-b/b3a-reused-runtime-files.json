@@ -1,0 +1,97 @@
+[
+  {
+    "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+    "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/lib/smart-textbook-runtime-v1/registry.ts",
+    "sha256": "4d41f360ec4b6ba625effb6780087f1f283d05bf6d77fb875ec1b4221430b0e8",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+    "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/core/block-registry.ts",
+    "sha256": "600a4b117eed6b2c3ec43f91d13130aa944ba34d55d809353d61864dd9ffcd8c",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/core/services.ts",
+    "sha256": "2cd89f50ca480c9707c8ad994b5f611db2d855ee9b94892b48d1141605797eca",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/core/target-registry.ts",
+    "sha256": "364b9e0d12e8074a1ef0b55b71f244f93bef19d3b96fbdc14a1c8d5448c7ccd6",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+    "sha256": "2c8d263571a8e6566a4123040a5ebc4ef7c8867f8ee9d5a8fdde42d4f6910a73",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+    "sha256": "0d1b8b801d3840477352acfb9d5d6665e262e225f607cd39330d8a52b99991b8",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+    "sha256": "7f69309e478945b68f248952152424ce89f206f1acad390a9a0d6433f2899334",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+    "sha256": "13cae3a99198ba27126d922d9922afb3faa1dd54ad7e8bd7ff0842513347c876",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/choice-block.tsx",
+    "sha256": "13aac266efcb230883f9dacc8d16f3b34a8b6a8ff0550c953da3cbcb26130001",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+    "sha256": "4521c6b7fa991d4a886d0ea0058521a23debf0eb6d62a186d0238f1b97d2817e",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/runtime.css",
+    "sha256": "508cf0301f8a15b9e5e99e5462596d72971d370a919658690b6ffee5805df303",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+    "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+    "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "sha256": "e0be7eb2d48d40cfb177b9b02f400016b845c5a6c254e620f9fd8905531f1bb9",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "sha256": "35eaf42079249fa8b9dcfa28b61429ca3f974a1d1c01e224b7e8dda1c61a7a2e",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/components/video-block.tsx",
+    "sha256": "967743a3fa1610055063caa2292486548e26efb4dd842d30b5afe43cd91cd042",
+    "priorStageHash": "MATCH"
+  },
+  {
+    "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+    "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+    "priorStageHash": "MATCH"
+  }
+]

@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-09-13T03:20:06.79503+00:00",
+  "readOnly": "on",
+  "activity": [
+    {
+      "pid": 2139754,
+      "usename": "authenticator",
+      "application_name": "PostgREST 14.5",
+      "backend_type": "client backend",
+      "state": "active",
+      "wait_event_type": "Lock",
+      "wait_event": "advisory",
+      "backend_start": "2026-09-10T20:23:23.821808+00:00",
+      "xact_start": "2026-09-13T03:20:06.743114+00:00",
+      "query_start": "2026-09-13T03:20:06.743499+00:00",
+      "state_change": "2026-09-13T03:20:06.743499+00:00",
+      "backend_xid": null,
+      "blockers": [
+        2139928
+      ],
+      "operations": [
+        {
+          "verb": "DELETE FROM",
+          "relation": "\"public\".\"learning_agent_script_versions\""
+        }
+      ],
+      "querySha256": "78e33ba19d871441215fa7da71ba740295d475ca9c1cbd28c2f541b076a2987d",
+      "queryLength": 489,
+      "queryTruncated": false,
+      "topLevel": "WITH",
+      "queryContentsExported": false
+    },
+    {
+      "pid": 2139928,
+      "usename": "authenticator",
+      "application_name": "PostgREST 14.5",
+      "backend_type": "client backend",
+      "state": "active",
+      "wait_event_type": null,
+      "wait_event": null,
+      "backend_start": "2026-09-10T20:25:51.023454+00:00",
+      "xact_start": "2026-09-13T03:20:06.663403+00:00",
+      "query_start": "2026-09-13T03:20:06.663844+00:00",
+      "state_change": "2026-09-13T03:20:06.663845+00:00",
+      "backend_xid": "2430567",
+      "blockers": [],
+      "operations": [
+        {
+          "verb": "DELETE FROM",
+          "relation": "\"public\".\"learning_agent_script_versions\""
+        }
+      ],
+      "querySha256": "78e33ba19d871441215fa7da71ba740295d475ca9c1cbd28c2f541b076a2987d",
+      "queryLength": 489,
+      "queryTruncated": false,
+      "topLevel": "WITH",
+      "queryContentsExported": false
+    }
+  ],
+  "locks": [
+    {
+      "pid": 2139754,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": false,
+      "relation": null,
+      "classid": "4171",
+      "objid": "2",
+      "objsubid": 2
+    },
+    {
+      "pid": 2139928,
+      "locktype": "advisory",
+      "mode": "ExclusiveLock",
+      "granted": true,
+      "relation": null,
+      "classid": "4171",
+      "objid": "2",
+      "objsubid": 2
+    }
+  ],
+  "runtimeRequests": 0,
+  "recordingRequests": 0,
+  "remoteWrites": false,
+  "targetVerified": true,
+  "tlsVerified": true
+}

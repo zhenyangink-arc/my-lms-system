@@ -1,0 +1,32 @@
+{
+  "stage": "R7D-C3B-RUNNER-I1",
+  "recordedAt": "2026-09-18T13:40:43.810097+00:00",
+  "pythonSyntax": "PASS",
+  "jsonParse": "PASS",
+  "implementationPaths": [
+    "scripts/teaching-agent-r7d-c3b/runner.py",
+    "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+    "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+    "scripts/teaching-agent-r7d-c3b/checks.py",
+    "scripts/teaching-agent-r7d-c3b/transaction.py",
+    "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+    "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+    "scripts/teaching-agent-r7d-c3b/receipts.py",
+    "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+    "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+    "tests/teaching_agent_single_migration_runner_contract_test.py",
+    "tests/teaching_agent_single_migration_runner_postgres_test.py",
+    "tests/teaching_agent_single_migration_runner_backup_test.py",
+    "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+    "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+    "scripts/teaching-agent-r7d-c3b/README.md"
+  ],
+  "extraImplementationPaths": [],
+  "shellTrue": false,
+  "publicArbitrarySqlExecutor": false,
+  "evalOrExec": false,
+  "credentialAccess": 0,
+  "currentDBConnections": 0,
+  "ownedTestsOnly": true,
+  "scanLimit": "Static source and owned fault tests; no live production acceptance claimed"
+}

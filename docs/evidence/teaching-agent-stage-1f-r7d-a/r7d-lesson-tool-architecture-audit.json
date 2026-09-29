@@ -1,0 +1,74 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "infrastructure": "FOUND",
+  "durableLessonToolIntegration": "PARTIAL",
+  "existingTools": [
+    {
+      "name": "get_current_lesson_context",
+      "version": "1.0.0",
+      "semantics": "published verified selected sentence/objectives; no durable attempts/progress"
+    },
+    {
+      "name": "get_current_teaching_state",
+      "version": "1.0.0",
+      "semantics": "last_saved_teaching_position; no completion authority"
+    }
+  ],
+  "framework": "existing ToolRegistration -> createToolRegistry -> executeAllowedTool -> PermissionPolicy -> Domain Port",
+  "globalRegistry": "EMPTY",
+  "requestLocalStudentRegistry": "two exact tools",
+  "skills": "explain-pinned-korean-segment@1.0.0 with mandatory lesson evidence",
+  "barriers": [
+    "StudentToolBinding requires WeakMap-minted VerifiedStudentBinding; cannot fabricate for banned development actor",
+    "published-only + active student membership correctly exclude B2 actor/Draft",
+    "client Runtime facts are partly observations and not a fresh server read",
+    "durable validated rows currently private to completion factory; Tool needs bounded metrics from same validated snapshot",
+    "Tool evidence checker currently understands selected sentence/last_saved, not durable Activity evidence"
+  ],
+  "concepts": {
+    "Tool": "versioned permitted Agent capability",
+    "API": "transport boundary, not evidence authority",
+    "DomainPort": "authorized domain read boundary",
+    "Skill": "versioned procedure/context/tool/evidence/output contract",
+    "TeachingScript": "frozen pedagogical source",
+    "RuntimeFact": "domain evidence, not Agent memory"
+  },
+  "sourceHashes": {
+    "src/features/agent-core/contracts/tool.ts": "5cf1f6324098bbd26308ec2be9dec6166c80f4e67e6f721686d77fa64c440244",
+    "src/features/agent-core/contracts/server.ts": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+    "src/features/agent-core/tools/registry.ts": "818ac9408f9be5f78729e760ee2096bc7558661b3a73a6285dc4865d4bfd8e0d",
+    "src/features/agent-core/tools/executor.ts": "cb7866cc3fafc5aeafeb7655caaba0b2e7ab90048cc12910831cbe7b76ea12e3",
+    "src/features/teaching-agent/server/tools/contracts.ts": "7da75210911760fe54f67120c62d2e8d5ea76b804dddb3763e5986af9d1f996c",
+    "src/features/teaching-agent/server/tools/get-current-lesson-context.ts": "3a390765cb26ef73bf6f26121a8738085589d61f6f1ab9e1978c34cadf4f768e",
+    "src/features/teaching-agent/server/tools/student-tool-registry.ts": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+    "src/features/teaching-agent/server/domain-ports/index.ts": "ec2655cfb428d24b056cc791b9a970e2c0f6ce7942f14f5d8ff4a5b5e3648703",
+    "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts": "0cfefa45b837a4779be7376c67715f2a164b31d758b26de54078331b7b325659",
+    "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts": "0cd46c700e978753e69f6cbeb3a670e73f6cd5eab4e931c535686bb1605a59f6",
+    "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+    "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts": "2162ab095e6e87fbfa1c785445cb1c42dd88d9bdd5fbeb217d964c0d37cdf801",
+    "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts": "d2dad4ce92e51d628602160d7dd840cee7135bb25782ab2ecbbbc39a71b7a889",
+    "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+    "src/features/teaching-agent/server/policies/student-tool-policy.ts": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+    "src/features/teaching-agent/server/selection/verify-student-selection.ts": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+    "src/features/teaching-agent/server/selection/references.ts": "377b9f9163cdce6a4eb2abbe3406189b4baffcdb5532a06ad5eda76e19c8b967",
+    "src/features/teaching-agent/server/skills/student-skill-registry.ts": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+    "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts": "0740aff8da0bf2942036571ff4d68010f89f15f742926ba7627bbd5c8b53a9d8",
+    "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts": "04a381b085ddc2d81f764b77973e8cc0bb1bf6fd7963a14fd33dd759fad86660",
+    "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+    "src/features/teaching-agent/server/runtime/student-run-coordinator.ts": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+    "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+    "src/features/teaching-agent/server/transport/production.ts": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts": "35eaf42079249fa8b9dcfa28b61429ca3f974a1d1c01e224b7e8dda1c61a7a2e",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "4a4cd76c69d9e7639767a49fd40eb0e707a9075a25e74528e579d535b88d9c50",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+    "src/features/development-execution/server/execution-composition.server.ts": "73a252f39b091c61e0f7149a7144769e7c03895c5fe0f05614845a6b79846528",
+    "src/features/development-execution/server/execution-transport.server.ts": "ff0f54f057d08200764f77438198f6e0116de33977f1a7fd9d041b2bf578a2d0"
+  }
+}

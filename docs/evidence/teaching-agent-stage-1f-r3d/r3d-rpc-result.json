@@ -1,0 +1,111 @@
+{
+  "checks": [
+    {
+      "name": "formal UI target still has zero textbooks",
+      "pass": true
+    },
+    {
+      "name": "A1 denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "UT denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "TA denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "MA denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "MA denied Tenant B",
+      "pass": true
+    },
+    {
+      "name": "TB denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "AA denied Tenant A",
+      "pass": true
+    },
+    {
+      "name": "stale catalog revision rejected",
+      "pass": true
+    },
+    {
+      "name": "two actual authenticated HTTP sessions: one success",
+      "pass": true
+    },
+    {
+      "name": "other concurrent session conflicts",
+      "pass": true
+    },
+    {
+      "name": "one canonical root",
+      "pass": true
+    },
+    {
+      "name": "digital_textbooks draft",
+      "pass": true
+    },
+    {
+      "name": "digital_textbook_versions draft",
+      "pass": true
+    },
+    {
+      "name": "digital_textbook_chapters draft",
+      "pass": true
+    },
+    {
+      "name": "learning_agent_lessons draft",
+      "pass": true
+    },
+    {
+      "name": "server-resolved profile",
+      "pass": true
+    },
+    {
+      "name": "no generated script",
+      "pass": true
+    },
+    {
+      "name": "repeat/double click 0",
+      "pass": true
+    },
+    {
+      "name": "repeat/double click 1",
+      "pass": true
+    },
+    {
+      "name": "existing content byte equivalent",
+      "pass": true
+    },
+    {
+      "name": "partial legacy rejected",
+      "pass": true
+    },
+    {
+      "name": "partial legacy not repaired",
+      "pass": true
+    },
+    {
+      "name": "late fifth insert fails",
+      "pass": true
+    },
+    {
+      "name": "late failure rolls back root and FK descendants",
+      "pass": true
+    },
+    {
+      "name": "formal UI target remains from zero",
+      "pass": true
+    }
+  ],
+  "realIndependentAuthSessions": true,
+  "errors": [],
+  "status": "PASS"
+}

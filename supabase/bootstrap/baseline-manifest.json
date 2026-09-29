@@ -1,0 +1,221 @@
+{
+  "baselineCutoverName": "runtime_authoring_nonretryable_error",
+  "baselineCutoverVersion": "202609130003",
+  "baselineSqlDigest": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+  "businessDataStatements": 0,
+  "excludedSchemas": [
+    "auth",
+    "extensions",
+    "graphql",
+    "graphql_public",
+    "pg_catalog",
+    "pgbouncer",
+    "realtime",
+    "storage",
+    "supabase_migrations",
+    "vault"
+  ],
+  "generatedAt": "2026-09-14T04:39:15Z",
+  "includedSchemas": [
+    "public",
+    "private",
+    "recording_private",
+    "runtime_publish_private"
+  ],
+  "objectCounts": {
+    "ACL": 713,
+    "CHECK CONSTRAINT": 1,
+    "COMMENT": 354,
+    "CONSTRAINT": 292,
+    "DEFAULT ACL": 6,
+    "EVENT TRIGGER": 1,
+    "FK CONSTRAINT": 521,
+    "FUNCTION": 393,
+    "INDEX": 308,
+    "POLICY": 287,
+    "PUBLICATION TABLE": 1,
+    "ROW SECURITY": 188,
+    "SCHEMA": 3,
+    "SEQUENCE": 21,
+    "TABLE": 188,
+    "TRIGGER": 280,
+    "VIEW": 8
+  },
+  "orphanMigrationDecisions": [
+    {
+      "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080004_teaching_operations.sql",
+      "decision": "REISSUE_POST_BASELINE",
+      "newFilename": "202609140003_teaching_operations_reissue.sql",
+      "newSha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "originalFilename": "202609080004_teaching_operations.sql",
+      "originalSha256": "0d43d2bb14bc3b43457dcf5671b615e2a046b7aaa5845a6421d481e1cdff368d",
+      "reason": "Current curriculum plan service/actions require get_curriculum_execution and dispatch_curriculum_plan_exam; objects absent from cutover snapshot; no superseding migration.",
+      "status": "REISSUED_POST_BASELINE"
+    },
+    {
+      "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080005_completion_policy_management.sql",
+      "decision": "REISSUE_POST_BASELINE",
+      "newFilename": "202609140004_completion_policy_management_reissue.sql",
+      "newSha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "originalFilename": "202609080005_completion_policy_management.sql",
+      "originalSha256": "44079b7845187ef97e189262c4f603d458e16901da5dc77f6c31bb0bdca6edf5",
+      "reason": "Current policy-actions require draft/publish/refresh RPCs; all four absent from cutover snapshot; no superseding migration.",
+      "status": "REISSUED_POST_BASELINE"
+    }
+  ],
+  "platformAttachments": [
+    [
+      "users on_auth_user_created",
+      "TRIGGER",
+      "auth"
+    ],
+    [
+      "users z_sync_auth_registration_metadata",
+      "TRIGGER",
+      "auth"
+    ],
+    [
+      "messages live class participants read channel",
+      "POLICY",
+      "realtime"
+    ],
+    [
+      "messages live class participants write channel",
+      "POLICY",
+      "realtime"
+    ],
+    [
+      "objects authorized users read platform resource files",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects owners delete managed profile photos",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects platform owner deletes resource files",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects platform owner uploads resource files",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects users delete own profile photos",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects users read own profile photos",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects users update own profile photos",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "objects users upload own profile photos",
+      "POLICY",
+      "storage"
+    ],
+    [
+      "ensure_rls",
+      "EVENT TRIGGER",
+      "-"
+    ]
+  ],
+  "platformPrerequisites": [
+    "Supabase roles",
+    "auth",
+    "storage",
+    "realtime",
+    "extensions",
+    "pgcrypto",
+    "uuid-ossp",
+    "btree_gist",
+    "Supabase CLI ledger schema"
+  ],
+  "postBaselineMigrationVersions": [
+    "202609140000",
+    "202609140001",
+    "202609140002",
+    "202609140003",
+    "202609140004",
+    "202609140005",
+    "202609140006",
+    "202609140007"
+  ],
+  "postBaselineMigrations": [
+    {
+      "filename": "202609140000_agent_core_foundation.sql",
+      "name": "agent_core_foundation",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "version": "202609140000"
+    },
+    {
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "name": "agent_runtime_completion_evidence",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "version": "202609140001"
+    },
+    {
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "name": "agent_run_cancel_request",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "version": "202609140002"
+    },
+    {
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "name": "teaching_operations_reissue",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "version": "202609140003"
+    },
+    {
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "name": "completion_policy_management_reissue",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "version": "202609140004"
+    },
+    {
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "name": "student_teaching_content_isolation",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "version": "202609140005"
+    },
+    {
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "name": "agent_run_reconciliation",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "version": "202609140006"
+    },
+    {
+      "filename": "202609140007_teaching_content_skeleton.sql",
+      "name": "teaching_content_skeleton",
+      "sha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4",
+      "version": "202609140007"
+    }
+  ],
+  "preCutoverLedgerCount": 449,
+  "preCutoverLedgerDigest": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+  "productionUse": "NEVER APPLY BASELINE TO EXISTING PRODUCTION DATABASE",
+  "schemaVersion": 1,
+  "snapshotPlatformExtensions": [
+    "btree_gist",
+    "pg_stat_statements",
+    "pgcrypto",
+    "supabase_vault",
+    "uuid-ossp"
+  ],
+  "snapshotPlatformPublications": [
+    "supabase_realtime",
+    "supabase_realtime_messages_publication"
+  ],
+  "sourceSchemaDigest": "8f31512aa71bd63aa33f8b5e1acd7f657b27c01981103cecc5d9498178260501",
+  "topLevelSchemaStatements": 5544
+}

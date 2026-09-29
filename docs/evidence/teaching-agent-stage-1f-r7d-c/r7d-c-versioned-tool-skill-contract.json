@@ -1,0 +1,36 @@
+{
+  "stage": "R7D-C Production Prerequisite Implementation",
+  "recordedAt": "2026-09-18T03:25:56.356499+00:00",
+  "status": "BLOCKED_BEFORE_PRODUCT_EDIT",
+  "authority": "LOCAL_SOURCE_AUDIT_ONLY",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "productChangesThisTurn": 0,
+  "migrationChangesThisTurn": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveStateRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "versionsApproved": {
+    "tool": "get_current_lesson_execution_facts@1.1.0",
+    "skill": "summarize-current-lesson-execution@1.1.0",
+    "output": "student-execution-summary@1.1.0",
+    "receipt": "activity-completion/3"
+  },
+  "implementation": "NOT_STARTED",
+  "preserved": [
+    "Tool1.0.0",
+    "Skill1.0.0",
+    "Output1.0.0",
+    "activity-completion/2",
+    "Explain1.0.0"
+  ],
+  "versionIsolationVerification": "NOT_EXECUTED"
+}

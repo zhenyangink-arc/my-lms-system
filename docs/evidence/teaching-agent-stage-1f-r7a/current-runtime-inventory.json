@@ -1,0 +1,151 @@
+{
+  "items": [
+    {
+      "component": "Script Runtime",
+      "status": "FOUND",
+      "current": "resolveScriptStep explanation/task/task_feedback/question with task and answer gates",
+      "required": "Retain deterministic domain authority",
+      "gap": "Old API transport coupling",
+      "stage": "R7B",
+      "sources": [
+        "script-domain"
+      ]
+    },
+    {
+      "component": "Teaching Script / Nodes",
+      "status": "FOUND",
+      "current": "Target one draft version, eight immutable pedagogy nodes; not runtime blocks",
+      "required": "Frozen source plus explicit node-to-execution bindings",
+      "gap": "No generated execution target yet",
+      "stage": "R7B",
+      "sources": [
+        "node-form",
+        "authoring-actions"
+      ]
+    },
+    {
+      "component": "Lesson Manifest",
+      "status": "FOUND",
+      "current": "LessonManifestV1 strict schema plus validator, digest, publication bundle and private bindings",
+      "required": "Reuse this contract with native frozen-script projection",
+      "gap": "Compiler/loader and service bindings coupled to legacy chapter-one source",
+      "stage": "R7B",
+      "sources": [
+        "manifest",
+        "manifest-artifact",
+        "manifest-loader"
+      ]
+    },
+    {
+      "component": "Lesson Runtime",
+      "status": "PARTIAL",
+      "current": "RuntimeRoot exported as LessonRuntime; steps, services, target registry and fail-closed capability validation exist",
+      "required": "One canonical native execution composition for target",
+      "gap": "Concrete current UI caller is audit preview, target-native production composition not wired",
+      "stage": "R7B",
+      "sources": [
+        "runtime",
+        "audit-client",
+        "audit-route"
+      ]
+    },
+    {
+      "component": "Teaching Area",
+      "status": "FOUND",
+      "current": "Template teaching region plus text and compat.teacher renderers",
+      "required": "Native text/video presentation",
+      "gap": "Native video renderer missing",
+      "stage": "R7B",
+      "sources": [
+        "layout",
+        "renderer-registry"
+      ]
+    },
+    {
+      "component": "Learning Area",
+      "status": "FOUND",
+      "current": "Interaction region, native MultipleChoiceBlock and ActivityExecutor",
+      "required": "Use same region/activity services",
+      "gap": "Need cue reveal and correlated completion notification",
+      "stage": "R7B",
+      "sources": [
+        "layout",
+        "native-choice",
+        "activity-renderer"
+      ]
+    },
+    {
+      "component": "Video",
+      "status": "PARTIAL",
+      "current": "HTML5 TeacherVideoPlayer plus media bindings; manifest video contract only",
+      "required": "Native video block registered in existing runtime",
+      "gap": "Native renderer unsupported; no timed cue coordinator hookup",
+      "stage": "R7B",
+      "sources": [
+        "video",
+        "video-binding",
+        "renderer-registry"
+      ]
+    },
+    {
+      "component": "Timeline Cue",
+      "status": "MISSING",
+      "current": "TeacherTimeline exists for server teaching turns and speech/task phases",
+      "required": "Bound media-time cue with 3 presentation actions",
+      "gap": "Existing TeacherRuntimeCue is not temporal cue; no generic time-trigger contract",
+      "stage": "R7B",
+      "sources": [
+        "presentation-timeline",
+        "presentation-contract"
+      ]
+    },
+    {
+      "component": "Director",
+      "status": "PARTIAL",
+      "current": "Existing split/learning/teaching and classroom shot modes; split/stack template",
+      "required": "Map three MVP focus states to existing layout authority",
+      "gap": "No unified bounded layout command in canonical video flow",
+      "stage": "R7B",
+      "sources": [
+        "director",
+        "layout",
+        "script-domain"
+      ]
+    },
+    {
+      "component": "Cue dedupe / Seek",
+      "status": "MISSING",
+      "current": "Generation/abort target registry exists, no completed time-cue ledger",
+      "required": "Session/snapshot cue identity plus authoritative completion reconciliation",
+      "gap": "Replay/seek/refresh semantics not linked",
+      "stage": "R7B",
+      "sources": [
+        "presentation-targets",
+        "step-controller"
+      ]
+    },
+    {
+      "component": "Refresh restore",
+      "status": "PARTIAL",
+      "current": "Opaque persisted snapshot session, server progress projection, UI step/sessionStorage video position",
+      "required": "Restore same snapshot and waiting/completed activity phase",
+      "gap": "No cue-aware restore; service bindings still chapter-one",
+      "stage": "R7B",
+      "sources": [
+        "session",
+        "progress",
+        "video"
+      ]
+    }
+  ],
+  "important": "FOUND is source capability, not proof of target production reachability. No runtime/admission route was invoked.",
+  "nativeRenderersImplemented": [
+    "text",
+    "multiple_choice"
+  ],
+  "compatibilityRenderersExistingOnly": [
+    "compat.learning.v1",
+    "compat.teacher.v1"
+  ],
+  "otherDeclaredBlockTypes": "Unsupported until independently implemented and capability-validated; do not promote declarations to FOUND execution."
+}

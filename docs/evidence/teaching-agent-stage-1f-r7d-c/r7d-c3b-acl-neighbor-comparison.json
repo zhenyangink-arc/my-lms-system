@@ -1,0 +1,341 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "neighbors": [
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "confirm_teaching_script_source_review(uuid,integer,jsonb,text)",
+      "volatility": "v",
+      "explicit_acl": [
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "public_execute": false,
+      "privilege_matrix": [
+        {
+          "role": "authenticated",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "anon",
+          "owner": false,
+          "execute": false,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "service_role",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        },
+        {
+          "role": "postgres",
+          "owner": true,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        }
+      ],
+      "security_definer": true,
+      "definition_sha256": "f5140ffc44ff9d5cdc678e34d71bd72ca8fec86d308188110b2fb48b0f0eb660",
+      "identity_arguments": "p_version_id uuid, p_revision integer, p_source jsonb, p_script_token text"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "get_teaching_script_source_review(uuid)",
+      "volatility": "v",
+      "explicit_acl": [
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "public_execute": false,
+      "privilege_matrix": [
+        {
+          "role": "authenticated",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "anon",
+          "owner": false,
+          "execute": false,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "service_role",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        },
+        {
+          "role": "postgres",
+          "owner": true,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        }
+      ],
+      "security_definer": true,
+      "definition_sha256": "21a70e53393d2d088d1ed9feea80a9637bd019d9a7a840c7e1421f879151c551",
+      "identity_arguments": "p_version_id uuid"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "sql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "read_chapter_practice_snapshots(uuid)",
+      "volatility": "s",
+      "explicit_acl": [
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "public_execute": false,
+      "privilege_matrix": [
+        {
+          "role": "authenticated",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "anon",
+          "owner": false,
+          "execute": false,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "service_role",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        },
+        {
+          "role": "postgres",
+          "owner": true,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        }
+      ],
+      "security_definer": true,
+      "definition_sha256": "d79eb3feb9473b9b87249d419d7f89d75d1b69d9b0fe2b089dc21d512f6194ed",
+      "identity_arguments": "p_app_id uuid"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "public",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+      "volatility": "v",
+      "explicit_acl": [
+        {
+          "grantee": "postgres",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "authenticated",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        },
+        {
+          "grantee": "service_role",
+          "grantor": "postgres",
+          "grantable": false,
+          "privilege": "EXECUTE"
+        }
+      ],
+      "public_execute": false,
+      "privilege_matrix": [
+        {
+          "role": "authenticated",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "anon",
+          "owner": false,
+          "execute": false,
+          "inherits": true,
+          "bypassrls": false,
+          "superuser": false
+        },
+        {
+          "role": "service_role",
+          "owner": false,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        },
+        {
+          "role": "postgres",
+          "owner": true,
+          "execute": true,
+          "inherits": true,
+          "bypassrls": true,
+          "superuser": false
+        }
+      ],
+      "security_definer": true,
+      "definition_sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+      "identity_arguments": "p_app_id uuid, p_chapter_id uuid, p_expected_revision integer, p_expected_snapshot jsonb, p_enabled boolean"
+    }
+  ],
+  "comparison": "All four public functions: owner postgres, SECURITY DEFINER, fixed empty search_path, direct postgres/authenticated/service_role EXECUTE, PUBLIC/anon denied.",
+  "securityModels": [
+    {
+      "function": "read_chapter_practice_snapshots",
+      "source": {
+        "path": "supabase/migrations/202609080001_chapter_practice_bindings.sql",
+        "sha256": "172585efdcb178dc2a1394b9c9e2a4dc1bbfac065b217a25e9011dd663d70dd2",
+        "lines": [
+          98
+        ]
+      },
+      "guard": "non-null auth.uid, current_user_can_read_student_app, app binding and published hierarchy; approved snapshots only"
+    },
+    {
+      "function": "get_teaching_script_source_review / confirm_teaching_script_source_review",
+      "source": {
+        "path": "supabase/migrations/202609080003_teaching_script_source_reviews.sql",
+        "sha256": "24737673bcea6c0b53a9b75fcc1ab6171c1380fb3d7824c8ff42c257da87075a",
+        "lines": [
+          44,
+          48,
+          62,
+          66
+        ]
+      },
+      "guard": "non-null auth.uid + private.is_platform_owner; confirm adds revision/source/token/status checks and writes"
+    }
+  ],
+  "inferenceLimit": "Consistent neighbors support an environment ACL explanation, not target-specific product necessity."
+}

@@ -1,0 +1,563 @@
+--- a/src/lib/course-content-workflow.ts
++++ b/src/lib/course-content-workflow.ts
+@@ -1,8 +1,8 @@
+ const steps = [
+-  { key: "content", title: "课程结构" },
+-  { key: "textbooks", title: "教材制作" },
+-  { key: "teaching-scripts", title: "教学脚本" },
+-  { key: "toolbox", title: "练习工具" },
++  { key: "content", title: "课程结构", responsibility: "课程、课时与开放规则", boundary: "维护目录、顺序和教材关联；教材正文在教材制作中维护，普通课时保留自身内容功能。" },
++  { key: "textbooks", title: "教材制作", responsibility: "章节内容与教材发布", boundary: "维护词汇、语法和互动内容。第一章通过内容工作台校验并发布教材；章节与关联测试的发布是另一项操作，不会更新教材快照。" },
++  { key: "teaching-scripts", title: "教学脚本", responsibility: "教师讲解与教学编排", boundary: "维护教师讲解、任务、提问与反馈。发布脚本不等于发布教材；教材快照更新仍需回到教材制作完成校验。" },
++  { key: "toolbox", title: "练习工具", responsibility: "材料引用、独立资源与工具设置", boundary: "章节材料引用、独立资源副本和学生工具入口分别管理；确认引用不生成题目，复制后不与教材自动同步。" },
+ ] as const;
+ 
+ /** Navigation only; destination pages retain their own authorization checks. */
+@@ -22,7 +22,7 @@
+   return source === "textbook" ? "教材导入副本" : "独立练习资源";
+ }
+ 
+-export const practiceSourceNotice = "教材导入内容是独立副本，不会随教材自动更新；在这里修改也不会改动教材。保存后会影响学生端练习，请先核对内容。";
++export const practiceSourceNotice = "教材导入内容是独立副本，不会随教材自动更新；在这里修改也不会改动教材。保存后会影响学生端练习中实际读取这些资源的入口，不等于发布教材或生成专项题目，请先核对内容。";
+ 
+ /** Prefer published content; otherwise use the latest available version. */
+ export function selectTextbookVersion<T extends { version_number: unknown; status: unknown }>(versions: T[]) {
+--- /dev/null
++++ b/src/app/dashboard/admin/apps/CourseWorkflowLinks.tsx
+@@ -0,0 +1,29 @@
++"use client";
++
++import Link from "next/link";
++import { useSearchParams } from "next/navigation";
++import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
++import { workflowHref } from "@/lib/course-workflow-context";
++
++/** URL owns chapter context, including chapter changes via native history. */
++export function CourseWorkflowLinks({ steps, appPath, section }: {
++  steps: readonly { key: string; title: string; responsibility: string; boundary: string }[];
++  appPath: string;
++  section: string;
++}) {
++  const params = useSearchParams();
++  const chapterId = params.get("chapter") ?? undefined;
++  const current = steps.find(step => step.key === section);
++  return <div className="space-y-2">
++    <nav aria-label="课程内容工作导航" className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
++      {steps.map(step => <Link key={step.key} href={workflowHref(appPath, step.key, chapterId)}
++        aria-current={section === step.key ? "page" : undefined}
++        className={`inline-flex min-h-11 items-center rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${section === step.key ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"}`}>
++        {step.title}
++      </Link>)}
++    </nav>
++    {current && <CardTitleWithHint title={current.responsibility} description={current.boundary}
++      headingLevel={2} hintLabel={`${current.title}的职责与边界`}
++      titleClassName="text-sm font-medium text-[var(--foreground-secondary)]" />}
++  </div>;
++}
+--- a/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
++++ b/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
+@@ -1,7 +1,7 @@
+-import Link from "next/link";
++import { CourseWorkflowLinks } from "./CourseWorkflowLinks";
+ import { getDigitalTextbookManagementData } from "@/features/digital-textbook/api/service";
+ import { courseContentSteps } from "@/lib/course-content-workflow";
+-import { workflowChapters, workflowHref } from "@/lib/course-workflow-context";
++import { workflowChapters } from "@/lib/course-workflow-context";
+ import type { ManagementAppAccess } from "@/lib/management-apps";
+ 
+ export async function CourseWorkflowNavigation({ access, section, chapterId }: {
+@@ -26,11 +26,6 @@
+     </form>}
+     {data?.hasError && <p role="status" className="text-sm">章节目录读取不完整，请刷新重试。</p>}
+     {!hasChapterNavigator && chapterId && !selected && !data?.hasError && <p role="status" className="text-sm">当前章节不存在或不在可查看范围内，请重新选择。</p>}
+-    <nav aria-label="课程内容工作导航" className="flex flex-wrap gap-2">
+-      {steps.map(step => <Link key={step.key} href={workflowHref(access.appPath, step.key, chapterId)} aria-current={section === step.key ? "page" : undefined}
+-        className={`rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${section === step.key ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"}`}>
+-        {step.title}
+-      </Link>)}
+-    </nav>
++    <CourseWorkflowLinks steps={steps} appPath={access.appPath} section={section} />
+   </div>;
+ }
+--- a/src/features/courses/components/course-catalog-listing.tsx
++++ b/src/features/courses/components/course-catalog-listing.tsx
+@@ -485,14 +485,6 @@
+             </p>
+           </div>
+           <div className="flex flex-wrap items-center gap-2 [&>*]:shrink-0">
+-            {textbookRoute && (
+-              <Link
+-                href={textbookRoute}
+-                className="management-secondary-button inline-flex h-9 items-center border px-4 text-xs font-semibold"
+-              >
+-                进入教材制作
+-              </Link>
+-            )}
+             {result.canManage && !result.catalogErrorMessage && folderRef && (
+               <CourseCatalogEditDialog
+                 node={currentFolderNode!}
+--- a/src/features/digital-textbook/components/textbook-studio.tsx
++++ b/src/features/digital-textbook/components/textbook-studio.tsx
+@@ -65,7 +65,7 @@
+           <header className="space-y-5 border-b border-border p-5 sm:p-7">
+             <div className="flex flex-wrap items-start justify-between gap-4">
+               <div className="min-w-0 space-y-2"><p className="text-sm text-muted-foreground">{selected.textbookTitle} / {chapterLabel(selected)}</p><h2 className="break-words text-2xl font-semibold tracking-tight">{selected.chapterTitle || chapterLabel(selected)}</h2></div>
+-              {href&&<Link href={href} className={`${buttonStyle} border-transparent bg-primary text-primary-foreground hover:bg-primary/90`}>打开内容工作台<ChevronRight className="size-4" aria-hidden="true"/></Link>}
++              {href&&<Link href={href} className={`${buttonStyle} border-transparent bg-primary text-primary-foreground hover:bg-primary/90`}>{tab==='publish'?'前往工作台校验与发布':'打开内容工作台'}<ChevronRight className="size-4" aria-hidden="true"/></Link>}
+             </div>
+             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"><span>第 {selected.versionNumber} 版</span><span>词汇 {selected.vocabularyCount}</span><span>语法条目 {selected.grammarCount}</span>{!canManage&&<span>只读查看</span>}</div>
+             {selected.grammarNodes.some(n=>n.items.length>0)&&<p className="text-sm text-muted-foreground">语法来源：教材卡 {selected.grammarNodes.reduce((sum,n)=>sum+(n.cards?.length??0),0)} 张；旧格式 {selected.grammarNodes.reduce((sum,n)=>sum+n.items.length,0)} 条。分别保留，不自动去重或覆盖。</p>}
+@@ -75,7 +75,7 @@
+           </header>
+           <div className="space-y-6 p-5 sm:p-7" key={selected.chapterId}>
+             {tab==='content'&&<>
+-              {href&&<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-5"><div><h3 className="font-semibold">学习步骤与互动题目</h3><p className="mt-2 text-sm text-muted-foreground">在第一章工作台查看完整内容，并完成校验与发布。</p></div><span className="text-sm font-medium text-primary">第一章已接入</span></div>}
++              {href&&<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-5"><CardTitleWithHint headingLevel={3} title="学习步骤与互动题目" description="通过上方内容工作台查看第一章完整内容，并完成编辑、校验与教材发布。" hintLabel="学习步骤与互动题目的制作入口" titleClassName="font-semibold"/><span className="text-sm font-medium text-primary">第一章已接入</span></div>}
+               <div className="grid gap-4 xl:grid-cols-2">
+                 {([{key:'vocabulary',title:'章节词汇',count:selected.vocabularyCount,unit:'个词汇',examples:selected.vocabularyNodes.flatMap(n=>n.vocabulary).map(w=>`${w.ko}　${w.zh}`)}, {key:'grammar',title:'章节语法',count:selected.grammarCount,unit:'个条目',examples:selected.grammarNodes.flatMap(n=>[...n.items.map(g=>g.title),...(n.cards??[]).map(g=>g.form)])}] as const).map(item=><section key={item.key} className="flex min-w-0 flex-col rounded-xl border border-border p-5">
+                   <div className="flex items-center justify-between gap-3"><CardTitleWithHint headingLevel={3} title={item.title} description={item.key==='vocabulary'?'编辑本章现有词汇及释义，保存后仍需按章节发布流程发布。':'统计本章语法卡和旧格式语法，二者保持各自来源。第一章语法卡文字在工作台修改并重新发布。'} titleClassName="text-base font-semibold"/><BookText className="size-5 text-muted-foreground" aria-hidden="true"/></div>
+@@ -87,7 +87,7 @@
+               {courseStructureRoute&&<Link href={`${courseStructureRoute}?chapter=${encodeURIComponent(selected.chapterId)}`} className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground">查看本章课程结构<ChevronRight className="size-4" aria-hidden="true"/></Link>}
+             </>}
+             {tab==='publish'&&<>
+-              {href&&<section className="space-y-4 rounded-xl border border-border p-5"><h3 className="text-base font-semibold">新教材内容发布</h3><p className="max-w-2xl text-sm leading-6 text-muted-foreground">打开工作台，按“进入编辑 → 保存内容 → 校验 → 发布”完成。进入编辑会暂停本教材测试运行，重新发布后恢复。</p><Link href={href} className={buttonStyle}>前往校验与发布</Link></section>}
++              {href&&<section className="space-y-4 rounded-xl border border-border p-5"><CardTitleWithHint headingLevel={3} title="教材内容发布" description="通过上方工作台入口完成进入编辑、保存、校验和发布。此操作更新学生 Runtime 使用的教材快照，与下面的章节测试发布不同。" hintLabel="教材内容发布的作用" titleClassName="text-base font-semibold"/><p className="text-sm leading-6 text-muted-foreground">进入编辑会暂停本教材测试运行，重新发布后恢复。</p></section>}
+               <section className="space-y-4 rounded-xl border border-border p-5"><CardTitleWithHint headingLevel={3} title="章节与关联测试" description="沿用现有章节发布服务，同时发布关联测试，不发布教学脚本，不更新新教材快照。" titleClassName="text-base font-semibold"/><p className="text-sm text-muted-foreground">章节状态：{selected.chapterStatus==='published'?'已发布':selected.chapterStatus==='draft'?'草稿':'已归档'}</p><DigitalTextbookCellAction row={selected} canManage={false} canPublishChapter={canPublish}/></section>
+             </>}
+             {tab==='settings'&&<section className="space-y-4 rounded-xl border border-border p-5"><div className="flex items-center gap-2"><Settings2 className="size-5" aria-hidden="true"/><h3 className="font-semibold">整本教材设置</h3></div><p className="text-sm text-muted-foreground">{selected.textbookTitle} · 操作影响这本教材的全部章节。</p><dl className="space-y-3 text-sm"><div><dt className="text-muted-foreground">教材标识</dt><dd className="break-all">{selected.textbookSlug}</dd></div><div><dt className="text-muted-foreground">章节标识</dt><dd className="break-all">{selected.chapterSlug}</dd></div></dl><DigitalTextbookCellAction row={selected} canManage={canManage} canPublishChapter={false} settingsOnly/></section>}
+--- a/src/features/learning-agent-script-studio/TeachingScriptStudio.tsx
++++ b/src/features/learning-agent-script-studio/TeachingScriptStudio.tsx
+@@ -688,7 +688,7 @@
+           {editable && selectedVersion && (
+             <details className="group relative">
+               <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 border border-[var(--border)] bg-[var(--muted)] px-4 text-sm font-semibold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+-                <Send size={15} aria-hidden="true" />发布学习步骤
++                <Send size={15} aria-hidden="true" />发布当前步骤脚本
+               </summary>
+               <div className="absolute right-0 top-full z-40 mt-2 w-[min(23rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
+                 <h3 className="text-sm font-bold text-[var(--foreground)]">发布当前步骤的脚本</h3>
+@@ -707,7 +707,7 @@
+                     <span className="block">修改说明</span>
+                     <input name="change_note" maxLength={500} placeholder="说明本次调整内容" className="app-input h-11 w-full border px-3" />
+                   </label>
+-                  <FormSubmitButton pendingLabel="正在校验并发布…" className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">校验并发布</FormSubmitButton>
++                  <FormSubmitButton pendingLabel="正在校验并发布脚本…" className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">校验并发布脚本</FormSubmitButton>
+                 </form>
+               </div>
+             </details>
+--- a/src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx
++++ b/src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx
+@@ -28,7 +28,7 @@
+     });
+   }
+   return <section className="space-y-3 rounded-lg border border-[var(--border)] p-4">
+-    <CardTitleWithHint headingLevel={2} title="章节发布条件检查" description="检查正式教材、脚本、复核状态、视频文件与练习引用。可另选学生核对开放条件，不会登录该账号。此检查不发布教材，实际画面与播放效果请使用脚本预览。" />
++    <CardTitleWithHint headingLevel={2} title="教学依赖检查（不发布）" description="检查正式教材、脚本、复核状态、视频文件与练习引用。可另选学生核对开放条件，不会登录该账号。此检查不发布教材，实际画面与播放效果请使用脚本预览。" />
+     <details className="rounded-lg border border-[var(--border)]">
+       <summary className="min-h-11 cursor-pointer px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">指定学生核对开放条件（可选）{studentKey ? " · 已选择" : ""}</summary>
+     <div className="flex flex-wrap items-end gap-3 border-t p-3">
+--- a/src/features/growth-toolbox/components/growth-toolbox-listing.tsx
++++ b/src/features/growth-toolbox/components/growth-toolbox-listing.tsx
+@@ -84,7 +84,7 @@
+         description={`这里展示当前应用的全部独立资源，不随上方章节筛选，也不代表已关联到本章。${practiceSourceNotice}`}
+         hintLabel="独立练习库的范围与保存规则" />
+       <details className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+-        <summary className="cursor-pointer text-sm font-medium">从教材添加 · {chapterId ? "所选章节" : "全部章节"}</summary>
++        <summary className="cursor-pointer text-sm font-medium">从教材复制到独立库 · {chapterId ? "所选章节" : "全部章节"}</summary>
+         <div className="mt-4">
+       {textbookResult.hasError ? (
+         <ManagementNotice tone="warning">教材来源未能完整读取，暂不提供复制入口。现有练习库仍可查看。</ManagementNotice>
+--- a/src/features/growth-toolbox/components/growth-toolbox-workspace.tsx
++++ b/src/features/growth-toolbox/components/growth-toolbox-workspace.tsx
+@@ -39,7 +39,7 @@
+   chapter: ReactNode; library: ReactNode; settings: ReactNode;
+ }) {
+   return <WorkspaceTabs label="练习工具工作区" items={[
+-    { key: "chapter", title: "章节练习", content: chapter },
++    { key: "chapter", title: "章节材料引用", content: chapter },
+     { key: "library", title: "独立练习库", content: library },
+     { key: "settings", title: "工具设置", content: settings },
+   ]} />;
+--- /dev/null
++++ b/tests/authoring-responsibilities.test.mjs
+@@ -0,0 +1,38 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFileSync } from 'node:fs';
++import { courseContentSteps } from '../src/lib/course-content-workflow.ts';
++const read = path => readFileSync(new URL('../src/'+path, import.meta.url),'utf8');
++const access = {app:{slug:'korean'},scope:'platform',globalRole:'platform_owner',capabilities:{manageContent:true}};
++test('each area explains its own responsibility and publication boundary',()=>{
++  const steps=courseContentSteps(access);
++  assert.equal(new Set(steps.map(s=>s.responsibility)).size,4);
++  assert.match(steps[0].boundary,/普通课时/);
++  assert.match(steps[1].boundary,/章节与关联测试.*不会更新教材快照/);
++  assert.match(steps[2].boundary,/发布脚本不等于发布教材/);
++  assert.match(steps[3].boundary,/确认引用不生成题目/);
++});
++test('live chapter context is read from URL, not stale server props',()=>{
++  const links=read('app/dashboard/admin/apps/CourseWorkflowLinks.tsx');
++  assert.match(links,/useSearchParams\(\)/);
++  assert.match(links,/workflowHref\(appPath, step.key, chapterId\)/);
++  assert.match(links,/CardTitleWithHint/);
++});
++test('duplicate global textbook shortcut removed, contextual lesson entry retained',()=>{
++  const catalog=read('features/courses/components/course-catalog-listing.tsx');
++  assert.doesNotMatch(catalog,/href=\{textbookRoute\}/);
++  assert.match(catalog,/textbookHref=\{textbookRoute\}/);
++  assert.match(read('features/courses/components/course-lesson-view.tsx'),/进入教材制作/);
++});
++test('textbook has one workbench CTA, legacy chapter publication is retained',()=>{
++  const studio=read('features/digital-textbook/components/textbook-studio.tsx');
++  assert.equal((studio.match(/<Link href=\{href\}/g)||[]).length,1);
++  assert.match(studio,/前往工作台校验与发布/);
++  assert.match(studio,/canPublishChapter=\{canPublish\}/);
++});
++test('script publication is explicitly distinguished from textbook publication',()=>{
++  const studio=read('features/learning-agent-script-studio/TeachingScriptStudio.tsx');
++  assert.match(studio,/发布当前步骤脚本/);
++  assert.doesNotMatch(studio,/发布学习步骤/);
++  assert.match(studio,/已发布教材快照的更新仍需在教材工作台完成/);
++});
+--- a/tests/learning-agent-script-studio.test.mjs
++++ b/tests/learning-agent-script-studio.test.mjs
+@@ -250,12 +250,12 @@
+   assert.match(studio, /可横向滚动的教学编排轴/);
+   assert.match(studio, /showSectionNavigation=\{!showOrchestrationAxis\}/);
+   assert.match(studio, /selectedVersion\.nodes\.map/);
+-  assert.match(studio, /发布学习步骤/);
++  assert.match(studio, /发布当前步骤脚本/);
+   assert.match(studio, /form=\{selectedNodeFormId\}/);
+   assert.match(studio, /nodeSavePending \? "正在保存…" : "保存当前小节"/);
+   assert.match(studio, /editable && selectedNode && selectedNodeFormId/);
+   assert.match(studio, /summary className="inline-flex min-h-11[^"]*border border-\[var\(--border\)\] bg-\[var\(--muted\)\]/);
+-  assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布学习步骤"));
++  assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布当前步骤脚本"));
+   assert.match(studio, /小节 · \{selectedNode\.title\["zh-CN"\] \|\| "未命名小节"\}/);
+   assert.match(studio, /aria-label="选择教学小节"/);
+   assert.match(studio, /sticky top-0 z-30/);
+--- a/tests/textbook-navigation.test.mjs
++++ b/tests/textbook-navigation.test.mjs
+@@ -17,7 +17,7 @@
+     b.onResolve({filter:/digital-textbook-action-dialogs$/},()=>({path:'dialog',namespace:'dialog'}));
+     b.onLoad({filter:/.*/,namespace:'dialog'},()=>({contents:'export const DigitalTextbookContentDialog = null;'}));
+     b.onResolve({filter:/admin\/digital-textbook\/actions$/},()=>({path:'actions',namespace:'test'}));
+-    b.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='data'?`export async function getDigitalTextbookManagementData(){const d=${JSON.stringify(data)};if(location.search.includes('readonly')){d.canManage=false;d.canPublishChapters=false;}if(location.search.includes('error')){d.hasError=true;d.courses=[];}return d;}`:a.path==='next/navigation'?`export const useRouter=()=>({refresh(){}});`:a.path==='next/link'?`import React from 'react';export default function Link(p){return <a {...p}/>}`:a.path==='next/dynamic'?`import React from 'react';export default function dynamic(){return p=><div role="dialog" aria-label={p.panel}>原编辑器传参：{p.panel}<button onClick={()=>p.onOpenChange(false)}>关闭</button></div>}`:`export async function publishTextbookChapterAction(){throw Error('unexpected mutation')}export async function setTextbookStatusAction(){throw Error('unexpected mutation')}` }));
++b.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='data'?`export async function getDigitalTextbookManagementData(){const d=${JSON.stringify(data)};if(location.search.includes('readonly')){d.canManage=false;d.canPublishChapters=false;}if(location.search.includes('error')){d.hasError=true;d.courses=[];}return d;}`:a.path==='next/navigation'?`export const useRouter=()=>({refresh(){}});export const useSearchParams=()=>new URLSearchParams(location.search);`:a.path==='next/link'?`import React from 'react';export default function Link(p){return <a {...p}/>}`:a.path==='next/dynamic'?`import React from 'react';export default function dynamic(){return p=><div role="dialog" aria-label={p.panel}>原编辑器传参：{p.panel}<button onClick={()=>p.onOpenChange(false)}>关闭</button></div>}`:`export async function publishTextbookChapterAction(){throw Error('unexpected mutation')}export async function setTextbookStatusAction(){throw Error('unexpected mutation')}` }));
+   }}]});
+   const css=(await postcss([tailwind()]).process(await readFile('src/app/globals.css','utf8'),{from:process.cwd()+'/src/app/globals.css'})).css;
+   let browser;const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/bundle.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html; charset=utf-8');res.end(req.url==='/bundle.js'?bundle.outputFiles[0].text:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><body><main class="p-4" data-dashboard-ui="management" data-management-workspace="platform"><div id="root"></div></main><script type="module" src="/bundle.js"></script></body></html>');});
+--- /dev/null
++++ b/scripts/verify-authoring-navigation.mjs
+@@ -0,0 +1,67 @@
++// Real navigation and Studio components; local-only transports, no credentials.
++import assert from 'node:assert/strict';
++import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
++import { tmpdir } from 'node:os';
++import path from 'node:path';
++import { createServer } from 'node:http';
++import { build } from 'esbuild';
++import { chromium } from '@playwright/test';
++import postcss from 'postcss';
++import tailwind from '@tailwindcss/postcss';
++
++const root=process.cwd(), dir=await mkdtemp(path.join(tmpdir(),'uply-authoring-links-'));
++await build({stdin:{resolveDir:root,loader:'tsx',contents:`
++import React from 'react';import {createRoot} from 'react-dom/client';
++import {CourseWorkflowLinks} from './src/app/dashboard/admin/apps/CourseWorkflowLinks';
++import {courseContentSteps} from './src/lib/course-content-workflow';
++import {TextbookStudio} from './src/features/digital-textbook/components/textbook-studio';
++import {WORKBENCH_CHAPTER_ID} from './src/features/digital-textbook/components/textbook-navigation';
++const row={chapterId:WORKBENCH_CHAPTER_ID,chapterNumber:1,chapterTitle:'你好',chapterSlug:'hello',chapterStatus:'published',textbookId:'book',textbookTitle:'韩语1级',textbookSlug:'korean',versionNumber:1,vocabularyCount:0,grammarCount:3,vocabularyNodes:[],grammarNodes:[{id:'grammar',items:[],cards:[{form:'은/는'},{form:'이에요'},{form:'입니까'}]}]};
++const steps=courseContentSteps({app:{slug:'korean'},scope:'platform',globalRole:'platform_owner',capabilities:{manageContent:true}});
++createRoot(document.getElementById('root')).render(<main className="mx-auto max-w-6xl space-y-5 p-4"><CourseWorkflowLinks steps={steps} section="textbooks" appPath="/platform/dashboard/admin/apps/korean"/><TextbookStudio rows={[row,{...row,chapterId:'chapter-two',chapterTitle:'这是什么',chapterNumber:2}]} canManage canPublish={false} workbenchHref="/platform/dashboard/admin/apps/korean/textbooks/workbench" courseStructureRoute="/platform/dashboard/admin/apps/korean/content"/></main>);
++`},bundle:true,platform:'browser',jsx:'automatic',outfile:path.join(dir,'app.js'),define:{'process.env.NODE_ENV':'"development"'},plugins:[{name:'local-transports',setup(p){
++  p.onResolve({filter:/^next\/(link|navigation|dynamic)$/},a=>({path:a.path,namespace:'test'}));
++  // Action-bearing editors/publication controls remain tested separately; never invoke them here.
++  p.onResolve({filter:/digital-textbook-(action-dialogs|table\/cell-action)$/},a=>({path:a.path,namespace:'test'}));
++  p.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'tsx',resolveDir:root,contents:a.path==='next/link'?`import React from 'react';export default function Link({children,...props}){return <a {...props}>{children}</a>}`:
++    a.path==='next/navigation'?`import {useSyncExternalStore} from 'react';const old=history.replaceState.bind(history);history.replaceState=(...args)=>{old(...args);window.dispatchEvent(new Event('url-change'))};const sub=cb=>{window.addEventListener('url-change',cb);return()=>window.removeEventListener('url-change',cb)};export function useSearchParams(){return new URLSearchParams(useSyncExternalStore(sub,()=>location.search,()=>''))}`:
++    a.path==='next/dynamic'?`export default function dynamic(){return ()=>null}`:
++    `export function DigitalTextbookCellAction(){return null} export function DigitalTextbookContentDialog(){return null}`}));
++}}]});
++const css=(await postcss([tailwind({base:root})]).process(await readFile('src/app/globals.css','utf8'),{from:path.join(root,'src/app/globals.css')})).css;
++const js=await readFile(path.join(dir,'app.js'));
++const server=createServer((req,res)=>{res.setHeader('Content-Type',req.url==='/app.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html');res.end(req.url==='/app.js'?js:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>')});
++await new Promise(r=>server.listen(0,'127.0.0.1',r));
++let browser;const checks=[];
++try{
++ browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1440,height:950}});
++ const errors=[];page.on('pageerror',e=>errors.push(e.message));
++ await page.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
++ await page.goto('http://127.0.0.1:'+server.address().port+'/?chapter=cda24fb8-c93b-4a19-9577-4418350ff708');
++ const nav=page.getByRole('navigation',{name:'课程内容工作导航'});
++ await nav.getByRole('link',{name:'教材制作',exact:true}).waitFor();
++ assert.equal(await nav.getByRole('link').count(),4);
++ assert.equal(await nav.getByRole('link',{name:'教材制作'}).getAttribute('aria-current'),'page');
++ await page.getByRole('button',{name:/这是什么/}).click();
++ for(const link of await nav.getByRole('link').all())assert.equal(new URL(await link.getAttribute('href'),'https://test.invalid').searchParams.get('chapter'),'chapter-two');
++ assert.equal(await page.getByRole('link',{name:'打开内容工作台'}).count(),0);
++ checks.push('四板块单一导航；切换第二章后全部跳转携带第二章；不冒充支持第二章工作台');
++ await page.getByRole('button',{name:/你好/}).click();
++ await page.getByRole('button',{name:'检查与发布',exact:true}).click();
++ assert.equal(await page.getByRole('link',{name:'前往工作台校验与发布'}).count(),1);
++ assert.equal(await page.getByRole('link',{name:'打开内容工作台'}).count(),0);
++ checks.push('第一章单一工作台入口随制作/发布上下文改名；章节测试功能仍分区保留');
++ const hint=page.getByRole('button',{name:'教材制作的职责与边界'});
++ await hint.focus();await page.getByRole('tooltip').filter({hasText:'不会更新教材快照'}).waitFor();
++ await page.keyboard.press('Escape');assert.equal(await page.getByRole('tooltip').count(),0);
++ checks.push('职责说明可键盘聚焦、Escape退出；复用统一提示组件');
++ for(const width of [375,768,1440]){
++  await page.setViewportSize({width,height:950});
++  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'overflow '+width);
++  await page.screenshot({path:path.join(dir,width+'.png'),fullPage:true});
++ }
++ await page.evaluate(()=>document.documentElement.classList.add('dark'));await page.screenshot({path:path.join(dir,'dark.png'),fullPage:true});
++ assert.deepEqual(errors,[]);checks.push('375/768/1440宽度无页面溢出；深色渲染；无JS异常');
++ await writeFile(path.join(dir,'validation.json'),JSON.stringify({checks,productionAccess:false,scope:'Real components with isolated Next navigation transport; not authenticated application E2E'},null,2));
++ console.log(JSON.stringify({passed:checks.length,checks,evidence:dir},null,2));
++}finally{await browser?.close();await new Promise(r=>server.close(r))}
+--- /dev/null
++++ b/scripts/verify-teaching-script-workspace.mjs
+@@ -0,0 +1,143 @@
++// Isolated component verification. Server Actions are explicit test transports;
++// no login, production credentials, database or media objects are used.
++import assert from 'node:assert/strict';
++import { mkdtemp, readFile, mkdir, writeFile } from 'node:fs/promises';
++import { tmpdir } from 'node:os';
++import path from 'node:path';
++import { createServer } from 'node:http';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import tailwind from '@tailwindcss/postcss';
++import { chromium } from '@playwright/test';
++
++const root = process.cwd();
++const directory = await mkdtemp(path.join(tmpdir(), 'uply-script-workspace-'));
++const output = process.env.UPLY_SCRIPT_UI_EVIDENCE_DIR || directory;
++await mkdir(output, { recursive: true });
++const actionPaths = [
++  'src/app/dashboard/admin/teaching-scripts/actions.ts',
++  'src/features/learning-agent-script-studio/source-review-actions.ts',
++  'src/features/learning-agent-script-studio/release-check-actions.ts',
++  'src/features/learning-agent-script-studio/teacher-video-actions.ts',
++];
++const names = (await Promise.all(actionPaths.map(f => readFile(f, 'utf8')))).flatMap(s => [...s.matchAll(/export async function (\w+)/g)].map(m => m[1]));
++const actionModule = names.map(name => `export async function ${name}(...args) {
++  window.actionCalls.push({ name: '${name}', args: args.map(v => v instanceof FormData ? [...v.entries()] : v) });
++  if ('${name}' === 'saveTeachingScriptNodeAction') return {status:'success',message:'教学小节已保存到草稿。'};
++  if ('${name}' === 'inspectChapterRelease') return {checkedAt:'2026-09-13T00:00:00Z',checks:[{label:'隔离检查',state:'ready',detail:'仅验证界面显示'}]};
++  if ('${name}' === 'searchReleaseCheckStudents') return {options:[],message:'没有匹配项'};
++  if ('${name}' === 'loadScriptSourceReview') return {ok:false,message:'隔离复核提示'};
++  return {ok:true,items:[]};
++}`).join('\n');
++await build({
++  stdin: { contents: `import React from 'react'; import {createRoot} from 'react-dom/client';
++    import {TeachingScriptStudio} from './src/features/learning-agent-script-studio/TeachingScriptStudio';
++    const text=v=>({'zh-CN':v,'ko-KR':''});
++    const node=(id,order,terminal=false)=>({id,versionId:'draft',key:id,type:terminal?'summary':'explanation',order,title:text(terminal?'完成学习':'第一次见面，怎样开口？'),script:text('先主动问候，再介绍自己。'),configuration:{terminal,teacherVideo:{mode:'legacy'},virtualCharacter:{kind:'uply-teacher',pose:'explaining'},display:{kind:'overview',title:text('初次见面')}},referenceActivityId:null,actionType:'none',nextNodeKey:null,remediationNodeKey:null,required:true,updatedAt:'2026-09-13T00:00:00Z',speechAssets:[],speechAssetsFromPublishedVersion:false,interactionSecret:null});
++    const codes=['orientation','vocabulary','grammar','patterns','dialogue','listen_speak','read_write','review'];
++    const modules=codes.map((code,i)=>({id:code,code,order:i+1,title:text(code),chapterId:'chapter-one',chapterNumber:1,chapterTitle:text('你好？'),textbookId:'book',textbookTitle:text('韩国语 1 级'),textbookVersion:{id:'v1',number:1,status:'published',newerDraftNumber:null},textbookStatus:'published',chapterStatus:'published',practiceStatus:'linked',lessonId:'lesson-'+code,activities:[],learningTargets:[],versions:['draft','published','archived'].map((status,j)=>({id:code+'-'+status,lessonId:'lesson-'+code,number:24-j,status,title:text('教学脚本'),changeNote:'',publishedAt:null,sourceReviewStatus:'unreviewed',nodes:[node(code+'-first-'+status,1),node(code+'-last-'+status,2,true)]}))}));
++    window.actionCalls=[];
++    createRoot(document.getElementById('root')).render(<main data-dashboard-ui="management" data-management-workspace="platform" className="management-teaching-script-page" style={{maxWidth:1500,margin:'auto',padding:16}}><TeachingScriptStudio data={{appId:'test-app',modules,characterStyleTemplates:[],blackboardLayoutTemplates:[]}} /></main>);`, loader: 'tsx', resolveDir: root },
++  outfile: path.join(directory, 'app.js'), bundle: true, platform: 'browser', jsx: 'automatic',
++  define: { 'process.env': '{}', 'process.env.NODE_ENV': '"development"' },
++  plugins: [{ name: 'isolated-actions', setup(plugin) {
++    plugin.onResolve({ filter: /^(next\/navigation|next\/link)$/ }, args => ({ path: args.path, namespace: 'stub' }));
++    plugin.onResolve({ filter: /(?:^|\/)(actions|source-review-actions|release-check-actions|teacher-video-actions)$/ }, args => ({ path: args.path, namespace: 'actions' }));
++    plugin.onLoad({ filter: /.*/, namespace: 'actions' }, () => ({ contents: actionModule, loader: 'js' }));
++    plugin.onLoad({ filter: /.*/, namespace: 'stub' }, args => ({ contents: args.path === 'next/link'
++      ? 'import React from "react"; export default function Link(props){return React.createElement("a",props)}'
++      : 'export const usePathname=()=>"/platform/dashboard/admin/apps/korean/teaching-scripts"; export const useRouter=()=>({refresh(){},push(){}});', loader: 'js', resolveDir: root }));
++  } }],
++});
++const css = (await postcss([tailwind({ base: root })]).process(await readFile('src/app/globals.css','utf8'), { from: path.join(root,'src/app/globals.css') })).css;
++const js = await readFile(path.join(directory,'app.js'));
++const server = createServer((req,res)=>{
++  if (req.url === '/app.js') { res.setHeader('Content-Type','text/javascript'); return res.end(js); }
++  if (req.url === '/style.css') { res.setHeader('Content-Type','text/css'); return res.end(css); }
++  if (req.url?.startsWith('/api/')) { res.writeHead(404); return res.end(); }
++  res.setHeader('Content-Type','text/html');
++  res.end('<!doctype html><html lang="zh-CN" data-management-workspace="platform"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>');
++});
++await new Promise(ok=>server.listen(0,'127.0.0.1',ok));
++let browser;
++const checks=[];
++try {
++  browser=await chromium.launch({headless:true});
++  const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
++  const errors=[];
++  page.on('pageerror',e=>{errors.push(e.message);console.error('Isolated browser error:',e.message);});
++  await page.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());
++  await page.goto('http://127.0.0.1:'+server.address().port);
++  await page.getByRole('heading',{name:'教学脚本',exact:true}).waitFor();
++  assert.equal(await page.getByRole('region',{name:'可横向滚动的教学编排轴'}).count(),0);
++  assert.equal(await page.locator('[name="script_zh"]').first().isVisible(),true);
++  assert.equal(await page.getByRole('button',{name:'检查本章准备情况'}).isVisible(),false);
++  assert.equal(await page.getByRole('navigation',{name:'课程结构'}).locator('[aria-current="page"]').count(),1);
++  checks.push('default narration visible; checks and axis collapsed; one selected step');
++  await page.screenshot({path:path.join(output,'desktop.png'),fullPage:true});
++  const narration=page.locator('[name="script_zh"]').first();
++  await narration.click();
++  await narration.press('ControlOrMeta+A');
++  await narration.pressSequentially('先主动问候，然后介绍姓名。');
++  assert.equal(await narration.inputValue(),'先主动问候，然后介绍姓名。');
++  page.once('dialog',dialog=>dialog.dismiss());
++  await page.getByLabel('选择教学小节',{exact:true}).selectOption('orientation-last-draft');
++  assert.equal(await page.getByLabel('选择教学小节',{exact:true}).inputValue(),'orientation-first-draft');
++  assert.equal(await narration.inputValue(),'先主动问候，然后介绍姓名。');
++  checks.push('first keystroke retained; cancelling unsaved navigation preserves input');
++  await page.getByRole('button',{name:'保存当前小节',exact:true}).click();
++  await page.waitForFunction(()=>window.actionCalls.some(x=>x.name==='saveTeachingScriptNodeAction'&&x.args[1].some(([k,v])=>k==='script_zh'&&v==='先主动问候，然后介绍姓名。')));
++  const save=await page.evaluate(()=>window.actionCalls.filter(x=>x.name==='saveTeachingScriptNodeAction').at(-1).args[1]);
++  assert.ok(save.some(([k,v])=>k==='script_zh'&&v==='先主动问候，然后介绍姓名。'));
++  assert.ok(save.some(([k])=>k==='virtual_character_kind'));
++  assert.ok(save.some(([k])=>k==='buffer_preset_id'));
++  checks.push('real form submission retains narration and collapsed character fields');
++  await page.getByRole('tab',{name:/画面/}).click();
++  const character=page.locator('details[aria-labelledby="virtual-character-group-title"]');
++  assert.equal(await character.getAttribute('open'),null);
++  await character.locator(':scope > summary').click();
++  assert.notEqual(await character.getAttribute('open'),null);
++  await page.screenshot({path:path.join(output,'advanced.png'),fullPage:true});
++  checks.push('character editor remains accessible behind advanced disclosure');
++  await page.getByRole('button',{name:'显示教学编排轴',exact:true}).click();
++  await page.getByRole('button',{name:'路径预演',exact:true}).click();
++  await page.getByRole('button',{name:'下一节点',exact:true}).click();
++  await page.getByRole('button',{name:'下一节点',exact:true}).click();
++  await page.getByText(/结束节点，路径预演已完成/).waitFor();
++  assert.equal(await page.getByRole('button',{name:'新增小节',exact:true}).isVisible(),true);
++  await page.getByRole('button',{name:'退出路径预演',exact:true}).click();
++  await page.getByRole('button',{name:'隐藏教学编排轴',exact:true}).click();
++  checks.push('path preview follows ending; node add/reorder controls preserved');
++  await page.getByLabel('选择教学小节',{exact:true}).selectOption('orientation-last-draft');
++  await page.locator('#subsection-editor-title').filter({hasText:'完成学习'}).waitFor();
++  await page.getByRole('button',{name:/第 1 章第 2 步：/}).click();
++  await page.getByLabel('查看版本').selectOption('vocabulary-archived');
++  await page.getByText('已归档 · 只读',{exact:true}).waitFor();
++  assert.equal(await page.getByRole('button',{name:'保存当前小节',exact:true}).count(),0);
++  await page.getByLabel('查看版本').selectOption('vocabulary-draft');
++  checks.push('step/node/version switch; archived remains read-only');
++  await page.locator('summary').filter({hasText:'复核与发布检查'}).click();
++  await page.getByRole('button',{name:'检查本章准备情况',exact:true}).click();
++  await page.getByText('隔离检查 · 已满足').waitFor();
++  await page.getByRole('button',{name:'读取复核内容',exact:true}).click();
++  await page.getByText('隔离复核提示',{exact:true}).waitFor();
++  await page.locator('summary').filter({hasText:'复核与发布检查'}).click();
++  await page.locator('summary').filter({hasText:'发布当前步骤脚本'}).click();
++  await page.getByText(/已发布教材快照的更新仍需在教材工作台完成/).waitFor();
++  await page.getByRole('button',{name:'校验并发布脚本',exact:true}).click();
++  await page.waitForFunction(()=>window.actionCalls.some(x=>x.name==='publishTeachingScriptAction'));
++  checks.push('review/check/publish still use original Action contracts');
++  await page.locator('summary').filter({hasText:'发布当前步骤脚本'}).click();
++  for(const width of [375,768,1440]) {
++    await page.setViewportSize({width,height:950});
++    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), 'horizontal overflow at '+width);
++    await page.screenshot({path:path.join(output,width+'.png'),fullPage:true});
++  }
++  await page.evaluate(()=>document.documentElement.classList.add('dark'));
++  await page.screenshot({path:path.join(output,'dark.png'),fullPage:true});
++  assert.deepEqual(errors,[]);
++  checks.push('375/768/1440px no page overflow; dark render; no JS exceptions');
++  const result={passed:true,checks,scope:'Isolated real components, mocked server transports; not owner or production E2E'};
++  await writeFile(path.join(output,'validation.json'),JSON.stringify(result,null,2)+'\n');
++  console.log(JSON.stringify({...result,evidence:output},null,2));
++} finally {await browser?.close();await new Promise(ok=>server.close(ok));}
+--- /dev/null
++++ b/scripts/verify-toolbox-workspace.mjs
+@@ -0,0 +1,95 @@
++// Real listing/components, isolated data and Action transports. No production access.
++import assert from 'node:assert/strict';
++import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
++import { tmpdir } from 'node:os';
++import path from 'node:path';
++import { createServer } from 'node:http';
++import { build } from 'esbuild';
++import postcss from 'postcss';
++import tailwind from '@tailwindcss/postcss';
++import { chromium } from '@playwright/test';
++
++const root = process.cwd();
++const dir = await mkdtemp(path.join(tmpdir(), 'uply-toolbox-ui-'));
++const word = {id:'word',ko:'안녕',zh:'你好',pos:'感叹词',collocation:'',transcription:'',source:'custom',sortOrder:1};
++const courses = [{id:'course',title:'隔离测试课程',lessons:[{id:'lesson',title:'问候',textbooks:[{id:'book',title:'测试教材',status:'published',chapters:[{id:'chapter',number:1,status:'published',versionId:'version',versionNumber:1,versionStatus:'published',nodes:[{id:'node',vocabulary:[word]}],grammarNodes:[]}]}]}]}];
++const data = {hasError:false,canManage:true,courseTree:[{id:'course',title:'隔离测试课程'}],vocabularyLibrary:[word],grammarLibrary:[],toolboxItems:[{id:'tool',title:'单词练习',description:'复习已学词汇',slug:'words',href:'/tools/words',iconName:'Book',relatedCourseId:'course',isEnabled:true,sortOrder:1}]};
++const actions = (await Promise.all(['growth-toolbox','digital-textbook'].map(name=>readFile(`src/app/dashboard/admin/${name}/actions.ts`,'utf8')))).join('\n');
++const actionNames = [...actions.matchAll(/export async function (\w+)/g)].map(m=>m[1]);
++await build({stdin:{contents:`import React from 'react'; import {createRoot} from 'react-dom/client';
++import Listing from './src/features/growth-toolbox/components/growth-toolbox-listing';
++window.calls=[]; (async()=>{const content=await Listing({studentAppId:'test-app',chapterId:new URLSearchParams(location.search).has('noChapter')?undefined:'chapter'});
++createRoot(document.getElementById('root')).render(<main data-dashboard-ui="management" data-management-workspace="platform" style={{padding:24,maxWidth:1400,margin:'auto'}}>{content}</main>);})();`,loader:'tsx',resolveDir:root},outfile:path.join(dir,'app.js'),bundle:true,platform:'browser',jsx:'automatic',define:{'process.env':'{}','process.env.NODE_ENV':'"development"'},plugins:[{name:'isolated',setup(p){
++  p.onResolve({filter:/^(next\/navigation|@\/lib\/auth)$/},a=>({path:a.path,namespace:'isolated'}));
++  p.onResolve({filter:/api\/(service|actions|chapter-practice-actions)$/},a=>({path:a.path,namespace:'isolated'}));
++  p.onResolve({filter:/@\/app\/dashboard\/admin\/.*\/actions$/},a=>({path:a.path,namespace:'isolated'}));
++  p.onLoad({filter:/.*/,namespace:'isolated'},a=>({loader:'js',contents:
++    a.path==='next/navigation'?'export const useRouter=()=>({refresh(){}});':
++    a.path==='@/lib/auth'?'export const requireActiveUser=async()=>({supabase:{from(){const q={select(){return q},eq(){return q},maybeSingle:async()=>({data:null,error:null})};return q}}});':
++    a.path.includes('chapter-practice-actions')?'export async function reviewChapterPracticeAction(input){window.calls.push(input);return {ok:true,message:"隔离保存成功"}}':
++    a.path.endsWith('/actions')?actionNames.map(n=>`export async function ${n}(){return {status:'error',message:'本测试不保存独立资源'}}`).join('\n'):
++    a.path.includes('digital-textbook')?`export async function getDigitalTextbookManagementData(){return {...${JSON.stringify({hasError:false,courses})},canManage:!new URLSearchParams(location.search).has('readonly')}}`:
++    `export async function getGrowthToolboxManagementData(){const d=${JSON.stringify(data)};if(new URLSearchParams(location.search).has('readonly'))d.canManage=false;return d;}`
++  }));
++}}]});
++const css=(await postcss([tailwind({base:root})]).process(await readFile('src/app/globals.css','utf8'),{from:path.join(root,'src/app/globals.css')})).css;
++const js=await readFile(path.join(dir,'app.js'));
++const server=createServer((req,res)=>{res.setHeader('Content-Type',req.url==='/app.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html');res.end(req.url==='/app.js'?js:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN" data-management-workspace="platform"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>');});
++await new Promise(r=>server.listen(0,'127.0.0.1',r));
++let browser;
++const checks=[];
++try {
++  browser=await chromium.launch({headless:true});
++  const page=await browser.newPage({viewport:{width:1440,height:1000}});
++  const errors=[];page.on('pageerror',e=>errors.push(e.message));
++  await page.route('**/*',r=>new URL(r.request().url()).hostname==='127.0.0.1'?r.continue():r.abort());
++  const url=`http://127.0.0.1:${server.address().port}`;
++  await page.goto(url);
++  await page.getByRole('heading',{name:'本章教材练习引用'}).waitFor();
++  const confirm=page.getByRole('button',{name:'确认关联到练习'});
++  assert.equal(await confirm.isDisabled(),true);
++  await page.getByRole('checkbox',{name:'我已核对完整内容，确认用于本章练习。'}).check();
++  await page.getByRole('tab',{name:'独立练习库',exact:true}).click();
++  await page.getByRole('tab',{name:'章节材料引用',exact:true}).click();
++  assert.equal(await confirm.isEnabled(),true);
++  await confirm.click();
++  await page.getByText('隔离保存成功').waitFor();
++  const calls=await page.evaluate(()=>window.calls);
++  assert.equal(calls.length,1);assert.equal(calls[0].chapterId,'chapter');assert.equal(calls[0].snapshot.length,1);
++  checks.push('章节默认展示；核对门禁保留；切换不丢确认状态；真实关联组件提交正确范围');
++  await page.screenshot({path:path.join(dir,'chapter.png'),fullPage:true});
++  await page.getByRole('tab',{name:'独立练习库',exact:true}).click();
++  await page.getByRole('cell',{name:'你好',exact:true}).waitFor();
++  assert.equal(await page.getByRole('heading',{name:'教材原文'}).isVisible(),false);
++  await page.getByText('从教材复制到独立库 · 所选章节',{exact:true}).click();
++  await page.getByRole('heading',{name:'教材原文'}).waitFor();
++  await page.getByRole('tab',{name:'语法',exact:true}).click();
++  await page.getByRole('heading',{name:'独立语法库',exact:true}).waitFor();
++  await page.screenshot({path:path.join(dir,'library.png'),fullPage:true});
++  checks.push('教材复制按需展开；词汇/语法切换；独立库与章节引用分离');
++  await page.getByRole('tab',{name:'工具设置'}).click();
++  assert.equal(await page.getByRole('columnheader',{name:/学生端路径/}).count(),0);
++  await page.getByRole('cell',{name:'隔离测试课程',exact:true}).waitFor();
++  const search=page.getByRole('textbox',{name:'搜索工具入口'});
++  await search.fill('不存在');await page.getByText('没有符合条件的工具入口').waitFor();
++  await page.getByRole('tab',{name:'章节材料引用',exact:true}).click();
++  await page.getByRole('tab',{name:'工具设置'}).click();assert.equal(await search.inputValue(),'不存在');
++  await search.fill('');
++  await page.screenshot({path:path.join(dir,'settings.png'),fullPage:true});
++  await page.getByRole('tab',{name:'工具设置'}).focus();await page.keyboard.press('Home');
++  assert.equal(await page.getByRole('tab',{name:'章节材料引用',exact:true}).getAttribute('aria-selected'),'true');
++  checks.push('技术列默认隐藏；搜索状态保留；键盘 Home 切换');
++  await page.setViewportSize({width:390,height:844});
++  await page.screenshot({path:path.join(dir,'mobile.png'),fullPage:true});
++  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
++  await page.evaluate(()=>document.documentElement.classList.add('dark'));
++  await page.screenshot({path:path.join(dir,'dark.png'),fullPage:true});
++  checks.push('手机默认页无横向溢出；深色截图');
++  await page.goto(url+'?noChapter');await page.getByText('在上方选择章节与教材版本后，可核对并关联本章教材练习。').waitFor();
++  await page.goto(url+'?readonly');await page.getByText('仅平台负责人可以管理教材练习关联；独立练习库和工具设置沿用各自权限。').waitFor();
++  assert.equal(await page.getByRole('button',{name:'确认关联到练习'}).count(),0);
++  checks.push('未选章节与只读权限明确提示，不暴露关联操作');
++  assert.deepEqual(errors,[]);
++  await writeFile(path.join(dir,'result.json'),JSON.stringify({checks,browserErrors:errors,productionAccess:false},null,2));
++  console.log(JSON.stringify({passed:checks.length,evidence:dir,checks},null,2));
++} finally {await browser?.close();await new Promise(r=>server.close(r));}

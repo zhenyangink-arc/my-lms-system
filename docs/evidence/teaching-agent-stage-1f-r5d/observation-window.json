@@ -1,0 +1,13 @@
+{
+  "r5dStartUtc": "2026-09-16T04:58:40.975487+00:00",
+  "r5dStartAsiaSeoul": "2026-09-16T13:58:40.975487+09:00",
+  "observationDeadlineUtc": "2026-09-16T05:28:40.975487+00:00",
+  "startMonotonic": 244774.199981601,
+  "scope": "READ-ONLY ACCEPTANCE ONLY",
+  "r5dEndUtc": "2026-09-16T05:05:08.841843+00:00",
+  "r5dEndAsiaSeoul": "2026-09-16T14:05:08.841843+09:00",
+  "durationSeconds": 387.8663315869926,
+  "maximumObservationMinutes": 30,
+  "budgetExceeded": false,
+  "productionMaintenanceAuthorization": false
+}

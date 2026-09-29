@@ -1,0 +1,10 @@
+{
+  "cause": "tarfile data filter normalizes approved 0664 source modes to 0644",
+  "artifactHashDrift": false,
+  "sourceHashDrift": false,
+  "rollback": "COMPLETE / old Build online",
+  "correction": "restore exact archive mode for eight source files in staging before stop",
+  "productSourceChange": 0,
+  "sameApprovedCandidate": true,
+  "dbWrites": 0
+}

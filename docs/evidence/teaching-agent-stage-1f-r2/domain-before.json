@@ -1,0 +1,318 @@
+{
+  "announcement_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "assessment_paper_question_keys": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "assessment_paper_questions": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "assessment_papers": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "chapter_test_attempts": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "chapter_test_question_reviews": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "chapter_test_questions": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "chapter_tests": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "conversation_practice_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "conversation_practice_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_categories": {
+    "rows": 4,
+    "digest": "0921f72992660f942cefc6f10db41eb6"
+  },
+  "course_completion_certificate_events": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_completion_certificates": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_completion_policies": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_completion_refresh_task_results": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_completion_refresh_tasks": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "course_ebook_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "courses": {
+    "rows": 2,
+    "digest": "75b0df68d921389cdc569e204e33d57e"
+  },
+  "curriculum_plan_assessments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_activities": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_activity_page_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_activity_secrets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_attempts": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_chapters": {
+    "rows": 2,
+    "digest": "4bdaeff371de76ee1190f44a60973a9c"
+  },
+  "digital_textbook_guided_repeat_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_listening_tracks": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_media_assets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_modules": {
+    "rows": 2,
+    "digest": "3711d9fe11a4983a6c525b6ed27c0abd"
+  },
+  "digital_textbook_node_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_nodes": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_preferences": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_speaking_evidence": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "digital_textbook_versions": {
+    "rows": 2,
+    "digest": "80ae16c33954f8962eeebcc0a048a63c"
+  },
+  "digital_textbooks": {
+    "rows": 2,
+    "digest": "ce04463e24002e48e85b785d658913cc"
+  },
+  "document_review_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "grade_center_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "help_center_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_blackboard_layout_templates": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_character_style_templates": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_lessons": {
+    "rows": 2,
+    "digest": "5d26f30bce4670dc55f5e36178b9a45d"
+  },
+  "learning_agent_messages": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_model_change_logs": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_node_attempts": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_node_interaction_secrets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_profile_secrets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_profiles": {
+    "rows": 1,
+    "digest": "5a22293905173fe84e02f9b3c60b1b04"
+  },
+  "learning_agent_publish_logs": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_script_audio_assets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_script_nodes": {
+    "rows": 18,
+    "digest": "acb720f29c606034e4eef2838976a67e"
+  },
+  "learning_agent_script_versions": {
+    "rows": 4,
+    "digest": "790b8241c8ded438cb9682b6d6cdb9a2"
+  },
+  "learning_agent_sessions": {
+    "rows": 4,
+    "digest": "22a6947e207556d01a84825ad11968c7"
+  },
+  "learning_agent_steps": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_agent_task_events": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_drafts": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_question_keys": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_questions": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_recording_evidence": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_remediation_attempts": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_retake_students": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_submission_counters": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignment_targets": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "learning_record_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "lesson_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "lessons": {
+    "rows": 2,
+    "digest": "a52e380d890478bd39cdf5a32c361440"
+  },
+  "library_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "profiles": {
+    "rows": 8,
+    "digest": "bec12e01c14e25e4772e8bb8e82b6f42"
+  },
+  "question_bank_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "staff_app_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_app_enrollments": {
+    "rows": 4,
+    "digest": "f4187ff5c96e7f690b5db0d34348ccf3"
+  },
+  "student_chapter_practice_progress": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_course_completion_evaluations": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "student_university_assessments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tenant_memberships": {
+    "rows": 7,
+    "digest": "2065763c582fef775763d8e92248d3de"
+  },
+  "tenant_student_apps": {
+    "rows": 2,
+    "digest": "fe1815c5bde2fd0f88991a6fc3044dde"
+  },
+  "tenant_student_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "tenants": {
+    "rows": 2,
+    "digest": "b2e787bf8ddaa076b727d86061b1f33f"
+  },
+  "visa_admin_assignments": {
+    "rows": 0,
+    "digest": "d41d8cd98f00b204e9800998ecf8427e"
+  }
+}

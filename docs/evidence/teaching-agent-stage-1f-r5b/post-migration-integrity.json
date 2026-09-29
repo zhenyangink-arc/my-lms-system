@@ -1,0 +1,707 @@
+{
+  "status": "PASS",
+  "checks": {
+    "all35FunctionBodiesAndSecurity": true,
+    "privateAgentAcl": true,
+    "agentRpcServiceOnly": true,
+    "skeletonAcl": true,
+    "agentTablesRlsNoBrowser": true,
+    "agentServiceTableAcl": true,
+    "sixIndexesValid": true,
+    "sevenTriggersEnabled": true,
+    "constraintCountsAndValidation": true,
+    "twoDeferredInputMessageFks": true,
+    "usageBoundariesRestrictive": true,
+    "rawNodeBroadPolicyRemoved": true,
+    "staffPolicies": true,
+    "safeView": true,
+    "exactNewColumns": true,
+    "usageNewColumns": true,
+    "cancelSequenceShape": true,
+    "agentRowsZero": true
+  },
+  "catalogCategoryDigests": {
+    "functions": "747ad522ee292f5ecfd0fefaffb23fb4f28c4cc42bfb5a2607b4028bc48b3ad5",
+    "columns": "7418e5d566733d34fd13a0375457f146319730a208ebed3b0bb423e1e436d6f5",
+    "constraints": "fd0f3681de0b5ccc1032b6d0d8f9ebe48b552d4ca3de65fe8a250357597f69e2",
+    "indexes": "03345e91be8b9956d47bce0be943bb571c343f9e765f3953c2858cea75966618",
+    "rls": "d0f4ef50c81cb25821498cd716d9d095a56ba338ace0f2ae56dfc4bb808dfec5",
+    "policies": "29a60d30d3c927eefae10854f6f149d486b75f3574eb5f07aa73366be3f956a2",
+    "view": "fbacd21e2f58b88dc2757a1713e9771de8e44a834d9da61f3309586de54dd5fe",
+    "triggers": "d38f8797db5898ce1d0bd160fe9867537a94a75fb681bf0505dacdb1fbe20ae5",
+    "agentRows": "87d142e3c221095bca685aa0990801bf20bbdb3347afa3c95d672a9c9b3798fe"
+  },
+  "functionCount": 35,
+  "agentRpcCount": 12,
+  "agentRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "columns": [
+    {
+      "table": "agent_conversations",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "actor_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "agent_code",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "app_id",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "scope_kind",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "scope_ref",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_conversations",
+      "name": "status",
+      "type": "text",
+      "notNull": true,
+      "default": "'active'::text"
+    },
+    {
+      "table": "agent_conversations",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "clock_timestamp()"
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "actor_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "agent_code",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "version",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "status",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "manifest",
+      "type": "jsonb",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_definition_versions",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "clock_timestamp()"
+    },
+    {
+      "table": "agent_messages",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "agent_messages",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "actor_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "conversation_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "run_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "role",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "content",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "state",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_messages",
+      "name": "origin",
+      "type": "text",
+      "notNull": true,
+      "default": "'agent_core'::text"
+    },
+    {
+      "table": "agent_messages",
+      "name": "source_refs",
+      "type": "jsonb",
+      "notNull": true,
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "agent_messages",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "clock_timestamp()"
+    },
+    {
+      "table": "agent_run_events",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "agent_run_events",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "actor_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "run_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "seq",
+      "type": "bigint",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "kind",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "model_call_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "tool_call_id",
+      "type": "text",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "skill_run_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_run_events",
+      "name": "metadata",
+      "type": "jsonb",
+      "notNull": true,
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "agent_run_events",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "clock_timestamp()"
+    },
+    {
+      "table": "agent_runs",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "agent_runs",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "actor_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "conversation_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "input_message_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "definition_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "agent_code",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "profile_version",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "skill_ref",
+      "type": "jsonb",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "scope_ref",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "status",
+      "type": "text",
+      "notNull": true,
+      "default": "'created'::text"
+    },
+    {
+      "table": "agent_runs",
+      "name": "idempotency_key",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "request_digest",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "budget",
+      "type": "jsonb",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "deadline_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "lease_expires_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "state_version",
+      "type": "integer",
+      "notNull": true,
+      "default": "1"
+    },
+    {
+      "table": "agent_runs",
+      "name": "fencing_token",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "agent_runs",
+      "name": "execution_attempt",
+      "type": "integer",
+      "notNull": true,
+      "default": "1"
+    },
+    {
+      "table": "agent_runs",
+      "name": "retry_of_run_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "context_metadata",
+      "type": "jsonb",
+      "notNull": true,
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "agent_runs",
+      "name": "terminal_reason",
+      "type": "text",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "clock_timestamp()"
+    },
+    {
+      "table": "agent_runs",
+      "name": "ended_at",
+      "type": "timestamp with time zone",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "cancel_requested_at",
+      "type": "timestamp with time zone",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "agent_runs",
+      "name": "public_event_seq",
+      "type": "bigint",
+      "notNull": true,
+      "default": "0"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "user_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "model",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "input_tokens",
+      "type": "integer",
+      "notNull": true,
+      "default": "0"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "output_tokens",
+      "type": "integer",
+      "notNull": true,
+      "default": "0"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "total_tokens",
+      "type": "integer",
+      "notNull": true,
+      "default": "0"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "now()"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "tenant_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "provider",
+      "type": "text",
+      "notNull": true,
+      "default": "'unknown'::text"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "feature_code",
+      "type": "text",
+      "notNull": true,
+      "default": "'unknown'::text"
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "agent_code",
+      "type": "text",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "run_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "model_call_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "attempt_index",
+      "type": "integer",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "usage_status",
+      "type": "text",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "ai_token_usage",
+      "name": "duration_ms",
+      "type": "integer",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "curriculum_plan_assessments",
+      "name": "plan_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "curriculum_plan_assessments",
+      "name": "item_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "curriculum_plan_assessments",
+      "name": "assignment_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "curriculum_plan_assessments",
+      "name": "created_by",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "table": "curriculum_plan_assessments",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "now()"
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "script_version_id",
+      "type": "uuid",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "sort_order",
+      "type": "integer",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "teacher_script",
+      "type": "jsonb",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "segments",
+      "type": "jsonb",
+      "notNull": false,
+      "default": null
+    },
+    {
+      "table": "student_learning_agent_script_nodes",
+      "name": "video_mode",
+      "type": "text",
+      "notNull": false,
+      "default": null
+    }
+  ],
+  "constraintCounts": {
+    "agent_definition_versions": 7,
+    "agent_conversations": 5,
+    "agent_runs": 10,
+    "agent_messages": 8,
+    "agent_run_events": 3,
+    "curriculum_plan_assessments": 6
+  },
+  "ledger": 457,
+  "latest": "202609140007",
+  "readOnly": true
+}

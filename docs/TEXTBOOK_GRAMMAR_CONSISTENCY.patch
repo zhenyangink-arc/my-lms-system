@@ -1,0 +1,1195 @@
+diff --git a/src/app/dashboard/admin/digital-textbook/actions.ts b/src/app/dashboard/admin/digital-textbook/actions.ts
+index 606fc7c..fd7fae0 100644
+--- a/src/app/dashboard/admin/digital-textbook/actions.ts
++++ b/src/app/dashboard/admin/digital-textbook/actions.ts
+@@ -124,11 +124,8 @@ const TEXTBOOK_STATUSES = new Set(["draft", "published", "archived"]);
+  * 保持一致——平台负责人永久拥有，或被授权的平台副负责人可管理。
+  */
+ async function canManageTextbooks(): Promise<boolean> {
+-  const { supabase } = await requireActiveUser();
+-  const { data, error } = await supabase.rpc(
+-    "current_user_can_manage_standard_question_bank"
+-  );
+-  return !error && data === true;
++  const auth = await requireActiveUser();
++  return auth.platformProfile?.global_role === 'platform_owner' && !auth.tenant;
+ }
+ 
+ function cleanWord(raw: Partial<VocabularyWord>): VocabularyWord {
+@@ -455,6 +452,7 @@ async function loadGrammarNode(
+     .eq("id", nodeId)
+     .maybeSingle();
+   if (nodeError || !node) return { error: "找不到语法节点" };
++  if (Object.hasOwn(node.content ?? {}, 'grammarCards')) return { error: '本章使用语法卡，请在第一章工作台修改；旧语法编辑器不能覆盖或另写一套内容。' };
+   return { nodeId, content: (node.content ?? {}) as Record<string, unknown> };
+ }
+ 
+diff --git a/src/features/digital-textbook/api/service.ts b/src/features/digital-textbook/api/service.ts
+index 05c699b..e7787ba 100644
+--- a/src/features/digital-textbook/api/service.ts
++++ b/src/features/digital-textbook/api/service.ts
+@@ -1,4 +1,5 @@
+ import "server-only";
++import { readTextbookGrammarCards } from '@/lib/textbook-grammar-content';
+ import { cache } from "react";
+ 
+ import { redirect } from "next/navigation";
+@@ -123,12 +124,9 @@ async function loadDigitalTextbookManagementData(
+   studentAppId: string,
+ ): Promise<DigitalTextbookManagementResult> {
+   const auth = await requireActiveUser();
+-  const { supabase: userSupabase } = auth;
+   const canPublishChapters =
+     auth.platformProfile?.global_role === "platform_owner" && !auth.tenant;
+-  const { data: canManage } = await userSupabase.rpc(
+-    "current_user_can_manage_standard_question_bank",
+-  );
++  const canManage = auth.platformProfile?.global_role === 'platform_owner' && !auth.tenant;
+   if (!studentAppId) redirect("/dashboard/admin/apps");
+   if (auth.tenant) {
+     await requireTenantAppCapability(studentAppId, "manageContent");
+@@ -146,11 +144,7 @@ async function loadDigitalTextbookManagementData(
+     .select(
+       "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,title,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
+     )
+-    .eq("student_app_id", studentAppId)
+-    .in(
+-      "digital_textbook_versions.digital_textbook_chapters.digital_textbook_modules.module_code",
+-      ["vocabulary", "grammar"],
+-    );
++    .eq("student_app_id", studentAppId);
+   if (!canManage && !canPublishChapters) {
+     textbookQuery = textbookQuery.eq("status", "published");
+   }
+@@ -343,7 +337,7 @@ async function loadDigitalTextbookManagementData(
+             0,
+           ),
+           grammarCount: moduleNodes.reduce(
+-            (sum, node) => sum + grammarOf(node.content).length,
++            (sum, node) => sum + grammarOf(node.content).length + readTextbookGrammarCards(node.content).length,
+             0,
+           ),
+         };
+@@ -355,6 +349,7 @@ async function loadDigitalTextbookManagementData(
+       grammarNodes: grammarNodes.map((node) => ({
+         id: node.id,
+         items: grammarOf(node.content),
++        cards: readTextbookGrammarCards(node.content),
+       })),
+     });
+   }
+diff --git a/src/features/digital-textbook/api/types.ts b/src/features/digital-textbook/api/types.ts
+index f472513..bb6975c 100644
+--- a/src/features/digital-textbook/api/types.ts
++++ b/src/features/digital-textbook/api/types.ts
+@@ -1,3 +1,4 @@
++import type { TextbookGrammarCard } from '@/lib/textbook-grammar-content';
+ export type DigitalTextbookVocabularyWord = {
+   ko: string;
+   zh: string;
+@@ -40,6 +41,7 @@ export type DigitalTextbookVocabularyNode = {
+ export type DigitalTextbookGrammarNode = {
+   id: string;
+   items: DigitalTextbookGrammarItem[];
++  cards?: TextbookGrammarCard[];
+ };
+ 
+ export type DigitalTextbookModule = {
+diff --git a/src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx b/src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx
+index 9b5aa5c..bc2c763 100644
+--- a/src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx
++++ b/src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx
+@@ -1,6 +1,7 @@
+ "use client";
+ 
+ import { useState } from "react";
++import { GrammarCardContent } from './grammar-card-content';
+ import { useRouter } from "next/navigation";
+ import { LoaderCircle, Pencil, Plus, Trash2, Upload, Volume2 } from "lucide-react";
+ 
+@@ -76,7 +77,11 @@ export function DigitalTextbookContentDialog({
+           {panel === "vocabulary" ? (
+             <VocabularyEditor row={row} />
+           ) : (
+-            <GrammarEditor row={row} />
++            row.grammarNodes.some(n => n.cards?.length) ? <div className="space-y-4">
++              <p role="status" className="text-sm text-muted-foreground">这是学生正在使用的语法卡。第一章文字修改请进入第一章工作台；例句媒体与其他章节本轮仅查看，不会写入旧语法字段。</p>
++              {row.grammarNodes.flatMap(n => (n.cards ?? []).map((card,i)=><GrammarCardContent key={`${n.id}:${i}`} card={card}/>))}
++              {row.grammarNodes.some(n=>n.items.length>0)&&<p role="alert">本章同时存在旧格式语法，请先核对来源；当前不允许合并或覆盖。</p>}
++            </div> : <GrammarEditor row={row} />
+           )}
+         </div>
+       </DialogContent>
+diff --git a/src/features/digital-textbook/components/digital-textbook-listing.tsx b/src/features/digital-textbook/components/digital-textbook-listing.tsx
+index 35a32a3..3de6698 100644
+--- a/src/features/digital-textbook/components/digital-textbook-listing.tsx
++++ b/src/features/digital-textbook/components/digital-textbook-listing.tsx
+@@ -15,6 +15,8 @@ export default async function DigitalTextbookListing({
+   workbenchHref?: string;
+ }) {
+   const result = await getDigitalTextbookManagementData(studentAppId);
++  // A failed query is unknown inventory, not a confirmed empty chapter.
++  if (result.hasError) return <ManagementNotice tone="warning">教材内容读取不完整，暂不显示数量或开放编辑。请刷新重试。</ManagementNotice>;
+   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
+     course.lessons.flatMap((lesson) =>
+       lesson.textbooks.flatMap((textbook) =>
+@@ -47,7 +49,7 @@ export default async function DigitalTextbookListing({
+             0,
+           ),
+           grammarCount: chapter.grammarNodes.reduce(
+-            (sum, node) => sum + node.items.length,
++            (sum, node) => sum + node.items.length + (node.cards?.length ?? 0),
+             0,
+           ),
+           vocabularyNodes: chapter.nodes,
+diff --git a/src/features/digital-textbook/components/grammar-card-content.tsx b/src/features/digital-textbook/components/grammar-card-content.tsx
+new file mode 100644
+index 0000000..0f5b681
+--- /dev/null
++++ b/src/features/digital-textbook/components/grammar-card-content.tsx
+@@ -0,0 +1,15 @@
++import { CardTitleWithHint } from '@/components/ui/card-title-with-hint';
++import type { TextbookGrammarCard } from '@/lib/textbook-grammar-content';
++
++export function GrammarCardContent({ card }: { card: TextbookGrammarCard }) {
++  const bilingual = (value: { 'zh-CN': string; 'ko-KR': string }) => <><p>{value['zh-CN']}</p><p lang="ko" className="text-muted-foreground">{value['ko-KR']}</p></>;
++  return <article className="space-y-4 rounded-xl border border-border p-4 text-sm leading-6">
++    <CardTitleWithHint title={card.form} description={card.function['zh-CN']} headingLevel={3}/>
++    <p lang="ko">{card.function['ko-KR']}</p>
++    <ul className="list-inside list-disc">{card.rules.map((r,i)=><li key={i}>{r}</li>)}</ul>
++    <section aria-label="语法例句" className="space-y-2">{card.examples.map((e,i)=><div key={i}><p lang="ko">{e.ko}</p><p>{e.zh}</p></div>)}</section>
++    <section><h4 className="font-semibold">注意事项</h4>{bilingual(card.caution)}</section>
++    {card.comparison&&<section><h4 className="font-semibold">对比说明</h4>{bilingual(card.comparison)}</section>}
++    <section><h4 className="font-semibold">来源</h4>{bilingual(card.source)}</section>
++  </article>;
++}
+diff --git a/src/features/digital-textbook/components/textbook-studio.tsx b/src/features/digital-textbook/components/textbook-studio.tsx
+index d2743f8..9e8ddf1 100644
+--- a/src/features/digital-textbook/components/textbook-studio.tsx
++++ b/src/features/digital-textbook/components/textbook-studio.tsx
+@@ -68,6 +68,7 @@ export function TextbookStudio({ rows, initialChapterId, canManage, canPublish,
+               {href&&<Link href={href} className={`${buttonStyle} border-transparent bg-primary text-primary-foreground hover:bg-primary/90`}>打开内容工作台<ChevronRight className="size-4" aria-hidden="true"/></Link>}
+             </div>
+             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"><span>第 {selected.versionNumber} 版</span><span>词汇 {selected.vocabularyCount}</span><span>语法条目 {selected.grammarCount}</span>{!canManage&&<span>只读查看</span>}</div>
++            {selected.grammarNodes.some(n=>n.items.length>0)&&<p className="text-sm text-muted-foreground">语法来源：教材卡 {selected.grammarNodes.reduce((sum,n)=>sum+(n.cards?.length??0),0)} 张；旧格式 {selected.grammarNodes.reduce((sum,n)=>sum+n.items.length,0)} 条。分别保留，不自动去重或覆盖。</p>}
+             <nav aria-label="当前章节制作功能" className="flex flex-wrap gap-1">
+               {([['content','内容制作'],['publish','检查与发布'],['settings','教材设置']] as const).map(([key,label])=><button key={key} type="button" aria-current={tab===key?'page':undefined} onClick={()=>setTab(key)} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${tab===key?'bg-muted text-foreground':'text-muted-foreground hover:bg-muted/60'}`}>{label}</button>)}
+             </nav>
+@@ -76,11 +77,11 @@ export function TextbookStudio({ rows, initialChapterId, canManage, canPublish,
+             {tab==='content'&&<>
+               {href&&<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-5"><div><h3 className="font-semibold">学习步骤与互动题目</h3><p className="mt-2 text-sm text-muted-foreground">在第一章工作台查看完整内容，并完成校验与发布。</p></div><span className="text-sm font-medium text-primary">第一章已接入</span></div>}
+               <div className="grid gap-4 xl:grid-cols-2">
+-                {([{key:'vocabulary',title:'章节词汇',count:selected.vocabularyCount,unit:'个词汇',examples:selected.vocabularyNodes.flatMap(n=>n.vocabulary).map(w=>`${w.ko}　${w.zh}`)}, {key:'grammar',title:'章节语法',count:selected.grammarCount,unit:'个条目',examples:selected.grammarNodes.flatMap(n=>n.items).map(g=>g.title)}] as const).map(item=><section key={item.key} className="flex min-w-0 flex-col rounded-xl border border-border p-5">
+-                  <div className="flex items-center justify-between gap-3"><CardTitleWithHint headingLevel={3} title={item.title} description={item.key==='vocabulary'?'编辑本章现有词汇及释义，保存后仍需按章节发布流程发布。':'此处统计专用语法编辑器可读取的条目；零条不代表学生端没有语法教学内容。'} titleClassName="text-base font-semibold"/><BookText className="size-5 text-muted-foreground" aria-hidden="true"/></div>
++                {([{key:'vocabulary',title:'章节词汇',count:selected.vocabularyCount,unit:'个词汇',examples:selected.vocabularyNodes.flatMap(n=>n.vocabulary).map(w=>`${w.ko}　${w.zh}`)}, {key:'grammar',title:'章节语法',count:selected.grammarCount,unit:'个条目',examples:selected.grammarNodes.flatMap(n=>[...n.items.map(g=>g.title),...(n.cards??[]).map(g=>g.form)])}] as const).map(item=><section key={item.key} className="flex min-w-0 flex-col rounded-xl border border-border p-5">
++                  <div className="flex items-center justify-between gap-3"><CardTitleWithHint headingLevel={3} title={item.title} description={item.key==='vocabulary'?'编辑本章现有词汇及释义，保存后仍需按章节发布流程发布。':'统计本章语法卡和旧格式语法，二者保持各自来源。第一章语法卡文字在工作台修改并重新发布。'} titleClassName="text-base font-semibold"/><BookText className="size-5 text-muted-foreground" aria-hidden="true"/></div>
+                   <p className="mt-4 text-sm text-muted-foreground">{item.count} {item.unit}</p>
+                   <ul className="my-4 flex-1 space-y-2 text-sm">{item.examples.slice(0,3).map((text,i)=><li key={i} className="break-words border-b border-border/60 pb-2">{text}</li>)}{!item.examples.length&&<li className="py-4 text-muted-foreground">当前编辑器暂无可展示条目</li>}</ul>
+-                  {canManage&&<button type="button" onClick={()=>setEditor(item.key)} className={`${buttonStyle} self-start`}>{item.key==='vocabulary'?'编辑词汇':'编辑语法'}</button>}
++                  {canManage&&<button type="button" onClick={()=>setEditor(item.key)} className={`${buttonStyle} self-start`}>{item.key==='vocabulary'?'编辑词汇':'查看语法内容'}</button>}
+                 </section>)}
+               </div>
+               {courseStructureRoute&&<Link href={`${courseStructureRoute}?chapter=${encodeURIComponent(selected.chapterId)}`} className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground">查看本章课程结构<ChevronRight className="size-4" aria-hidden="true"/></Link>}
+diff --git a/src/features/digital-textbook/workbench/chapter-workbench.tsx b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+index e0c3be5..1c515f0 100644
+--- a/src/features/digital-textbook/workbench/chapter-workbench.tsx
++++ b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+@@ -4,6 +4,7 @@ import { startTransition, useRef, useState } from 'react';
+ import { Button } from '@/components/ui/button';
+ import { CardTitleWithHint } from '@/components/ui/card-title-with-hint';
+ import { chapterWorkbenchAction } from './actions';
++import { GrammarTextEditor } from './grammar-text-editor';
+ import type { ChapterWorkbenchData, PublicationCheck, WorkbenchActivity, WorkbenchResult } from './contracts';
+ 
+ type Props = { initial: ChapterWorkbenchData; previewHref: string; contentHref: string; scriptsHref: string };
+@@ -21,6 +22,8 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+   const [busy, setBusy] = useState(false);
+   const lock = useRef(false);
+   const [editor, setEditor] = useState<WorkbenchActivity|null>(null);
++  const [grammarEditing,setGrammarEditing] = useState(false);
++  const editing = !!editor || grammarEditing;
+   const [section, setSection] = useState<'activities'|'teaching'|'publish'>('activities');
+   const step = data.steps.find(s=>s.id===active);
+   async function run(input: unknown): Promise<WorkbenchResult|null> {
+@@ -42,7 +45,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+     if(r?.ok&&r.kind==='begin') {setState(r.state);setMessage(r.state==='editing'?'已进入编辑。保存后请校验并发布；即使未修改，也需要重新发布才能恢复测试。':`仍有 ${r.inflight} 个学习请求未结束。请稍后重新检查，不会强制清理。`);}
+   }
+   async function refresh() {
+-    if(editor&&!window.confirm('刷新会放弃当前表单中未保存的修改，确定继续？'))return;
++    if(editing&&!window.confirm('刷新会放弃当前表单中未保存的修改，确定继续？'))return;
+     const r=await run({operation:'read'});
+     if(r?.ok&&r.kind==='read') {setData(r.data);setEditor(null);setCheck(null);setState('locked');setMessage('内容已刷新。保存权限仍由服务器编辑窗口决定；需要编辑时重新确认进入编辑。');}
+   }
+@@ -63,6 +66,11 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+       setEditor(null);setCheck(null);setMessage('题干和正确选项已一并保存，尚未发布。');
+     }
+   }
++  async function grammarSaved() {
++    setCheck(null);
++    const read=await run({operation:'read'});
++    if(read?.ok&&read.kind==='read'){setData(read.data);setMessage('语法文字和稳定身份映射已保存，尚未发布。请重新校验并发布。');}
++  }
+   return <div className="overflow-hidden rounded-2xl border border-border bg-card" aria-busy={busy}>
+     <header className="space-y-5 border-b border-border p-5 sm:p-7">
+       <div className="flex flex-wrap items-start justify-between gap-4">
+@@ -73,11 +81,11 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+         </div>
+         <div className="flex flex-wrap gap-2">
+           <Link href={previewHref} target="_blank" rel="noopener noreferrer" className={linkStyle}>预览已保存内容（新窗口）</Link>
+-          <Button className="min-h-11" disabled={busy||!!editor||state==='editing'} onClick={begin}>{state==='draining'?'重新检查编辑条件':state==='editing'?'已进入编辑':'进入编辑'}</Button>
++          <Button className="min-h-11" disabled={busy||editing||state==='editing'} onClick={begin}>{state==='draining'?'重新检查编辑条件':state==='editing'?'已进入编辑':'进入编辑'}</Button>
+         </div>
+       </div>
+       <nav aria-label="工作台功能" className="flex flex-wrap gap-1">
+-        {([['activities','活动内容'],['teaching','教学脚本'],['publish','校验发布']] as const).map(([key,label])=><button key={key} type="button" onClick={()=>setSection(key)} disabled={busy||!!editor} aria-current={section===key?'page':undefined} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${section===key?'bg-primary/10 text-primary':'text-muted-foreground hover:bg-muted'}`}>{label}</button>)}
++        {([['activities','活动内容'],['teaching','教学脚本'],['publish','校验发布']] as const).map(([key,label])=><button key={key} type="button" onClick={()=>setSection(key)} disabled={busy||editing} aria-current={section===key?'page':undefined} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${section===key?'bg-primary/10 text-primary':'text-muted-foreground hover:bg-muted'}`}>{label}</button>)}
+       </nav>
+       <p role={failed?'alert':'status'} aria-live="polite" className={`rounded-lg px-4 py-3 text-sm leading-6 ${failed?'bg-destructive/10 text-destructive':state==='editing'?'bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200':'bg-muted/60 text-muted-foreground'}`}>{busy?'正在处理，请勿重复操作…':message}</p>
+     </header>
+@@ -86,12 +94,12 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+         <section className={`${surface} space-y-4`}>
+           <CardTitleWithHint headingLevel={2} title="检查待发布内容" description="校验已保存的题目、资源和教学依赖；发布时仍会再次检查，防止校验后内容被改动。" titleClassName="text-lg font-semibold"/>
+           <p className="text-sm leading-6 text-muted-foreground">{check?`校验通过：${check.steps} 个步骤、${check.activities} 个活动。`:'先保存全部修改，再进行发布检查。'}</p>
+-          <Button variant="outline" className="min-h-11" disabled={busy||!!editor} onClick={validate}>校验待发布内容</Button>
++          <Button variant="outline" className="min-h-11" disabled={busy||editing} onClick={validate}>校验待发布内容</Button>
+         </section>
+         <section className={`${surface} space-y-4`}>
+           <h2 className="text-lg font-semibold">确认发布</h2>
+           <p className="text-sm leading-6 text-muted-foreground">发布成功后，测试账号返回课程并重新进入，加载本次内容。此操作不会扩大测试账号范围。</p>
+-          <Button className="min-h-11" disabled={busy||!!editor||!check} onClick={publish}>发布校验版本</Button>
++          <Button className="min-h-11" disabled={busy||editing||!check} onClick={publish}>发布校验版本</Button>
+           {!check&&<p className="text-sm text-muted-foreground">完成上方校验后可发布。</p>}
+         </section>
+       </div>
+@@ -106,7 +114,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+       <aside className="min-w-0 border-b border-border bg-muted/20 p-3 lg:border-b-0 lg:border-r">
+         <h2 className="px-3 py-3 text-sm font-semibold">学习步骤</h2>
+         <nav aria-label="章节学习步骤" className="max-h-64 space-y-1 overflow-y-auto lg:max-h-[70vh]">
+-          {data.steps.map((s,i)=><button key={s.id} type="button" aria-current={active===s.id?'step':undefined} disabled={busy||!!editor}
++          {data.steps.map((s,i)=><button key={s.id} type="button" aria-current={active===s.id?'step':undefined} disabled={busy||editing}
+             className={`flex min-h-14 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${active===s.id?'bg-primary/10 text-primary':'hover:bg-muted'}`}
+             onClick={()=>setActive(s.id)}><span className="flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-card text-xs tabular-nums">{i+1}</span><span className="min-w-0"><span className="block font-medium">{s.title}</span><span className="mt-1 block text-xs text-muted-foreground">{s.nodes.reduce((sum,n)=>sum+n.activities.length,0)} 个活动</span></span></button>)}
+         </nav>
+@@ -123,6 +131,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+         </>:<>
+           <p className="text-sm text-muted-foreground">{editor?'正在编辑题目，保存或取消后可切换步骤。':state==='editing'?'选择题目进行修改，保存后到“校验发布”完成发布。':'当前为查看模式，点击顶部“进入编辑”后可修改支持的题目。'}</p>
+           {step.nodes.map(node=><section key={node.id} className="space-y-3">
++            {(node.grammarCards??[]).map(card=><GrammarTextEditor key={card.cardId} value={card} enabled={state==='editing'&&!editing} busy={busy} onEditing={setGrammarEditing} run={run} onSaved={grammarSaved}/>)}
+             <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-muted-foreground">{node.title}</h3><span className="text-xs text-muted-foreground">{node.activities.length} 个活动</span></div>
+             {node.activities.map((a,index)=><article key={a.id} className={`${surface} space-y-3`}>
+               <div className="flex items-center justify-between gap-2"><span className="text-xs text-muted-foreground">题目 {index+1}</span><span className="text-xs text-muted-foreground">{a.editable?'可编辑题干与答案':'当前只读'}</span></div>
+@@ -135,7 +144,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+               <CardTitleWithHint title={a.prompt||'未填写题干'} description={a.instruction} headingLevel={4}/>
+               {a.koreanPrompt&&a.koreanPrompt!==a.prompt&&<p lang="ko" className="text-sm leading-6 text-muted-foreground">{a.koreanPrompt}</p>}
+               {a.options.length>0&&<ol className="my-3 grid list-inside list-decimal gap-2 text-sm xl:grid-cols-2">{a.options.map((o,i)=><li key={i} className={`rounded-lg px-3 py-2 ${a.answerIndex===i?'bg-primary/5 text-foreground':'bg-muted/40'}`}>{o}{a.answerIndex===i?'（正确选项）':''}</li>)}</ol>}
+-              {a.editable?<Button variant="outline" className="mt-3" disabled={busy||!!editor||state!=='editing'} onClick={()=>{setEditor({...a});setCheck(null);}}>编辑题干与答案</Button>:<p className="mt-3 text-sm text-muted-foreground">当前只读 · 复杂活动仍使用原服务与完成规则</p>}
++              {a.editable?<Button variant="outline" className="mt-3" disabled={busy||editing||state!=='editing'} onClick={()=>{setEditor({...a});setCheck(null);}}>编辑题干与答案</Button>:<p className="mt-3 text-sm text-muted-foreground">当前只读 · 复杂活动仍使用原服务与完成规则</p>}
+             </>}
+             </article>)}
+             {!node.activities.length&&<p className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">此节点没有独立题目，可通过顶部预览查看学习内容。</p>}
+diff --git a/src/features/digital-textbook/workbench/contracts.ts b/src/features/digital-textbook/workbench/contracts.ts
+index 359742d..7bbb3e9 100644
+--- a/src/features/digital-textbook/workbench/contracts.ts
++++ b/src/features/digital-textbook/workbench/contracts.ts
+@@ -1,3 +1,5 @@
++import type { TextbookGrammarCard } from '@/lib/textbook-grammar-content';
++export type WorkbenchGrammarCard = {nodeId:string;cardId:string;expected:string;card:TextbookGrammarCard};
+ export type Pointer = { snapshotId: string; generation: number } | null;
+ export type WorkbenchActivity = {
+   id: string; key: string; type: string; prompt: string; koreanPrompt: string;
+@@ -7,7 +9,7 @@ export type WorkbenchActivity = {
+ export type ChapterWorkbenchData = {
+   title: string; version: number; pointer: Pointer;
+   steps: { id: string; title: string; description: string;
+-    nodes: { id: string; title: string; activities: WorkbenchActivity[] }[];
++    nodes: { id: string; title: string; activities: WorkbenchActivity[]; grammarCards?: WorkbenchGrammarCard[] }[];
+     teaching: { title: string; script: string; version: number }[];
+   }[];
+ };
+diff --git a/src/features/digital-textbook/workbench/grammar-text-editor.tsx b/src/features/digital-textbook/workbench/grammar-text-editor.tsx
+new file mode 100644
+index 0000000..9e0b373
+--- /dev/null
++++ b/src/features/digital-textbook/workbench/grammar-text-editor.tsx
+@@ -0,0 +1,35 @@
++'use client';
++import { useState } from 'react';
++import { Button } from '@/components/ui/button';
++import { GrammarCardContent } from '../components/grammar-card-content';
++import { grammarTextEditSchema, type GrammarTextEdit } from '@/lib/textbook-grammar-content';
++import type { WorkbenchGrammarCard, WorkbenchResult } from './contracts';
++
++export function GrammarTextEditor({ value, enabled, busy, onEditing, run, onSaved }: {
++  value:WorkbenchGrammarCard; enabled:boolean; busy:boolean;
++  onEditing:(value:boolean)=>void; run:(input:unknown)=>Promise<WorkbenchResult|null>; onSaved:()=>Promise<void>;
++}) {
++  const [draft,setDraft] = useState<GrammarTextEdit|null>(null);
++  const [error,setError] = useState('');
++  const field='w-full rounded-md border border-input bg-background p-3 text-sm';
++  async function save() {
++    if(busy||!draft)return;
++    const parsed=grammarTextEditSchema.safeParse(draft);
++    if(!parsed.success){setError('请填写语法形式，并检查双语文本长度。');return;}
++    const result=await run({operation:'save-grammar',cardId:value.cardId,expected:value.expected,patch:parsed.data});
++    if(result?.ok){setDraft(null);onEditing(false);await onSaved();}
++    else setError(result&&!result.ok?result.message:'请求未完成，请刷新核对保存状态。');
++  }
++  return <div className="space-y-3">
++    {!draft?<><GrammarCardContent card={value.card}/><Button variant="outline" disabled={!enabled||busy} onClick={()=>{setDraft({form:value.card.form,function:value.card.function,caution:value.card.caution,source:value.card.source});setError('');onEditing(true);}}>编辑语法文字</Button></>:<form className="space-y-4 rounded-xl border p-5" onSubmit={e=>{e.preventDefault();void save();}}>
++      <p className="text-sm text-muted-foreground">修改形式、功能、注意事项和来源。规则、例句及媒体保持不变；本次不新增、删除或重排语法卡。</p>
++      <label className="block space-y-2">语法形式<input className={field} required maxLength={12000} disabled={busy} value={draft.form} onChange={e=>setDraft({...draft,form:e.target.value})}/></label>
++      {([['function','功能说明'],['caution','注意事项'],['source','来源']] as const).map(([key,title])=><fieldset key={key} className="grid gap-3 sm:grid-cols-2"><legend className="py-2 font-medium">{title}</legend>{(['zh-CN','ko-KR'] as const).map(locale=>{
++        const label=`${title}（${locale==='zh-CN'?'中文':'韩文'}）`,id=`grammar-${value.cardId}-${key}-${locale}`;
++        return <div key={locale} className="space-y-2 text-sm"><label htmlFor={id}>{label}</label><textarea id={id} className={field} maxLength={12000} disabled={busy} value={draft[key][locale]} onChange={e=>setDraft({...draft,[key]:{...draft[key],[locale]:e.target.value}})}/></div>;
++      })}</fieldset>)}
++      {error&&<p role="alert" className="text-sm text-destructive">{error}</p>}
++      <div className="flex gap-3"><Button disabled={busy} type="submit">保存语法文字</Button><Button disabled={busy} variant="outline" type="button" onClick={()=>{setDraft(null);onEditing(false);}}>取消语法修改</Button></div>
++    </form>}
++  </div>;
++}
+diff --git a/src/features/digital-textbook/workbench/service.server.ts b/src/features/digital-textbook/workbench/service.server.ts
+index 2d67a24..a9b784d 100644
+--- a/src/features/digital-textbook/workbench/service.server.ts
++++ b/src/features/digital-textbook/workbench/service.server.ts
+@@ -9,10 +9,12 @@ import { assertPublishableSnapshot } from '@/lib/smart-textbook-publishing/artif
+ import { beginChapterOneEditing, editChapterOneActivity } from '@/lib/smart-textbook-publishing/authoring.server';
+ import { compileChapterOnePublication, publishChapterOne, publicationHistory, validatePublication } from '@/lib/smart-textbook-publishing/publisher.server';
+ import type { ChapterWorkbenchData, WorkbenchResult } from './contracts';
++import { grammarAuthoringCards, grammarSaveSchema, saveChapterOneGrammar } from '@/lib/smart-textbook-publishing/grammar-authoring.server';
+ 
+ const inputSchema = z.discriminatedUnion('operation', [
+   z.strictObject({ operation: z.literal('read') }),
+   z.strictObject({ operation: z.literal('begin') }),
++  grammarSaveSchema.extend({operation:z.literal('save-grammar')}),
+   z.strictObject({ operation: z.literal('check') }),
+   z.strictObject({ operation: z.literal('publish'), expected: pointerSchema.nullable(), digest: z.string().regex(/^sha256:[a-f0-9]{64}$/) }),
+   z.strictObject({ operation: z.literal('save'), activityId: z.string().uuid(),
+@@ -33,6 +35,11 @@ export async function chapterWorkbenchOperation(input: unknown): Promise<Workben
+     const auth = await requireActiveUser();
+     if (auth.profile?.global_role !== 'platform_owner') return { ok: false, message: '仅平台负责人可以管理智能教材。' };
+     const value = inputSchema.parse(input);
++    if (value.operation === 'save-grammar') {
++      const {operation:_,...input} = value;
++      await saveChapterOneGrammar(input);
++      return {ok:true,kind:'save'};
++    }
+     if (value.operation === 'begin') {
+       const result = await beginChapterOneEditing();
+       return { ok: true, kind: 'begin', state: result.state, inflight: result.inflight };
+@@ -51,11 +58,12 @@ export async function chapterWorkbenchOperation(input: unknown): Promise<Workben
+         expected: await currentPointer(), steps: bundle.manifest.steps.length, activities: bundle.manifest.activityRefs.length } };
+     }
+     const { source: s, dependencies: d } = await captureChapterOnePublication(createAdminClient(), auth.user.id, chapterOnePublicationScope);
++    const grammarCards = grammarAuthoringCards(d);
+     const data: ChapterWorkbenchData = { title: s.chapter.title['zh-CN'], version: s.version.version_number,
+       pointer: await currentPointer(), steps: [...s.modules].sort((a,b)=>a.sort_order-b.sort_order).map(module => ({
+         id: module.id, title: chapterOneStepTitle(module.id,module.title['zh-CN']), description: module.description['zh-CN'],
+         nodes: s.nodes.filter(n=>n.module_id===module.id).sort((a,b)=>a.sort_order-b.sort_order).map(node=>({
+-          id: node.id, title: node.title['zh-CN'], activities: s.activities.filter(a=>a.node_id===node.id).sort((a,b)=>a.sort_order-b.sort_order).map(a=>{
++          id: node.id, title: node.title['zh-CN'], grammarCards:grammarCards.filter(c=>c.nodeId===node.id), activities: s.activities.filter(a=>a.node_id===node.id).sort((a,b)=>a.sort_order-b.sort_order).map(a=>{
+             const answer = z.object({kind:z.literal('index'),value:z.number().int().nonnegative()}).safeParse(d.digital_textbook_activity_secrets.find(secret=>secret.activity_id===a.id)?.answer_key);
+             const editable = a.activity_type==='single_choice' && answer.success && answer.data.value<a.options.length;
+             return {id:a.id,key:a.activity_key,type:a.activity_type,prompt:a.prompt['zh-CN'],koreanPrompt:a.prompt['ko-KR'],instruction:a.instruction['zh-CN'],
+@@ -68,9 +76,9 @@ export async function chapterWorkbenchOperation(input: unknown): Promise<Workben
+     return { ok:true, kind:'read', data };
+   } catch (error) {
+     const message = error instanceof Error ? error.message : '';
+-    if (error instanceof z.ZodError) return {ok:false,message:'输入或数据格式不符合要求；未继续操作。请检查题干和正确选项。'};
++    if (error instanceof z.ZodError) return {ok:false,message:'输入或数据格式不符合要求；未继续操作。请检查正在编辑的教材字段。'};
+     if (message.includes('CONFLICT') || message.includes('CHECK_STALE')) return {ok:false,message:'内容或发布版本已变化。请刷新内容，重新校验后再发布。'};
+-    if (message.includes('EDIT_REJECTED')) return {ok:false,message:'保存被拒绝：请确认已进入编辑状态，且题目及选项仍有效。'};
++    if (message.includes('EDIT_REJECTED')) return {ok:false,message:'保存被拒绝：请确认已进入编辑状态，刷新后核对内容；不会覆盖并发修改。'};
+     if (message.includes('EDIT_WINDOW')) return {ok:false,message:'暂不能进入编辑，请等待在途学习请求结束后重试；不会强制清理请求。'};
+     return {ok:false,message:'读取或发布前置检查未通过。未跳过任何校验，请核对章节、媒体和发布依赖后重试。'};
+   }
+diff --git a/src/features/growth-toolbox/api/chapter-practice-actions.ts b/src/features/growth-toolbox/api/chapter-practice-actions.ts
+index 5b482dd..818fa31 100644
+--- a/src/features/growth-toolbox/api/chapter-practice-actions.ts
++++ b/src/features/growth-toolbox/api/chapter-practice-actions.ts
+@@ -8,7 +8,9 @@ import type { PracticeSnapshotItem } from "@/lib/chapter-practice-binding";
+ export async function reviewChapterPracticeAction(input: {
+   appId: string; chapterId: string; revision: number; snapshot: PracticeSnapshotItem[]; enabled: boolean;
+ }): Promise<{ ok: boolean; message: string }> {
+-  const { supabase } = await requireActiveUser();
++  const auth = await requireActiveUser();
++  if (auth.platformProfile?.global_role !== 'platform_owner' || auth.tenant) return {ok:false,message:'仅平台负责人可以维护教材练习关联。'};
++  const { supabase } = auth;
+   if (!Object.values(STUDENT_APP_IDS).includes(input.appId) || !/^[0-9a-f-]{36}$/i.test(input.chapterId)
+     || !Number.isInteger(input.revision) || input.revision < 0 || typeof input.enabled !== "boolean"
+     || !Array.isArray(input.snapshot) || JSON.stringify(input.snapshot).length > 500_000) {
+diff --git a/src/features/growth-toolbox/components/chapter-practice-binding.tsx b/src/features/growth-toolbox/components/chapter-practice-binding.tsx
+index 355235e..5f80e8f 100644
+--- a/src/features/growth-toolbox/components/chapter-practice-binding.tsx
++++ b/src/features/growth-toolbox/components/chapter-practice-binding.tsx
+@@ -10,6 +10,7 @@ const fieldNames: Record<string, string> = {
+   ko: "韩语", zh: "中文", pos: "词性", collocation: "搭配", transcription: "音标",
+   title: "语法", meaning: "含义", cases: "收音情况", batchim: "收音", conjugation: "变化",
+   rows: "形态", form: "形式", combination: "组合", audio: "音频", examples: "例句", caution: "注意事项",
++  function: "功能说明", rules: "规则", source: "来源", comparison: "对比说明", 'zh-CN': "中文", 'ko-KR': "韩文", audioId: "音频引用", audioStatus: "音频状态",
+ };
+ function showValue(value: unknown): string {
+   if (Array.isArray(value)) return value.map(showValue).join("\n");
+diff --git a/src/features/growth-toolbox/components/growth-toolbox-listing.tsx b/src/features/growth-toolbox/components/growth-toolbox-listing.tsx
+index ef01d5e..8cac441 100644
+--- a/src/features/growth-toolbox/components/growth-toolbox-listing.tsx
++++ b/src/features/growth-toolbox/components/growth-toolbox-listing.tsx
+@@ -30,7 +30,7 @@ export default async function GrowthToolboxListing({
+   const result = await getGrowthToolboxManagementData(studentAppId);
+   const textbookResult = await getDigitalTextbookManagementData(studentAppId);
+   const { supabase } = await requireActiveUser();
+-  const bindingResult = chapterId && result.canManage ? await supabase.from("chapter_practice_bindings")
++  const bindingResult = chapterId && textbookResult.canManage ? await supabase.from("chapter_practice_bindings")
+     .select("id,chapter_id,version_id,revision,is_enabled,snapshot,reviewed_at")
+     .eq("student_app_id", studentAppId).eq("chapter_id", chapterId).maybeSingle() : null;
+   const currentSnapshot = chapterId && !textbookResult.hasError ? chapterPracticeSnapshot(textbookResult.courses, chapterId) : null;
+@@ -72,13 +72,13 @@ export default async function GrowthToolboxListing({
+         />
+       </ReadOnlySection>
+       } chapter={<div className="space-y-4">
+-      {chapterId && result.canManage && <ChapterPracticeBindingPanel
++      {chapterId && textbookResult.canManage && <ChapterPracticeBindingPanel
+         key={`${chapterId}:${binding?.revision ?? 0}:${JSON.stringify(currentSnapshot)}`}
+         appId={studentAppId} chapterId={chapterId} current={currentSnapshot}
+         binding={binding} available={Boolean(bindingResult && !bindingResult.error && !textbookResult.hasError && !result.hasError)}
+       />}
+-      {!chapterId && result.canManage && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
+-      {!result.canManage && <ManagementNotice>当前权限仅可查看独立练习库和工具设置，不能管理章节练习关联。</ManagementNotice>}
++      {!chapterId && textbookResult.canManage && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
++      {!textbookResult.canManage && <ManagementNotice>仅平台负责人可以管理教材练习关联；独立练习库和工具设置沿用各自权限。</ManagementNotice>}
+       </div>} library={<div className="space-y-5">
+       <CardTitleWithHint title="独立练习库" headingLevel={2}
+         description={`这里展示当前应用的全部独立资源，不随上方章节筛选，也不代表已关联到本章。${practiceSourceNotice}`}
+diff --git a/src/features/growth-toolbox/components/referenced-grammar-materials.tsx b/src/features/growth-toolbox/components/referenced-grammar-materials.tsx
+index 124ef90..082e3c0 100644
+--- a/src/features/growth-toolbox/components/referenced-grammar-materials.tsx
++++ b/src/features/growth-toolbox/components/referenced-grammar-materials.tsx
+@@ -1,16 +1,18 @@
+ import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+ import type { PracticeSnapshotItem } from "@/lib/chapter-practice-binding";
++import { textbookGrammarCardSchema } from '@/lib/textbook-grammar-content';
++import { GrammarCardContent } from '@/features/digital-textbook/components/grammar-card-content';
+ 
+ const string = (value: unknown) => typeof value === "string" ? value : "";
+ function rows(value: unknown): Record<string, unknown>[] {
+   return Array.isArray(value) ? value.filter(item => item && typeof item === "object" && !Array.isArray(item)) : [];
+ }
+ export function ReferencedGrammarMaterials({ items }: { items: PracticeSnapshotItem[] }) {
+-  const grammar = items.filter(item => item.kind === "grammar" && string(item.value.title));
++  const grammar = items.filter(item => item.kind === "grammar" && (string(item.value.title) || textbookGrammarCardSchema.safeParse(item.value).success));
+   if (!grammar.length) return null;
+   return <section className="space-y-3">
+     <CardTitleWithHint headingLevel={2} title="本章语法复习" description="先复习老师已确认的教材语法，再完成下方练习。阅读材料不计入正式题目成绩。" />
+-    {grammar.map((item, index) => <details key={`${item.nodeId}:${index}`} className="rounded-xl border border-[var(--border)] p-4">
++    {grammar.map((item, index) => textbookGrammarCardSchema.safeParse(item.value).success ? <GrammarCardContent key={`${item.nodeId}:${index}`} card={textbookGrammarCardSchema.parse(item.value)}/> : <details key={`${item.nodeId}:${index}`} className="rounded-xl border border-[var(--border)] p-4">
+       <summary className="cursor-pointer font-semibold">{string(item.value.title)}</summary>
+       <div className="space-y-3 pt-3 text-sm leading-6">
+         <p className="whitespace-pre-wrap">{string(item.value.meaning)}</p>
+diff --git a/src/lib/chapter-practice-binding.ts b/src/lib/chapter-practice-binding.ts
+index adc0320..49b843d 100644
+--- a/src/lib/chapter-practice-binding.ts
++++ b/src/lib/chapter-practice-binding.ts
+@@ -14,7 +14,7 @@ export function chapterPracticeSnapshot(courses: DigitalTextbookCourse[], chapte
+     if (book.status !== "published" || chapter.status !== "published" || chapter.versionStatus !== "published") return null;
+     const groups = [
+       ...chapter.nodes.map(node => ({ nodeId: node.id, kind: "vocabulary" as const, values: node.vocabulary })),
+-      ...chapter.grammarNodes.map(node => ({ nodeId: node.id, kind: "grammar" as const, values: node.items })),
++      ...chapter.grammarNodes.map(node => ({ nodeId: node.id, kind: "grammar" as const, values: [...node.items, ...(node.cards ?? [])] })),
+     ].sort((a, b) => a.nodeId.localeCompare(b.nodeId) || a.kind.localeCompare(b.kind));
+     return groups.flatMap(group => group.values.map(value => ({ nodeId: group.nodeId, kind: group.kind, value: structuredClone(value) as unknown as Record<string, unknown> })));
+   }
+diff --git a/src/lib/smart-textbook-publishing/artifact.server.ts b/src/lib/smart-textbook-publishing/artifact.server.ts
+index 6653c12..3d585f4 100644
+--- a/src/lib/smart-textbook-publishing/artifact.server.ts
++++ b/src/lib/smart-textbook-publishing/artifact.server.ts
+@@ -8,6 +8,7 @@ import { validatePrivateBindings } from '../smart-textbook-legacy-adapter/bindin
+ import { validateLessonManifestV1 } from '../smart-textbook-runtime-v1/validator';
+ import type { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server';
+ import identities from './assets/v1/chapter-one-identities.server';
++import { publicationIdentities } from './grammar-identities.server';
+ import history from './assets/v1/chapter-one-service-identities.server';
+ import { verifyMediaPublicationPolicy } from './media-policy.server';
+ import { dependencyCaptureSchema, type DependencyCapture } from './capture.server';
+@@ -41,7 +42,7 @@ export function dependencyPins(p: SnapshotPrivate) {
+     source: Object.fromEntries(Object.entries(s).map(([key,value])=>[key,digest(value)])),
+     serviceEvidenceDigest: digest(p.evidence), mediaRefsDigest: digest(m.mediaRefs),
+     teachingRevisions: s.teachingVersions.map(v=>({id:v.id,number:v.version_number})),
+-    sourceRevision: digest({source:s,profile,identityMap:identities}) };
++    sourceRevision: digest({source:s,profile,identityMap:publicationIdentities(p.dependencies?.digital_textbook_nodes ?? [])}) };
+ }
+ 
+ /** Server compiler output envelope; not a second Manifest or authoring schema.
+diff --git a/src/lib/smart-textbook-publishing/grammar-authoring.server.ts b/src/lib/smart-textbook-publishing/grammar-authoring.server.ts
+new file mode 100644
+index 0000000..7d12413
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/grammar-authoring.server.ts
+@@ -0,0 +1,46 @@
++import 'server-only';
++import { z } from 'zod';
++import { requireActiveUser } from '../auth';
++import { createAdminClient } from '../supabase/admin';
++import { readTextbookGrammarCards, grammarTextEditSchema } from '../textbook-grammar-content';
++import { digest, rebindLegacyIdentity } from '../smart-textbook-legacy-adapter/identity.server';
++import { publicationIdentities, grammarIdentityOverridesSchema } from './grammar-identities.server';
++import { captureChapterOnePublication, type DependencyCapture } from './capture.server';
++import { chapterOnePublicationScope } from './loader.server';
++
++export function grammarAuthoringCards(dependencies: DependencyCapture) {
++  const map = publicationIdentities(dependencies.digital_textbook_nodes);
++  return dependencies.digital_textbook_nodes.flatMap(n => readTextbookGrammarCards(n.content as Record<string,unknown>).map(card => {
++    const entries = map.entries.filter(e => e.owner === n.id && e.collection === 'content.grammarCards' && e.fingerprint === digest(card));
++    if (entries.length !== 1) throw Error('GRAMMAR_IDENTITY_UNRESOLVED');
++    return { nodeId: String(n.id), cardId: entries[0].id, expected: digest({content:n.content,identities:n.authoring_grammar_identities ?? []}), card };
++  }));
++}
++export const grammarSaveSchema = z.strictObject({
++  cardId: z.string().uuid(), expected: z.string().regex(/^[a-f0-9]{64}$/), patch: grammarTextEditSchema,
++});
++/** No browser row/index/media/ledger payload. Reauthorization + one captured
++ * source; SQL compares node AND mapping and commits both under authoring lock. */
++export async function saveChapterOneGrammar(input: unknown) {
++  const auth = await requireActiveUser();
++  if (auth.profile?.global_role !== 'platform_owner') throw Error('PUBLICATION_OWNER_ONLY');
++  const value = grammarSaveSchema.parse(input), admin = createAdminClient();
++  const { dependencies } = await captureChapterOnePublication(admin,auth.user.id,chapterOnePublicationScope);
++  const card = grammarAuthoringCards(dependencies).find(c => c.cardId === value.cardId);
++  if (!card || card.expected !== value.expected) throw Error('GRAMMAR_EDIT_CONFLICT');
++  const row = dependencies.digital_textbook_nodes.find(n=>n.id === card.nodeId)!;
++  const nextCard = { ...card.card, ...value.patch };
++  const map = rebindLegacyIdentity(publicationIdentities(dependencies.digital_textbook_nodes),card.cardId,nextCard);
++  const prior = grammarIdentityOverridesSchema.parse(row.authoring_grammar_identities ?? []);
++  const next = [...prior.filter(e => e.id !== card.cardId), {id:card.cardId,fingerprint:digest(nextCard)}].sort((a,b)=>a.id.localeCompare(b.id));
++  // Validate the projected ledger again before writing. All descendants remain
++  // unchanged: no rules, example text/audio, comparison, add/delete or reorder.
++  if (!map.entries.some(e=>e.id===card.cardId&&e.fingerprint===digest(nextCard))) throw Error('GRAMMAR_IDENTITY_INVALID');
++  const result = await admin.rpc('edit_runtime_grammar_card_v1', {
++    p_actor: auth.user.id, p_scope:chapterOnePublicationScope, p_node:card.nodeId,
++    p_expected_content:row.content, p_expected_identities:prior,
++    p_old_card:card.card, p_patch:value.patch, p_identities:next,
++  });
++  if (result.error || result.data?.saved !== true) throw Error('GRAMMAR_EDIT_REJECTED');
++  return {saved:true as const};
++}
+diff --git a/src/lib/smart-textbook-publishing/grammar-identities.server.ts b/src/lib/smart-textbook-publishing/grammar-identities.server.ts
+new file mode 100644
+index 0000000..fbf0b3a
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/grammar-identities.server.ts
+@@ -0,0 +1,21 @@
++import 'server-only';
++import { z } from 'zod';
++import frozen from './assets/v1/chapter-one-identities.server';
++import { identityMapSchema, type LegacyIdentityMap } from '../smart-textbook-legacy-adapter/identity.server';
++
++export const grammarIdentityOverridesSchema = z.array(z.strictObject({
++  id: z.string().uuid(), fingerprint: z.string().regex(/^[a-f0-9]{64}$/),
++}));
++/** Captured together with the node, fenced and sealed in private dependencies.
++ * This can rebind existing card values, never allocate a new Runtime identity. */
++export function publicationIdentities(nodes: { id?: unknown; authoring_grammar_identities?: unknown }[]): LegacyIdentityMap {
++  const ledger = identityMapSchema.parse(structuredClone(frozen));
++  const seen = new Set<string>();
++  for (const node of nodes) for (const change of grammarIdentityOverridesSchema.parse(node.authoring_grammar_identities ?? [])) {
++    const entry = ledger.entries.find(e => e.id === change.id && e.owner === node.id && e.collection === 'content.grammarCards');
++    if (!entry || seen.has(entry.id)) throw Error('GRAMMAR_IDENTITY_INVALID');
++    seen.add(entry.id); entry.fingerprint = change.fingerprint;
++  }
++  for (const e of ledger.entries) if (ledger.entries.filter(other => other.owner === e.owner && other.collection === e.collection && other.fingerprint === e.fingerprint).length !== 1) throw Error('GRAMMAR_IDENTITY_AMBIGUOUS');
++  return ledger;
++}
+diff --git a/src/lib/smart-textbook-publishing/grammar-media-proof.server.ts b/src/lib/smart-textbook-publishing/grammar-media-proof.server.ts
+new file mode 100644
+index 0000000..eb63b6f
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/grammar-media-proof.server.ts
+@@ -0,0 +1,16 @@
++import 'server-only';
++import { digest } from '../smart-textbook-legacy-adapter/identity.server';
++import { readTextbookGrammarCards } from '../textbook-grammar-content';
++
++/** Re-audited against the frozen Chapter 1 node. learning-tools.server.ts
++ * resolves examples[].audioId and validates metadata.script === examples[].ko;
++ * playback never consumes form/function/caution/source. Rules, example text,
++ * IDs/status, ordering and ALL other node fields remain in this projection.
++ * This is not an exemption from the published dependency fence. */
++export function unchangedGrammarMedia(node:{id:string;content:unknown},originalNodeDigest:string|null):boolean {
++  if(node.id!=='e5078937-9a9d-4fb7-b92f-a6fe54fa7633'||originalNodeDigest!=='8da8793aff849b949c25b84cc1040e1ef6fd18e3cb26322e666c23e27e7ad289')return false;
++  const content=node.content as Record<string,unknown>;
++  const cards=readTextbookGrammarCards(content);
++  const projected={...content,grammarCards:cards.map(({form:_,function:f,caution:c,source:s,...mediaAndOtherContent})=>mediaAndOtherContent)};
++  return digest(projected)==='d668480a2d047446d96acf9fc0cabd7137ee3ce3ab636b5be0c3eddb94f908ba';
++}
+diff --git a/src/lib/smart-textbook-publishing/media-policy.server.ts b/src/lib/smart-textbook-publishing/media-policy.server.ts
+index 27c22b6..716db88 100644
+--- a/src/lib/smart-textbook-publishing/media-policy.server.ts
++++ b/src/lib/smart-textbook-publishing/media-policy.server.ts
+@@ -3,6 +3,7 @@ import { canonical, digest } from '../smart-textbook-legacy-adapter/identity.ser
+ import type { LegacyChapterOneSource } from '../smart-textbook-legacy-adapter/source.server';
+ import type { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server';
+ import audit from './assets/v1/chapter-one-media-audit.server';
++import { unchangedGrammarMedia } from './grammar-media-proof.server';
+ 
+ type Result = ReturnType<typeof finalizeChapterOneNonUiReadiness>;
+ /** All 75 references remain. Source readiness and stable learning IDs remain.
+@@ -19,7 +20,7 @@ export function mediaPublicationAudit(source: LegacyChapterOneSource, result: Re
+     // actual resource identity, not an unrelated chapter title/compiler revision.
+     const {revision:_,...resource}=binding;
+     if (!proof || proof.readiness !== ref.readiness || digest(asset ?? resource) !== proof.resourceDigest ||
+-      (node ? digest(node.content) : null) !== proof.nodeDigest) throw Error(`PUBLICATION_MEDIA_REAUDIT_REQUIRED:${ref.id}`);
++      ((node ? digest(node.content) : null) !== proof.nodeDigest && !(node&&unchangedGrammarMedia(node,proof.nodeDigest)))) throw Error(`PUBLICATION_MEDIA_REAUDIT_REQUIRED:${ref.id}`);
+     return {...proof, ...(proof.rule === 'required-ready' ? {} : { admission: {
+       revision:'chapter-one-media/1' as const, rule:proof.rule, evidenceDigest:digest(proof),
+     }})};
+diff --git a/src/lib/smart-textbook-publishing/publisher.server.ts b/src/lib/smart-textbook-publishing/publisher.server.ts
+index ed7cce0..99cba4f 100644
+--- a/src/lib/smart-textbook-publishing/publisher.server.ts
++++ b/src/lib/smart-textbook-publishing/publisher.server.ts
+@@ -7,7 +7,7 @@ import { chapterOnePublicationScope } from './loader.server';
+ import { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server';
+ import { packageSnapshot, draftFromSnapshot, validateSnapshotBundle, type PublicationBundle, type PublicationScope } from './artifact.server';
+ import { publicationRepository, type PublicationPointer } from './repository.server';
+-import identities from './assets/v1/chapter-one-identities.server';
++import { publicationIdentities } from './grammar-identities.server';
+ import history from './assets/v1/chapter-one-service-identities.server';
+ import { digest } from '../smart-textbook-legacy-adapter/identity.server';
+ 
+@@ -17,7 +17,7 @@ async function owner(){const auth=await requireActiveUser();if(auth.profile?.glo
+ export async function compileChapterOnePublication(){
+   const actor=await owner(),admin=createAdminClient();
+   const {source,evidence,dependencies}=await captureChapterOnePublication(admin,actor,chapterOnePublicationScope);
+-  const compiled=finalizeChapterOneNonUiReadiness(source,identities,history,evidence);
++  const compiled=finalizeChapterOneNonUiReadiness(source,publicationIdentities(dependencies.digital_textbook_nodes),history,evidence);
+   return packageSnapshot(source,evidence,withMediaPublicationPolicy(source,compiled,digest(dependencies)),dependencies);
+ }
+ export async function validatePublication(bundle:PublicationBundle){await owner();return validateSnapshotBundle(bundle);}
+diff --git a/src/lib/textbook-grammar-content.ts b/src/lib/textbook-grammar-content.ts
+new file mode 100644
+index 0000000..36e197f
+--- /dev/null
++++ b/src/lib/textbook-grammar-content.ts
+@@ -0,0 +1,24 @@
++import { z } from 'zod';
++
++const text = z.string().max(12000);
++export const grammarLocalizedSchema = z.strictObject({ 'zh-CN': text, 'ko-KR': text });
++/** Current teaching cards and the independent/legacy grammar library are NOT
++ * interchangeable persistence models. Never normalize a card into `grammar`. */
++export const textbookGrammarCardSchema = z.strictObject({
++  form: text.min(1), function: grammarLocalizedSchema,
++  rules: z.array(text),
++  examples: z.array(z.strictObject({ ko: text, zh: text, audioId: text, audioStatus: text })),
++  caution: grammarLocalizedSchema, source: grammarLocalizedSchema,
++  comparison: grammarLocalizedSchema.optional(),
++});
++export type TextbookGrammarCard = z.infer<typeof textbookGrammarCardSchema>;
++export function readTextbookGrammarCards(content: Record<string, unknown> | null): TextbookGrammarCard[] {
++  if (!content || !Object.hasOwn(content, 'grammarCards')) return [];
++  // Unknown/malformed content is an error, never an empty inventory.
++  return z.array(textbookGrammarCardSchema).parse(content.grammarCards);
++}
++export const grammarTextEditSchema = z.strictObject({
++  form: text.trim().min(1), function: grammarLocalizedSchema,
++  caution: grammarLocalizedSchema, source: grammarLocalizedSchema,
++});
++export type GrammarTextEdit = z.infer<typeof grammarTextEditSchema>;
+diff --git a/supabase/migrations/202609130001_textbook_grammar_authoring.sql b/supabase/migrations/202609130001_textbook_grammar_authoring.sql
+new file mode 100644
+index 0000000..af3ba5b
+--- /dev/null
++++ b/supabase/migrations/202609130001_textbook_grammar_authoring.sql
+@@ -0,0 +1,60 @@
++begin;
++
++-- No backfill/identity allocation, no content seed, no learner data changes.
++-- Captured by the existing SELECT to_jsonb(node) dependency capture. The existing
++-- node dependency fence covers this column too; it is NOT an audit exemption.
++alter table public.digital_textbook_nodes add column authoring_grammar_identities jsonb not null default '[]'::jsonb
++  check (jsonb_typeof(authoring_grammar_identities) = 'array');
++
++-- An absent/empty identity override has exactly the frozen-v1 meaning. Only
++-- that default is normalized; nonempty overrides remain semantic dependencies.
++create or replace function runtime_publish_private.semantic_capture(p_capture jsonb) returns jsonb
++ language plpgsql immutable set search_path='' as $$
++declare result jsonb:=p_capture; name text; rows jsonb;
++begin
++ foreach name in array array['digital_textbooks','digital_textbook_versions','digital_textbook_chapters','chapter_tests'] loop
++  select coalesce(jsonb_agg(r-'updated_at' order by (r-'updated_at')::text),'[]'::jsonb) into rows from jsonb_array_elements(p_capture->name) r;
++  result:=jsonb_set(result,array[name],rows);
++ end loop;
++ select coalesce(jsonb_agg(r order by r::text),'[]'::jsonb) into rows from (
++  select case when e->'authoring_grammar_identities'='[]'::jsonb then e-'authoring_grammar_identities' else e end r
++  from jsonb_array_elements(p_capture->'digital_textbook_nodes') e
++ ) normalized;
++ return jsonb_set(result,'{digital_textbook_nodes}',rows);
++end $$;
++
++create function public.edit_runtime_grammar_card_v1(
++ p_actor uuid, p_scope jsonb, p_node uuid, p_expected_content jsonb,
++ p_expected_identities jsonb, p_old_card jsonb, p_patch jsonb, p_identities jsonb
++) returns jsonb language plpgsql security definer set search_path='' as $$
++declare n public.digital_textbook_nodes%rowtype; next_cards jsonb; matches integer;
++begin
++ perform runtime_publish_private.owner_guard(p_actor);
++ perform runtime_publish_private.authoring_lock();
++ if not exists(select 1 from runtime_publish_private.authoring_control where textbook_id=(p_scope->>'textbookId')::uuid and state='editing') then raise exception 'EDIT_WINDOW_REQUIRED'; end if;
++ select node.* into n from public.digital_textbook_nodes node
++ join public.digital_textbook_modules m on m.id=node.module_id
++ join public.digital_textbook_chapters c on c.id=m.chapter_id
++ join public.digital_textbook_versions v on v.id=c.version_id
++ where node.id=p_node and m.module_code='grammar' and c.id=(p_scope->>'chapterId')::uuid
++ and v.id=(p_scope->>'versionId')::uuid and v.textbook_id=(p_scope->>'textbookId')::uuid for update of node;
++ if not found or n.content is distinct from p_expected_content or n.authoring_grammar_identities is distinct from p_expected_identities then raise exception 'GRAMMAR_EDIT_CONFLICT'; end if;
++ if jsonb_typeof(n.content->'grammarCards') is distinct from 'array' or n.content ? 'grammar' then raise exception 'GRAMMAR_FORMAT_CONFLICT'; end if;
++ if p_patch is null or jsonb_typeof(p_patch) is distinct from 'object' or (p_patch-'form'-'function'-'caution'-'source')<>'{}'::jsonb
++ or not (p_patch ?& array['form','function','caution','source']) or jsonb_typeof(p_patch->'form') is distinct from 'string' or length(btrim(p_patch->>'form'))=0 then raise exception 'GRAMMAR_EDIT_FIELDS'; end if;
++ if exists(select 1 from jsonb_each(p_patch-'form') e where jsonb_typeof(e.value) is distinct from 'object'
++ or (e.value-'zh-CN'-'ko-KR')<>'{}'::jsonb or jsonb_typeof(e.value->'zh-CN') is distinct from 'string' or jsonb_typeof(e.value->'ko-KR') is distinct from 'string') then raise exception 'GRAMMAR_EDIT_LOCALE'; end if;
++ if p_identities is null or jsonb_typeof(p_identities) is distinct from 'array' then raise exception 'GRAMMAR_IDENTITY_SHAPE'; end if;
++ if exists(select 1 from jsonb_array_elements(p_identities) e where jsonb_typeof(e) is distinct from 'object' or (e-'id'-'fingerprint')<>'{}'::jsonb
++ or coalesce(e->>'id','') !~ '^[a-f0-9-]{36}$' or coalesce(e->>'fingerprint','') !~ '^[a-f0-9]{64}$')
++ or (select count(*)<>count(distinct e->>'id') from jsonb_array_elements(p_identities)e) then raise exception 'GRAMMAR_IDENTITY_SHAPE'; end if;
++ select count(*) into matches from jsonb_array_elements(n.content->'grammarCards') e where e=p_old_card;
++ if matches<>1 then raise exception 'GRAMMAR_CARD_AMBIGUOUS'; end if;
++ select jsonb_agg(case when e=p_old_card then e||p_patch else e end order by ord) into next_cards
++ from jsonb_array_elements(n.content->'grammarCards') with ordinality a(e,ord);
++ update public.digital_textbook_nodes set content=jsonb_set(n.content,'{grammarCards}',next_cards),authoring_grammar_identities=p_identities where id=p_node;
++ return jsonb_build_object('saved',true);
++end $$;
++revoke all on function public.edit_runtime_grammar_card_v1(uuid,jsonb,uuid,jsonb,jsonb,jsonb,jsonb,jsonb) from public,anon,authenticated;
++grant execute on function public.edit_runtime_grammar_card_v1(uuid,jsonb,uuid,jsonb,jsonb,jsonb,jsonb,jsonb) to service_role;
++commit;
+diff --git a/supabase/migrations/202609130002_textbook_grammar_practice_binding.sql b/supabase/migrations/202609130002_textbook_grammar_practice_binding.sql
+new file mode 100644
+index 0000000..75c15d6
+--- /dev/null
++++ b/supabase/migrations/202609130002_textbook_grammar_practice_binding.sql
+@@ -0,0 +1,117 @@
++begin;
++-- Mirrors textbookGrammarCardSchema. Do not approve malformed/unknown card
++-- content merely because it contains a nonempty form or title.
++create function private.valid_textbook_grammar_card(p jsonb) returns boolean
++ language plpgsql immutable set search_path='' as $$
++declare key text; row jsonb;
++begin
++ if p is null or jsonb_typeof(p) is distinct from 'object' or
++ (p-'form'-'function'-'rules'-'examples'-'caution'-'source'-'comparison')<>'{}'::jsonb or
++ not (p ?& array['form','function','rules','examples','caution','source']) or
++ jsonb_typeof(p->'form') is distinct from 'string' or length(p->>'form') not between 1 and 12000 then return false; end if;
++ foreach key in array array['function','caution','source','comparison'] loop
++  if key='comparison' and not (p ? key) then continue; end if;
++  row:=p->key;
++  if jsonb_typeof(row) is distinct from 'object' or (row-'zh-CN'-'ko-KR')<>'{}'::jsonb or
++   jsonb_typeof(row->'zh-CN') is distinct from 'string' or jsonb_typeof(row->'ko-KR') is distinct from 'string' or
++   length(row->>'zh-CN')>12000 or length(row->>'ko-KR')>12000 then return false; end if;
++ end loop;
++ if jsonb_typeof(p->'rules') is distinct from 'array' or jsonb_typeof(p->'examples') is distinct from 'array' then return false; end if;
++ for row in select value from jsonb_array_elements(p->'rules') loop
++  if jsonb_typeof(row) is distinct from 'string' or length(row#>>'{}')>12000 then return false; end if;
++ end loop;
++ for row in select value from jsonb_array_elements(p->'examples') loop
++  if jsonb_typeof(row) is distinct from 'object' or (row-'ko'-'zh'-'audioId'-'audioStatus')<>'{}'::jsonb then return false; end if;
++  foreach key in array array['ko','zh','audioId','audioStatus'] loop
++   if jsonb_typeof(row->key) is distinct from 'string' or length(row->>key)>12000 then return false; end if;
++  end loop;
++ end loop;
++ return true;
++end $$;
++revoke all on function private.valid_textbook_grammar_card(jsonb) from public,anon,authenticated,service_role;
++-- Existing CAS/row locks and immutable approved snapshot semantics retained.
++-- No binding created, no independent library copied, no teaching data changed.
++create or replace function public.review_chapter_practice_binding(
++  p_app_id uuid, p_chapter_id uuid, p_expected_revision integer,
++  p_expected_snapshot jsonb, p_enabled boolean
++) returns uuid
++language plpgsql security definer set search_path = '' as $$
++declare
++  source_version uuid;
++  current_snapshot jsonb;
++  result_id uuid;
++begin
++  if auth.uid() is null or not coalesce(private.is_platform_owner(), false) then
++    raise exception '没有权限维护教材练习关联';
++  end if;
++  if p_enabled is null or p_expected_revision is null or p_expected_revision < 0 then
++    raise exception '无效的复核请求';
++  end if;
++  if not p_enabled then
++    update public.chapter_practice_bindings set is_enabled = false,
++      revision = revision + 1, reviewed_at = now(), reviewed_by = auth.uid()
++    where student_app_id = p_app_id and chapter_id = p_chapter_id and revision = p_expected_revision
++    returning id into result_id;
++    if result_id is null then raise exception '关联已被修改，请刷新后重新核对'; end if;
++    return result_id;
++  end if;
++
++  perform runtime_publish_private.authoring_lock();
++  -- Lock authoring rows so an in-place edit cannot slip between comparison and approval.
++  select v.id into source_version
++  from public.digital_textbook_chapters c
++  join public.digital_textbook_versions v on v.id = c.version_id
++  join public.digital_textbooks t on t.id = v.textbook_id
++  where c.id = p_chapter_id and t.student_app_id = p_app_id
++    and c.status = 'published' and v.status = 'published' and t.status = 'published'
++  for share of c, v, t;
++  if source_version is null then raise exception '只能关联当前应用已发布的教材章节'; end if;
++  perform m.id from public.digital_textbook_modules m where m.chapter_id = p_chapter_id for share;
++  perform n.id from public.digital_textbook_nodes n
++    join public.digital_textbook_modules m on m.id = n.module_id
++    where m.chapter_id = p_chapter_id for share of n;
++
++  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
++    where m.chapter_id=p_chapter_id and m.module_code='grammar' and n.content ? 'grammarCards'
++    and jsonb_typeof(n.content->'grammarCards') is distinct from 'array') then raise exception '语法卡格式无效，请核对教材来源'; end if;
++  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id
++    cross join lateral jsonb_array_elements(case when jsonb_typeof(n.content->'grammarCards')='array' then n.content->'grammarCards' else '[]'::jsonb end)e
++    where m.chapter_id=p_chapter_id and m.module_code='grammar' and not private.valid_textbook_grammar_card(e)) then raise exception '语法卡格式无效，请核对教材来源'; end if;
++
++  select coalesce(jsonb_agg(jsonb_build_object('nodeId', items.node_id, 'kind', items.kind, 'value', items.value)
++    order by items.node_id, items.kind, items.ordinality), '[]'::jsonb) into current_snapshot
++  from (
++    select n.id as node_id, m.module_code as kind, elem.value, elem.ordinality
++    from public.digital_textbook_nodes n
++    join public.digital_textbook_modules m on m.id = n.module_id
++    cross join lateral jsonb_array_elements(
++      (case when jsonb_typeof(n.content -> m.module_code) = 'array' then n.content -> m.module_code else '[]'::jsonb end)
++      || (case when m.module_code='grammar' and jsonb_typeof(n.content->'grammarCards')='array' then n.content->'grammarCards' else '[]'::jsonb end)
++    ) with ordinality elem(value, ordinality)
++    where m.chapter_id = p_chapter_id and m.module_code in ('vocabulary', 'grammar')
++      and jsonb_typeof(elem.value) = 'object'
++      and case when m.module_code = 'vocabulary' then
++        coalesce(elem.value->>'ko', '') <> '' or coalesce(elem.value->>'zh', '') <> ''
++      else coalesce(elem.value->>'title', '') <> '' or coalesce(elem.value->>'form','') <> '' end
++  ) items;
++  if current_snapshot = '[]'::jsonb or current_snapshot is distinct from p_expected_snapshot then
++    raise exception '教材内容已变化或为空，请刷新并重新核对后再确认';
++  end if;
++  if p_expected_revision = 0 then
++    insert into public.chapter_practice_bindings (student_app_id, chapter_id, version_id, snapshot, reviewed_by)
++    values (p_app_id, p_chapter_id, source_version, current_snapshot, auth.uid())
++    on conflict (student_app_id, chapter_id) do nothing returning id into result_id;
++  else
++    update public.chapter_practice_bindings set snapshot = current_snapshot, version_id = source_version,
++      is_enabled = true, revision = revision + 1, reviewed_at = now(), reviewed_by = auth.uid()
++    where student_app_id = p_app_id and chapter_id = p_chapter_id and revision = p_expected_revision
++    returning id into result_id;
++  end if;
++  if result_id is null then raise exception '关联已被修改，请刷新后重新核对'; end if;
++  return result_id;
++end;
++$$;
++revoke all on function public.review_chapter_practice_binding(uuid, uuid, integer, jsonb, boolean) from public;
++grant execute on function public.review_chapter_practice_binding(uuid, uuid, integer, jsonb, boolean) to authenticated;
++
++commit;
+diff --git a/tests/course-catalog-management-ui.test.mjs b/tests/course-catalog-management-ui.test.mjs
+index f44e0c7..fe6ae87 100644
+--- a/tests/course-catalog-management-ui.test.mjs
++++ b/tests/course-catalog-management-ui.test.mjs
+@@ -50,33 +50,37 @@ test("课程结构与教材制作具有明确命名和双向入口", async () =>
+     "utf8",
+   );
+   const textbookListing = await readFile(
+-    new URL("src/features/digital-textbook/components/digital-textbook-listing.tsx", root),
++    new URL("src/features/digital-textbook/components/textbook-studio.tsx", root),
+     "utf8",
+   );
+ 
+   assert.match(workspace, /title: "课程结构"/);
+   assert.match(workspace, /title: "教材制作"/);
+   assert.match(courseListing, /进入教材制作/);
+-  assert.match(textbookListing, /返回课程结构/);
++  assert.match(textbookListing, /查看本章课程结构/);
++  assert.match(textbookListing, /encodeURIComponent\(selected.chapterId\)/);
+ });
+ 
+-test("教材制作列表合并内容统计和三级发布状态", async () => {
+-  const columns = await readFile(
+-    new URL("src/features/digital-textbook/components/digital-textbook-table/columns.tsx", root),
++test("教材制作工作区保留三级状态数据并区分内容、发布与设置", async () => {
++  const listing = await readFile(
++    new URL("src/features/digital-textbook/components/digital-textbook-listing.tsx", root),
+     "utf8",
+   );
+-  const table = await readFile(
+-    new URL("src/features/digital-textbook/components/digital-textbook-table/index.tsx", root),
++  const studio = await readFile(
++    new URL("src/features/digital-textbook/components/textbook-studio.tsx", root),
+     "utf8",
+   );
+ 
+-  assert.match(columns, /sortableHeader\("教材位置"\)/);
+-  assert.match(columns, /sortableHeader\("内容概况"\)/);
+-  assert.match(columns, /sortableHeader\("发布状态"\)/);
+-  assert.match(columns, />教材<\/dt>/);
+-  assert.match(columns, />版本<\/dt>/);
+-  assert.match(columns, />本章<\/dt>/);
+-  assert.doesNotMatch(columns, /header: sortableHeader\("教材状态"\)/);
+-  assert.doesNotMatch(columns, /header: sortableHeader\("章节状态"\)/);
+-  assert.match(table, /min-w-\[1060px\]/);
++  assert.match(listing, /textbookStatus: textbook.status/);
++  assert.match(listing, /versionStatus: chapter.versionStatus/);
++  assert.match(listing, /chapterStatus: chapter.status/);
++  assert.match(listing, /node.items.length \+ \(node.cards\?\.length \?\? 0\)/);
++  assert.match(studio, /selected.vocabularyCount/);
++  assert.match(studio, /selected.grammarCount/);
++  assert.match(studio, /内容制作/);
++  assert.match(studio, /检查与发布/);
++  assert.match(studio, /教材设置/);
++  assert.match(studio, /不更新新教材快照/);
++  assert.match(studio, /canPublishChapter=\{canPublish\}/);
++  assert.match(studio, /canManage=\{canManage\} canPublishChapter=\{false\} settingsOnly/);
+ });
+diff --git a/tests/digital-textbook-workbench.test.mjs b/tests/digital-textbook-workbench.test.mjs
+index f29c319..06fb208 100644
+--- a/tests/digital-textbook-workbench.test.mjs
++++ b/tests/digital-textbook-workbench.test.mjs
+@@ -13,6 +13,7 @@ test('chapter workbench: authorized real DB edit/check/publish, Chromium author
+   let f, browser, http;
+   try {
+     f=await publishedChapterFixture();
++    await f.db.query(await readFile('supabase/migrations/202609130001_textbook_grammar_authoring.sql','utf8'));
+     const api=await serverModule('src/features/digital-textbook/workbench/service.server.ts',publishedOverrides);
+     const call=api.chapterWorkbenchOperation;
+     let read=await call({operation:'read'});
+@@ -107,6 +108,34 @@ test('chapter workbench: authorized real DB edit/check/publish, Chromium author
+       await page.reload();await page.getByRole('button',{name:'进入编辑',exact:true}).waitFor();
+       await page.getByText('工作台保存后的真实隔离题干',{exact:true}).waitFor();
+     });
++    await t.test('Chromium: real grammar text save, reload and formal republish preserve targets/media',async()=>{
++      await page.getByRole('button',{name:'进入编辑',exact:true}).click();
++      await page.getByRole('button',{name:'已进入编辑',exact:true}).waitFor();
++      await page.getByRole('navigation',{name:'章节学习步骤'}).getByRole('button').nth(2).click();
++      assert.equal(await page.getByRole('button',{name:'编辑语法文字',exact:true}).count(),3);
++      await page.getByRole('button',{name:'编辑语法文字',exact:true}).first().click();
++      assert(await page.getByRole('button',{name:'校验发布',exact:true}).isDisabled());
++      await page.getByLabel('功能说明（中文）',{exact:true}).fill('浏览器保存的语法功能说明');
++      await page.getByRole('button',{name:'保存语法文字',exact:true}).click();
++      await page.getByText('语法文字和稳定身份映射已保存，尚未发布。请重新校验并发布。').waitFor();
++      await page.reload();
++      await page.getByRole('navigation',{name:'章节学习步骤'}).getByRole('button').nth(2).click();
++      const loaded=await call({operation:'read'});
++      assert.equal(loaded.data.steps[2].nodes[0].grammarCards[0].card.function['zh-CN'],'浏览器保存的语法功能说明');
++      for(const width of [375,1440]){
++        await page.setViewportSize({width,height:950});
++        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
++        await page.screenshot({path:`/tmp/uply-workbench-redesign-visual/grammar-${width}.png`,fullPage:true});
++      }
++      await page.getByRole('button',{name:'校验发布',exact:true}).click();
++      await page.getByRole('button',{name:'校验待发布内容',exact:true}).click();
++      await page.getByText('校验通过。发布将再次检查内容和当前发布版本。').waitFor();
++      await page.getByRole('button',{name:'发布校验版本',exact:true}).click();
++      await page.getByText('发布成功。测试账号请返回课程后重新进入；本操作不扩大 Runtime 开放范围。').waitFor();
++      const published=await f.loader.loadPublishedRuntimeSnapshot();
++      assert.deepEqual(published.bundle.manifest.runtimeTargets.map(t=>t.id),before.bundle.manifest.runtimeTargets.map(t=>t.id));
++      assert.deepEqual(published.bundle.privatePayload.source.media,before.bundle.privatePayload.source.media);
++    });
+     await t.test('stale check and CAS reject; out-of-range answer rejected; no private payload',async()=>{
+       assert((await call({operation:'begin'})).ok);
+       const checked=await call({operation:'check'});assert(checked.ok);
+diff --git a/tests/textbook-grammar-consistency.test.mjs b/tests/textbook-grammar-consistency.test.mjs
+new file mode 100644
+index 0000000..8429856
+--- /dev/null
++++ b/tests/textbook-grammar-consistency.test.mjs
+@@ -0,0 +1,169 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {readFile,readdir} from 'node:fs/promises';
++import {publishedChapterFixture,publishedOverrides} from './fixtures/published-chapter-one.mjs';
++import {serverModule} from './fixtures/runtime-4a2.server.mjs';
++import {literal as q,json,service} from './fixtures/recording-v2-postgres.mjs';
++import {source} from './fixtures/runtime-4a.mjs';
++import {chapterPracticeSnapshot} from '../src/lib/chapter-practice-binding.ts';
++
++const migration=p=>readFile(`supabase/migrations/${p}`,'utf8');
++const grammarSource=source.nodes.find(n=>n.node_code==='topic-and-copula');
++// Extract the JSON array from repository content seeds, never execute seed SQL.
++function cardsFromSeed(sql){
++  const at=sql.indexOf('"grammarCards"'),start=sql.indexOf('[',at);
++  if(at<0)throw Error('Missing grammarCards');
++  for(let end=start+1;end<sql.length;end++)if(sql[end]===']')try{return JSON.parse(sql.slice(start,end+1));}catch{}
++  throw Error('Invalid grammarCards seed');
++}
++test('actual 16 chapter seed cards → management reader: 63 total, 3 in chapter 1, not old grammar',async()=>{
++  const files=(await readdir('supabase/migrations')).filter(n=>/chapter_(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen)_golden_smart_textbook/.test(n));
++  assert.equal(files.length,15);
++  const arrays=[grammarSource.content.grammarCards,...await Promise.all(files.map(async f=>cardsFromSeed(await migration(f))))];
++  const chapters=arrays.map((cards,i)=>({id:`chapter-${i}`,version_id:'version',slug:`chapter-${i}`,chapter_number:i+1,status:'published',digital_textbook_modules:[{id:`module-${i}`,chapter_id:`chapter-${i}`,module_code:'grammar',digital_textbook_nodes:[{id:`node-${i}`,module_id:`module-${i}`,content:{grammarCards:cards}}]}]}));
++  chapters[0].digital_textbook_modules.push(...source.modules.filter(m=>m.module_code!=='grammar').map(m=>({...m,chapter_id:'chapter-0',digital_textbook_nodes:source.nodes.filter(n=>n.module_id===m.id)})));
++  chapters.push({id:'overview',version_id:'version',slug:'overview',chapter_number:0,status:'published',digital_textbook_modules:[]});
++  const rows={digital_textbooks:[{id:'book',lesson_id:'lesson',slug:'book',title:'教材',status:'published',lessons:{id:'lesson',title:'课时',course_id:'course'},digital_textbook_versions:[{id:'version',textbook_id:'book',version_number:1,status:'published',digital_textbook_chapters:chapters}]}],courses:[{id:'course',title:'课程'}],growth_toolbox_grammar:[],growth_toolbox_vocabulary:[]};
++  globalThis.__grammarRead={rows,role:'platform_owner'};
++  try{
++    const mod=await serverModule('src/features/digital-textbook/api/service.ts',{
++      '@/lib/auth':'export async function requireActiveUser(){return {tenant:null,platformProfile:{global_role:globalThis.__grammarRead.role},supabase:{}}}',
++      '@/lib/supabase/admin':`export function createAdminClient(){return {from(t){if(!(t in globalThis.__grammarRead.rows))throw Error('unexpected table');const q={select(){return q},eq(){return q},in(){throw Error('module filter would hide the real 8 Step structure')},order(){return q},then(a,b){return Promise.resolve({data:globalThis.__grammarRead.rows[t],error:null}).then(a,b)}};return q}}}`,
++      '@/lib/tenant-app-capabilities':'export async function requireTenantAppCapability(){throw Error("unexpected tenant");}',
++      'next/navigation':'export function redirect(){throw Error("redirect");}',
++      'react':'export function cache(fn){return fn}',
++    });
++    const data=await mod.getDigitalTextbookManagementData('app');
++    const result=data.courses[0].lessons[0].textbooks[0].chapters;
++    assert.equal(result.length,17);assert.equal(result[0].modules[0].grammarCount,3);
++    assert.equal(result[0].modules.length,8);assert.equal(result[16].grammarNodes.length,0);
++    assert.equal(result.reduce((s,c)=>s+c.modules.reduce((n,m)=>n+m.grammarCount,0),0),63);
++    assert.deepEqual(result.flatMap(c=>c.grammarNodes.flatMap(n=>n.cards)),arrays.flat());
++    assert.equal(result.flatMap(c=>c.grammarNodes.flatMap(n=>n.items)).length,0);
++    globalThis.__grammarRead.role='platform_admin';assert.equal((await mod.getDigitalTextbookManagementData('app')).canManage,false);
++    chapters[0].digital_textbook_modules[0].digital_textbook_nodes[0].content.grammarCards=[{form:'malformed'}];
++    await assert.rejects(mod.getDigitalTextbookManagementData('app'),'invalid content must not pretend zero');
++  }finally{delete globalThis.__grammarRead;}
++});
++
++test('current grammar cards are lossless, closed and separate from legacy grammar',async()=>{
++  const {readTextbookGrammarCards}=await serverModule('src/lib/textbook-grammar-content.ts');
++  const cards=readTextbookGrammarCards(grammarSource.content);
++  assert.equal(cards.length,3);assert.deepEqual(cards,grammarSource.content.grammarCards);
++  assert.deepEqual(readTextbookGrammarCards({grammar:[{title:'legacy'}]}),[]);
++  for(const bad of [null,{},[{...cards[0],secret:'no'}]])assert.throws(()=>readTextbookGrammarCards({grammarCards:bad}));
++  const comparison={...cards[0],comparison:{'zh-CN':'对比','ko-KR':'비교'}};
++  assert.deepEqual(readTextbookGrammarCards({grammarCards:[comparison]})[0],comparison);
++  const tree=[{lessons:[{textbooks:[{status:'published',chapters:[{id:'c',status:'published',versionStatus:'published',nodes:[],grammarNodes:[{id:'n',items:[{title:'legacy'}],cards:[comparison]}]}]}]}]}];
++  const snapshot=chapterPracticeSnapshot(tree,'c');assert.equal(snapshot.length,2);
++  assert.deepEqual(snapshot[1].value,comparison);assert.equal(snapshot[0].value.title,'legacy');
++});
++test('media proof only permits non-playback text edits; rules, examples, audio and other node fields still block',async()=>{
++  const {unchangedGrammarMedia}=await serverModule('src/lib/smart-textbook-publishing/grammar-media-proof.server.ts');
++  const original='8da8793aff849b949c25b84cc1040e1ef6fd18e3cb26322e666c23e27e7ad289';
++  const n=structuredClone(grammarSource);n.content.grammarCards[0].form='new form';n.content.grammarCards[0].function['zh-CN']='new';
++  assert.equal(unchangedGrammarMedia(n,original),true);
++  for(const mutate of [n=>n.content.grammarCards[0].examples[0].ko='other text',n=>n.content.grammarCards[0].examples[0].audioId='other audio',n=>n.content.grammarCards[0].examples[0].audioStatus='ready',n=>n.content.grammarCards[0].rules[0]='other rule',n=>n.content.grammarCards.reverse(),n=>n.content.lead['zh-CN']='other',n=>n.id='other']){
++    const changed=structuredClone(n);mutate(changed);assert.equal(unchangedGrammarMedia(changed,original),false);
++  }
++  assert.equal(unchangedGrammarMedia(n,'forged'),false);
++});
++
++test('real owner grammar edit → stable identity → compiler → publisher → Loader, conflicts and fence', {timeout:240000},async t=>{
++  let f;
++  try{
++    f=await publishedChapterFixture();
++    const call=(await serverModule('src/features/digital-textbook/workbench/service.server.ts',publishedOverrides)).chapterWorkbenchOperation;
++    const beforeCheck=await call({operation:'check'});assert(beforeCheck.ok,JSON.stringify(beforeCheck));
++    const first=await call({operation:'publish',expected:beforeCheck.check.expected,digest:beforeCheck.check.digest});assert(first.ok,JSON.stringify(first));
++    const before=await f.loader.loadPublishedRuntimeSnapshot();
++    await f.db.query(await migration('202609130001_textbook_grammar_authoring.sql'));
++    assert.equal((await f.loader.loadPublishedRuntimeSnapshot()).bundle.snapshotId,before.bundle.snapshotId,'empty mapping is semantics-preserving');
++    // The capture must still equal its existing fence after adding the column.
++    await f.db.query("update public.digital_textbooks set status=status");
++    let read=await call({operation:'read'});assert(read.ok,JSON.stringify(read));
++    let card=read.data.steps.flatMap(s=>s.nodes.flatMap(n=>n.grammarCards)).find(Boolean);
++    assert(card);
++    const input={operation:'save-grammar',cardId:card.cardId,expected:card.expected,patch:{form:card.card.form,function:{...card.card.function,'zh-CN':'语法功能隔离修订'},caution:card.card.caution,source:card.card.source}};
++    await t.test('owner-only, no write outside edit window or unknown fields',async()=>{
++      assert.equal((await call(input)).ok,false);
++      for(const role of ['platform_admin','organization_owner','teacher','student']){f.auth.profile.global_role=role;assert.equal((await call(input)).ok,false);}
++      f.auth.profile.global_role='platform_owner';
++      assert.equal((await call({...input,patch:{...input.patch,examples:[]}})).ok,false);
++      for(const role of ['anon','authenticated'])assert.notEqual((await f.db.raw(`set role ${role};select public.edit_runtime_grammar_card_v1(null,null,null,null,null,null,null,null)`)).code,0);
++    });
++    assert((await call({operation:'begin'})).ok);
++    await t.test('same expected content: two concurrent saves cannot overwrite each other',async()=>{
++      const results=await Promise.all([call(input),call({...input,patch:{...input.patch,function:{...input.patch.function,'zh-CN':'并发修订'}}})]);
++      assert.equal(results.filter(r=>r.ok).length,1,JSON.stringify(results));
++      assert.equal((await call(input)).ok,false,'stale editor must refresh');
++    });
++    read=await call({operation:'read'});assert(read.ok);
++    const current=read.data.steps.flatMap(s=>s.nodes.flatMap(n=>n.grammarCards)).find(c=>c.cardId===card.cardId);
++    assert.notEqual(current.expected,card.expected);
++    assert.deepEqual(current.card.examples,card.card.examples);assert.deepEqual(current.card.rules,card.card.rules);
++    assert.equal(await f.db.query(`select content ? 'grammar' from public.digital_textbook_nodes where id=${q(card.nodeId)}`),'f');
++    await f.publisher.compileChapterOnePublication();
++    const check=await call({operation:'check'});assert(check.ok,JSON.stringify(check));
++    const pub=await call({operation:'publish',expected:check.check.expected,digest:check.check.digest});assert(pub.ok,JSON.stringify(pub));
++    const after=await f.loader.loadPublishedRuntimeSnapshot();
++    assert.equal(after.bundle.manifest.steps.length,8);assert.equal(after.bundle.manifest.activityRefs.length,19);
++    assert.equal(after.bundle.manifest.blocks.filter(b=>b.type==='multiple_choice').length,3);
++    assert.deepEqual(after.bundle.manifest.runtimeTargets.map(t=>t.id),before.bundle.manifest.runtimeTargets.map(t=>t.id));
++    assert.deepEqual(after.bundle.privatePayload.source.teachingNodes,before.bundle.privatePayload.source.teachingNodes);
++    assert.notEqual(after.bundle.manifestDigest,before.bundle.manifestDigest);
++    assert.equal(after.bundle.privatePayload.source.nodes.find(n=>n.id===card.nodeId).content.grammarCards[0].function['zh-CN'],current.card.function['zh-CN']);
++    const projector=await serverModule('src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts');
++    const capsule=after.bundle.privatePayload.result.bindings.capsules.find(c=>c.kind==='learning'&&c.nodeId===card.nodeId);
++    const displayed=projector.projectLearningContent(after.bundle.privatePayload.result.bindings,capsule.id,'zh-CN');
++    assert(displayed.cards.find(c=>c.section==='grammarCards').children.some(c=>c.paragraphs.includes(current.card.function['zh-CN'])),'actual student projection uses edited published text');
++    assert.equal(before.bundle.privatePayload.source.nodes.find(n=>n.id===card.nodeId).content.grammarCards[0].function['zh-CN'],card.card.function['zh-CN']);
++    const raw=await f.db.raw(`update public.digital_textbook_nodes set authoring_grammar_identities='[]' where id=${q(card.nodeId)}`);assert.match(raw.stderr,/IMMUTABLE/);
++    assert(!/authoring_grammar_identities|answer_key|object_key|service_role/.test(JSON.stringify(read)));
++    await t.test('second revision rebinds same card again, not an index/title allocation',async()=>{
++      assert((await call({operation:'begin'})).ok);
++      const saved=await call({...input,expected:current.expected,patch:{...input.patch,form:'은/는（主题助词）'}});assert(saved.ok,JSON.stringify(saved));
++      const next=await f.publisher.compileChapterOnePublication();
++      assert.deepEqual(next.manifest.runtimeTargets.map(t=>t.id),before.bundle.manifest.runtimeTargets.map(t=>t.id));
++      assert.equal(next.privatePayload.source.nodes.find(n=>n.id===card.nodeId).content.grammarCards[0].form,'은/는（主题助词）');
++    });
++    await t.test('real reference RPC keeps full current cards, owner guard, CAS and frozen student read',async()=>{
++      const app='10000000-0000-4000-8000-000000000001';
++      await f.db.query(`create schema if not exists private;
++        create or replace function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
++        create table public.student_apps(id uuid primary key);insert into public.student_apps values(${q(app)});
++        alter table public.digital_textbooks add column if not exists student_app_id uuid;
++        alter table public.digital_textbooks add column if not exists lesson_id uuid;
++        update public.digital_textbooks set student_app_id=${q(app)};
++        create or replace function private.is_platform_owner() returns boolean language sql stable as $$select exists(select 1 from public.profiles where id=auth.uid() and global_role='platform_owner' and status='active')$$;
++        create or replace function public.current_user_can_manage_standard_question_bank() returns boolean language sql stable as $$select true$$;
++        create or replace function private.current_user_can_read_student_app(id uuid) returns boolean language sql stable as $$select id=${q(app)}::uuid and auth.uid() is not null$$;`);
++      await f.db.query(await migration('202609080001_chapter_practice_bindings.sql'));
++      await f.db.query(await migration('202609080002_chapter_practice_explicit_function_grants.sql'));
++      await f.db.query(await migration('202609130002_textbook_grammar_practice_binding.sql'));
++      const nodes=JSON.parse(await f.db.query(`select jsonb_agg(to_jsonb(n)) from public.digital_textbook_nodes n`));
++      const gn=nodes.find(n=>n.id===card.nodeId),vn=nodes.find(n=>Array.isArray(n.content.vocabulary));
++      const tree=[{lessons:[{textbooks:[{status:'published',chapters:[{id:source.chapter.id,status:'published',versionStatus:'published',nodes:[{id:vn.id,vocabulary:vn.content.vocabulary}],grammarNodes:[{id:gn.id,items:[],cards:gn.content.grammarCards}]}]}]}]}];
++      const snapshot=chapterPracticeSnapshot(tree,source.chapter.id);
++      assert.equal(snapshot.length,15);assert.equal(snapshot.filter(i=>i.kind==='grammar').length,3);
++      const asOwner=sql=>`set role authenticated;set request.jwt.claim.sub=${q(f.student)};${sql}`;
++      const review=(rev,snapshot)=>f.db.raw(asOwner(`select public.review_chapter_practice_binding(${q(app)},${q(source.chapter.id)},${rev},${json(snapshot)},true)`));
++      assert.equal(await f.db.query('select count(*) from public.chapter_practice_bindings'),'0');
++      const approved=await review(0,snapshot);assert.equal(approved.code,0,approved.stderr);
++      const read=await f.db.query(asOwner(`select snapshot from public.read_chapter_practice_snapshots(${q(app)})`));
++      assert.deepEqual(JSON.parse(read),snapshot);
++      const view=await serverModule('src/features/growth-toolbox/components/referenced-grammar-materials.tsx',{
++        '@/components/ui/card-title-with-hint':'export function CardTitleWithHint(){return null}',
++        '@/features/digital-textbook/components/grammar-card-content':'export function GrammarCardContent({card}){return card.form}',
++      });
++      assert(view.ReferencedGrammarMaterials({items:JSON.parse(read)}),'actual student material branch accepts grammarCards');
++      assert.notEqual((await review(0,snapshot)).code,0);
++      const bad=structuredClone(snapshot);bad.find(i=>i.kind==='grammar').value.examples[0].ko='not authorized';
++      assert.notEqual((await review(1,bad)).code,0);
++      const races=await Promise.all([review(1,snapshot),review(1,snapshot)]);assert.equal(races.filter(r=>r.code===0).length,1);
++      await f.db.query(`update public.profiles set global_role='platform_admin' where id=${q(f.student)}`);
++      assert.match((await review(2,snapshot)).stderr,/没有权限/);
++      await f.db.query(`update public.profiles set global_role='platform_owner' where id=${q(f.student)}`);
++    });
++  }finally{await f?.dispose();}
++});
+diff --git a/tests/textbook-navigation.test.mjs b/tests/textbook-navigation.test.mjs
+index 60b25fb..a3eefd3 100644
+--- a/tests/textbook-navigation.test.mjs
++++ b/tests/textbook-navigation.test.mjs
+@@ -17,7 +17,7 @@ test('textbook management: scoped workbench, visible editors, legacy publication
+     b.onResolve({filter:/digital-textbook-action-dialogs$/},()=>({path:'dialog',namespace:'dialog'}));
+     b.onLoad({filter:/.*/,namespace:'dialog'},()=>({contents:'export const DigitalTextbookContentDialog = null;'}));
+     b.onResolve({filter:/admin\/digital-textbook\/actions$/},()=>({path:'actions',namespace:'test'}));
+-    b.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='data'?`export async function getDigitalTextbookManagementData(){const d=${JSON.stringify(data)};if(location.search.includes('readonly')){d.canManage=false;d.canPublishChapters=false;}return d;}`:a.path==='next/navigation'?`export const useRouter=()=>({refresh(){}});`:a.path==='next/link'?`import React from 'react';export default function Link(p){return <a {...p}/>}`:a.path==='next/dynamic'?`import React from 'react';export default function dynamic(){return p=><div role="dialog" aria-label={p.panel}>原编辑器传参：{p.panel}<button onClick={()=>p.onOpenChange(false)}>关闭</button></div>}`:`export async function publishTextbookChapterAction(){throw Error('unexpected mutation')}export async function setTextbookStatusAction(){throw Error('unexpected mutation')}` }));
++    b.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='data'?`export async function getDigitalTextbookManagementData(){const d=${JSON.stringify(data)};if(location.search.includes('readonly')){d.canManage=false;d.canPublishChapters=false;}if(location.search.includes('error')){d.hasError=true;d.courses=[];}return d;}`:a.path==='next/navigation'?`export const useRouter=()=>({refresh(){}});`:a.path==='next/link'?`import React from 'react';export default function Link(p){return <a {...p}/>}`:a.path==='next/dynamic'?`import React from 'react';export default function dynamic(){return p=><div role="dialog" aria-label={p.panel}>原编辑器传参：{p.panel}<button onClick={()=>p.onOpenChange(false)}>关闭</button></div>}`:`export async function publishTextbookChapterAction(){throw Error('unexpected mutation')}export async function setTextbookStatusAction(){throw Error('unexpected mutation')}` }));
+   }}]});
+   const css=(await postcss([tailwind()]).process(await readFile('src/app/globals.css','utf8'),{from:process.cwd()+'/src/app/globals.css'})).css;
+   let browser;const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/bundle.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html; charset=utf-8');res.end(req.url==='/bundle.js'?bundle.outputFiles[0].text:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><body><main class="p-4" data-dashboard-ui="management" data-management-workspace="platform"><div id="root"></div></main><script type="module" src="/bundle.js"></script></body></html>');});
+@@ -31,7 +31,7 @@ test('textbook management: scoped workbench, visible editors, legacy publication
+     assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),0);
+     assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),1);
+     await page.getByRole('button',{name:'编辑词汇',exact:true}).click();await page.getByRole('dialog',{name:'vocabulary',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
+-    await page.getByRole('button',{name:'编辑语法',exact:true}).click();await page.getByRole('dialog',{name:'grammar',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
++    await page.getByRole('button',{name:'查看语法内容',exact:true}).click();await page.getByRole('dialog',{name:'grammar',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
+     await page.getByRole('button',{name:'检查与发布',exact:true}).click();
+     await page.getByRole('button',{name:'发布章节与测试',exact:true}).click();await page.getByRole('alertdialog').waitFor();await page.getByRole('button',{name:'取消',exact:true}).click();await page.getByRole('alertdialog').waitFor({state:'hidden'});
+     await page.getByRole('button',{name:'教材设置',exact:true}).click();
+@@ -52,6 +52,9 @@ test('textbook management: scoped workbench, visible editors, legacy publication
+     await page.goto(url+'?chapter=unknown');await page.getByText('该章节不存在或不在可查看范围内，请从目录选择。').waitFor();
+     await page.goto(url+'?readonly');await page.getByText('只读查看',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'打开内容工作台'}).count(),0);
+     await page.getByRole('button',{name:'检查与发布',exact:true}).click();assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),0);
++    await page.goto(url+'?error');await page.getByText('教材内容读取不完整，暂不显示数量或开放编辑。请刷新重试。',{exact:true}).waitFor();
++    assert.equal(await page.getByRole('region',{name:'教材制作工作区'}).count(),0);
++    assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),0);
+     assert.deepEqual(errors,[]);
+   }finally{await browser?.close();await new Promise(r=>server.close(r));}
+ });

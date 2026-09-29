@@ -1,0 +1,11 @@
+{
+  "formalAttempt1": "UI passed; tail assertion failed with 3 live-banner polling reads; original result preserved",
+  "formalAttempt2": "server from previous exec session had ended; connection refused; no added run",
+  "formalAttempt3": "PASS; page closed after UI/cancel tests before HTTP-only 45s deadline, retaining real Agent read/Tool positive controls",
+  "migrationAttempts": [
+    "baseline byte check initially normalized CRLF; fixed harness to hash bytes",
+    "per-object parser initially omitted numeric suffixes; corrected harness identifier regex",
+    "final two-path six-step verification and failure injection PASS"
+  ],
+  "productChanges": 0
+}

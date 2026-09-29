@@ -1,0 +1,15 @@
+{
+  "path": [
+    "existing Core executor",
+    "get_current_lesson_execution_facts",
+    "LessonExecutionFactsReadPort",
+    "readDurableActivityFacts",
+    "existing repository.read"
+  ],
+  "authorization": "issuer-local WeakMap handle + exact authority reference/run/skill/deadline + fresh server authorization before/after read",
+  "developmentOperator": "normal Platform Owner",
+  "subject": "fixed existing B2 actor, never Owner",
+  "admission": "separate READ capability, no VerifiedStudentBinding or B3 scope issuance",
+  "environment": "fixed canonical cwd/config/DB identity/Auth origin",
+  "currentDbAcceptance": "NOT EXECUTED; requires approved candidate deployment and existing Owner session"
+}

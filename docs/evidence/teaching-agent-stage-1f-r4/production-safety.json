@@ -1,0 +1,52 @@
+{
+  "ledgerBefore": 449,
+  "ledgerAfter": 449,
+  "ledgerExactUnchanged": true,
+  "cutover": {
+    "version": "202609130003",
+    "name": "runtime_authoring_nonretryable_error"
+  },
+  "agentTablesBefore": 0,
+  "agentTablesAfter": 0,
+  "contentMetadataUnchanged": true,
+  "inventoryObservedAtStart": "2026-09-15T03:01:38.69961+00:00",
+  "inventoryObservedAtEnd": "2026-09-15T03:08:14.467566+00:00",
+  "schemaCatalogStartEndEqual": true,
+  "applicationSchemaMatchesR3D": true,
+  "applicationSchemaDigest": "4551ce1bdaa84645e1c882cba57462bc87fc29af84e6e57f97c93deaea7c5bbe",
+  "runtime": {
+    "runtimeHash": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "flagOff": true,
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    }
+  },
+  "operations": {
+    "pm2": {
+      "name": "uply-first-enable",
+      "pid": 1176676,
+      "status": "online",
+      "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "killTimeout": 15000,
+      "instances": 1
+    },
+    "tailscaleConfigSHA256": "ac16b5ccee45e492d60444def3c8be3cb7185b1ee0ee6a2ee5f79748fed90864",
+    "tailscalePorts": [
+      "443",
+      "4000",
+      "8443"
+    ],
+    "mutations": 0
+  },
+  "productionWrites": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionDeploy": false,
+  "liveProviderRequests": 0,
+  "productionAgentRuns": 0,
+  "productionCandidate": 0,
+  "productionBackupCreated": false,
+  "schemaOnlySnapshotIsDataBackup": false,
+  "runtimeObservationBoundary": "Initial runtime/PM2/Serve snapshot during R4 integrity work and closing snapshot, both match R3D runtime hash; process environ not read."
+}

@@ -1,0 +1,28 @@
+{
+  "changes": [
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/approval-b1d-deploy.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-artifact-lock.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-candidate-build.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-freeze-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-preflight-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-preflight-fix.patch",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-production-readonly.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-sensitive-scan.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-source-lock.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-test-results.json",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b1d-validation.json",
+    "docs/teaching-agent-stage-1f-r7c-b-canonical-activity-binding.md",
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+    "tests/fixtures/teaching-agent-r7cb/preflight-harness.mjs",
+    "tests/teaching-agent-r7cb-authoring.test.mjs",
+    "tests/teaching-agent-r7cb-owner-preflight.test.mjs"
+  ],
+  "unexpectedChanges": [],
+  "deleted": [],
+  "productChangedCount": 1,
+  "newMigration": false,
+  "newSchema": false,
+  "currentDbWrites": 0,
+  "deploy": 0
+}

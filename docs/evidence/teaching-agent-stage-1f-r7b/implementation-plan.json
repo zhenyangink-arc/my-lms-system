@@ -1,0 +1,161 @@
+{
+  "planVersion": "r7b-implementation-plan/1",
+  "createdAtUtc": "2026-09-17T02:28:07.549992+00:00",
+  "status": "IMPLEMENTED_WITHIN_APPROVED_SCOPE",
+  "target": "Teaching Agent Lesson Execution MVP",
+  "mainline": "TEACHING_AGENT",
+  "targetAlias": "hangul-introduction",
+  "plannedModifiedProductFiles": [
+    "src/lib/smart-textbook-runtime-v1/contracts.ts",
+    "src/lib/smart-textbook-runtime-v1/registry.ts",
+    "src/lib/smart-textbook-runtime-v1/validator.ts",
+    "src/features/smart-textbook-runtime/core/block-registry.ts",
+    "src/features/smart-textbook-runtime/core/services.ts",
+    "src/features/smart-textbook-runtime/core/target-registry.ts",
+    "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+    "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+    "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/choice-block.tsx",
+    "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+    "src/features/smart-textbook-runtime/components/runtime.css"
+  ],
+  "plannedNewProductFiles": [
+    "src/lib/smart-textbook-runtime-v1/execution.ts",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "src/features/smart-textbook-runtime/components/video-block.tsx"
+  ],
+  "plannedModifiedTests": [
+    "tests/smart-textbook-runtime-4a.test.mjs",
+    "tests/smart-textbook-runtime-4a14.test.mjs",
+    "tests/smart-textbook-runtime-4a-browser.test.mjs"
+  ],
+  "plannedNewTests": [
+    "tests/teaching-agent-r7b-projection.test.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/teaching-agent-r7b-browser.test.mjs"
+  ],
+  "plannedNewFixtureFiles": [
+    "tests/fixtures/teaching-agent-r7b/fixture.server.mjs",
+    "tests/fixtures/teaching-agent-r7b/server.mjs",
+    "tests/fixtures/teaching-agent-r7b/browser.tsx",
+    "tests/fixtures/teaching-agent-r7b/start.mjs",
+    "tests/fixtures/teaching-agent-r7b/create-video.mjs",
+    "tests/fixtures/teaching-agent-r7b/video.webm",
+    "tests/fixtures/teaching-agent-r7b/README.md"
+  ],
+  "documentationScope": [
+    "docs/teaching-agent-stage-1f-r7b-lesson-execution-mvp.md",
+    "docs/evidence/teaching-agent-stage-1f-r7b/"
+  ],
+  "implementation": [
+    {
+      "area": "manifest/projection",
+      "decision": "Extend the existing strict LessonManifestV1 with an optional typed native execution field; no V2 or parallel schema authority. Server-only builder projects frozen Node5 and only public first-question semantics from Node7; validates through existing validator. Do not import the fixed chapter-one compiler/source/capsules."
+    },
+    {
+      "area": "activity/grading",
+      "decision": "Reuse MultipleChoiceBlock and existing RuntimeServices activity submission boundary; existing ActivityExecutor remains the general activity renderer, no new question UI. Server fixture uses existing gradeSmartTextbookActivity and existing single_choice answer contract. Fixture completion is a bound server-owned receipt, not ActivityResult.ok or step completion."
+    },
+    {
+      "area": "media owner",
+      "decision": "One native media controller subordinate to existing StepController generation/disposal and TargetRegistry. Video component reports media events/intents; only controller issues play/pause/seek. Native execution rejects mixed compat teacher blocks, so no parallel old TeacherTimeline execution."
+    },
+    {
+      "area": "cue",
+      "decision": "One fixture show_activity cue, immutable manifest-bound source/target/media revision; validate finite time and duration when available; mark pending before pause/reveal. Cue tracks pending/waiting/completed within scoped session/snapshot/step/media/cue identity."
+    },
+    {
+      "area": "completion",
+      "decision": "Typed COMPLETED/INCOMPLETE/UNKNOWN; bind request/session/snapshot/step/activity/attempt/generation plus server fixture state evidence. Separate content revision, student-state evidence and client generation. UNKNOWN invokes readback without resubmission; only validated COMPLETED allows resume."
+    },
+    {
+      "area": "restore",
+      "decision": "Same loopback fixture server retains isolated attempt/completion and pending interaction state across browser reload. Restore validates all bindings and reads authoritative fixture state; client video position is only an observation hint. This is not production durable progress."
+    },
+    {
+      "area": "presentation",
+      "decision": "Use existing Learning Area, MultipleChoiceBlock and TemplateRenderer. Cue changes presentation to learning, then restores previous layout. Respect user pause; autoplay rejected once requires user action; media error halts cue advancement."
+    },
+    {
+      "area": "runtime facts",
+      "decision": "Versioned read-only facts projection includes safe lesson/script/node/block/activity binding, runtime phase, completion summary, evidence/freshness and generation. Video time explicitly client-observed. No grading key, prompts, control commands, or Agent Tool registration."
+    },
+    {
+      "area": "test entry",
+      "decision": "Loopback-only isolated harness imports existing LessonRuntime. No production Next route, StudentPolicy change or real student admission. Synthetic 30-second dev media fixture only, no TTS/provider/official video. Test browser has no production login."
+    }
+  ],
+  "privacy": {
+    "public": [
+      "prompt",
+      "options",
+      "public presentation metadata",
+      "safe content bindings"
+    ],
+    "private": "Correct-answer designation/index and grader configuration stay in server-only/test-private files. Full Node7 authoring text is never serialized to client.",
+    "scanSemantics": "The public option ㅏ and ordinary numeral 1 are allowed. Scan answer-identifying fields/markers, private grading structures and complete answer-bearing authoring text, including generated browser dependency graph."
+  },
+  "testScenarios": [
+    "happy path with real HTML5 development video",
+    "wrong answer holds",
+    "UNKNOWN submit no retry; completed and unknown readbacks",
+    "duplicate timeupdate and completion callback",
+    "backward seek after completion",
+    "forward seek across earliest mandatory cue",
+    "seek landing near cue",
+    "refresh awaiting activity",
+    "refresh completed activity",
+    "invalid restore binding fails closed",
+    "stale generation and disposed instance callbacks ignored",
+    "user pause respected",
+    "autoplay rejection yields manual resume without loop",
+    "media error fails closed",
+    "public manifest/DOM/browser bundle/log/facts answer leakage scan",
+    "single presentation owner restores layout",
+    "runtime facts before/during/after with evidence",
+    "missing renderer/unknown action/unsupported activity fail closed",
+    "cue source/target/time/policy validation",
+    "frozen content and production boundary unchanged"
+  ],
+  "validation": [
+    "Targeted unit, integration and mounted runtime browser tests",
+    "Related existing runtime regression tests after reviewing their isolation",
+    "TypeScript typecheck and scoped ESLint",
+    "Next build in isolated sanitized workspace/output without production credentials or connections",
+    "JSON parse, git diff --check, scoped secret/resource scan, exact workspace diff against before map",
+    "Fresh independent READ ONLY production/frozen-content end-state verification"
+  ],
+  "boundary": {
+    "frozenContentWrites": 0,
+    "productionDbBusinessWrites": 0,
+    "migrations": 0,
+    "agentRuns": 0,
+    "providerRequests": 0,
+    "publish": 0,
+    "pins": 0,
+    "productionDeploy": 0,
+    "productionRuntimeMutation": 0,
+    "authWrites": 0,
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "secondRuntime": false,
+    "secondManifest": false,
+    "secondActivitySystem": false,
+    "secondProgressSystem": false,
+    "secondQuestionSystem": false
+  },
+  "expectedEvidenceLimit": {
+    "completionAuthority": "FIXTURE_ONLY",
+    "atomicRpcContract": "NOT USED",
+    "productionDurableProgress": "NOT YET VERIFIED",
+    "successfulClassification": "CONDITIONAL — PASS WITH FIXTURE LIMITATION",
+    "nextStageRecommendation": "R7C — NATIVE ACTIVITY / DURABLE COMPLETION BINDING",
+    "stage1G": "NOT READY"
+  },
+  "authorizationRule": "User R7B section 7 requires a fresh explicit approval after exact file plan, before any product code write. Historical R6 approvals do not apply. Scope expansion requires review before editing outside these paths."
+}

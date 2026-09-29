@@ -1,0 +1,1468 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1",
+  "recordedAt": "2026-09-20T05:16:20.467266+00:00",
+  "mode": "IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "PASS",
+  "existingRequired": 98,
+  "existingExecuted": 98,
+  "existingPassed": 98,
+  "newRequired": 36,
+  "newExecuted": 36,
+  "newPassed": 36,
+  "totalRequired": 134,
+  "executed": 134,
+  "passed": 134,
+  "failed": 0,
+  "skipped": 0,
+  "safetyCriticalSkips": 0,
+  "cases": [
+    {
+      "id": "CAPTURE-01",
+      "testMethod": "test_CAPTURE_01_missing_auth_before_credentials",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-02",
+      "testMethod": "test_CAPTURE_02_explicit_draft_authority",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-03",
+      "testMethod": "test_CAPTURE_03_cannot_authorize_install",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-04",
+      "testMethod": "test_CAPTURE_04_strict_schema",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-05",
+      "testMethod": "test_CAPTURE_05_static_hashes",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-06",
+      "testMethod": "test_CAPTURE_06_raw_file_recheck",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-07",
+      "testMethod": "test_CAPTURE_07_freshness",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-08",
+      "testMethod": "test_CAPTURE_08_fixed_identity_tls",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-09",
+      "testMethod": "test_CAPTURE_09_no_mutation_or_tools",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-10",
+      "testMethod": "test_CAPTURE_10_fixture_separation",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-11",
+      "testMethod": "test_CAPTURE_11_cli_arbitrary_inputs",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-12",
+      "testMethod": "test_CAPTURE_12_production_auth_without_credentials",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-13",
+      "testMethod": "test_CAPTURE_13_ledger_first_mock",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-14",
+      "testMethod": "test_CAPTURE_14_modes_reject_bad_session",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-15",
+      "testMethod": "test_CAPTURE_15_owned_baseline_rollback",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-16",
+      "testMethod": "test_CAPTURE_16_cli_owned_adapter",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-17",
+      "testMethod": "test_CAPTURE_17_readonly_mutation_probe",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-18",
+      "testMethod": "test_CAPTURE_18_count_mismatch_early_stop",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-19",
+      "testMethod": "test_CAPTURE_19_duplicates_early_stop",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-20",
+      "testMethod": "test_CAPTURE_20_statement_digest_and_pinned_recapture",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-21",
+      "testMethod": "test_CAPTURE_21_wrong_function_body",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-22",
+      "testMethod": "test_CAPTURE_22_wrong_owner_definer_path",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-23",
+      "testMethod": "test_CAPTURE_23_wrong_acl",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-24",
+      "testMethod": "test_CAPTURE_24_wrong_versions_same_count",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-25",
+      "testMethod": "test_CAPTURE_25_production_tls_before_ledger",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-26",
+      "testMethod": "test_CAPTURE_26_runtime_guards_preserved",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "CAPTURE-27",
+      "testMethod": "test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-01",
+      "testMethod": "test_CAPTURE_ORDER_01_ledger_gate",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-02",
+      "testMethod": "test_CAPTURE_ORDER_02_body",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-03",
+      "testMethod": "test_CAPTURE_ORDER_03_raw_definition",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-04",
+      "testMethod": "test_CAPTURE_ORDER_04_owner",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-05",
+      "testMethod": "test_CAPTURE_ORDER_05_definer",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-06",
+      "testMethod": "test_CAPTURE_ORDER_06_search_path",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-07",
+      "testMethod": "test_CAPTURE_ORDER_07_metadata",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-08",
+      "testMethod": "test_CAPTURE_ORDER_08_acl",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-09",
+      "testMethod": "test_CAPTURE_ORDER_09_effective",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-10",
+      "testMethod": "test_CAPTURE_ORDER_10_missing",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-11",
+      "testMethod": "test_CAPTURE_ORDER_11_success_order",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-12",
+      "testMethod": "test_CAPTURE_ORDER_12_metadata_consistency",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-13",
+      "testMethod": "test_CAPTURE_ORDER_13_acl_effective_consistency",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-14",
+      "testMethod": "test_CAPTURE_ORDER_14_ledger_consistency",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-15",
+      "testMethod": "test_CAPTURE_ORDER_15_same_snapshot_readonly",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-16",
+      "testMethod": "test_CAPTURE_ORDER_16_rollback_phases",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-17",
+      "testMethod": "test_CAPTURE_ORDER_17_fixed_inputs",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-18",
+      "testMethod": "test_CAPTURE_ORDER_18_receipt",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-19",
+      "testMethod": "test_CAPTURE_ORDER_19_full_coverage",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "CAPTURE-ORDER-20",
+      "testMethod": "test_CAPTURE_ORDER_20_capture_isolation",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log"
+    },
+    {
+      "id": "RUNNER-D1-01",
+      "testMethod": "test_RUNNER_D1_01",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-02",
+      "testMethod": "test_RUNNER_D1_02",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-03",
+      "testMethod": "test_RUNNER_D1_03",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-04",
+      "testMethod": "test_RUNNER_D1_04",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-05",
+      "testMethod": "test_RUNNER_D1_05",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-06",
+      "testMethod": "test_RUNNER_D1_06",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-07",
+      "testMethod": "test_RUNNER_D1_07",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-08",
+      "testMethod": "test_RUNNER_D1_08",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-09",
+      "testMethod": "test_RUNNER_D1_09",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-10",
+      "testMethod": "test_RUNNER_D1_10",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-11",
+      "testMethod": "test_RUNNER_D1_11",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-12",
+      "testMethod": "test_RUNNER_D1_12",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-13",
+      "testMethod": "test_RUNNER_D1_13",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-14",
+      "testMethod": "test_RUNNER_D1_14",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-15",
+      "testMethod": "test_RUNNER_D1_15",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-16",
+      "testMethod": "test_RUNNER_D1_16",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-17",
+      "testMethod": "test_RUNNER_D1_17",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-18",
+      "testMethod": "test_RUNNER_D1_18",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-19",
+      "testMethod": "test_RUNNER_D1_19",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-20",
+      "testMethod": "test_RUNNER_D1_20",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-21",
+      "testMethod": "test_RUNNER_D1_21",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-22",
+      "testMethod": "test_RUNNER_D1_22",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-23",
+      "testMethod": "test_RUNNER_D1_23",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-24",
+      "testMethod": "test_RUNNER_D1_24",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-25",
+      "testMethod": "test_RUNNER_D1_25",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-26",
+      "testMethod": "test_RUNNER_D1_26",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-27",
+      "testMethod": "test_RUNNER_D1_27",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-28",
+      "testMethod": "test_RUNNER_D1_28",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-29",
+      "testMethod": "test_RUNNER_D1_29",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-30",
+      "testMethod": "test_RUNNER_D1_30",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-31",
+      "testMethod": "test_RUNNER_D1_31",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-32",
+      "testMethod": "test_RUNNER_D1_32",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-33",
+      "testMethod": "test_RUNNER_D1_33",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-34",
+      "testMethod": "test_RUNNER_D1_34",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-35",
+      "testMethod": "test_RUNNER_D1_35",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-36",
+      "testMethod": "test_RUNNER_D1_36",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-37",
+      "testMethod": "test_RUNNER_D1_37",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-38",
+      "testMethod": "test_RUNNER_D1_38",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-39",
+      "testMethod": "test_RUNNER_D1_39",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-40",
+      "testMethod": "test_RUNNER_D1_40",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-41",
+      "testMethod": "test_RUNNER_D1_41",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-42",
+      "testMethod": "test_RUNNER_D1_42",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log"
+    },
+    {
+      "id": "RUNNER-D1-43",
+      "testMethod": "test_RUNNER_D1_43",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-44",
+      "testMethod": "test_RUNNER_D1_44",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-45",
+      "testMethod": "test_RUNNER_D1_45",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-46",
+      "testMethod": "test_RUNNER_D1_46",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-47",
+      "testMethod": "test_RUNNER_D1_47",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-48",
+      "testMethod": "test_RUNNER_D1_48",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "RUNNER-D1-49",
+      "testMethod": "test_RUNNER_D1_49",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-50",
+      "testMethod": "test_RUNNER_D1_50",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log"
+    },
+    {
+      "id": "RUNNER-D1-51",
+      "testMethod": "test_RUNNER_D1_51",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log"
+    },
+    {
+      "id": "TLS-D4-01",
+      "testMethod": "test_TLS_D4_01_missing_risk",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_ARTIFACT_MISSING",
+      "expectation": "Missing artifact rejects before credentials",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-02",
+      "testMethod": "test_TLS_D4_02_risk_hash",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_HASH_DRIFT",
+      "expectation": "Wrong raw risk artifact hash rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-03",
+      "testMethod": "test_TLS_D4_03_risk_scope",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_SCOPE",
+      "expectation": "Wrong stage/project/provider/contract rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-04",
+      "testMethod": "test_TLS_D4_04_explicit_operator_binding",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_OPERATOR_BINDING",
+      "expectation": "Proposal approved=false alone cannot authorize any operation; correct short operator risk attestation required",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-05",
+      "testMethod": "test_TLS_D4_05_expiry",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_EXPIRED",
+      "expectation": "Expired or over-900-second authorization rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-06",
+      "testMethod": "test_TLS_D4_06_closure",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RISK_COMPLETED",
+      "expectation": "Completion/revocation marker or stageActive=false rejects; malformed marker cannot reopen scope",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-07",
+      "testMethod": "test_TLS_D4_07_v4_only",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "V4_ONLY",
+      "expectation": "New v4 mock reference/hash accepted; v3 and arbitrary reference rejected",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-08",
+      "testMethod": "test_TLS_D4_08_ready_guards",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "READY_UNCHANGED",
+      "expectation": "DRAFT apply/backup/install-verify/preflight remain rejected",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-09",
+      "testMethod": "test_TLS_D4_09_fixture_separation",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "FIXTURE_SEPARATION",
+      "expectation": "Owned legacy authorization cannot select production",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-10",
+      "testMethod": "test_TLS_D4_10_port_profile",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "PORT_PIN",
+      "expectation": "Port 6543, missing/alternate port and profile override reject",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-11",
+      "testMethod": "test_TLS_D4_11_tcp_only",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "TCP_ONLY",
+      "expectation": "Socket, hostaddr override, multi-host and alternate hostname reject",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-12",
+      "testMethod": "test_TLS_D4_12_identity_ca_policy",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "CA_HOST_PIN",
+      "expectation": "Wrong CA/hostname/project/username binding rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-13",
+      "testMethod": "test_TLS_D4_13_mode_gss",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "MODE_ENFORCEMENT",
+      "expectation": "All weaker sslmode values reject; fixed GSS-off cannot be overridden",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-14",
+      "testMethod": "test_TLS_D4_14_real_psql",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "PSQL_REAL_TLS",
+      "expectation": "Owned actual pinned psql TLS metadata matches successful verify-full invocation",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-15",
+      "testMethod": "test_TLS_D4_15_no_tls",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "PSQL_NO_TLS",
+      "expectation": "Owned non-TLS endpoint rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-16",
+      "testMethod": "test_TLS_D4_16_bad_ca",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "PSQL_BAD_CA",
+      "expectation": "Owned untrusted CA rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-17",
+      "testMethod": "test_TLS_D4_17_bad_hostname",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "PSQL_BAD_HOST",
+      "expectation": "Owned hostname mismatch rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-18",
+      "testMethod": "test_TLS_D4_18_proof_replay",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "PSQL_PROOF_BINDING",
+      "expectation": "Wrong process/invocation, stale metadata or reconnect proof reuse rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-19",
+      "testMethod": "test_TLS_D4_19_metadata_missing",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "PSQL_METADATA_MISSING",
+      "expectation": "Missing/malformed metadata rejects with safe code",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-20",
+      "testMethod": "test_TLS_D4_20_backend_false",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "BACKEND_FALSE",
+      "expectation": "Valid client/risk/profiles plus backend=false records and continues; otherwise rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-21",
+      "testMethod": "test_TLS_D4_21_backend_unavailable",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "BACKEND_UNAVAILABLE",
+      "expectation": "Successful null observation represented unavailable; SQL error still rolls back",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-22",
+      "testMethod": "test_TLS_D4_22_order",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "CAPTURE_ORDER",
+      "expectation": "Same session RR READ ONLY; ledger/function early stops and full catalog consistency remain",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-23",
+      "testMethod": "test_TLS_D4_23_all_modes",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "TRANSPORT_ALL_MODES",
+      "expectation": "All production sessions receive proof before yielding, including exporter/apply/verify",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-24",
+      "testMethod": "test_TLS_D4_24_full_dump",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_FULL_REAL",
+      "expectation": "Owned actual full pg_dump under verify-full yields its own bound proof and archive",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-25",
+      "testMethod": "test_TLS_D4_25_schema_dump",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_SCHEMA_REAL",
+      "expectation": "Owned schema pg_dump uses independent invocation/output proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-26",
+      "testMethod": "test_TLS_D4_26_roles_dump",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_ROLES_REAL",
+      "expectation": "Owned roles pg_dumpall uses fixed initial postgres and no-role-passwords with own proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-27",
+      "testMethod": "test_TLS_D4_27_each_tool_tls_negative",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_NEGATIVE_TLS",
+      "expectation": "Each of the three tool profiles rejects non-TLS, wrong CA and wrong hostname; no valid manifest",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-28",
+      "testMethod": "test_TLS_D4_28_tool_override",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "DUMP_OVERRIDE",
+      "expectation": "No arbitrary tool/conninfo/args/help/version/parallel/endpoint accepted",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-29",
+      "testMethod": "test_TLS_D4_29_replay",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_REPLAY",
+      "expectation": "Different invocation/output/package/risk proof cannot satisfy required set",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-30",
+      "testMethod": "test_TLS_D4_30_exit_output",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "DUMP_EXIT",
+      "expectation": "Spawn-only, nonzero, timeout or bad output never counts as TLS proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-31",
+      "testMethod": "test_TLS_D4_31_manifest",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "name": "BACKUP_MANIFEST",
+      "expectation": "Forward manifest validates full exact proof set, hashes, freshness, risk and restored catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-32",
+      "testMethod": "test_TLS_D4_32_privacy",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RECEIPT_PRIVACY",
+      "expectation": "No raw conninfo/DSN/password/stderr/env or invented cipher/cert values",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-33",
+      "testMethod": "test_TLS_D4_33_durability",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "RECEIPT_DURABILITY",
+      "expectation": "Exclusive/fsync failure blocks progression; postcommit failure follows existing forward-fix/unknown rules",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-34",
+      "testMethod": "test_TLS_D4_34_scope",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "name": "SOURCE_SCOPE",
+      "expectation": "Exact 9 modifications, no source adds; all protected hashes unchanged",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-35",
+      "testMethod": "test_TLS_D4_35_atomicity_regression",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "ATOMICITY_REGRESSION",
+      "expectation": "Existing migration+ledger rollback, concurrency and unknown-commit behavior pass unchanged",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-36",
+      "testMethod": "test_TLS_D4_36_precommit_risk_expiry",
+      "planned": true,
+      "executed": true,
+      "status": "PASS",
+      "skip": false,
+      "log": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "name": "AUTH_RECHECK",
+      "expectation": "Risk expiry at existing precommit authorize hook stops and rolls back without engine edits",
+      "safetyCritical": true
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "sha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "tests": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "sha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "tests": 26,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "sha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "tests": 31,
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "sha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "sha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "regression": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+    "sha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e"
+  },
+  "negativeToolMatrix": [
+    {
+      "toolProfile": "full pg_dump",
+      "failure": "wrong CA",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "full pg_dump",
+      "failure": "wrong hostname",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "full pg_dump",
+      "failure": "non-TLS endpoint",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "schema pg_dump",
+      "failure": "wrong CA",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "schema pg_dump",
+      "failure": "wrong hostname",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "schema pg_dump",
+      "failure": "non-TLS endpoint",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "roles pg_dumpall",
+      "failure": "wrong CA",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "roles pg_dumpall",
+      "failure": "wrong hostname",
+      "executed": true,
+      "result": "REJECT"
+    },
+    {
+      "toolProfile": "roles pg_dumpall",
+      "failure": "non-TLS endpoint",
+      "executed": true,
+      "result": "REJECT"
+    }
+  ],
+  "nestedChecksNotDoubleCounted": "TLS-D4-22 and TLS-D4-35 also rerun one ordering case and five existing atomicity cases; top-level total remains 134.",
+  "receiptExpectationsForwarded": [
+    "production authorization/2",
+    "capture/2",
+    "backup/2",
+    "v4 only",
+    "backend false no longer client TLS failure"
+  ],
+  "developmentIterations": "Transient owned-only test failures were fixed before the final complete validation; final logs contain the final source execution."
+}

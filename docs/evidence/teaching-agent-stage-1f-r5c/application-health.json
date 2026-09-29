@@ -1,0 +1,118 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T04:37:56.523452+00:00",
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "nextVersion": "16.2.10",
+  "routes": [
+    {
+      "name": "homepage",
+      "method": "GET",
+      "path": "/",
+      "httpStatus": 200,
+      "responseBytes": 9290,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "PASS",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "login",
+      "method": "GET",
+      "path": "/login",
+      "httpStatus": 200,
+      "responseBytes": 26364,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "PASS",
+      "streamedLoginRedirectObserved": false
+    },
+    {
+      "name": "platform-dashboard",
+      "method": "GET",
+      "path": "/platform/dashboard",
+      "httpStatus": 200,
+      "responseBytes": 14504,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "course-read-entry",
+      "method": "GET",
+      "path": "/platform/apps/korean/courses",
+      "httpStatus": 200,
+      "responseBytes": 29098,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "admin",
+      "method": "GET",
+      "path": "/platform/dashboard/admin",
+      "httpStatus": 200,
+      "responseBytes": 20891,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "textbook-authoring",
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "httpStatus": 200,
+      "responseBytes": 29154,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "script-studio",
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+      "httpStatus": 200,
+      "responseBytes": 29311,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "existing-media",
+      "method": "HEAD",
+      "path": "/images/hangul/pronunciation-side-profile.png",
+      "httpStatus": 200,
+      "responseBytes": 0,
+      "contentType": "image/png",
+      "redirectPath": null,
+      "status": "PASS",
+      "streamedLoginRedirectObserved": false
+    }
+  ],
+  "compiledRoutes": {
+    "/[space]/dashboard/admin/apps/[appSlug]/textbooks/page": true,
+    "/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/page": true,
+    "/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page": true
+  },
+  "startupLogs": {
+    "pm_out_log_path": {
+      "newBytes": 117,
+      "fatalPatternFound": false,
+      "readyObserved": true
+    },
+    "pm_err_log_path": {
+      "newBytes": 0,
+      "fatalPatternFound": false,
+      "readyObserved": false
+    }
+  },
+  "agentPostRequests": 0,
+  "providerRequestsByTask": 0,
+  "productionAuthSessionUsed": false,
+  "authenticatedUI": "AUTHENTICATED UI VERIFICATION NOT EXECUTED",
+  "existingClassroomInteraction": "AUTH SESSION REQUIRED; compiled lesson route verified, no student session or classroom action executed"
+}

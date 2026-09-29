@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "httpResponse": "full captured response body, no refetch",
+  "httpBodyBytes": 59464,
+  "httpBodySha256": "ffa52718cdd174302a96717a3dbb2e9d644a21ee4d559a1ad0f2a804a240f57a",
+  "expectedToolSummaryVisible": true,
+  "actualActorTenantOrCredentialLeaks": 0,
+  "privateGradingMarkers": 0,
+  "browserFullDomScan": "PASS / no UUID or JWT markers",
+  "clientBundleScan": "deployed-client-scan.json",
+  "logs": [
+    {
+      "stream": "pm_out_log_path",
+      "bytes": 2599,
+      "privateValueLeaks": 0,
+      "refreshTokenNotFoundCodeCount": 0
+    },
+    {
+      "stream": "pm_err_log_path",
+      "bytes": 1816,
+      "privateValueLeaks": 0,
+      "refreshTokenNotFoundCodeCount": 2
+    }
+  ],
+  "dtoBoundary": "actual successful Core output validation + locked explicit DTO projection; raw ToolResult is server-only and not separately exported",
+  "genericAuthErrorCode": "refresh_token_not_found is an error label, not a token value"
+}

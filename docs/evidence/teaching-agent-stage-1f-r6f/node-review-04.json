@@ -1,0 +1,26 @@
+{
+  "nodeNumber": 4,
+  "title": "再认识基础辅音",
+  "formalType": "explanation",
+  "purpose": "辨认八个辅音，降低背诵压力。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "三句替代连续名词化/比较句，减轻理解负担；原八字母未增加。前后的모양을…보세요属短促复习提醒，间隔一条减压说明，没有新命题矛盾，也未达到需要再次修改的重复程度。",
+  "resolvedItems": [
+    "S2"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+  "teacherScriptSha256": "14dfec55c4f9b69766fe7c84f4a8e9978dda83200911129e0054751738dbb04b",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

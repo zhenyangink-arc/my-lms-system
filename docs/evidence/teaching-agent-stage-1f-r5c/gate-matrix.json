@@ -1,0 +1,248 @@
+{
+  "overall": "CONDITIONAL",
+  "executionStatus": "WINDOW EXPIRED / EXECUTION INCOMPLETE",
+  "foundation": "INSTALLED",
+  "foundationTechnicalStatus": "HOLD",
+  "gates": [
+    {
+      "gate": "G-R5C-1",
+      "name": "Explicit Authorization",
+      "status": "PASS",
+      "evidence": "本任务用户明确授权，仅60分钟"
+    },
+    {
+      "gate": "G-R5C-2",
+      "name": "Window Active",
+      "status": "PASS",
+      "evidence": "每个production变更前检查；无截止后production变更"
+    },
+    {
+      "gate": "G-R5C-3",
+      "name": "Production Identity Match",
+      "status": "PASS",
+      "evidence": "PG17.6/project/host MATCH"
+    },
+    {
+      "gate": "G-R5C-4",
+      "name": "Input Hashes Locked",
+      "status": "PASS",
+      "evidence": "8迁移+candidate/runner/transport/package/runtime/launcher MATCH"
+    },
+    {
+      "gate": "G-R5C-5",
+      "name": "Maintenance Credential Valid",
+      "status": "PASS",
+      "evidence": "READ ONLY capability SUFFICIENT / VALID"
+    },
+    {
+      "gate": "G-R5C-6",
+      "name": "Named PM2 App Stopped",
+      "status": "PASS",
+      "evidence": "only uply-first-enable；3000不再监听"
+    },
+    {
+      "gate": "G-R5C-7",
+      "name": "Fresh Backup Created",
+      "status": "PASS",
+      "evidence": "本窗口新recovery point"
+    },
+    {
+      "gate": "G-R5C-8",
+      "name": "Fresh Backup Seal Valid",
+      "status": "PASS",
+      "evidence": "full/schema/roles/list exit0，seal VALID"
+    },
+    {
+      "gate": "G-R5C-9",
+      "name": "Fresh Backup Restore Verified",
+      "status": "PASS",
+      "evidence": "26项真实isolated restore PASS"
+    },
+    {
+      "gate": "G-R5C-10",
+      "name": "Backup Age <=15m At Migration000",
+      "status": "PASS",
+      "evidence": "181.183s，<=900s"
+    },
+    {
+      "gate": "G-R5C-11",
+      "name": "Migration000 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger450 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-12",
+      "name": "Migration001 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger451 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-13",
+      "name": "Migration002 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger452 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-14",
+      "name": "Migration003 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger453 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-15",
+      "name": "Migration004 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger454 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-16",
+      "name": "Migration005 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger455 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-17",
+      "name": "Migration006 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger456 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-18",
+      "name": "Migration007 Confirmed",
+      "status": "PASS",
+      "evidence": "CONFIRMED / new readonly ledger457 / objectsPASS"
+    },
+    {
+      "gate": "G-R5C-19",
+      "name": "Final Ledger457",
+      "status": "PASS",
+      "evidence": "latest202609140007"
+    },
+    {
+      "gate": "G-R5C-20",
+      "name": "Old449 Prefix Preserved",
+      "status": "PASS",
+      "evidence": "version/name/完整SQL旧prefix unchanged"
+    },
+    {
+      "gate": "G-R5C-21",
+      "name": "Expected DB Objects",
+      "status": "PASS",
+      "evidence": "35 functions + columns/constraints/indexes/triggers"
+    },
+    {
+      "gate": "G-R5C-22",
+      "name": "RLS / ACL",
+      "status": "PASS",
+      "evidence": "exact policies/view/RLS；35函数权限逐项核对"
+    },
+    {
+      "gate": "G-R5C-23",
+      "name": "Persistent Artifact Hash",
+      "status": "PASS",
+      "evidence": "approved SHA exact"
+    },
+    {
+      "gate": "G-R5C-24",
+      "name": "Deployment Exact Build",
+      "status": "PASS",
+      "evidence": "6IhDHN8Dm1nCewiCEZnV5"
+    },
+    {
+      "gate": "G-R5C-25",
+      "name": "PM2 Named App Online",
+      "status": "PASS",
+      "evidence": "PID 934715"
+    },
+    {
+      "gate": "G-R5C-26",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "evidence": "启动后第一项安全检查；终态OFF"
+    },
+    {
+      "gate": "G-R5C-27",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "evidence": "TENANTS/COURSES/USERS EMPTY"
+    },
+    {
+      "gate": "G-R5C-28",
+      "name": "Agent Rows Zero",
+      "status": "PASS",
+      "evidence": "五张Agent表0"
+    },
+    {
+      "gate": "G-R5C-29",
+      "name": "Provider Requests Zero",
+      "status": "PASS",
+      "evidence": "本任务Provider0；无Agent/LLM测试"
+    },
+    {
+      "gate": "G-R5C-30",
+      "name": "Base App Health",
+      "status": "PASS",
+      "evidence": "HTTP/login/media基础健康；认证课堂业务验证未执行"
+    },
+    {
+      "gate": "G-R5C-31",
+      "name": "Authoring Foundation Available",
+      "status": "PARTIAL",
+      "evidence": "compiled routes/schema/RPC PASS；AUTH SESSION REQUIRED"
+    },
+    {
+      "gate": "G-R5C-32",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "evidence": "443/4000/8443保持，9443absent"
+    },
+    {
+      "gate": "G-R5C-33",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "evidence": "精确SHA MATCH"
+    },
+    {
+      "gate": "G-R5C-34",
+      "name": "Launcher Unchanged",
+      "status": "PASS",
+      "evidence": "精确SHA MATCH"
+    },
+    {
+      "gate": "G-R5C-35",
+      "name": "No Production Content Writes",
+      "status": "PASS",
+      "evidence": "41教学及身份相关表计数一致；本任务content writes0"
+    },
+    {
+      "gate": "G-R5C-36",
+      "name": "No Reconciler Run",
+      "status": "PASS",
+      "evidence": "0；只查catalog"
+    },
+    {
+      "gate": "G-R5C-37",
+      "name": "Window Not Exceeded",
+      "status": "FAIL",
+      "evidence": "最终只读复核超过60分钟；不延长窗口，HOLD"
+    },
+    {
+      "gate": "G-R5C-38",
+      "name": "Private Receipt Set Complete",
+      "status": "PASS",
+      "evidence": "授权/backup/8迁移/final/deploy/PM2/verification回执齐；600/700"
+    },
+    {
+      "gate": "G-R5C-39",
+      "name": "Sensitive Evidence Boundary",
+      "status": "PASS",
+      "evidence": "repo仅安全摘要，私有原件/凭据不入Git"
+    },
+    {
+      "gate": "G-R5C-40",
+      "name": "Stage1G Not Auto-Enabled",
+      "status": "PASS",
+      "evidence": "NOT AUTHORIZED / NOT READY"
+    }
+  ]
+}

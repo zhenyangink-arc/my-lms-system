@@ -1,0 +1,80 @@
+{
+  "capturedAt": "2026-09-13T01:58:22.870Z",
+  "mainRoot": "/home/yangzhen/projects/my-lms-system",
+  "releaseRoot": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "head": "b1672390ae96357a2143358235cc10edeff8d488",
+  "buildId": "l9HmPxSMluZWoirjL544P",
+  "workingTree": " M src/features/growth-toolbox/components/growth-toolbox-listing.tsx\n M src/features/growth-toolbox/components/toolbox-items-table/columns.tsx\n M src/features/growth-toolbox/components/toolbox-items-table/index.tsx\n M src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx\n M src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx\n M src/features/learning-agent-script-studio/TeachingScriptStudio.tsx\n?? .next-learning-insights-e2e/\n?? docs/TEACHING_SCRIPT_WORKSPACE_CLEANUP.md\n?? docs/TEACHING_SCRIPT_WORKSPACE_CLEANUP.patch\n?? docs/TEXTBOOK_DATA_AND_AUTHORING_WORKFLOW_AUDIT.md\n?? docs/TOOLBOX_WORKSPACE_REORGANIZATION.md\n?? docs/TOOLBOX_WORKSPACE_REORGANIZATION.patch\n?? docs/evidence/teaching-script-workspace-20260913/\n?? docs/evidence/textbook-data-audit-20260913/\n?? docs/evidence/toolbox-workspace-20260913/\n?? scripts/verify-teaching-script-workspace.mjs\n?? scripts/verify-toolbox-workspace.mjs\n?? src/features/growth-toolbox/components/growth-toolbox-workspace.tsx\n",
+  "files": [
+    {
+      "path": "src/features/digital-textbook/api/service.ts",
+      "mainSha256": "6e34c54cde0b3067420ad13ee727a536920aafa8757203b4d8ce1410fa4b3544",
+      "deployedSourceSha256": "1cfa7a84eb9b526248754e693925f67faf5cee12b01d068f24c93f34eaf1028c"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+      "mainSha256": "9778790c330ab7bc11a636808bb83e3282ff4f24fd4f5f407defbc4ee40f2102",
+      "deployedSourceSha256": "405c677ee6cca618edfda1b6c48be140189806d05705842f0355e4b0d4ca4ef1"
+    },
+    {
+      "path": "src/features/digital-textbook/components/textbook-studio.tsx",
+      "mainSha256": null,
+      "deployedSourceSha256": "3c61aa1637a30a5f400f1125db45e09067330aa8309d0116a159670118cebf67"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/service.server.ts",
+      "mainSha256": null,
+      "deployedSourceSha256": "55b2f1fe2f2b26302d43ce6049f9aee211ec0db763eb74633f4d38d9c1e026e5"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/page-content.tsx",
+      "mainSha256": "06e0d9997fa07140819d213112f9e954c423c10652999877f1310d2ebe9bea77",
+      "deployedSourceSha256": "57600a1ff59611770ebac103f31ff9e86ffaa6450c56fb3fc66910ce2c29ec1a"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "mainSha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+      "deployedSourceSha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/service.ts",
+      "mainSha256": "981966048e3362eec5e98c055f67cce2668559546e94a77746a85351d785bce2",
+      "deployedSourceSha256": "981966048e3362eec5e98c055f67cce2668559546e94a77746a85351d785bce2"
+    },
+    {
+      "path": "src/features/growth-toolbox/api/service.ts",
+      "mainSha256": "938db879997fb0de8db89de829f64cf418740f385d64a86b3bc50f89633a6950",
+      "deployedSourceSha256": "938db879997fb0de8db89de829f64cf418740f385d64a86b3bc50f89633a6950"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "mainSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "deployedSourceSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/authoring.server.ts",
+      "mainSha256": null,
+      "deployedSourceSha256": "96ccb8033a264369be15517d8cc26e152aa19e73926a20d5b7f0f6a5c818eeaa"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "mainSha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "deployedSourceSha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/adapter.server.ts",
+      "mainSha256": "60ccdfd1d64f442b93d79285c694ef11281159256cb99afa3d0e511003de23f7",
+      "deployedSourceSha256": "60ccdfd1d64f442b93d79285c694ef11281159256cb99afa3d0e511003de23f7"
+    },
+    {
+      "path": "src/lib/chapter-practice-binding.ts",
+      "mainSha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+      "deployedSourceSha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a"
+    },
+    {
+      "path": "src/lib/textbook-practice-resources.ts",
+      "mainSha256": "414c0c6dd5018fdbd34365c3dd36f65f45f87e8c80bcc42c1d334bd203f02c43",
+      "deployedSourceSha256": "414c0c6dd5018fdbd34365c3dd36f65f45f87e8c80bcc42c1d334bd203f02c43"
+    }
+  ]
+}

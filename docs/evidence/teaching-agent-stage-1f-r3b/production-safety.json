@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "ledgerBefore": 449,
+  "ledgerAfter": 449,
+  "exactLedgerMetadataEqual": true,
+  "agentTablesBefore": 0,
+  "agentTablesAfter": 0,
+  "readOnlyTransactions": true,
+  "courseMetadataUnchanged": true,
+  "runtime": {
+    "config": {
+      "TEACHING_AGENT_STUDENT_TRANSPORT_ENABLED": "OFF",
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    },
+    "process": {
+      "name": "uply-first-enable",
+      "pid": 1176676,
+      "status": "online",
+      "killTimeout": 15000,
+      "execMode": "fork_mode",
+      "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source"
+    },
+    "configSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "readOnly": true
+  },
+  "runtimeBeforeAfterEqual": true,
+  "runtimeMatchesR3A": true,
+  "runtimeSnapshotBoundary": "R3B mid/end snapshots plus unchanged R3A hash; DB catalog has R3B start/end checks",
+  "tailscaleConfigBeforeAfterEqual": true,
+  "tailscaleConfigSha256": "2f91b70d3e6b2a29ce9f4be55610306c2cfd493dcd90b6548fb62d7782e68fe3",
+  "tailscaleMutations": 0,
+  "productionWritesByThisTask": 0,
+  "productionDeploys": 0,
+  "productionMigrationApplied": false,
+  "productionEnable": false,
+  "liveProviderRequestsByThisTask": 0,
+  "studentEnrollmentProgressGradeChatRowsRead": 0,
+  "limitations": "Zero writes/requests is this task execution scope, not a global audit of unrelated activity."
+}

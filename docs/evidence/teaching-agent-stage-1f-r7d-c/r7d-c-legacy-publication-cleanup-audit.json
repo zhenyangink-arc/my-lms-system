@@ -1,0 +1,81 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "CLASSIFIED_NO_DELETION",
+  "categories": [
+    {
+      "category": "A_HISTORICAL_READER_REQUIRED",
+      "paths": [
+        "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "src/lib/smart-textbook-publishing/media-policy.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+        "src/lib/smart-textbook-publishing/assets/v1/chapter-one-identities.server.ts",
+        "src/lib/smart-textbook-publishing/assets/v1/chapter-one-service-identities.server.ts",
+        "src/lib/smart-textbook-publishing/assets/v1/chapter-one-media-audit.server.ts"
+      ],
+      "safeToDelete": false,
+      "reason": "Legacy snapshot certification/digest/media/history dependencies."
+    },
+    {
+      "category": "B_EXISTING_RUNTIME_CONSUMER_REQUIRED",
+      "paths": [
+        "src/lib/smart-textbook-publishing/loader.server.ts",
+        "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts"
+      ],
+      "safeToDelete": false,
+      "reason": "Source-level runtime and type consumers exist. Live activity not queried; do not claim inactive."
+    },
+    {
+      "category": "C_EXPLICIT_LEGACY_PRODUCER",
+      "paths": [
+        "src/lib/smart-textbook-publishing/publisher.server.ts",
+        "src/lib/smart-textbook-publishing/capture.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts"
+      ],
+      "safeToDelete": false,
+      "reason": "Producer/capture exports are used by publication tests, fixtures and historical workflow. Files include reusable functions/type dependencies; no whole-file retirement certified."
+    },
+    {
+      "category": "D_UNUSED_SAFE",
+      "paths": [],
+      "safeToDelete": false,
+      "reason": "No path proved free of imports, runtime, historical snapshots, rollback and external dependencies."
+    }
+  ],
+  "legacyCleanupCandidates": [],
+  "safeImmediateProductDeletions": 0,
+  "retirementReviewOnly": [
+    "explicit legacy producer operation could be reviewed after native activation; not an approved cleanup candidate"
+  ],
+  "liveDependencyAudit": "NOT_PERFORMED by instruction; preserving all paths makes this unnecessary for proposed non-deleting scope. Do not use this audit to authorize any deletion.",
+  "futureRetirementTests": [
+    "historical read/digest/fence unaffected",
+    "new native publication cannot select legacy producer",
+    "no runtime fallback",
+    "no dangling imports or active call-sites",
+    "separate external/PM2/config/session/request/rollback dependency audit before cleanup"
+  ]
+}

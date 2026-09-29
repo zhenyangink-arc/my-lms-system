@@ -1,0 +1,101 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I2",
+  "recordedAt": "2026-09-20T01:30:36.775608+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "implementationAddedFiles": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3": "DISABLED_RETAINED",
+  "status": "PASS",
+  "requiredOrder": [
+    "LEDGER",
+    "TARGET_PREGATE",
+    "TARGET_DEFINITION",
+    "PROTECTED_CATALOG"
+  ],
+  "observedOwnedSuccessOrder": [
+    "LEDGER",
+    "TARGET_PREGATE",
+    "TARGET_DEFINITION",
+    "PROTECTED_CATALOG"
+  ],
+  "fullOrder": [
+    "SESSION_TARGET_IDENTITY_GUARDS",
+    "LEDGER",
+    "capture_ledger_check PASS",
+    "TARGET_PREGATE",
+    "function_check PASS",
+    "acl_check PASS",
+    "TARGET_DEFINITION",
+    "raw SHA PASS",
+    "PROTECTED_CATALOG",
+    "LEDGER_AND_TARGET_CONSISTENCY",
+    "SAFE_RECEIPT"
+  ],
+  "queryFamilySha256": {
+    "session": "dfd38a9121284ec9800cf0bdf9778e842258e107de77316af5acb4688c7fde26",
+    "tls": "12a0087e69d26c70a3b57b9ddb606645320420455e6511caff267cf7597a1bb8",
+    "ledger": "efca7d87df98ec2916a32f2a163496bc5c162ff14b34ff48c8e1f74684b1888d",
+    "targetPreGate": "49c11f238341f1be966d71b06563fe3e21cdd0fc658d2f841d5c10d97b5f79ad",
+    "targetDefinition": "9000d911cd48b385403639dc50a1e084feade968970a2bc76095c407765dbbc3",
+    "protectedCatalog": "39710497209d055003b9201aee72f180ee467ca2f5aa224d3450035d66e0cf40"
+  },
+  "ledgerMismatch": {
+    "targetPreGateQueries": 0,
+    "targetDefinitionQueries": 0,
+    "protectedCatalogQueries": 0
+  },
+  "functionMismatch": {
+    "protectedCatalogQueries": 0
+  },
+  "traceEvidence": "CaptureOrder.trace intercepts real owned-session query calls; test 11 asserts exact order and validator events.",
+  "testReferences": [
+    "CAPTURE-ORDER-01",
+    "CAPTURE-ORDER-02",
+    "CAPTURE-ORDER-03",
+    "CAPTURE-ORDER-04",
+    "CAPTURE-ORDER-05",
+    "CAPTURE-ORDER-06",
+    "CAPTURE-ORDER-07",
+    "CAPTURE-ORDER-08",
+    "CAPTURE-ORDER-09",
+    "CAPTURE-ORDER-10",
+    "CAPTURE-ORDER-11"
+  ],
+  "initialUnpinnedStatementDigest": "First capture computes fresh digest; a differing history is rejected when prior digest is pinned. Existing ledger semantics unchanged.",
+  "fullCatalogCoverage": "PRESERVED",
+  "sharedSymbols": {
+    "CATALOG_SQL": "719f4737d0b5c2a2b58669cc4c14755a1c734127c0aa3606f5d8b49f0bc10d8a",
+    "observe": "1f536434e8df5746718d780bf9e1cb325fac5e3601f23ae1dc5699d9bc11a801",
+    "descriptor": "d2034a6df8f752cd77d8641c97ae4706af3fc577b497c7fdb990b90b47cd3729",
+    "fingerprint": "1b5365195fd0a9c4344dc2b91d5ca99978bc47f61aee78a6ac07c29e023cbbfc",
+    "target": "97d1c2ec887e25de44c1dec868b317ff76ef246a641df7f3299a709d69dcd493",
+    "function_check": "c010877f720013f4488a2d81f6496a0eb03291047369b53a22a363e805390053",
+    "acl_check": "23f168e5ad225739a7f0344115df1e147910c70df6d727c7ee91ca927a6caaa7",
+    "LEDGER_CAPTURE_SQL": "b7172f079dbafb0ce6a5cec4ab84d4dd39739826c2bb591716d25b89bc6012a9",
+    "TARGET_DEFINITION_SQL": "a904ed01534049041d1dd05a596595fa28d9a73a7df853fa67a7cdcf9f6ca749",
+    "capture_ledger_check": "948143be2000a1a19134cea9e205adac3ffe6bedd354f81c87f367d958d81bcd"
+  }
+}

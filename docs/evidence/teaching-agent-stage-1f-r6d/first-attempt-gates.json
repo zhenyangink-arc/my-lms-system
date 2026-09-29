@@ -1,0 +1,249 @@
+{
+  "overall": "NO-GO",
+  "review": "INCOMPLETE",
+  "contentReviewStatus": "BLOCKED",
+  "gates": [
+    {
+      "id": "G-R6D-1",
+      "name": "R6C Draft Ready",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-2",
+      "name": "Script Version One",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-3",
+      "name": "Script Still Draft",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-4",
+      "name": "Node Count Eight",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-5",
+      "name": "Node Order Valid",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-6",
+      "name": "Formal Types Match",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-7",
+      "name": "Persisted/UI Match",
+      "status": "FAIL",
+      "note": "目标UI上下文不匹配；未进行目标逐节点UI比对"
+    },
+    {
+      "id": "G-R6D-8",
+      "name": "Objective1 Coverage",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-9",
+      "name": "Objective2 Coverage",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-10",
+      "name": "Objective3 Coverage",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-11",
+      "name": "Objective4 Coverage",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-12",
+      "name": "Node1 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-13",
+      "name": "Node2 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-14",
+      "name": "Node3 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-15",
+      "name": "Node4 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-16",
+      "name": "Node5 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-17",
+      "name": "Node6 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-18",
+      "name": "Node7 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-19",
+      "name": "Node8 Review",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-20",
+      "name": "Korean Grammar",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-21",
+      "name": "Korean Naturalness",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-22",
+      "name": "Beginner Appropriateness",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-23",
+      "name": "Pedagogical Accuracy",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-24",
+      "name": "Terminology Consistency",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-25",
+      "name": "Syllable Block Coverage",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-26",
+      "name": "Cognitive Load",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-27",
+      "name": "Practice Correctness",
+      "status": "PARTIAL",
+      "note": "NOT EXECUTED AFTER STOP；不代表教学内容错误"
+    },
+    {
+      "id": "G-R6D-28",
+      "name": "No R6D Node Writes",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-29",
+      "name": "No Publish",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-30",
+      "name": "No Runtime",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-31",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-32",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-33",
+      "name": "Agent Zero",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-34",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-35",
+      "name": "Pins Zero",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-36",
+      "name": "Canonical Content Unchanged",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-37",
+      "name": "Auth Writes Zero",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-38",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-39",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    },
+    {
+      "id": "G-R6D-40",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "note": "独立只读DB/工作区及操作记录"
+    }
+  ],
+  "revisionRequired": null,
+  "stage1G": "NOT READY"
+}

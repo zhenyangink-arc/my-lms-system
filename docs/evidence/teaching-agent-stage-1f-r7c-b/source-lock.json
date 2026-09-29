@@ -1,0 +1,69 @@
+{
+  "files": [
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "sha256": "67b0ef3b76493ab4112c41baebe3646aa031916de378bdefd3798b9531a67c93"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "sha256": "47f71d669f6185b6d1c64db7469f79e3e04e0615d7b9be1278942b82d43e7e17"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-flow.server.ts",
+      "sha256": "2944b87f7ddffb1af645f5d4e8514028ebfee7e38b52afd006e01bb3026db78d"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-session.server.ts",
+      "sha256": "706f5532cd7eb6bd10a9ff6912224ae830ff3d66f11de958f6a016e9a327ad0e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "sha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189"
+    },
+    {
+      "path": "src/features/chapter-practice/api/management-service.ts",
+      "sha256": "76a72eeda9c327374140012afd7993def1b11553a001a2733ba8e21856fb15c4"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts",
+      "sha256": "ffc9282ca985fc9df03b88049ff9761c1d6e1e316e7d5489a6325c8fe023edd7"
+    },
+    {
+      "path": "src/lib/admin.ts",
+      "sha256": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7c/bootstrap.sql",
+      "sha256": "9a95c653bc1cb0c46e3d7fda235eaf75c43fbbd45559b1ce355f449437006906"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7c/README.md",
+      "sha256": "e5daf818e24f4fc183edae9b95758067ddb6b5e8d3da019a0476fb3a06ea5bc7"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r7c-native-activity-durable-completion.md",
+      "sha256": "189e612d1308b85df4589bb06cee68c966a6dec84187e7f5e8d7af756b6de3f6"
+    },
+    {
+      "path": "node_modules/next/dist/docs/01-app/02-guides/data-security.md",
+      "sha256": "4ab1abeafaeb69b091a3fa51228cb0abf1c362737e94ec16a04629720e4d7828"
+    },
+    {
+      "path": "node_modules/next/dist/docs/01-app/02-guides/server-actions.md",
+      "sha256": "8063a28cde0495a61c5ac195b0b769d86a10740a673facdc5f3e2f80f0e59b77"
+    }
+  ],
+  "sourceCodeWrites": 0
+}

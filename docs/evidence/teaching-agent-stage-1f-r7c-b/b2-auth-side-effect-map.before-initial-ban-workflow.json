@@ -1,0 +1,213 @@
+{
+  "status": "MAPPED FOR SPECIFIED ISOLATED SEQUENCE",
+  "sources": [
+    {
+      "table": "auth.users",
+      "trigger": "on_auth_user_created",
+      "definitionSha256": "0da996fbca2881e1359d414ec2e0123466a0e9223b7157e83b0c5fc0cf3d1500",
+      "function": "handle_new_user()",
+      "functionSha256": "18483087c341a2ce892cf6ba52d3f3c6d8d5c718eac92704112368db5ebbc0f7"
+    },
+    {
+      "table": "auth.users",
+      "trigger": "z_sync_auth_registration_metadata",
+      "definitionSha256": "dd6087450f8f4aaa088e894ab3817086d2d326ba6954f6912886e41e57ed5910",
+      "function": "sync_auth_registration_metadata()",
+      "functionSha256": "d9f2c96ac65458b57553e54f60de95e3a3eaeb95b5b89232ced4dbbd212835d4"
+    },
+    {
+      "table": "public.account_management_audit_logs",
+      "trigger": "account_management_audit_logs_tenant_scope",
+      "definitionSha256": "5c6f8f03c89635a99245a8835aaa84facd14d81143209cc7cdc2607f7f1a23fb",
+      "function": "private.enforce_tenant_scope()",
+      "functionSha256": "e4ae66d7551ce60d19272ef34421d430731afd2aab1d3ea5254506575185321a"
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "enforce_profile_self_service_fields_trigger",
+      "definitionSha256": "89abd3b7bc10edf32823965e39c8512fbc69810bd09e3bbc63c35ebe40119cf2",
+      "function": "enforce_profile_self_service_fields()",
+      "functionSha256": "507941a8c7564b2d486acc492129f56d4c232690701b13dd7c72c8d88a8308f3"
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_audit_management_change",
+      "definitionSha256": "5a697a200bae52d44d199121684f656adc49badb1d95d405dad7c44e9700d378",
+      "function": "audit_profile_management_change()",
+      "functionSha256": "74002980e2e7dbbb07fc3c3de55da5ec6967e3a6df66a846252ef7d58d884ba3"
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_set_management_timestamps",
+      "definitionSha256": "2ae103317f94fb3a090b9a1da371811143eaaabebbe28ebcf9ce02bf24ebbd0c",
+      "function": "set_profile_management_timestamps()",
+      "functionSha256": "63d52c67618693b3d38a5db57128a4d7133c06c912376a5657ee9c1409483028"
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_sync_bootstrap_membership",
+      "definitionSha256": "bd1d93b3667a96939a2dfe4608a9bd578d257614644dcb9d2bc146237426f49b",
+      "function": "private.sync_profile_to_bootstrap_membership()",
+      "functionSha256": "05a594ba5ac62324be31ca338f752d94c377120a64e78abf4433d1187a60cdd1"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_audit_change",
+      "definitionSha256": "2021e4a9bbb3bb99d7ed4d9e790fb092f1802a58cb8869cc02d32b5f11cf8ab6",
+      "function": "private.audit_tenant_membership_change()",
+      "functionSha256": "18a9b455b867771232d030c8d6b5d6f7a577befa6941724b02685234a1dabccf"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_enforce_integrity",
+      "definitionSha256": "1df14f408b53b3688f97fb272dfad097057fe5765956a03dd3e5ec32ff61bf72",
+      "function": "private.enforce_tenant_membership_integrity()",
+      "functionSha256": "01d5caac426f824f0900d026882dc49cb09fee1b7a0117830db5cd57204e640f"
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_set_updated_at",
+      "definitionSha256": "7391995339b2bfd8614aae41673db01ccc5f4728782888ecca5df45f50094bf5",
+      "function": "private.set_updated_at()",
+      "functionSha256": "8f919abc0eafd481129e242bd55cb25e3301f45b8660417310d22ed92351d7de"
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_seed_learning_grading_comments",
+      "definitionSha256": "32acc5c51a8596bbd750e9ad4db3329d76b442b2ba84829fbae46c1235a00528",
+      "function": "seed_learning_grading_comments_for_tenant()",
+      "functionSha256": "42f4433ab6c1d58b00c3ee1c47c6d92f49b87438218864641ad4e1f7e0be8aa4"
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_seed_student_apps",
+      "definitionSha256": "baf4320efcd76398aea38f43f2c820e3f5cc2fa6c18442471d85edbe4c159e8c",
+      "function": "private.seed_student_apps_for_tenant()",
+      "functionSha256": "d96a3f231f0d4d3e698f5a3f6a708824ae1fbc6ddca4b86db0d79294765f27f1"
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_set_updated_at",
+      "definitionSha256": "274ad0fe818932b3f7265a62119bc616606e144cf46c0c1080be4652b9df73be",
+      "function": "private.set_updated_at()",
+      "functionSha256": "8f919abc0eafd481129e242bd55cb25e3301f45b8660417310d22ed92351d7de"
+    }
+  ],
+  "expectedProvisioningRows": {
+    "auth.users": {
+      "INSERT": 1,
+      "UPDATE": 5,
+      "DELETE": 0
+    },
+    "auth.identities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.audit_log_entries": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.profiles": {
+      "INSERT": 1,
+      "UPDATE": 3,
+      "DELETE": 0
+    },
+    "public.account_management_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenants": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_memberships": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.learning_grading_comments": {
+      "INSERT": 4,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_student_apps": {
+      "INSERT": 5,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "sequence": [
+    "Owner-authorized create_tenant RPC INSERT only; do not use existing createTenantAction which additionally creates a login-capable manager",
+    "Admin POST /admin/users once with initial ban, confirmed synthetic email, server-generated random password, bounded metadata",
+    "Bound server repository UPDATE profile status inactive before adding membership",
+    "Bound server repository INSERT student/suspended/not-default membership"
+  ],
+  "authCreateOnly": [
+    {
+      "table_name": "auth.identities",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.profiles",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.profiles",
+      "operation": "UPDATE",
+      "count": 2
+    },
+    {
+      "table_name": "auth.users",
+      "operation": "UPDATE",
+      "count": 5
+    },
+    {
+      "table_name": "auth.users",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "whyAccountAuditZero": "profiles_audit_management_change has WHEN private.default_tenant_of(new.id) IS NOT NULL. No membership exists during initial INSERT/metadata UPDATE/profile deactivation. This is current trigger behavior, not disabled auditing. Later profile changes after membership can add audit rows.",
+  "membershipAudit": 1,
+  "tenantAutomaticRows": [
+    {
+      "table_name": "public.learning_grading_comments",
+      "operation": "INSERT",
+      "count": 4
+    },
+    {
+      "table_name": "public.tenant_student_apps",
+      "operation": "INSERT",
+      "count": 5
+    },
+    {
+      "table_name": "public.tenants",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "roleGrants": 0,
+  "tenantProvisionedAccounts": 0,
+  "sessionRefresh": 0,
+  "otherWrites": 0,
+  "assumptions": [
+    "Auth v2.197.0, current trigger definitions, email_confirm=true, same metadata fields",
+    "audit_log_disable_postgres=true; hosted non-DB Auth access/audit logging remains possible",
+    "student_apps count5, dedicated tenant slug absent, no preexisting subject membership",
+    "Only known exact operations; unknown commit stops and readbacks, no automatic retry or cleanup",
+    "Probe uses same tenant INSERT body and repository DML, not yet a deployed Owner provisioning workflow"
+  ],
+  "negativeProbeWrites": "Isolated magic-link/OTP generation updates Auth challenge state; excluded from provisioning budget and NEVER planned against current DB",
+  "currentDbWrites": 0
+}

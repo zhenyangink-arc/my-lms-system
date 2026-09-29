@@ -1,0 +1,102 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "validation": {
+    "typegen": 0,
+    "typecheck": 0,
+    "lint": 0,
+    "build": 0
+  },
+  "buildId": "dtQUY4hWv780Fx52x8nXq",
+  "typecheck": "Isolated full source tree with identical approved 34 files; tsc --noEmit --incremental false after Next typegen",
+  "lint": "eslint --max-warnings=0 on exact 34 paths",
+  "build": "next build --webpack",
+  "inputs": {
+    "font": "Existing local font fixture",
+    "publicSupabaseURL": "localhost invalid endpoint",
+    "publicKey": "Synthetic noncredential placeholder",
+    "network": "Fetch/http/https denied by local build hook",
+    "studentTransportEnabled": false
+  },
+  "artifacts": [
+    {
+      "path": "build/r7dc34b-validation-artifacts/validation-build.tar.gz",
+      "sha256": "0b5899c5f482395e4c36b3ae47e5437e19a75007bb4d9912404de244d993efd5",
+      "mode": "0o664",
+      "bytes": 6905417,
+      "classification": "VALIDATION_ARTIFACT_ONLY",
+      "deployable": false
+    },
+    {
+      "path": "build/r7dc34b-validation-artifacts/validation-source-34.tar.gz",
+      "sha256": "9b7c4d33e4ed82cca7edd6aac8ee43b7a9925f16fa55f79b4ef6a50602354b3b",
+      "mode": "0o664",
+      "bytes": 47800,
+      "classification": "VALIDATION_ARTIFACT_ONLY",
+      "deployable": false
+    }
+  ],
+  "deploymentCandidate": false,
+  "classification": "VALIDATION_ARTIFACT_ONLY",
+  "productionCompatibleBuildRequiredBeforeDeploy": true,
+  "sourceHashes": "34/34 match isolated build inputs",
+  "logs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o664",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/typescript.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o664",
+      "bytes": 0
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/new-tests.log",
+      "sha256": "fab9eac04e309080b51fc78b0576122953af8f9f563703e2d342611d04a8ffea",
+      "mode": "0o664",
+      "bytes": 15048
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/build.log",
+      "sha256": "f01e487f7b081c8a3b787268b25e166df129caddeada53a00de8ba6b0ee3fb04",
+      "mode": "0o664",
+      "bytes": 10615
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/regression.log",
+      "sha256": "7ae0497578f50639248991ae993ea841aa90c03028dd8e16cb83476df2f87513",
+      "mode": "0o664",
+      "bytes": 44146
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/typegen.log",
+      "sha256": "adba4af9194e10e47dda75ff0fd0f8c2b756474896d0eba5612799c527ff372a",
+      "mode": "0o664",
+      "bytes": 59
+    }
+  ]
+}

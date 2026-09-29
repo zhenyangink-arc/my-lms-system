@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-09-13T03:12:30.375734+00:00",
+  "readOnly": "on",
+  "activity": [],
+  "extensions": [
+    {
+      "name": "plpgsql",
+      "schema": "pg_catalog"
+    },
+    {
+      "name": "btree_gist",
+      "schema": "public"
+    },
+    {
+      "name": "pg_stat_statements",
+      "schema": "extensions"
+    },
+    {
+      "name": "uuid-ossp",
+      "schema": "extensions"
+    },
+    {
+      "name": "pgcrypto",
+      "schema": "extensions"
+    },
+    {
+      "name": "supabase_vault",
+      "schema": "vault"
+    }
+  ],
+  "counts": [
+    {
+      "status": "draft",
+      "count": 8
+    },
+    {
+      "status": "archived",
+      "count": 1
+    },
+    {
+      "status": "published",
+      "count": 1
+    }
+  ],
+  "deleteStats": {
+    "deleted": 2376458,
+    "updated": 44,
+    "inserted": 31,
+    "liveEstimate": 10
+  },
+  "tableHooks": [
+    {
+      "name": "learning_agent_script_versions_set_updated_at",
+      "function": "set_updated_at",
+      "schema": "private"
+    },
+    {
+      "name": "runtime_publish_fence",
+      "function": "check_authoring_statement",
+      "schema": "runtime_publish_private"
+    },
+    {
+      "name": "runtime_publish_lock",
+      "function": "lock_authoring_statement",
+      "schema": "runtime_publish_private"
+    },
+    {
+      "name": "teaching_script_source_review_before_publish",
+      "function": "require_teaching_script_source_review",
+      "schema": "private"
+    }
+  ],
+  "statementViews": [
+    "extensions.pg_stat_statements"
+  ],
+  "remoteWrites": false,
+  "targetVerified": true,
+  "tlsVerified": true
+}

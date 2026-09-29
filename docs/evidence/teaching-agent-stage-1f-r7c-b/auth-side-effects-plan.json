@@ -1,0 +1,24 @@
+{
+  "status": "NOT YET MAPPED TO EXACT COUNTS",
+  "staticallyLocated": [
+    "auth.users create/update",
+    "auth.identities on email/phone identity provisioning",
+    "auth.audit_log_entries depending on actual Auth config",
+    "public.profiles INSERT via handle_new_user",
+    "profiles updates through metadata sync",
+    "public.account_management_audit_logs",
+    "tenant insert and tenant-related triggers/audits",
+    "membership/provisioned-account changes if required; profile changes can sync membership"
+  ],
+  "exactCounts": {
+    "AuthApiCalls": null,
+    "AuthRowWrites": null,
+    "ProfileRowWrites": null,
+    "AuditRowWrites": null,
+    "TenantRowWrites": null,
+    "MembershipRowWrites": null,
+    "OtherTriggerWrites": null
+  },
+  "reason": "No isolated Auth provisioning was run in this read-only step. Static function inspection cannot safely determine API-dependent UPDATE/audit multiplicity.",
+  "nextRequired": "Separate bounded isolated Auth/API trigger audit approval before current-DB provisioning Approval B can be locked"
+}

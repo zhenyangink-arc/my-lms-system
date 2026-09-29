@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "valid submit receipt alone cannot resume and old generation readback is ignored",
+  "wrongHolds": true,
+  "unknownHolds": true,
+  "staleReadbackIgnored": true,
+  "privateDefinitionMismatchHolds": true,
+  "missingProgressHolds": true
+}

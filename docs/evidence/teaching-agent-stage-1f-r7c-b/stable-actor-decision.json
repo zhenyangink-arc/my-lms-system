@@ -1,0 +1,8 @@
+{
+  "preferStable": true,
+  "why": "Avoid repeated Auth/profile/audit creation; preserve same identity across restart/readback/progress tests",
+  "constraint": "Existing attempts key and max_attempts/completion aggregate by tenant+actor+activity; scenarioId alone cannot reset or isolate historical COMPLETED",
+  "policy": "One active scope per actor/activity. Within a scenario preserve rows across restart. Between independent from-empty scenarios, require separately approved exact test-owned attempt/progress cleanup and read-only baseline check, OR retain completed history and run readback-only cases. Never manufacture INCOMPLETE via registry and never filter authoritative completion by arbitrary new run IDs.",
+  "cleanup": "Only recorded test subject+tenant+activity/version rows, after dependency check; no CASCADE and no canonical node/activity/secret deletion",
+  "retention": "Safe external evidence retained; identity reused disabled outside scopes; cleanup is not implicitly approved"
+}

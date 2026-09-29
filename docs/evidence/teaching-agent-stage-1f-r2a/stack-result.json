@@ -1,0 +1,83 @@
+[
+  {
+    "name": "supabase_storage_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/storage-api:v1.62.5",
+    "state": "running",
+    "health": "healthy",
+    "ports": {},
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3"
+    }
+  },
+  {
+    "name": "supabase_rest_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/postgrest:v14.14",
+    "state": "running",
+    "health": null,
+    "ports": {},
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3"
+    }
+  },
+  {
+    "name": "supabase_realtime_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/realtime:v2.112.6",
+    "state": "running",
+    "health": "healthy",
+    "ports": {},
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3"
+    }
+  },
+  {
+    "name": "supabase_auth_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/gotrue:v2.192.0",
+    "state": "running",
+    "health": "healthy",
+    "ports": {},
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3"
+    }
+  },
+  {
+    "name": "supabase_kong_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/kong:2.8.1",
+    "state": "running",
+    "health": "healthy",
+    "ports": {
+      "8000/tcp": [
+        {
+          "HostIp": "",
+          "HostPort": "37905"
+        }
+      ]
+    },
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3",
+      "maintainer": "Kong <support@konghq.com>"
+    }
+  },
+  {
+    "name": "supabase_db_uply-agent-r2-de6e98a394a3",
+    "image": "public.ecr.aws/supabase/postgres:17.6.1.143",
+    "state": "running",
+    "health": "healthy",
+    "ports": {
+      "5432/tcp": [
+        {
+          "HostIp": "",
+          "HostPort": "51349"
+        }
+      ]
+    },
+    "labels": {
+      "com.docker.compose.project": "uply-agent-r2-de6e98a394a3",
+      "com.supabase.cli.project": "uply-agent-r2-de6e98a394a3"
+    }
+  }
+]

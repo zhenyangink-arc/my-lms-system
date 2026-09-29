@@ -1,0 +1,4 @@
+import{registerHooks}from'node:module';import{writeFileSync}from'node:fs';
+registerHooks({resolve(s,c,n){if(s==='server-only')return{url:'data:text/javascript,export{}',shortCircuit:true};if(s==='@/lib/admin')return{url:'data:text/javascript,export const requirePlatformOwner=()=>{throw Error("READ_ONLY_CAPTURE")}',shortCircuit:true};if(s==='@/lib/supabase/admin')return{url:'data:text/javascript,export const createAdminClient=()=>{throw Error("READ_ONLY_CAPTURE")}',shortCircuit:true};return n(s,c);}});
+const{createProvisioningReadback}=await import('/home/yangzhen/projects/my-lms-system/src/features/development-execution/server/provisioning-readback.server.ts');
+await createProvisioningReadback({transaction:async sql=>{writeFileSync('/tmp/r7cb-b2-approved-read.sql',sql,{mode:0o600});return{};}},'cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673').read();

@@ -1,0 +1,162 @@
+{
+  "approval": "Approval B — Development Execution Identity Provisioning",
+  "status": "APPROVED BY USER — EXECUTION BLOCKED BEFORE MUTATION",
+  "purpose": "Teaching Agent Lesson Runtime durable E2E foundation; provisioning only",
+  "environment": "canonical development DB / UPLY :8443",
+  "actor": "1 stable reusable non-human",
+  "tenant": "1 dedicated development tenant",
+  "securityContract": "INITIAL-BAN / NO USABLE SESSION",
+  "challengeIssuance": "MAY OCCUR",
+  "passwordSession": "DENIED",
+  "magicLinkSession": "DENIED WHILE BANNED",
+  "otpSession": "DENIED WHILE BANNED",
+  "refreshSession": "DENIED",
+  "sessionsAfterProvision": 0,
+  "refreshTokens": 0,
+  "expectedWrites": {
+    "auth.identities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.users": {
+      "INSERT": 1,
+      "UPDATE": 5,
+      "DELETE": 0
+    },
+    "public.learning_grading_comments": {
+      "INSERT": 4,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.profiles": {
+      "INSERT": 1,
+      "UPDATE": 3,
+      "DELETE": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_memberships": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_student_apps": {
+      "INSERT": 5,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenants": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.audit_log_entries": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.sessions": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.refresh_tokens": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.account_management_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.user_permission_grants": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_provisioned_accounts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_attempts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "productFiles": [
+    "src/features/development-execution/server/provisioning-composition.server.ts",
+    "src/features/development-execution/server/provisioning-contract.ts",
+    "src/features/development-execution/server/provisioning-journal.server.ts",
+    "src/features/development-execution/server/provisioning-readback.server.ts",
+    "src/features/development-execution/server/provisioning.actions.ts",
+    "src/features/development-execution/server/provisioning.service.ts",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts"
+  ],
+  "workflow": [
+    "Authenticated Platform Owner guard",
+    "Explicit bounded dev-only installation with environment identity, DB identity and Auth API origin SHA check",
+    "Fresh read-only canonical freeze/binding and empty actor/tenant check",
+    "Durable private single-operation journal exclusive claim; fresh empty readback",
+    "Owner caller create_tenant RPC once",
+    "New independent readback",
+    "Auth Admin createUser once with initial ban, synthetic email, confirmation, ephemeral CSPRNG password and bounded purpose metadata",
+    "Independent readback: initial ban/session0/refresh0/nonprivileged profile",
+    "Profile inactive PATCH before membership",
+    "Independent readback",
+    "Student suspended/non-default membership INSERT",
+    "Independent final readback; scope remains DISABLED"
+  ],
+  "preconditions": [
+    "Fresh current Auth version/config/provider/trigger hash parity with isolated evidence",
+    "Current canonical binding1/1/1 and R6F freeze MATCH",
+    "Actor alias/email and tenant alias absent; partial state STOP",
+    "Owner guard valid before admin construction",
+    "Private durable journal directory owned0700 and no prior claim",
+    "Provisioning authorization expiration at most30min; ban horizon >expiry+24h",
+    "Existing trusted DB transport identity independently pinned; no browser-supplied config or IDs",
+    "Approved controlled server composition only; production route does not import/register this action"
+  ],
+  "unknown": "STOP / no retry / new read-only classification / no auto-delete",
+  "currentDbWritesBeforeApproval": 0,
+  "frozenContentWrites": 0,
+  "canonicalActivityWrites": 0,
+  "attemptWrites": 0,
+  "progressWrites": 0,
+  "authTriggerChanges": 0,
+  "rlsChanges": 0,
+  "studentPolicyChanges": 0,
+  "migration": 0,
+  "deploy": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "scopeIssuer": "NOT IMPLEMENTED / NOT ACTIVATED",
+  "currentDbDurableE2E": "BLOCKED UNTIL APPROVAL B + PROVISION; attempt scenarios separately approved",
+  "R7D": "NOT READY",
+  "Stage1G": "NOT READY",
+  "recordedAt": "2026-09-17T08:16:57.271248+00:00",
+  "approvalReference": "User explicitly approved Approval B Development Execution Identity Provisioning, exact 15 INSERT / 8 UPDATE / 0 DELETE; no route deploy/second UPLY instance/attempt scope",
+  "executionBlocker": "OWNER_AUTHENTICATED_DEVELOPMENT_PROVISIONING_ENTRYPOINT_UNAVAILABLE",
+  "mutationDispatches": 0,
+  "journalClaimCreated": false
+}

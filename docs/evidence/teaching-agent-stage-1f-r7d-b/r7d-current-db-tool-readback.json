@@ -1,0 +1,33 @@
+{
+  "status": "FACTS ACCEPTANCE PASS / OVERALL CONDITIONAL DUE GLOBAL AUTH DELTA",
+  "tool": "get_current_lesson_execution_facts@1.0.0",
+  "operator": "normal existing Platform Owner browser session; not subject",
+  "subject": "fixed existing B2 development actor",
+  "source": "CURRENT_DEVELOPMENT_DB",
+  "invocation": "one full document navigation, no replay",
+  "route": "/platform/dashboard/admin/development-execution/lesson-facts",
+  "responseHttp": 200,
+  "observedAt": "2026-09-18T02:10:24.196Z",
+  "asOf": "2026-09-18T02:10:24.196Z",
+  "attemptCount": 2,
+  "latestResult": "CORRECT",
+  "completionStatus": "COMPLETED",
+  "nodeProgress": {
+    "status": "completed",
+    "completionPercent": 100,
+    "masteryScore": 100,
+    "attemptCount": 2
+  },
+  "currentTeachingNode": null,
+  "currentPositionAvailability": "unavailable",
+  "coreResult": "partial (cursor unavailable)",
+  "sameSnapshot": "PASS - deployed locked shared read and Core validator; output fields derive from one validated repository read",
+  "independentComparison": "MATCH",
+  "independentReadAt": "2026-09-18T02:10:57.221777+00:00",
+  "evidenceCapture": "rendered Tool summary + full captured HTTP body + deployed server source contract; no extra repository substituted for Tool",
+  "serverOnlyFields": "receipt/revision/raw ToolResult retained server-side; validated by locked Core/projection, not dumped into browser",
+  "privateBoundary": "PASS",
+  "strictAllTableZeroWrite": "FAIL - Owner Auth refresh side effects",
+  "agentRuns": 0,
+  "providerRequests": 0
+}

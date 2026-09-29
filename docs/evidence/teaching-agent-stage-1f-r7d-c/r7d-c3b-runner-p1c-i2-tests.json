@@ -1,0 +1,640 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I2",
+  "recordedAt": "2026-09-20T01:30:36.775608+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "implementationAddedFiles": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3": "DISABLED_RETAINED",
+  "status": "PASS",
+  "planned": 98,
+  "executed": 98,
+  "passed": 98,
+  "failed": 0,
+  "skipped": 0,
+  "safetyCriticalSkips": 0,
+  "groups": {
+    "historicalRunner": {
+      "planned": 51,
+      "executed": 51,
+      "passed": 51,
+      "failed": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_01",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_02",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_03",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_04",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_05",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_06",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_07",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_08",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_09",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_10",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_29",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_30",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_32",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_33",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_49",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_50",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_11",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_12",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_13",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_14",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_15",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_16",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_17",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_18",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_19",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_20",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_21",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_22",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_23",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_24",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_25",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_26",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_27",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_28",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_31",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_43",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_44",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_45",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_46",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_47",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_48",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_51",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_34",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_35",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_36",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_37",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_38",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_39",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_40",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_41",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_42",
+          "status": "PASS"
+        }
+      ]
+    },
+    "existingCapture": {
+      "planned": 27,
+      "executed": 27,
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_01_missing_auth_before_credentials",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_02_explicit_draft_authority",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_03_cannot_authorize_install",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_04_strict_schema",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_05_static_hashes",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_06_raw_file_recheck",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_07_freshness",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_08_fixed_identity_tls",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_09_no_mutation_or_tools",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_10_fixture_separation",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_11_cli_arbitrary_inputs",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_12_production_auth_without_credentials",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_13_ledger_first_mock",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_14_modes_reject_bad_session",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_25_production_tls_before_ledger",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_26_runtime_guards_preserved",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_15_owned_baseline_rollback",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_16_cli_owned_adapter",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_17_readonly_mutation_probe",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_18_count_mismatch_early_stop",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_19_duplicates_early_stop",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_20_statement_digest_and_pinned_recapture",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_21_wrong_function_body",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_22_wrong_owner_definer_path",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_23_wrong_acl",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_24_wrong_versions_same_count",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+          "status": "PASS"
+        }
+      ]
+    },
+    "queryOrder": {
+      "planned": 20,
+      "executed": 20,
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_01_ledger_gate",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_02_body",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_03_raw_definition",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_04_owner",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_05_definer",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_06_search_path",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_07_metadata",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_08_acl",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_09_effective",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_10_missing",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_11_success_order",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_12_metadata_consistency",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_13_acl_effective_consistency",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_14_ledger_consistency",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_15_same_snapshot_readonly",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_16_rollback_phases",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_17_fixed_inputs",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_18_receipt",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_19_full_coverage",
+          "status": "PASS"
+        },
+        {
+          "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_20_capture_isolation",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "queryOrderPlanMapping": [
+    {
+      "planId": "CAPTURE-ORDER-01",
+      "requirement": "count/versions/duplicates/descriptor/optional pinned-prefix mismatch -> BOTH target query constants absent and catalog absent",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_01_ledger_gate",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-02",
+      "requirement": "changed function body -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_02_body",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-03",
+      "requirement": "metadata passes but injected raw definition differs -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_03_raw_definition",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-04",
+      "requirement": "wrong owner -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_04_owner",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-05",
+      "requirement": "SECURITY INVOKER -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_05_definer",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-06",
+      "requirement": "wrong config -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_06_search_path",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-07",
+      "requirement": "parameterize language, volatility, parallel, leakproof -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_07_metadata",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-08",
+      "requirement": "unexpected grant/missing authenticated/wrong grantor/grantable -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_08_acl",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-09",
+      "requirement": "explicit target ACL unchanged; owned role-membership setup producing effective anon execute -> full catalog zero; also parameterize all fixed role values",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_09_effective",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-10",
+      "requirement": "missing exact signature or only other overload -> full catalog zero",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_10_missing",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-11",
+      "requirement": "one ledger, target metadata, target definition, full catalog; all validator pass events precede next family",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_11_success_order",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-12",
+      "requirement": "real successful equality plus injected full target field changes -> fail closed before receipt",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_12_metadata_consistency",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-13",
+      "requirement": "injected ACL/effective mismatch or target missing in full result -> fail closed",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_13_acl_effective_consistency",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-14",
+      "requirement": "injected full ledger difference still fails; target gate must already have passed",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_14_ledger_consistency",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-15",
+      "requirement": "all queries share session id, RR and read_only=on; mutation probe at target phase denied; no committed state change",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_15_same_snapshot_readonly",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-16",
+      "requirement": "ledger/target metadata/raw definition/full consistency errors end ROLLBACK with no success receipt",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_16_rollback_phases",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-17",
+      "requirement": "constant exact signature and fixed role set; no SQL/identifier parameters, no new CLI/auth fields",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_17_fixed_inputs",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-18",
+      "requirement": "existing receipt schema survives; query hash map includes targetGate; no raw definitions/statements/credentials",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_18_receipt",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-19",
+      "requirement": "CATALOG_SQL and shared observe/fingerprint source hashes unchanged; same full state => same fingerprint",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_19_full_coverage",
+      "executed": true,
+      "status": "PASS"
+    },
+    {
+      "planId": "CAPTURE-ORDER-20",
+      "requirement": "new pre-gate only in capture; install/backup/READY semantics unchanged; all immutable boundary hashes match",
+      "testId": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_20_capture_isolation",
+      "executed": true,
+      "status": "PASS"
+    }
+  ],
+  "detailedResult": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+    "sha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531"
+  },
+  "log": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+    "sha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0"
+  },
+  "additionalFocusedValidation": {
+    "cases": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "ids": [
+      "CAPTURE-ORDER-08",
+      "CAPTURE-ORDER-09",
+      "CAPTURE-ORDER-10"
+    ],
+    "reason": "Expanded negative subcases after initial suite module load; reran affected final test methods against unchanged operational source.",
+    "coverage": [
+      "unexpected grant",
+      "missing authenticated",
+      "wrong grantor",
+      "grantable",
+      "all fixed effective roles",
+      "only other overload"
+    ],
+    "log": {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "sha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6"
+    }
+  },
+  "uniqueRequiredCases": 98,
+  "coreSuiteAndFocusedRecheckExecutions": 101,
+  "preliminarySmokeRunsExcludedFromTotals": true,
+  "regressionSeparate": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+    "sha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d"
+  }
+}

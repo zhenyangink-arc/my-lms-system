@@ -1,0 +1,14 @@
+{
+  "nextVersion": "16.2.10",
+  "productionHandlerSha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+  "probeSha256": "2caeea0acc3362c0f6b676871cd86b70501a3977d29408926603ec2a63afe423",
+  "originExpressionsByteEqual": true,
+  "compressOverride": false,
+  "productConfigSha256": "83b091cf0f756d1d5761ef1abcf0778eac5e3c259c43c381b3b472bfddf44555",
+  "envVariableNames": [
+    "PATH",
+    "NODE_ENV",
+    "NEXT_TELEMETRY_DISABLED"
+  ],
+  "isolatedDirectory": "/tmp/uply-r4b-probe.gobkCk"
+}

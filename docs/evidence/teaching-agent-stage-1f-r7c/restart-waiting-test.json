@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "child service termination completed/waiting rebuilds solely from surviving DB",
+  "serviceProcessTerminatedAndRecreated": true,
+  "newReadback": "INCOMPLETE",
+  "browserPhase": "AWAITING_ACTIVITY",
+  "waitingPresentationHint": "Scoped sessionStorage observation only; DB remains completion authority",
+  "durableCueCheckpoint": "NOT CREATED"
+}

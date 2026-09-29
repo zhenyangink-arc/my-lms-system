@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "backward": "completed cue not forced again",
+  "forward": "earliest unsatisfied crossed mandatory cue pauses and reveals",
+  "nearCueLanding": "pending scope prevents duplicate",
+  "algorithm": "crossing/unsatisfied-due scan, not float equality",
+  "videoPositionIsAuthoritativeProgress": false
+}

@@ -1,0 +1,70 @@
+{
+  "status": "COMPLETE",
+  "rows": [
+    {
+      "objectiveNumber": 1,
+      "objective": "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "nodes": [
+        1,
+        2,
+        5,
+        6,
+        8
+      ],
+      "coverage": "PARTIAL",
+      "evidence": "自音/母音及合体字形已有；视觉块内布局只隐含在가/한等例字，未明确讲解且无保存的黑板slides。",
+      "issueIds": [
+        "M1",
+        "M2",
+        "M3"
+      ]
+    },
+    {
+      "objectiveNumber": 2,
+      "objective": "能辨认并朗读基础元音和常用基础辅音。",
+      "nodes": [
+        3,
+        4,
+        5,
+        7
+      ],
+      "coverage": "PARTIAL",
+      "evidence": "6元音有跟读；8辅音主要辨形，4组合示例未明确带读；两题不考朗读。文本无法证明实际发音示范或学习者掌握。",
+      "issueIds": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "objectiveNumber": 3,
+      "objective": "理解初声、中声、终声组成韩语音节的基本方式。",
+      "nodes": [
+        6,
+        8
+      ],
+      "coverage": "PARTIAL",
+      "evidence": "초성/중성/종성及한拆分都有且拆分正确；中声视觉歧义、终声可选表述影响可靠理解。",
+      "issueIds": [
+        "M3",
+        "S4"
+      ]
+    },
+    {
+      "objectiveNumber": 4,
+      "objective": "能将基础辅音与元音组合成简单韩语音节。",
+      "nodes": [
+        2,
+        5,
+        7
+      ],
+      "coverage": "FULL",
+      "evidence": "4个正确C+V组合和题2对가的辨认构成入门讲解与练习覆盖；FULL指内容覆盖，不是学生已能独立掌握所有组合。",
+      "issueIds": []
+    }
+  ],
+  "objectivesAddressed": 4,
+  "full": 1,
+  "partial": 3,
+  "none": 0,
+  "noLearnerMasteryClaim": true
+}

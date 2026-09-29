@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "functionSourceSha256": "1364ed13817de9f0a1aaa9c2cac5b38125e5823b761fbcff569e1571085d8c76",
+  "sourceExact": true,
+  "defaults": [
+    {
+      "table": "digital_textbook_chapters",
+      "column": "status",
+      "default": "'draft'::text"
+    },
+    {
+      "table": "digital_textbook_versions",
+      "column": "status",
+      "default": "'draft'::text"
+    },
+    {
+      "table": "digital_textbooks",
+      "column": "status",
+      "default": "'draft'::text"
+    },
+    {
+      "table": "learning_agent_lessons",
+      "column": "status",
+      "default": "'draft'::text"
+    }
+  ],
+  "acl": {
+    "owner": "postgres",
+    "definer": true,
+    "config": [
+      "search_path=\"\""
+    ],
+    "anon": false,
+    "authenticated": true,
+    "serviceRole": false
+  }
+}

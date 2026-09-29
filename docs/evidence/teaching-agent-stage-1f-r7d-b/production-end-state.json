@@ -1,0 +1,33 @@
+{
+  "liveBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "ledger": 458,
+  "b1": "COMPLETE",
+  "b2": "COMPLETE",
+  "b3": "COMPLETE",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "attempts": 2,
+  "nodeProgress": {
+    "rows": 1,
+    "status": "completed",
+    "completionPercent": 100,
+    "masteryScore": 100,
+    "attemptCount": 2
+  },
+  "actorSessions": 0,
+  "actorRefresh": 0,
+  "frozenContent": "UNCHANGED",
+  "scope": "DISABLED",
+  "dbBusinessWritesThisStage": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "deployment": "NOT PERFORMED",
+  "newToolCurrentDbAcceptance": "NOT EXECUTED"
+}

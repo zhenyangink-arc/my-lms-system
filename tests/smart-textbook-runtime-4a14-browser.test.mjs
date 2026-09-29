@@ -43,6 +43,11 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
       const create=URL.createObjectURL.bind(URL),revoke=URL.revokeObjectURL.bind(URL);window.blobs=new Set();URL.createObjectURL=b=>{const u=create(b);window.blobs.add(u);return u;};URL.revokeObjectURL=u=>{window.blobs.delete(u);revoke(u);};
     });
     await page.goto(`http://127.0.0.1:${server.address().port}`);
+    // SceneImage is owned by the learning Step, independent of Teacher.stop().
+    // Every surviving URL must belong to a currently mounted scene; audio and
+    // Teacher character URLs must still be released. Full unmount must release all.
+    const assertOnlySceneUrls=async()=>assert.deepEqual(await page.evaluate(()=>[...window.blobs].sort()),
+      await page.locator('.runtime-scene-image img').evaluateAll(images=>images.map(i=>i.src).sort()));
     const teacher=page.getByRole('region',{name:'金老师讲解',exact:true});await teacher.getByRole('button',{name:'开始讲解'}).click();
     const settled=async()=>page.waitForFunction(()=>['feedback','awaiting-task','awaiting-answer','remediation','completed','error'].includes(document.querySelector('[data-teacher-phase]')?.getAttribute('data-teacher-phase')));
     const phases=new Set(),texts=[],poses=new Set(),blackboard=new Set();let wrong=false,question=false,task=false,taskTarget;
@@ -83,7 +88,8 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
     await page.evaluate(target=>window.testCommand(target,'play'),taskTarget);
     assert.equal(responses.filter(r=>r.operation==='observeTts').length,observations);
     assert(f.media.length>0&&f.characters.length>0);assert(f.media.every(m=>!evidence.speech.some(a=>a.id===m.assetId&&a.segment_index===199)));
-    await teacher.getByRole('button',{name:'停止讲解'}).click();await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+    await teacher.getByRole('button',{name:'停止讲解'}).click();await page.waitForTimeout(100);await assertOnlySceneUrls();
+    assert.equal(await page.locator('.runtime-scene-image img').count(),1,'stopping Teacher preserves the active learning illustration');
     const enter=async index=>{await page.locator('nav').getByRole('button',{name:manifest.steps[index].title['zh-CN'],exact:true}).click();await page.waitForTimeout(80);};
     await t.test('real Audio pause/resume, Step cancellation, detached late ended',async()=>{
       f.setAudioDuration(2);await teacher.getByRole('button',{name:'开始讲解'}).click();
@@ -93,12 +99,12 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
       await page.evaluate(()=>window.lateAudioEnded=window.audios.find(a=>!a.paused).onended);
       await enter(1);const count=requests.filter(r=>r.path.endsWith('/teacher')).length;
       await page.evaluate(()=>window.lateAudioEnded?.(new Event('ended')));await page.waitForTimeout(80);
-      assert.equal(requests.filter(r=>r.path.endsWith('/teacher')).length,count);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+      assert.equal(requests.filter(r=>r.path.endsWith('/teacher')).length,count);await assertOnlySceneUrls();
       await enter(0);f.setAudioDuration(.06);
     });
     await t.test('late authorized HTTP bytes after Step disposal cannot attach to a new Step',async()=>{
       const held=f.holdSpeech();await teacher.getByRole('button',{name:'开始讲解'}).click();await held.entered;
-      await enter(1);held.release();await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+      await enter(1);held.release();await page.waitForTimeout(120);await assertOnlySceneUrls();
       // This controlled refusal is expected, and must not be hidden as success.
       const expectedRefusal=errors.findIndex(e=>/REVOKED|STALE/.test(e));assert(expectedRefusal>=0);errors.splice(expectedRefusal,1);
       await enter(0);
@@ -108,7 +114,7 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
       await page.waitForFunction(()=>document.querySelector('[data-teacher-phase]')?.getAttribute('data-teacher-phase')==='tts-playing');
       await enter(1);const count=responses.filter(r=>r.operation==='advance'||r.operation==='observeTts').length;
       await page.evaluate(()=>window.lastTtsEnd?.());await page.waitForTimeout(80);
-      assert.equal(responses.filter(r=>r.operation==='advance'||r.operation==='observeTts').length,count);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+      assert.equal(responses.filter(r=>r.operation==='advance'||r.operation==='observeTts').length,count);await assertOnlySceneUrls();
       await page.evaluate(()=>window.ttsHold=false);f.setAudioFailure(false);await enter(0);
     });
     const reach=async desired=>{
@@ -127,7 +133,7 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
       for(let i=0;i<100&&responses.filter(r=>r.operation==='issueTts').length===issued;i++)await page.waitForTimeout(10);
       assert.equal(responses.filter(r=>r.operation==='issueTts').length,issued+1);await page.waitForTimeout(50);
       await enter(1);await page.evaluate(()=>window.lastTtsEnd?.());await page.waitForTimeout(100);
-      assert.equal(responses.filter(r=>r.operation==='observeTts').length,observed);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+      assert.equal(responses.filter(r=>r.operation==='observeTts').length,observed);await assertOnlySceneUrls();
       const old=responses.findLast(r=>r.operation==='open').value.session,grant=responses.findLast(r=>r.operation==='issueTts').value.grantId;
       await assert.rejects(f.boundary.dispatch({session:old,operation:'observeTts',grantId:grant}),/SCOPE/);
       await page.evaluate(()=>window.ttsHold=false);await enter(0);
@@ -147,7 +153,7 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
     for(const step of manifest.steps){await page.locator('nav').getByRole('button',{name:step.title['zh-CN'],exact:true}).click();await page.waitForTimeout(50);}
     await page.locator('nav').getByRole('button',{name:manifest.steps[0].title['zh-CN'],exact:true}).click();
     f.setAudioFailure(true);await teacher.getByRole('button',{name:'开始讲解'}).click();await settled();assert.notEqual(await teacher.getAttribute('data-teacher-phase'),'error');assert((await page.evaluate(()=>window.spoken.length))>1);
-    await page.locator('nav').getByRole('button',{name:manifest.steps[1].title['zh-CN'],exact:true}).click();await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>window.blobs.size),0);
+    await page.locator('nav').getByRole('button',{name:manifest.steps[1].title['zh-CN'],exact:true}).click();await page.waitForTimeout(100);await assertOnlySceneUrls();
     await page.reload();await page.locator('nav').waitFor();assert.equal(await page.locator('nav [aria-current="step"]').innerText(),manifest.steps[1].title['zh-CN']);
     await page.locator('nav').getByRole('button',{name:manifest.steps[0].title['zh-CN'],exact:true}).click();await teacher.getByRole('button',{name:'开始讲解'}).waitFor();
     for(const {path,input} of requests.filter(r=>r.path.endsWith('/teacher'))){const json=JSON.stringify(input);assert(!/scriptVersionId|nodeId|tenantId|userId|speechAssetId|objectKey|generation|snapshot|sourceRevision|score/.test(json),path);for(const node of source.teachingNodes)assert(!json.includes(node.id));}
@@ -156,6 +162,8 @@ test('4A14 mounted opaque Teacher with learning: real resolver/Audio, Grant owne
     assert(nodeCoverage.every(n=>n.covered),JSON.stringify(nodeCoverage));
     await page.goto(`http://127.0.0.1:${server.address().port}/?mode=strict`);
     await page.locator('nav').waitFor();assert.equal(await page.locator('nav').count(),1);await teacher.getByRole('button',{name:'开始讲解'}).waitFor();
+    await page.evaluate(()=>window.testUnmount());await page.waitForTimeout(100);
+    assert.equal(await page.evaluate(()=>window.blobs.size),0,'full unmount releases learning and Teacher media');
     await writeFile('/tmp/uply-runtime-4a14-mounted.json',JSON.stringify({snapshotId:manifest.snapshot.id,teachingRevision:manifest.teachingRefs[0].revision,
       mode:'development-mounted-not-strict-complete',nodes:nodeCoverage,targets:audit,blackboard:[...blackboard].sort(),phases:[...phases],
       mountedGrant:true,pauseResume:true,audioStepDispose:true,ttsStepDispose:true,grantStepDispose:true,questionStepDispose:true,lateHttp:true,lateAudioEnded:true,lateTtsEnded:true,

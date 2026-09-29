@@ -1,0 +1,86 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1",
+  "recordedAt": "2026-09-19T05:03:13.074562+00:00",
+  "status": "BLOCKED",
+  "blockingCode": "BLOCKED_DRAFT_PRODUCTION_READONLY_CAPTURE_ENTRYPOINT_UNAVAILABLE",
+  "authorization": "EXPLICIT_USER_READ_ONLY_CAPTURE_APPROVAL_RECOGNIZED",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "authWrites": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "migrationInstall": 0,
+  "realBackup": 0,
+  "restoreExecution": 0,
+  "credentialAccess": 0,
+  "operationalChanges": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildFreshlyObserved": false,
+  "feature": "OFF_LAST_KNOWN_NOT_REOBSERVED",
+  "allowlists": "EMPTY_LAST_KNOWN_NOT_REOBSERVED",
+  "B3Scope": "DISABLED_LAST_KNOWN_NOT_REOBSERVED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "outcome": "STOPPED_BEFORE_CONNECTION",
+  "transportInvoked": false,
+  "transactionStarted": false,
+  "transactionMode": null,
+  "transactionReadOnly": null,
+  "readStart": null,
+  "readEnd": null,
+  "rollback": "NOT_APPLICABLE_NO_SESSION",
+  "queryFamiliesExecuted": [],
+  "credentialOutput": false,
+  "businessWrites": 0,
+  "sourceInspectionReferences": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "line": 24,
+      "behavior": "Unconditional plan.ensure_ready() before every CLI mode and before reading authorization/credentials"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "line": 115,
+      "behavior": "ensure_ready rejects DRAFT_NOT_EXECUTABLE"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "line": 158,
+      "behavior": "authorize unconditionally requires READY; lines174-175 require the descriptor/catalog digests this capture is intended to obtain"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "line": 96,
+      "behavior": "Production constructor calls the same READY-only authorization before credentials"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "line": 75,
+      "behavior": "Engine constructor requires READY; preflight validates an already sealed ledger/catalog baseline"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 93,
+      "behavior": "Historical RUNNER-D1-08 asserts all four existing CLI modes reject DRAFT before credential access"
+    }
+  ],
+  "forbiddenWorkaroundsNotUsed": [
+    "temporary psql",
+    "private _Session direct call",
+    "R5B/R5D transport fallback",
+    "monkeypatch authorization",
+    "fake READY plan",
+    "fabricated descriptor/prefix"
+  ]
+}

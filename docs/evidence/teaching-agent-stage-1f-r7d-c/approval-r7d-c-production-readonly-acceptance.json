@@ -1,0 +1,49 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "approved": false,
+  "executionAuthorized": false,
+  "previousPackage": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/release-c3a/history/approval-r7d-c-production-readonly-acceptance.json",
+    "sha256": "da7802e9ef4fc6f9a06008cc7cb3085ec0ea688c43214ff2a1843ce31cdc823d"
+  },
+  "status": "BLOCKED_TARGET_SUBJECT_ENTRYPOINT_AND_PRIVATE_CONFIG_NOT_LOCKED",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "target": "TARGET_PROVISIONING_REQUIRED",
+  "subject": "DEDICATED_ACCEPTANCE_STUDENT_REQUIRED",
+  "facts": "NOT_LOCKED",
+  "entrypoint": "BLOCKED_ZERO_RUN_ZERO_PROVIDER_CONFLICT",
+  "privateReadConfig": "ABSENT",
+  "requiredPipeline": "Real Student admission/verifier → production binding → production capability composition → Core → Tool1.1 → Skill1.1 server projection",
+  "authority": "Official native publication and trusted durable facts in same READ ONLY snapshot",
+  "prohibitions": [
+    "No Owner/B2/fixture substitution",
+    "No current Frozen Draft publication",
+    "No direct repository/SQL equivalent result",
+    "No coordinator/Provider under readonly approval"
+  ],
+  "requiredSeparateDecisions": [
+    "Dedicated QA content/student setup",
+    "Official v2 QA publication",
+    "Protected server transport identity configuration",
+    "Legitimate zero-Agent/zero-Provider entrypoint architecture and precise implementation scope"
+  ],
+  "actualExecution": false
+}

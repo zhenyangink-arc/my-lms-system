@@ -1,0 +1,118 @@
+{
+  "status": "CANONICAL AUTHORING DESIGN READY — NOT APPROVED / NOT IMPLEMENTED",
+  "plannedProductFileChanges": [
+    "package.json",
+    "package-lock.json"
+  ],
+  "plannedNewProductFiles": [
+    "src/app/[space]/dashboard/admin/digital-textbook/native-activity/page.tsx",
+    "src/features/smart-textbook-runtime/server/native-activity-authoring.actions.ts",
+    "src/features/smart-textbook-runtime/server/native-activity-authoring.server.ts",
+    "src/features/smart-textbook-runtime/server/current-db-transaction.server.ts"
+  ],
+  "approvedBusinessWrites": 0,
+  "futureCandidateAuthoringRows": {
+    "digital_textbook_nodes": 1,
+    "digital_textbook_activities": 1,
+    "digital_textbook_activity_secrets": 1
+  },
+  "futureRowsAuthorized": false,
+  "futurePlanConditions": [
+    "Canonical-only creation may be approved separately without a student actor",
+    "Durable execution must await formal identity contract approval",
+    "No Frozen Script/Auth/StudentPolicy/Publish/Agent modifications within canonical-only action scope"
+  ],
+  "frozenWrites": 0,
+  "migration": 0,
+  "publish": 0,
+  "agent": 0,
+  "provider": 0,
+  "plannedTests": [
+    "tests/teaching-agent-r7cb-authoring.test.mjs",
+    "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs"
+  ],
+  "dependencyProposal": "Add maintained PostgreSQL Node driver and types to support one server-side connection transaction; exact pinned versions/license/build compatibility must be checked before implementation. No install performed.",
+  "scopeSplit": {
+    "canonicalAuthoring": "Does not require a student identity; may be separately approved",
+    "currentDbDurableExecution": "BLOCKED — needs new formal dev/test execution identity contract approval"
+  },
+  "plannedCanonicalBusinessWrites": {
+    "digital_textbook_nodes": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_secrets": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "otherBusinessTables": 0,
+    "frozenNodes": 0,
+    "scriptVersions": 0,
+    "objectives": 0,
+    "auth": 0,
+    "attempts": 0,
+    "progress": 0
+  },
+  "transactionPlan": [
+    "Server Action verifies requirePlatformOwner on each POST using existing authenticated session; server-only development gate default denies production route",
+    "Trusted fixed target alias; fetch and compare exact lesson/module/chapter/version/frozen hashes; client never supplies parent IDs/private keys/SQL",
+    "Use existing authoring lock before parent locks, then reread unique draft target and three-row emptiness within transaction",
+    "If all expected objects exist and exact safe/private server verification succeeds, return EXISTING with zero writes; partial/mismatch/duplicates STOP",
+    "Insert minimal practice node, one single_choice Activity, one existing private secret using parameterized repository queries; retain existing statement fences",
+    "Assert row counts and exact parent/key/shape before COMMIT; exception rolls back all three; no compensating DELETE workflow",
+    "Unknown commit: hold; fresh READ ONLY reconciliation; no blind resubmit",
+    "Return safe receipt only; independent read-only counts/freeze/secret access check; retain canonical rows"
+  ],
+  "plannedNode": {
+    "node_code": "hangul-introduction-vowel-recognition",
+    "node_type": "practice",
+    "sort_order": 1,
+    "estimated_minutes": 1,
+    "title": {
+      "zh-CN": "元音辨认"
+    },
+    "content": {},
+    "parent": "canonical chapter0/orientation module; resolved server-side"
+  },
+  "plannedActivity": {
+    "activity_key": "hangul-introduction-vowel-recognition",
+    "activity_type": "single_choice",
+    "sort_order": 1,
+    "prompt": {
+      "zh-CN": "哪个是元音？"
+    },
+    "instruction": {
+      "zh-CN": "请选择一个选项。"
+    },
+    "options": [
+      {
+        "zh-CN": "ㄱ"
+      },
+      {
+        "zh-CN": "ㅏ"
+      },
+      {
+        "zh-CN": "ㄴ"
+      }
+    ],
+    "public_config": {},
+    "max_attempts": 3,
+    "counts_toward_completion": true
+  },
+  "plannedSecret": "Existing answer_key contract initialized server-only; no value/private digest in receipt or public evidence",
+  "runtimeChangesInCanonicalAuthoringPlan": 0,
+  "approvalPrerequisites": [
+    "Read and pin maintained driver/API contract; no dependency installation until approval",
+    "Confirm existing authenticated Chrome can access isolated dev entry without login/cookie transfer or production deployment; otherwise STOP for separate environment decision",
+    "Prove transaction backend has required existing grants; do not add roles/grants/migrations silently",
+    "Enumerate any isolated authoring-test bootstrap rows before test-DB approval; current plan does not authorize test DB writes"
+  ],
+  "completionClaim": "Canonical binding can become PASS independently; durable current-DB verification remains BLOCKED and R7D unavailable"
+}

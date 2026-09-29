@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "newTests": 29,
+  "regressionTests": 117,
+  "total": 146,
+  "environment": "owned isolated PostgreSQL / browser fixtures ONLY",
+  "actualPgDriver": "PASS",
+  "real7ParameterRpc": "PASS",
+  "realCurrentRpcTriggersBudgetTest": "PASS",
+  "compositionWrongHold": "PASS",
+  "compositionCommittedResponseSuppressionAndReadbackResume": "PASS",
+  "thirdSubmissionBlocked": "PASS",
+  "scopeOwnerAndIdentityGuards": "PASS",
+  "freshReadbackAfterOwnedChildRestart": "PASS",
+  "builtChildUnapprovedStartDeniedAndCleanExit": "PASS",
+  "currentDbScenario": "NOT EXECUTED",
+  "newFiles": [
+    "tests/teaching-agent-r7cb-b3a-composition.test.mjs",
+    "tests/teaching-agent-r7cb-b3a-contracts.test.mjs",
+    "tests/teaching-agent-r7cb-b3a-transaction.test.mjs",
+    "tests/teaching-agent-r7cb-b3a-entrypoint.test.mjs"
+  ],
+  "testLogs": {
+    "b3a-final-tests.log": "b869bec0716854bb48737322e8360f4caef940bc3e96675f92ffcc82dbb19ef0",
+    "b3a-final-regression.log": "908ce4f4aeff4b44bc29fecfd4d9adfe9299e8966de2bf996d53be8cf9d753f1",
+    "b3a-typecheck-final.log": "8e377c9f604846c145b218ffda5020982f8f36320a5187104069a54e7153ea46",
+    "b3a-lint-all.log": "b885372ad23b3b29fd668f831cb035d7c7a1c10416f1a49c3ff87c2a48b22a4a",
+    "b3a-build.log": "7866eccdabb763a0db4c2a035c21c4642a3a429175d7711f25cb77f56db3e81a"
+  }
+}

@@ -1,0 +1,3587 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "result": "LOCKED",
+  "implementationProductScope": 34,
+  "implementationProductChangesThisStage": 0,
+  "deploymentSourceClosureCount": 143,
+  "productDeploymentCount": 142,
+  "buildConfigurationDeploymentCount": 1,
+  "buildConfigurationPaths": [
+    "tsconfig.json"
+  ],
+  "previousPrediction": 40,
+  "previouslyUndeployedC2Dependencies": 6,
+  "additionalHistoricalProductPaths": 102,
+  "reasonNot40": "34b + six C2 files are not a complete live-filesystem delta. R7D-B deployed a sealed .next with only eight source overlays; 102 other source paths and its build tsconfig were not synchronized. Current live .next matches all 1416 approved archive files. No new code or transport behavior was authored here.",
+  "files": [
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "b8783b18db19699993f0a66a550a6ced93b42c738a1b5b222f0a31a003d6016e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/page.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "f0e1368d11bf21fb30baca9808a9fec6b1bbe9c1815d80fc154350e69374cfcb",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "bbd92f55c3097d8172a6c50521e9eba8510462ca8cdf5b2fbe2604730cea2bc4",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "bbd92f55c3097d8172a6c50521e9eba8510462ca8cdf5b2fbe2604730cea2bc4",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/cancel/route.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a1ef08f420d97bde605f6a74d2cc62e872ab9131c76619b39d18c000ef51f754",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a1ef08f420d97bde605f6a74d2cc62e872ab9131c76619b39d18c000ef51f754",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/route.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "75e32a7bbf4953fe895540c71b954de726108505bedc59abfeba71dfb788b05f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "75e32a7bbf4953fe895540c71b954de726108505bedc59abfeba71dfb788b05f",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/route.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "89e2698e79f7db8e7d35dfa2ccb21c6d84bbee7c3d43609ff9befcf06210a50b",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "89e2698e79f7db8e7d35dfa2ccb21c6d84bbee7c3d43609ff9befcf06210a50b",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "f22379a775888e37e49b66c4bbe5de48d84fb8ae2e1550342645875a811a4420",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "6260afa9170b6b172586991861eb5a579ddb10a039838371443c8321373d2bd3",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "6260afa9170b6b172586991861eb5a579ddb10a039838371443c8321373d2bd3",
+      "directCandidateImporters": [
+        "src/app/dashboard/admin/apps/ManagementApplicationSectionPage.tsx"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "144e824442bc1ae525ceec3b831ef4bf05ae7970a589b4f69f87489f64b56614",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+      "directCandidateImporters": [
+        "src/app/dashboard/admin/digital-textbook/DigitalTextbookManager.tsx",
+        "src/app/dashboard/admin/growth-toolbox/GrowthToolboxManager.tsx",
+        "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+        "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx",
+        "src/features/growth-toolbox/components/growth-toolbox-action-dialogs.tsx"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/page-content.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "57600a1ff59611770ebac103f31ff9e86ffaa6450c56fb3fc66910ce2c29ec1a",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "06e0d9997fa07140819d213112f9e954c423c10652999877f1310d2ebe9bea77",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "06e0d9997fa07140819d213112f9e954c423c10652999877f1310d2ebe9bea77",
+      "directCandidateImporters": [
+        "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/page.tsx"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/HangulInteractiveBook.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "4c49603f7ba57f8ee0d6cbe35fe04c68b7abcc09b711430eba3e08f4eeba6a03",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3fe8097f190b2995a530d33614b58641052a9bf83f3d5c12e2ab235dccf9fdfe",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3fe8097f190b2995a530d33614b58641052a9bf83f3d5c12e2ab235dccf9fdfe",
+      "directCandidateImporters": [
+        "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx",
+        "src/app/dashboard/live/LiveClassRoom.tsx"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "39378c99697219bed872f0b922d07cde96d70f9376d1eec9e34717744131037e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "4a606e97c9b754752cfd034dae1fc2ff4e9ff0ac1ccf917505a2849caddb7bdd",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "4a606e97c9b754752cfd034dae1fc2ff4e9ff0ac1ccf917505a2849caddb7bdd",
+      "directCandidateImporters": [
+        "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/SmartTextbookShell.tsx"
+      ]
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "650b7b0c1a84372cc9088df586de267efb09bb7c4978f1b9f9294f21d44d8823",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1fdedddece6bf5faa5de4d2ed96ae9f8e6f985169cfa9abf98a361c089b57b67",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "1fdedddece6bf5faa5de4d2ed96ae9f8e6f985169cfa9abf98a361c089b57b67",
+      "directCandidateImporters": [
+        "src/app/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page.tsx",
+        "src/app/[space]/apps/study-abroad/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page.tsx"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/provider.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "4b088d22f5e961325a3de4847a033357272281e09ecde0cec7d6688018bb397c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "4b088d22f5e961325a3de4847a033357272281e09ecde0cec7d6688018bb397c",
+      "directCandidateImporters": [
+        "src/features/agent-core/contracts/server.ts",
+        "src/features/agent-core/persistence/ports.ts",
+        "src/features/agent-core/providers/deepseek/adapter.ts",
+        "src/features/agent-core/providers/deepseek/capabilities.ts",
+        "src/features/agent-core/providers/deepseek/stream-parser.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/tools/executor.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/public.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3b0d89c5abb367ba5dc98d1fc589a9d8fb55a333696a6dc9ca43b022f19f6862",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3b0d89c5abb367ba5dc98d1fc589a9d8fb55a333696a6dc9ca43b022f19f6862",
+      "directCandidateImporters": [
+        "src/features/agent-core/contracts/provider.ts",
+        "src/features/agent-core/contracts/server.ts",
+        "src/features/agent-core/conversation/scope.ts",
+        "src/features/agent-core/index.ts",
+        "src/features/agent-core/observability/events.ts",
+        "src/features/agent-core/observability/trace.ts",
+        "src/features/agent-core/persistence/ports.ts",
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/runtime/errors.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/runtime/run-state.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "88009d079280e38488caadde310d5d5d2ff6ae5d2118e677d491d6e84c229c8e",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "directCandidateImporters": [
+        "src/features/agent-core/contracts/provider.ts",
+        "src/features/agent-core/contracts/skill.ts",
+        "src/features/agent-core/contracts/tool.ts",
+        "src/features/agent-core/conversation/scope.ts",
+        "src/features/agent-core/permissions/permission-policy.ts",
+        "src/features/agent-core/permissions/tool-policy.ts",
+        "src/features/agent-core/persistence/ports.ts",
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/runtime/run-budget.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/runtime/run-state.ts",
+        "src/features/agent-core/skills/registry.ts",
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/domain-ports/index.ts",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+        "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "src/features/teaching-agent/server/repositories/contracts.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/selection/selection-types.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/server/skills/teaching-skill-contract.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "src/features/teaching-agent/server/tools/contracts.ts",
+        "src/features/teaching-agent/server/transport/run-store.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/skill.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ced5b0e807abd88b978c9c134044a6b6630981c2233569601eb1cf3800ca437d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "ced5b0e807abd88b978c9c134044a6b6630981c2233569601eb1cf3800ca437d",
+      "directCandidateImporters": [
+        "src/features/agent-core/permissions/tool-policy.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/skills/registry.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/server/skills/teaching-skill-contract.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/tool.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5cf1f6324098bbd26308ec2be9dec6166c80f4e67e6f721686d77fa64c440244",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5cf1f6324098bbd26308ec2be9dec6166c80f4e67e6f721686d77fa64c440244",
+      "directCandidateImporters": [
+        "src/features/agent-core/permissions/tool-policy.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/tools/executor.ts",
+        "src/features/agent-core/tools/registry.ts",
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/domain-ports/index.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/repositories/contracts.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "src/features/teaching-agent/server/tools/contracts.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+        "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+        "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/contracts/transport.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e69e91b32cd66ced53ea2335164870257040ee931e52029297e332175864785b",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e69e91b32cd66ced53ea2335164870257040ee931e52029297e332175864785b",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/client/ndjson-parser.ts",
+        "src/features/teaching-agent/client/student-ai-teacher-client.ts",
+        "src/features/teaching-agent/server/transport/run-store.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/conversation/scope.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0f0b4b791ea664ad48e6183600875fcffeed996d72d040305315765a79266e8c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0f0b4b791ea664ad48e6183600875fcffeed996d72d040305315765a79266e8c",
+      "directCandidateImporters": [
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/index.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "8a83552c339ccbde1b44201be535422644ccf8f6ce2bbdee3ad7442f0ca9e104",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "8a83552c339ccbde1b44201be535422644ccf8f6ce2bbdee3ad7442f0ca9e104",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/agent-core/observability/events.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a9aa3b860b9015fb58d8627984cc9111db06867f451d4094569dc75976ff5cb0",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a9aa3b860b9015fb58d8627984cc9111db06867f451d4094569dc75976ff5cb0",
+      "directCandidateImporters": [
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "29f5fd21b0b1a4a20eadab7d8a6df35cf7cd792698cb2cd4ab8e00eab04a4b80",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "directCandidateImporters": [
+        "src/features/agent-core/observability/events.ts",
+        "src/features/agent-core/persistence/ports.ts",
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/permissions/permission-policy.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "34d4c4e25dfeddebd6619c3c1a46c5ccf6f12fd2f4f6c1aeef8477ff666fb606",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "34d4c4e25dfeddebd6619c3c1a46c5ccf6f12fd2f4f6c1aeef8477ff666fb606",
+      "directCandidateImporters": [
+        "src/features/agent-core/permissions/tool-policy.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/tools/executor.ts",
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/permissions/tool-policy.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e4701265f1a320c54d9e74a1db56e385fb5633391dce8962e35a33308efed55c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e4701265f1a320c54d9e74a1db56e385fb5633391dce8962e35a33308efed55c",
+      "directCandidateImporters": [
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/persistence/ports.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "8cfafc2e36eab96c58e4bbdb0913abf4ed58c0ed014f2521b6c0afde06183d2a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "8cfafc2e36eab96c58e4bbdb0913abf4ed58c0ed014f2521b6c0afde06183d2a",
+      "directCandidateImporters": [
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "19f0070d9c2f0083f3bcff7d488570752bc5cd22a2baf29bae8a38b880c8b7a9",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/transport/production.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/adapter.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a73c8ac6e0363c48a5fc33f0d9ec36d1481ed46c8779eb01d7d181762d0ddf2c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a73c8ac6e0363c48a5fc33f0d9ec36d1481ed46c8779eb01d7d181762d0ddf2c",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/capabilities.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a5964bfd6ab03a2fa9a598f16d1ba11f846ea1b07af3950fb67fb25b0e6e0d40",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a5964bfd6ab03a2fa9a598f16d1ba11f846ea1b07af3950fb67fb25b0e6e0d40",
+      "directCandidateImporters": [
+        "src/features/agent-core/providers/deepseek/adapter.ts",
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/stream-parser.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "31557526de04c4ad893ccc1df89d1635473d528b1018922ccc14481839cb9c45",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "31557526de04c4ad893ccc1df89d1635473d528b1018922ccc14481839cb9c45",
+      "directCandidateImporters": [
+        "src/features/agent-core/providers/deepseek/adapter.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/runtime/deadline.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "84c6619198c569a5538e970bc0f6bfafe1776c524d3e52e3728ed317dea342b3",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "84c6619198c569a5538e970bc0f6bfafe1776c524d3e52e3728ed317dea342b3",
+      "directCandidateImporters": [
+        "src/features/agent-core/providers/deepseek/adapter.ts",
+        "src/features/agent-core/providers/deepseek/stream-parser.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/tools/executor.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+        "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "src/features/teaching-agent/server/transport/rollout-policy.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/runtime/errors.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "8d33431de66bd89500f8ca43c509a92fa12735ab79698e2646eee2f52444764a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "8d33431de66bd89500f8ca43c509a92fa12735ab79698e2646eee2f52444764a",
+      "directCandidateImporters": [
+        "src/features/agent-core/conversation/scope.ts",
+        "src/features/agent-core/observability/events.ts",
+        "src/features/agent-core/persistence/supabase/repositories.ts",
+        "src/features/agent-core/providers/deepseek/adapter.ts",
+        "src/features/agent-core/providers/deepseek/stream-parser.ts",
+        "src/features/agent-core/runtime/deadline.ts",
+        "src/features/agent-core/runtime/run-budget.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/runtime/run-state.ts",
+        "src/features/agent-core/skills/registry.ts",
+        "src/features/agent-core/tools/executor.ts",
+        "src/features/agent-core/tools/registry.ts",
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "src/features/teaching-agent/server/transport/active-run-abort-registry.ts",
+        "src/features/teaching-agent/server/transport/production.ts",
+        "src/features/teaching-agent/server/transport/run-store.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-budget.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "652f61791b93e5e54e2974ec62a866615e4fbb562a70743dd3e2019030cb121f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "652f61791b93e5e54e2974ec62a866615e4fbb562a70743dd3e2019030cb121f",
+      "directCandidateImporters": [
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-coordinator.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5cde67d98897cc6b6b7a3fa53c0d77e7c3b9087a1c75fa21b255082a80081fae",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5cde67d98897cc6b6b7a3fa53c0d77e7c3b9087a1c75fa21b255082a80081fae",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-state.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "dbca66baddce3aac3948630c127d15e9fb4c512f5aff582d1dc2e70cc6c2b072",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "dbca66baddce3aac3948630c127d15e9fb4c512f5aff582d1dc2e70cc6c2b072",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/agent-core/skills/registry.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "73e0ef6210555dd9425c293f5eeb363ee8be65294f8e89c6d4a2c45f96f9563a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "73e0ef6210555dd9425c293f5eeb363ee8be65294f8e89c6d4a2c45f96f9563a",
+      "directCandidateImporters": [
+        "src/features/agent-core/permissions/tool-policy.ts",
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/agent-core/tools/registry.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/tools/executor.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "cb7866cc3fafc5aeafeb7655caaba0b2e7ab90048cc12910831cbe7b76ea12e3",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "cb7866cc3fafc5aeafeb7655caaba0b2e7ab90048cc12910831cbe7b76ea12e3",
+      "directCandidateImporters": [
+        "src/features/agent-core/runtime/run-coordinator.ts",
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/agent-core/tools/registry.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "818ac9408f9be5f78729e760ee2096bc7558661b3a73a6285dc4865d4bfd8e0d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "818ac9408f9be5f78729e760ee2096bc7558661b3a73a6285dc4865d4bfd8e0d",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/tools/student-tool-registry.ts"
+      ]
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-listing.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "8de94fdcb82dfd382f323a1ab181fbf70de4bfb091588ec581ba42a2b19220b9",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "2d3de6ac5597ff97ce3e76a3422d9f38481d8e3ec456089e8d00f1a81e696775",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "2d3de6ac5597ff97ce3e76a3422d9f38481d8e3ec456089e8d00f1a81e696775",
+      "directCandidateImporters": [
+        "src/app/[space]/dashboard/admin/apps/[appSlug]/content/page.tsx",
+        "src/app/dashboard/admin/courses/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-node-view.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "6c07aa5e03a4f6cef4f45ab8cae3db0648e83f0b1dc36a0b248ecdad069c1d78",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1b15b1fe340dee40882dce1b8d4e55b5d88e5a79db081a3339cad02d5c21ef3d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "1b15b1fe340dee40882dce1b8d4e55b5d88e5a79db081a3339cad02d5c21ef3d",
+      "directCandidateImporters": [
+        "src/features/courses/components/course-catalog-listing.tsx"
+      ]
+    },
+    {
+      "path": "src/features/courses/components/course-lesson-view.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "6566183b027b170de2aa354f6de43583b21aeed77f1c8a531e4542602a3d6b7e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f286b0730d3c349f60696a5ff3f8894cae23e1dc9010849cc51f8acef4923814",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f286b0730d3c349f60696a5ff3f8894cae23e1dc9010849cc51f8acef4923814",
+      "directCandidateImporters": [
+        "src/features/courses/components/course-catalog-node-view.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-teaching-content.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "21243818972d06397a98784f68734e012814f9ef78ebb9f7d4069a04df3582a2",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "21243818972d06397a98784f68734e012814f9ef78ebb9f7d4069a04df3582a2",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/create-teaching-content-form.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/api/service.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "f088a81b30d5d93a3ef182e5cdd8c5b0e49118e4382b21cd55bc264d2d1843db",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "6e34c54cde0b3067420ad13ee727a536920aafa8757203b4d8ce1410fa4b3544",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "6e34c54cde0b3067420ad13ee727a536920aafa8757203b4d8ce1410fa4b3544",
+      "directCandidateImporters": [
+        "src/app/[space]/dashboard/admin/apps/[appSlug]/content/page.tsx",
+        "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+        "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+        "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+        "src/features/learning-agent-script-studio/service.ts"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/api/types.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "b62de7a344dda8d38f802a6f4ac89f6f1a4e42977c31fc7318c20ac8e8c150f4",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f26351c2d5ed37ef256972185c72cca41fd166d860a3e2108cc719aa04d13ac8",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f26351c2d5ed37ef256972185c72cca41fd166d860a3e2108cc719aa04d13ac8",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/api/service.ts",
+        "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+        "src/features/digital-textbook/components/digital-textbook-table/columns.tsx",
+        "src/lib/chapter-practice-binding.ts",
+        "src/lib/course-workflow-context.ts",
+        "src/lib/textbook-practice-resources.ts"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-entry.tsx",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "97160eb90c107e53f9d57e25f3daa76e115dcf778596ffd3e2b0cdd9199e9e49",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "97160eb90c107e53f9d57e25f3daa76e115dcf778596ffd3e2b0cdd9199e9e49",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/digital-textbook-listing.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-form.tsx",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e29f77cd343171f76613d368d234bca408a60735a2fa5f93a293f24534eac738",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e29f77cd343171f76613d368d234bca408a60735a2fa5f93a293f24534eac738",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/create-teaching-content-entry.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "34993ecfa5239cc037030175e5064504d9195978574c985877a343548c348148",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ff1d034ec096893f07e9941a49a4d18a5dd9bfcd0d1857a6683ecb5d0632ac81",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "ff1d034ec096893f07e9941a49a4d18a5dd9bfcd0d1857a6683ecb5d0632ac81",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "6b49bd44d478db2efbe6a729380b5353423854ef3217203f1af756e9ba609a9d",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f66ce725cc5cae7c9a5753d479f823aa903affc642a46308feea7cfc9ed48178",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f66ce725cc5cae7c9a5753d479f823aa903affc642a46308feea7cfc9ed48178",
+      "directCandidateImporters": [
+        "src/app/dashboard/admin/digital-textbook/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "bd568969715e0734d7d418db7f1c2346aa43bf1fdc391df2cd375298f8e41263",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0f0b883099bf4265a7da6a9a7fccd1a739402c2cc9bf884b6970e46f63393650",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0f0b883099bf4265a7da6a9a7fccd1a739402c2cc9bf884b6970e46f63393650",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/digital-textbook-table/columns.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/columns.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "2246feb95746cc5745b39a38d58e35a8007573c3de015abe0b8ca0d7fa1af117",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "529a1d83b603bc92042e713fb60afd297491f66b32d82ec69e38ae3fc97d9a4b",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "529a1d83b603bc92042e713fb60afd297491f66b32d82ec69e38ae3fc97d9a4b",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+        "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+        "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx",
+        "src/features/digital-textbook/components/digital-textbook-table/index.tsx"
+      ]
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/index.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "2f5e22b1a49a0cfc1daf880918e8186fcef33b2c17dd9246b4eaee2d14fc40f0",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a8d89adea4e01cb6cf0741b21e7b9475107c27bb7b66d55ad18d861922a7494e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a8d89adea4e01cb6cf0741b21e7b9475107c27bb7b66d55ad18d861922a7494e",
+      "directCandidateImporters": [
+        "src/features/digital-textbook/components/digital-textbook-listing.tsx"
+      ]
+    },
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "directCandidateImporters": [
+        "src/features/growth-toolbox/components/chapter-practice-binding.tsx"
+      ]
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "df7780c231540f39e6126c28b94bb9bf0ed5bd108cbd2f3965c3d8350bc9e48c",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+      "directCandidateImporters": [
+        "src/features/growth-toolbox/components/growth-toolbox-listing.tsx"
+      ]
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "4d5ed49024f0fdd7481b21c222abfa86eff0e8155f9786b2c5057dc9d7af6b93",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "directCandidateImporters": [
+        "src/app/[space]/dashboard/admin/apps/[appSlug]/toolbox/page.tsx",
+        "src/app/dashboard/admin/growth-toolbox/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-workspace.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "0040a950ff3924d647a41586054e86d96880fb2d9d122a8e83cea58f6230790b",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "74d94dc6c241d32db4a85ab75da8b6408cc0de33bb3f2c44f1c70f691ae7dd10",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "74d94dc6c241d32db4a85ab75da8b6408cc0de33bb3f2c44f1c70f691ae7dd10",
+      "directCandidateImporters": [
+        "src/features/growth-toolbox/components/growth-toolbox-listing.tsx"
+      ]
+    },
+    {
+      "path": "src/features/growth-toolbox/components/referenced-grammar-materials.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "ddbdb48459dc2fb772bc6ddd1a41dc70059665d9c950de60fbd835a8299bdc91",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "a95efa01ef4c39562e9bb6f9bbf91d249423e0f8450ffab84217653e7258a93c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "a95efa01ef4c39562e9bb6f9bbf91d249423e0f8450ffab84217653e7258a93c",
+      "directCandidateImporters": [
+        "src/app/dashboard/toolbox/[skill]/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "68b92d889acbf30b0d4a2dd2982def9756d1995e2483c408b8065f00d3a43d6b",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "31a31cbd46e394d6b1f44840b24c9c27a65c83b2e72658bc8d554e865f25837e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "31a31cbd46e394d6b1f44840b24c9c27a65c83b2e72658bc8d554e865f25837e",
+      "directCandidateImporters": [
+        "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx"
+      ]
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "23b3fb9380bf7d8bf48cd1b87bfad2b3ed1386831ddaf524fcdd9515d222ab48",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b18a3e20ac75be2a55bb0c46029f24aa06575dddc588d5f4db9c9bcd4d1e231e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "b18a3e20ac75be2a55bb0c46029f24aa06575dddc588d5f4db9c9bcd4d1e231e",
+      "directCandidateImporters": [
+        "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx"
+      ]
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "f2c72f69d0f8f0fd3b5cebed6faf5e6c165f3af6dc988c82bef31e7260e3d3be",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e85b0f00fd033079986226f65db2aa17fa4f2965334b44de0cea236649eb5496",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e85b0f00fd033079986226f65db2aa17fa4f2965334b44de0cea236649eb5496",
+      "directCandidateImporters": [
+        "src/app/dashboard/admin/teaching-scripts/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-toolbar.tsx",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "e9a7e49fbe3fc6e816415e7b9fbbae03a10bf02f45c7a203a2ea10a9075423f7",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3e2fceaab92d9fa41c32b323faab615ae35cba16619f75404e730d926869025c",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3e2fceaab92d9fa41c32b323faab615ae35cba16619f75404e730d926869025c",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/components/template-renderer.tsx"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+        "mode": "0o644"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "51f4cb12e8665d7673348f17f5dc3dbdf69ebd6ba5b6da0500c2ff94f94e0051",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/execution-composition.server.ts",
+        "src/features/development-execution/server/execution-scope.server.ts",
+        "src/features/development-execution/server/execution.actions.ts",
+        "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+        "src/features/smart-textbook-runtime/core/services.ts",
+        "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+        "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/learning-session-transport.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "67151fb0d2daef833c97b93b267612e27281719f3ab1a2051d80b56510e74402",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d24a9fde7d31d7399773afe49751adb4cb4475c790648c637bf9c1f13669cead",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "d24a9fde7d31d7399773afe49751adb4cb4475c790648c637bf9c1f13669cead",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/components/audit-client.tsx"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "4a088e717b1c32f655d1f593a2a8ef4f365717069fae89d8b8148300354f0c3d",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "directCandidateImporters": [
+        "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+        "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-source.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "30510545b3ee3b052416cbcd3c22723e2ccba49b381bccda759d543df8ee737e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534",
+      "directCandidateImporters": [
+        "src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx",
+        "src/features/smart-textbook-runtime/server/audit-session.server.ts",
+        "src/features/smart-textbook-runtime/server/audit-teacher.server.ts",
+        "src/features/smart-textbook-runtime/server/teacher-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/teacher-cue.server.ts",
+        "src/features/smart-textbook-runtime/server/teacher-inventory.server.ts",
+        "src/features/smart-textbook-runtime/server/teacher-session.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "75af21f3f45e76d754eff1fda0c4a29899c60327757b7164629c0eb19e2ac562",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/execution-composition.server.ts",
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+        "mode": "0o644"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1a226f0c85a5e42782ccb1b862647f6785f07e8889366197a189f377b469f43c",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/execution-composition.server.ts",
+        "src/features/development-execution/server/execution-transport.server.ts",
+        "src/features/development-execution/server/execution.actions.ts",
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "f80a150dd7893dcc4d6e016025c44393a99f9c1350388271c1a8e7aa6f79685f",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-history.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "c01f912ce56417e2e53c4b3d39a009fbb8e423b1bceceb7329607f6e9b5b61d4",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f2eea3c020eba9a59a3886050ff97fc4f4e2e5ecb2c040734a674786e8c34096",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f2eea3c020eba9a59a3886050ff97fc4f4e2e5ecb2c040734a674786e8c34096",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/production-learning.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e66cd951787e07ca21986a2b5e147f50c445070dc5a838a0a1d8feedafc8d8c8",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "ba735ee9c69e2bd65e1412ce93946c8884dcaedbbfca50f62f832e3d82096b09",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "16873eb09daab78afe03533de64ca23f613b8f7588315b46ddc61955f56cc31e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "c03efafaba9a100c48ba8190e6a65b4b8868a7f749b5423bd18311fc6d5a175d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "c03efafaba9a100c48ba8190e6a65b4b8868a7f749b5423bd18311fc6d5a175d",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "77eb3fadf1a33693f8cdce098df91a5efe50a97115f1de34810ca06326e98bf0",
+        "mode": "0o644"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/repositories/contracts.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/client/ndjson-parser.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d70d7d1ee2729b9c89b5027153f728a15f54a44936fb83ebdb11d2990cf2d51d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "d70d7d1ee2729b9c89b5027153f728a15f54a44936fb83ebdb11d2990cf2d51d",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/client/student-ai-teacher-client.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/client/selection-state.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "90a6a6f467da3e1db17b30ff6ee4faf3185d453cedce18a4865ff8186e764363",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "90a6a6f467da3e1db17b30ff6ee4faf3185d453cedce18a4865ff8186e764363",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/client/student-ai-teacher-client.ts",
+        "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/client/student-ai-teacher-client.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "41eb4f2bf63e7139e8952375c2f3fd44c121b4fd4ae47ce5d762f87a3f1a50fc",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "41eb4f2bf63e7139e8952375c2f3fd44c121b4fd4ae47ce5d762f87a3f1a50fc",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/client/use-student-ai-teacher-run.ts",
+        "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/client/use-student-ai-teacher-run.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "bebd814076575fa5783d8ac667344d9b7064f5b61ef01c424d286e12c231ef6f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "bebd814076575fa5783d8ac667344d9b7064f5b61ef01c424d286e12c231ef6f",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ba3e87354c9e7e35177bc62f1ecc928110a85cb3e519ca999f67987a338cc977",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "ba3e87354c9e7e35177bc62f1ecc928110a85cb3e519ca999f67987a338cc977",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/page-projection/lesson-slots.tsx"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/kim-persona.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "57e7998a9fe2f74b23e1f96d3a96e87492d115456570a7b6fa94c019041070f7",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "57e7998a9fe2f74b23e1f96d3a96e87492d115456570a7b6fa94c019041070f7",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "9bc3ca59a5a833e741a54e4e22371f025abcd1155852bd8743a6f69633dabf1f",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+        "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "2162ab095e6e87fbfa1c785445cb1c42dd88d9bdd5fbeb217d964c0d37cdf801",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "2162ab095e6e87fbfa1c785445cb1c42dd88d9bdd5fbeb217d964c0d37cdf801",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b19e126e5b2f9bf460ec7b83f9a8d73e2639212200a94a456ddda691fb575940",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Included as an unchanged C2 full-source/typecheck input for reproducible source parity. No production importer; this is not a sixth runtime dependency and does not activate the isolated composition.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [],
+      "dependencyRole": "ISOLATED_C2_SOURCE_PRESERVATION_NOT_PRODUCTION_REGISTRATION"
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d64c69d254dec14038e763754325a8cb01595d598f2109f155fdaef747747348",
+        "mode": "0o644"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "6f13ea423870793901b82acd1a83f89a44faac255a24eae7115ae7e000c156c1",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Previously implemented C2 dependency, absent from live source; exact C2 evidence hash.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "d2dad4ce92e51d628602160d7dd840cee7135bb25782ab2ecbbbc39a71b7a889",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/tools/contracts.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5b3485211fa4b7bdd9ee93c18bb7885c49b2abd2a086fd48d7c23a5c7d52ade7",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5b3485211fa4b7bdd9ee93c18bb7885c49b2abd2a086fd48d7c23a5c7d52ade7",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/trace.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1f2c35d7c7ccd202e8e4d15c49c69103627ba7620e69f1206d91315fadc5bd58",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "1f2c35d7c7ccd202e8e4d15c49c69103627ba7620e69f1206d91315fadc5bd58",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+        "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0cfefa45b837a4779be7376c67715f2a164b31d758b26de54078331b7b325659",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0cfefa45b837a4779be7376c67715f2a164b31d758b26de54078331b7b325659",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "56d75a718f53b7a35bca4fd257fa56d6534585a72354164a1c0a8f409b5866ac",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "064c2f385d03be3899d4db3e93b6cad2d5705bedafee1510067462cd4d308033",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/domain-ports/index.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3e409af6d35f0f3226c1e9a805f5d58244220f2568ed48e77852e29ab6101236",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ce95a1013f5c84efa878964a8bd00d5f04b9e4706262fa44c2dd29501287e5a3",
+        "mode": "0o644"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0cd46c700e978753e69f6cbeb3a670e73f6cd5eab4e931c535686bb1605a59f6",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0cd46c700e978753e69f6cbeb3a670e73f6cd5eab4e931c535686bb1605a59f6",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b8d9e00d277725455316aedc6d7bce74f71504a6d091eaed59e5b9bd43512bb1",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "b8d9e00d277725455316aedc6d7bce74f71504a6d091eaed59e5b9bd43512bb1",
+      "directCandidateImporters": [
+        "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5e6f9129be70d6bf45528b5fe994bedd2f0d87c50c7f4ebce11b71b931220db7",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5e6f9129be70d6bf45528b5fe994bedd2f0d87c50c7f4ebce11b71b931220db7",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/page-projection/lesson-slots.tsx"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/access-rules.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d935ba12d72d9ef77d8533d543313a1a931e7c127b239242a7c22c14812e9adc",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "d935ba12d72d9ef77d8533d543313a1a931e7c127b239242a7c22c14812e9adc",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "9539dd9cb9163c483fe33c8a2b420697eed5d210c519ad63e38bf649acc715bb",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f2abd28bbe5b86cc120f0c1885becc5cbd2c776b097920a581d3d962a05df8dd",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+        "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/selection/references.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+        "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+        "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/transport/production.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b50465cb8fec9f9ec4f1ae0f82487b1305d17d875aec966e00843cb741ebad1f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "b50465cb8fec9f9ec4f1ae0f82487b1305d17d875aec966e00843cb741ebad1f",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e1bd8d0d877163f9a3260c59c185a8bc6a5f7522809313af10cf5304c9ef3891",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/transport/production.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ff55f59f60601e814271fcc81843970f4fbf0b068f1012a3abd5b638d1e2b633",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "0b7346ccf1eed97c9f0d77689ff4b205063fe8c9ccc0266c718d498f55ad10e4",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "288aa1ecc45ba26912507d2479cc54b9f4cb5a761ed121be70af3218e6bfb9c3",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "48adfaa529abc98a28e0547677bdd1e8011886661b8fa32d28d03ab246538c38",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/references.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "377b9f9163cdce6a4eb2abbe3406189b4baffcdb5532a06ad5eda76e19c8b967",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "377b9f9163cdce6a4eb2abbe3406189b4baffcdb5532a06ad5eda76e19c8b967",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+        "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+        "src/features/teaching-agent/server/domain-ports/index.ts",
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+        "src/features/teaching-agent/server/repositories/contracts.ts",
+        "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+        "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+        "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/selection/references.ts",
+        "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+        "src/features/teaching-agent/server/tools/contracts.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+        "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+        "src/features/teaching-agent/server/tools/get-current-teaching-state.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "ecb1ef29897c1fcdfb94b379a52daaa09428a8aabf1661df8a21f54959cdd4be",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/teaching-skill-contract.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d3275eb7dce08bca624cfa6acebcbab5fccd8329b8327dd3242239feed9c3588",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Previously implemented C2 dependency, absent from live source; exact C2 evidence hash.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "9ba9214edd5162bcfa3f12f3abbbccfd02eeb924c7ad918fa16f42df1dbd75bb",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Previously implemented C2 dependency, absent from live source; exact C2 evidence hash.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/trace.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e479834d936c5e70e9086ac0c0e475478a627f03cd57e81cb8ffba7a17d2c5bc",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e479834d936c5e70e9086ac0c0e475478a627f03cd57e81cb8ffba7a17d2c5bc",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d0f938bb22ee66d06ae79f5cb210171d171ced58ff45e870cc1b25d9d9d13ec4",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/server/domain-ports/index.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+        "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+        "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+        "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+        "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+        "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+        "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+        "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3a390765cb26ef73bf6f26121a8738085589d61f6f1ab9e1978c34cadf4f768e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3a390765cb26ef73bf6f26121a8738085589d61f6f1ab9e1978c34cadf4f768e",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/tools/student-tool-registry.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "35f59d90142180195c5cc9dfd493bfaf901a9ab6a3f71fef7b07356890ee94a4",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "directCandidateImporters": [
+        "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "e84470d9371932c852ccb9d3a1098597fc45195f54592fdd6a199a32bc6e274a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "e84470d9371932c852ccb9d3a1098597fc45195f54592fdd6a199a32bc6e274a",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/tools/student-tool-registry.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b7d7c64304a1ddada4690a2cd1d0809e69ea4abca71daf31ea7ddc47d5f9d949",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/active-run-abort-registry.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "76fe840b4f22c2ca201eac04846efddbeff8b69f7a2e6d2fa08cb1ed985a9e35",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "76fe840b4f22c2ca201eac04846efddbeff8b69f7a2e6d2fa08cb1ed985a9e35",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/transport/production.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "directCandidateImporters": [
+        "src/app/api/teaching-agent/runs/[runId]/cancel/route.ts",
+        "src/app/api/teaching-agent/runs/[runId]/route.ts",
+        "src/app/api/teaching-agent/runs/route.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/rollout-policy.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "afc063f8ae03094a95885b29980733023b9903e46e9613069c389202ecbfd5af",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "afc063f8ae03094a95885b29980733023b9903e46e9613069c389202ecbfd5af",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+        "src/features/teaching-agent/server/transport/production.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/run-store.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "08cf6a52b950cd89772c15aeb794496360fd5c3d3c4f2859aded73baa400e388",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "08cf6a52b950cd89772c15aeb794496360fd5c3d3c4f2859aded73baa400e388",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/transport/active-run-abort-registry.ts",
+        "src/features/teaching-agent/server/transport/production.ts",
+        "src/features/teaching-agent/server/transport/rollout-policy.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/transport/production.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/transport-config.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5c8a2f8c8dd00d0f3d2e62dbb26722497034cfad83e03020c49ad46670bda47e",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5c8a2f8c8dd00d0f3d2e62dbb26722497034cfad83e03020c49ad46670bda47e",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+        "src/features/teaching-agent/server/transport/production.ts",
+        "src/features/teaching-agent/server/transport/rollout-policy.ts",
+        "src/features/teaching-agent/server/transport/student-handlers.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "93139887b671af606c2e9c2f99efe9f290b86943444a8c9b8e1766216053be4f",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Previously implemented C2 dependency, absent from live source; exact C2 evidence hash.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "0740aff8da0bf2942036571ff4d68010f89f15f742926ba7627bbd5c8b53a9d8",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "04a381b085ddc2d81f764b77973e8cc0bb1bf6fd7963a14fd33dd759fad86660",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "04a381b085ddc2d81f764b77973e8cc0bb1bf6fd7963a14fd33dd759fad86660",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "32057dd08c8f4a9a4fb9b726652c217a2fb662307106c732dfc18a0e3763bf02",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "32057dd08c8f4a9a4fb9b726652c217a2fb662307106c732dfc18a0e3763bf02",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/procedure.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "39639dda46e1d8d3dc98df927834737c41bc41e8c649a892b0e5016d840fb4a4",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "39639dda46e1d8d3dc98df927834737c41bc41e8c649a892b0e5016d840fb4a4",
+      "directCandidateImporters": [
+        "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "af316db64508c11d81438860ccd5f9151f7e5df7eee2a85446c363dde997cf54",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+        "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d2994be40a6f5edb5615e2e928c006f7fe8462f1fda7a90836e09f00be3fe3e5",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1f92c879d1e69fc5a683995da479a07201c48e6929fcd1b4a88162deee82ee51",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts"
+      ]
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "fbe01e6df5f7b6827c7b8ed95708fafde189c2c2cb838cea75f988221a90eefe",
+        "mode": "0o664"
+      },
+      "originStage": "C2",
+      "whyRequired": "Previously implemented C2 dependency, absent from live source; exact C2 evidence hash.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts"
+      ]
+    },
+    {
+      "path": "src/lib/chapter-practice-binding.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "e14fbbfda9269acd3358bf0e9c6874734c6fb425d19648cdccd1444c018fcc47",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+      "directCandidateImporters": [
+        "src/app/dashboard/toolbox/[skill]/page-content.tsx",
+        "src/app/dashboard/toolbox/vocabulary/page-content.tsx",
+        "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+        "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+        "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+        "src/features/growth-toolbox/components/referenced-grammar-materials.tsx",
+        "src/features/learning-agent-script-studio/service.ts"
+      ]
+    },
+    {
+      "path": "src/lib/course-content-workflow.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "beb3859b87d10e9fa810b1eaa5bd8c79b8c217368798d54e63de50976829f172",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "f87fe225de5bd67a068013fbd18fb6b6ce0b77cafcdcf163886d33c8894de597",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "f87fe225de5bd67a068013fbd18fb6b6ce0b77cafcdcf163886d33c8894de597",
+      "directCandidateImporters": [
+        "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+        "src/app/dashboard/admin/apps/ManagementApplicationSectionPage.tsx",
+        "src/features/growth-toolbox/components/grammar-table/columns.tsx",
+        "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+        "src/features/growth-toolbox/components/vocabulary-table/columns.tsx",
+        "src/features/learning-agent-script-studio/service.ts"
+      ]
+    },
+    {
+      "path": "src/lib/recording-domain-gateway.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "2cbfbdc75d925a4cb8a19ad871a29e4c00f6268b73024aa72f3219abb8c74107",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3232e1a26a23c4ed2391a5a0c0cb199df48c1f4293c86664866f019e45731436",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3232e1a26a23c4ed2391a5a0c0cb199df48c1f4293c86664866f019e45731436",
+      "directCandidateImporters": [
+        "src/app/api/digital-textbook/recordings/[activityId]/route.ts",
+        "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-actions.ts",
+        "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts",
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+        "src/features/smart-textbook-runtime/server/recording-production.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/chapter-one-shapes.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "693061f2b9467b46dcae1bddaeeda5b8583c7689f866f6732f3b174853aaab78",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "3950af6c8b127f1ff40b7ced9baa895082ab8317e9c685d206d2b17599f075b4",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "3950af6c8b127f1ff40b7ced9baa895082ab8317e9c685d206d2b17599f075b4",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/audit-tts.server.ts",
+        "src/features/smart-textbook-runtime/server/production-teacher-backend.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/adapter.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/capsules.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/current-speech-proof.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/final-proof.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/readiness.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/speech-proof.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/profile.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "2fbba0467a4b73e71397fc3e90793026a3cc43bdf245629f082dd23f45d531dd",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "55677b1942c27870f30e40835f48a8dcee0e17de49b7b4779feedc040f3ad9ea",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "55677b1942c27870f30e40835f48a8dcee0e17de49b7b4779feedc040f3ad9ea",
+      "directCandidateImporters": [
+        "src/lib/smart-textbook-legacy-adapter/adapter.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/final-proof.server.ts",
+        "src/lib/smart-textbook-legacy-adapter/readiness.server.ts",
+        "src/lib/smart-textbook-publishing/artifact.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "e0747db2c7ae65b83825c5d863812c9bb84631c85a99f543e50808e20f3f5fa3",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "817d866a91dfd032733370616146cc11908978f75b44ab3fddbaca16ff6c6fcd",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "817d866a91dfd032733370616146cc11908978f75b44ab3fddbaca16ff6c6fcd",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/audit-actions.ts",
+        "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "297b78d598b430bcec99258e0630cabd4a5da68bc80be9e7eca25f5a293eb45e",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "647e2097f17c4b1c2d0de71cf18c3a55781c18e438706977d973577b8b223502",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+        "src/lib/smart-textbook-publishing/capture.server.ts",
+        "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+        "src/lib/smart-textbook-publishing/loader.server.ts",
+        "src/lib/smart-textbook-publishing/native-publication.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts",
+        "src/lib/smart-textbook-publishing/repository.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "9c6b102ee18549e6f92bceddfaac92158ee7201bf795afb988a258676009c9f7",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "4a4967c73964141b6f3319cdc4ead023c9959b834ada421933e9f41b1a371fb5",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662",
+      "directCandidateImporters": [
+        "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "src/lib/smart-textbook-publishing/native-publication.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "cfa45a84b9468922075cbf13b0a38df548ca6cea2f2764d54efb123742dadc0b",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "09bfd8b6a0b4d67390258af1fa8d6cc149ddb25cee4009c6c254cb383cc9628a",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "directCandidateImporters": [
+        "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/native-publication.server.ts",
+      "live": {
+        "presence": "ABSENT",
+        "sha256": null,
+        "mode": null
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "1e6f2664a329fe76e07814f8d57da1bb2d292159a31c3477070a3b827ad9a62e",
+        "mode": "0o644"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": null,
+      "directCandidateImporters": [
+        "src/lib/smart-textbook-publishing/artifact.server.ts",
+        "src/lib/smart-textbook-publishing/capture.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts"
+      ]
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "8e016f80f1a6bbd37b5ade6aef6817356bb655f714d36969e232ff95b7a5874a",
+        "mode": "0o600"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "bd6d4eff089437d43bafbeb448f29a149bbe26f44ad968f565699df94ee434c0",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "directCandidateImporters": []
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "b54ea95b2056f3072b1ce4c2b1dda64745bfbeec55dad45e79b60efafaf52230",
+        "mode": "0o664"
+      },
+      "originStage": "34b",
+      "whyRequired": "Authorized 34b implementation.",
+      "changedIn34b": true,
+      "transitiveDependencyOf40Seeds": true,
+      "productFile": true,
+      "priorSealedBuildSourceSha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+      "directCandidateImporters": [
+        "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+        "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+        "src/lib/smart-textbook-publishing/loader.server.ts",
+        "src/lib/smart-textbook-publishing/publisher.server.ts"
+      ]
+    },
+    {
+      "path": "tsconfig.json",
+      "live": {
+        "presence": "EXISTS",
+        "sha256": "da88b88bc74f29110c9f1bc48250ee521a2cc9a2b5f8db99937e7ba7fcff1641",
+        "mode": "0o664"
+      },
+      "candidate": {
+        "presence": "EXISTS",
+        "sha256": "d40bf56fe9fbf99ddbd04ede6358871e5f84b3a4351db2159315ae1ed4cf4537",
+        "mode": "0o600"
+      },
+      "originStage": "R7D-B_SEALED_BUILD_BASELINE",
+      "whyRequired": "Restore source parity with the exact sealed input used for the already-deployed R7D-B binary; no new implementation. Required for a reproducible full-source release rather than a patch-only workspace build.",
+      "changedIn34b": false,
+      "transitiveDependencyOf40Seeds": false,
+      "productFile": false,
+      "priorSealedBuildSourceSha256": "d40bf56fe9fbf99ddbd04ede6358871e5f84b3a4351db2159315ae1ed4cf4537",
+      "directCandidateImporters": []
+    }
+  ],
+  "fullCandidateSourceFiles": 1360,
+  "sourceAuthorityChain": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-b/candidate-source-lock.json",
+      "sha256": "0de2fb0ae0b4707e8f94cc4338b814cb17eae2793f0c3c32b11c5f36eb8480eb",
+      "bytes": 179655
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c2-final-validation.json",
+      "sha256": "12f1c52037f73e5a046fe93699fc04519c0d2fb791eb4ed6072078a70aa7e596",
+      "bytes": 1887
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-source-lock.json",
+      "sha256": "deeb19157f8a41702ea78055056422dfd79d8a850cfa087f1c805b22c1ce4f07",
+      "bytes": 31043
+    }
+  ],
+  "dependencyAudit": {
+    "edges": 3923,
+    "sourceFiles": 1319,
+    "transitive40SeedFiles": 133,
+    "unresolved": []
+  },
+  "publicRoutes": "Unchanged exact route set; existing Explain-only transport source restored, not activated",
+  "deletion": 0,
+  "packageChanges": 0,
+  "closurePolicy": "Full sealed build-input/source parity, not a minimal tree-shaken runtime-only file set.",
+  "C2DependencyClassification": {
+    "productImportDependencies": 5,
+    "isolatedC2CompositionSourcePreservation": 1,
+    "totalPreviouslyUndeployedC2Files": 6
+  }
+}

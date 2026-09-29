@@ -1,0 +1,16 @@
+{
+  "classification": "OWNED_ISOLATED_FIXTURE",
+  "productionExecutable": false,
+  "versions": [
+    "202609180000",
+    "202609180001",
+    "202609180002"
+  ],
+  "ledgerCounts": [
+    458,
+    459,
+    460,
+    461
+  ],
+  "historicalStatements": "449 metadata null statements + 9 exact local source statements; NOT a current DB clone"
+}

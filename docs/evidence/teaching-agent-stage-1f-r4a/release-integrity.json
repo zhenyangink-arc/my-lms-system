@@ -1,0 +1,31 @@
+{
+  "status": "LOCKED",
+  "sourceInputCount": 1306,
+  "sourceDigest": "48b8e7b979b0a158635c82e31e9e0f948742e0e5a0f2ca5e5bab553ec458708c",
+  "sourceDefinition": [
+    "src/**",
+    "public/**",
+    "package.json",
+    "package-lock.json",
+    "next.config.ts",
+    "tsconfig.json",
+    "postcss.config.mjs"
+  ],
+  "sourceInputsReference": "../teaching-agent-stage-1f-r4/release-integrity.json#sourceInputs",
+  "sourceInputsByteIdentical": true,
+  "baselineManifestIncludedInSourceDigest": false,
+  "harnessAndTestsIncludedInSourceDigest": false,
+  "candidateBuilderExcludesSupabase": true,
+  "candidateBuilderCopiesHarnessButProductHasNoImport": true,
+  "archivePath": "/tmp/uply-r3d-release-candidate/candidate-build.tar.gz",
+  "archiveSHA256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "artifactFiles": 1377,
+  "artifactDigest": "b088781734cd2191c9027b208da70f04d8931b095afaf8a5bd2efe97a777185b",
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "publicPackageConfigFilesMatched": 17,
+  "migrationInventoryDigest": "4735e8bb64b2619160eb1ad665e6a12f6a5c282f001a684b306f21d3b261a605",
+  "migrationsUnchanged": true,
+  "rebuildPerformed": false,
+  "deployed": false,
+  "algorithm": "SHA256 UTF8 JSON sorted keys compact path:SHA256 map; migration inventory is ordered array of filename/version/sha256 objects"
+}

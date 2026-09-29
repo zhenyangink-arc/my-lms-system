@@ -1,0 +1,14 @@
+{
+  "evidenceKind": "LOCAL_FILE_INTEGRITY_ONLY",
+  "productUnchanged": true,
+  "migrationsUnchanged": true,
+  "testsUnchanged": true,
+  "historicalEvidenceUnchanged": true,
+  "reportAppendOnly": true,
+  "proposalPaths": "35 EXACT = 31 existing + 4 new; awaiting approval",
+  "newEvidenceJSONValid": 22,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0
+}

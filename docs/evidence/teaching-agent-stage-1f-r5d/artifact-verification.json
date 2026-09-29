@@ -1,0 +1,17 @@
+{
+  "status": "MATCH",
+  "candidatePath": "/home/yangzhen/artifacts/uply-teaching-agent-foundation-r3d/candidate-build.tar.gz",
+  "candidateSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "size": 18760388,
+  "regularNotSymlink": true,
+  "archiveReadable": true,
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "nextVersion": "16.2.10",
+  "liveSource": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "approvedFileCount": 1394,
+  "allApprovedFilesMatch": true,
+  "fileMappingSha256": "607b05f0a387ced8b85d274722d6f4a669d7c1a963fd9513c3ac389d937eb9e1",
+  "additionalLiveFiles": [],
+  "requiredServerFiles": 19,
+  "requiredServerFilesPresent": true
+}

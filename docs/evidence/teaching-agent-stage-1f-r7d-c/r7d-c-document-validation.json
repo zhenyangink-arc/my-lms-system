@@ -1,0 +1,41 @@
+{
+  "stage": "R7D-C1",
+  "verifiedAt": "2026-09-18T02:45:54.270121+00:00",
+  "method": "local document parse / source hashes / protected-file hashes / bounded sensitive-pattern scan",
+  "jsonDocumentsParsed": 9,
+  "auditedSourceHashesMatched": 37,
+  "protectedFilesUnchanged": 2417,
+  "protectedFilesChanged": [],
+  "productChangesThisTurn": 0,
+  "originalHistoricalReportsAndEvidence": "UNCHANGED",
+  "sensitivePatternScan": {
+    "rawUUID": 0,
+    "JWT": 0,
+    "postgresCredentialURL": 0,
+    "secretAssignment": 0
+  },
+  "newFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-implementation.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-implementation-plan.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-negative-test-plan.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-permission-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-planning-boundary.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-run-completion-gate.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-skill-architecture-audit.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-skill-evidence-contract.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-tool-availability-contract.json",
+    "docs/teaching-agent-stage-1f-r7d-c-skill-tool-binding-audit.md",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c-document-validation.json"
+  ],
+  "testsExecuted": 0,
+  "toolInvocations": 0,
+  "browserRequests": 0,
+  "dbReads": 0,
+  "dbWrites": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "approval": "NOT GRANTED; READY FOR USER REVIEW",
+  "scopeLimitation": "Product and historical state compared as local files only. No live DB or runtime revalidation."
+}

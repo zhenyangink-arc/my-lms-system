@@ -1,0 +1,9 @@
+{
+  "reason": "Locator exact label mismatch before any change event",
+  "nodeCount": 1,
+  "updateLogs": 0,
+  "updatedAtEqualsCreatedAt": true,
+  "defaultContentUnchanged": true,
+  "creationRetry": false,
+  "nextAction": "Edit existing node with corrected visible control locator"
+}

@@ -1,0 +1,124 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-V4-CAPTURE",
+  "recordedAt": "2026-09-20T06:04:30.496765+00:00",
+  "approved": false,
+  "executionAuthorized": false,
+  "explicitCaptureApproval": "RECORDED_CURRENT_USER_MESSAGE_ONE_CAPTURE_ONLY",
+  "v4": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v4.json",
+    "sha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068"
+  },
+  "captureAttempts": 1,
+  "captureRetry": 0,
+  "currentDBConnections": 1,
+  "productionCredentialAccess": true,
+  "productionCredentialUse": "FORMAL_RUNNER_ONLY",
+  "credentialOutput": 0,
+  "credentialPersistenceOutsideExistingStore": 0,
+  "currentDBReads": true,
+  "currentDBWrites": 0,
+  "ddl": 0,
+  "dml": 0,
+  "aclWrites": 0,
+  "ledgerWrites": 0,
+  "commit": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateArtifactHashes": "ALL_MATCH",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "testsRerun": 0,
+  "contract": "capture-failure-analysis/1",
+  "runnerState": "PRECHECK_FAILED",
+  "runnerCode": "DIRECTORY_MODE",
+  "blockingCode": "BLOCKED_CAPTURE_RECEIPT_DIRECTORY_MODE",
+  "failurePhase": "FINAL_CAPTURE_RECEIPT_PERSISTENCE_AFTER_CAPTURE_RETURN",
+  "directory": {
+    "path": "build/r7dc3b-exact-migration-ops/receipts",
+    "observedMode": "0775",
+    "requiredMode": "0700",
+    "ownerUid": 1001,
+    "symlink": false,
+    "modeChangedInThisStage": false,
+    "transportProofDirectoryMode": "0700"
+  },
+  "sourceEvidence": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558"
+    }
+  ],
+  "directEvidence": [
+    "Formal command returnCode=1, PRECHECK_FAILED/DIRECTORY_MODE, empty stderr",
+    "Exactly one current-authorization-bound psql proof exists and is 0600",
+    "Proof records actual TLSv1.3 TLS_AES_256_GCM_SHA384 and backendObservedSsl=false",
+    "Final receipt directory is 0775; no .capture.json exists"
+  ],
+  "controlFlowInference": [
+    "DIRECTORY_MODE is thrown by receipts.private_directory when mode is not 0700",
+    "Transport proof exists: proof-directory and exclusive proof creation completed",
+    "Capture path has no other private_directory call after proof except runner final capture receipt write",
+    "runner final receipt write executes only after CaptureTransport.capture returned; its finally explicitly executes ROLLBACK with SQLSTATE acknowledgement, then closes the same client",
+    "Therefore ledger, target pre-gate, raw definition, full catalog and consistency checks completed before final receipt persistence failed"
+  ],
+  "transaction": {
+    "isolation": "REPEATABLE READ",
+    "readOnly": true,
+    "transactionReadOnly": "on",
+    "sameSession": true,
+    "sameSnapshot": true,
+    "rollback": "PASS_INFERRED_FROM_ACK_CHECKED_CONTROL_FLOW",
+    "commit": 0,
+    "basis": "Locked source plus terminal failure location; no independent SQL trace or extra production probe was added"
+  },
+  "queryFamilyOrder": [
+    "LEDGER",
+    "TARGET_PREGATE",
+    "TARGET_DEFINITION",
+    "PROTECTED_CATALOG"
+  ],
+  "queryOrderEvidence": "CONTROL_FLOW_INFERENCE_NOT_PERSISTED_RUNTIME_TRACE",
+  "queryFamilySha256": {
+    "session": "dfd38a9121284ec9800cf0bdf9778e842258e107de77316af5acb4688c7fde26",
+    "tls": "f41a4830ba8fe2eb92ef247dacaba209df8ba60d22e8f9b3e2040fe816e345ed",
+    "ledger": "efca7d87df98ec2916a32f2a163496bc5c162ff14b34ff48c8e1f74684b1888d",
+    "targetPreGate": "49c11f238341f1be966d71b06563fe3e21cdd0fc658d2f841d5c10d97b5f79ad",
+    "targetDefinition": "9000d911cd48b385403639dc50a1e084feade968970a2bc76095c407765dbbc3",
+    "protectedCatalog": "39710497209d055003b9201aee72f180ee467ca2f5aa224d3450035d66e0cf40"
+  },
+  "writesZeroEvidence": "The sole executed command uses fixed SELECT capture families in enforced REPEATABLE READ READ ONLY; no mutation or COMMIT dispatch exists on this path. Not a server-wide write audit.",
+  "directoryCreationExplanation": "The proof helper creates transport-invocations with parents=True and leaf mode 0700; parent receiptRoot permissions are not established by that leaf mode. Observed parent mode 0775 is rejected later by final receipt writer. No permission repair performed.",
+  "baselinePersistence": "CAPTURE_RESULT_WAS_IN_MEMORY_ONLY_AND_NOT_PERSISTED",
+  "baselineAuthority": "UNAVAILABLE_DO_NOT_SEAL_OR_ADVANCE",
+  "noReconstruction": true,
+  "permissionFixPerformed": false,
+  "noRetry": true,
+  "followUp": "FOLLOW_UP_REQUIRED: separately review receipt-directory readiness and failure-safe persistence; no fix or new execution authorized here."
+}

@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "currentBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "previousBuild": "6IhDHN8Dm1nCewiCEZnV5",
+  "candidateArchiveSha256": "f4d9a7d0127b3189fefcb948d6ea6ed46eae6bd39ae409755d781158c2577ec7",
+  "sourceSha256": "6f0017392d5475f5dcad927235f7b9cccf74c9a6891200030c2d02c69fdb25eb",
+  "targetProcess": {
+    "name": "uply-first-enable",
+    "pid": 3652443,
+    "status": "online",
+    "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "script": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "restart": 0
+  },
+  "otherProcessesUnchanged": true,
+  "namedStopStart": 1,
+  "launcherRuntimeTailscale": "UNCHANGED",
+  "changedApplicationFiles": [
+    "src/features/digital-textbook/api/create-native-activity.ts",
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+    "src/features/digital-textbook/components/create-native-activity-form.tsx",
+    "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx"
+  ],
+  "health": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/platform/dashboard",
+      "status": 200
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean",
+      "status": 200
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "status": 200
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+      "status": 200
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/textbooks/native-activity",
+      "status": 200
+    }
+  ],
+  "rollbackArtifact": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/20260917T061353Z/rollback/previous-next",
+  "businessWrites": 0,
+  "correctedHealthProbe": "Initial /textbooks/workbench404 was invalid path in both old and new route manifests; actual /textbooks200",
+  "authoringResult": "Page loads under existing Owner but readCanonicalBinding returns BLOCKED; no create clicked"
+}

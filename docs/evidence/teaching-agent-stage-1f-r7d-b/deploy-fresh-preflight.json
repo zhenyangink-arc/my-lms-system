@@ -1,0 +1,139 @@
+{
+  "status": "PASS",
+  "at": "2026-09-18T02:08:21.503921+00:00",
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "archiveHashes": {
+    "candidate-build.tar.gz": "c95ba807a5e4094062a2af1e465d01e3ec5413765a31fd14359a84499eb046fd",
+    "candidate-source.tar.gz": "2cd8714bad62443c813d436267b8dd37f3a330e0f9723b8febc075be139fda7d"
+  },
+  "sourceHashes": "MATCH",
+  "sourceModes": {
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": 436,
+    "src/features/teaching-agent/server/domain-ports/index.ts": 436,
+    "src/features/teaching-agent/server/tools/contracts.ts": 436,
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts": 436,
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts": 436,
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts": 436,
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts": 436,
+    "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx": 436
+  },
+  "livePresence": {
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": {
+      "exists": true,
+      "mode": "0o644",
+      "sha256": "4a4cd76c69d9e7639767a49fd40eb0e707a9075a25e74528e579d535b88d9c50"
+    },
+    "src/features/teaching-agent/server/domain-ports/index.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/features/teaching-agent/server/tools/contracts.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    },
+    "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx": {
+      "exists": false,
+      "mode": null,
+      "sha256": null
+    }
+  },
+  "sourceBuildDiff": "8 EXACT",
+  "DB": {
+    "ledger": 458,
+    "rpcSha256": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+    "scope": "DISABLED",
+    "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "toolAcceptance": "NOT EXECUTED"
+  },
+  "baseline": {
+    "phase": "R7D-B INDEPENDENT BASELINE AUDIT - NOT TOOL ACCEPTANCE",
+    "lessonToolInvoked": false,
+    "at": "2026-09-18T02:08:20.705046+00:00",
+    "source": "CURRENT_DEVELOPMENT_DB",
+    "connection": "NEW INDEPENDENT READ ONLY",
+    "canonicalBinding": [
+      1,
+      1,
+      1
+    ],
+    "freeze": "MATCH",
+    "actorSafety": "PASS",
+    "actorSessions": 0,
+    "actorRefreshTokens": 0,
+    "journal": {
+      "directory": true,
+      "approval": true,
+      "scenario": true,
+      "dispatch0": true,
+      "dispatch1": true,
+      "disabled": true
+    },
+    "attempts": [
+      {
+        "number": 1,
+        "correct": false,
+        "score": 0.0,
+        "createdAt": "2026-09-17T13:37:44.048635+00:00",
+        "requestHash": "6f54e9cba9bf217a57d46aa881f508536ce317850d9a5d0bb44712c4580b5a1e"
+      },
+      {
+        "number": 2,
+        "correct": true,
+        "score": 100.0,
+        "createdAt": "2026-09-17T13:39:16.72588+00:00",
+        "requestHash": "65d681a4427188ab437b8eac05b61f602071cb322a90e8517d75e80b03548dc9"
+      }
+    ],
+    "progress": [
+      {
+        "status": "completed",
+        "completionPercent": 100,
+        "masteryScore": 100,
+        "attemptCount": 2,
+        "xmin": "2431359"
+      }
+    ],
+    "pageProgress": 0
+  },
+  "nodeProgressTriggers": "MATCH",
+  "protected": {
+    "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "/home/yangzhen/releases/uply-first-enable-20260910/source/package.json": "3f86c618474619c4e3ad49ae619e096a602a0d32bb93b97b3597f18f84cc90f1",
+    "/home/yangzhen/releases/uply-first-enable-20260910/source/package-lock.json": "32afe671ae11e981d3d889c546b4c6a8e240e95ce934be2aa9f76bc81c2e7a2d",
+    "publicTree": "37e8b563e79e70ee38f882464121b76481b3f4df1df57eeb0c5515bb41871425",
+    "b3Private": "aacb05e8a91f9356964ba91076fcff7fb6a2c645e32ed65f226026705efadd55",
+    "tailscale": "2f91b70d3e6b2a29ce9f4be55610306c2cfd493dcd90b6548fb62d7782e68fe3"
+  },
+  "pm2": {
+    "name": "uply-first-enable",
+    "status": "online",
+    "pid": 3736508
+  },
+  "writes": 0
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "result": "ERROR; stop cue advancement and media",
+  "stepOrActivityCompletedByError": false,
+  "durationMismatch": "fail closed"
+}

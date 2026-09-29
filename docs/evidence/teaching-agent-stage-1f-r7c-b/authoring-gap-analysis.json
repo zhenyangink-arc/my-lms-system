@@ -1,0 +1,13 @@
+{
+  "decision": "B — MINIMAL OFFICIAL AUTHORING WORKFLOW NEEDED; NOT IMPLEMENTED",
+  "existingSchemaSufficientForAuthoring": true,
+  "aliasField": "digital_textbook_activities.activity_key; UNIQUE(node_id,activity_key)",
+  "parentChain": "Activity -> execution node -> orientation module -> chapter0 -> textbook version",
+  "existingGrammarAction": "grammar-only parent; inappropriate for orientation",
+  "chapterPracticeManagement": "generates chapter_practice_units/blocks from published chapter; not Activity creation",
+  "currentCatalogCreationRpc": "No general INSERT node/activity/secret function located; existing edit actions do not create target",
+  "atomicAttemptRpc": "7-param EXISTS, service_role EXECUTE, authenticated denied",
+  "authoringGuards": "existing advisory lock + dependency fence statement triggers; must retain",
+  "testContextBlocker": "CURRENT-DB TEST IDENTITY BLOCKER",
+  "migrationRequiredForContentShape": false
+}

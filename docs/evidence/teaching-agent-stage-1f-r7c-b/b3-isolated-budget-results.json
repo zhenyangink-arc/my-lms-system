@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "environment": "OWNED ISOLATED POSTGRESQL / NETWORK NONE",
+  "liveRpcSha256": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+  "liveNodeTriggersApplied": 2,
+  "maxAttempts": 3,
+  "chapterTestIsNull": true,
+  "wrongEffects": [
+    {
+      "table": "digital_textbook_attempts",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "totalEffects": [
+    {
+      "table": "digital_textbook_attempts",
+      "operation": "INSERT",
+      "count": 2
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "operation": "UPDATE",
+      "count": 1
+    }
+  ],
+  "correctDelta": {
+    "digital_textbook_attempts": {
+      "INSERT": 1,
+      "UPDATE": 0
+    },
+    "digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 1
+    }
+  },
+  "courseEbookProgressWrites": 0,
+  "pageProgressWrites": 0,
+  "isolatedAuditRows": 4,
+  "privateAnswerSource": "existing server-only secret / no answer constants in scenario",
+  "restart": "child service pid changed; readback only; attempts remain 2",
+  "currentDbWrites": 0
+}

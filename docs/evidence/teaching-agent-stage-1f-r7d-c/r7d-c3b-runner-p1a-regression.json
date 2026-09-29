@@ -1,0 +1,378 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1A",
+  "recordedAt": "2026-09-19T06:11:06.177033+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "Stage1G": "NOT_READY",
+  "status": "PASS",
+  "historicalRunner": {
+    "planned": 51,
+    "executed": 51,
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_01",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_02",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_03",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_04",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_05",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_06",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_07",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_08",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_09",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_10",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_29",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_30",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_32",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_33",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_49",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_50",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_11",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_12",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_13",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_14",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_15",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_16",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_17",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_18",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_19",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_20",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_21",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_22",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_23",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_24",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_25",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_26",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_27",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_28",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_31",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_43",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_44",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_45",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_46",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_47",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_48",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_51",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_34",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_35",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_36",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_37",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_38",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_39",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_40",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_41",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_42",
+        "result": "PASS"
+      }
+    ]
+  },
+  "newCapture": {
+    "executed": 27,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "tests": [
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_01_missing_auth_before_credentials",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_02_explicit_draft_authority",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_03_cannot_authorize_install",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_04_strict_schema",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_05_static_hashes",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_06_raw_file_recheck",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_07_freshness",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_08_fixed_identity_tls",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_09_no_mutation_or_tools",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_10_fixture_separation",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_11_cli_arbitrary_inputs",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_12_production_auth_without_credentials",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_13_ledger_first_mock",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_14_modes_reject_bad_session",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_25_production_tls_before_ledger",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_26_runtime_guards_preserved",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_15_owned_baseline_rollback",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_16_cli_owned_adapter",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_17_readonly_mutation_probe",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_18_count_mismatch_early_stop",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_19_duplicates_early_stop",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_20_statement_digest_and_pinned_recapture",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_21_wrong_function_body",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_22_wrong_owner_definer_path",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_23_wrong_acl",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_24_wrong_versions_same_count",
+        "result": "PASS"
+      },
+      {
+        "test": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+        "result": "PASS"
+      }
+    ]
+  },
+  "existingRegression": {
+    "nodePassed": 155,
+    "r5bPassed": 17,
+    "passed": 172,
+    "failed": 0,
+    "skipped": 0
+  },
+  "uniqueRunnerCasesPassed": 78,
+  "safetyCriticalSkips": 0,
+  "logHashes": {
+    "all-tests.log": "fc227f85f3b8724cbe7a9e0890ee83fa6b3caae9c8f5aa5b3120a2501e044226",
+    "capture-final-v2.log": "9b2c7b4b1fea8aa7cd3e59eae1fc31e62b7f6aee6a9a71231690958efa68fbbf",
+    "existing-regression.log": "d32b13bb1db6c5dafb392c52f39bda956f2d8ff185bfb76c76a8ea1f2267bf15",
+    "r5b-historical-unit.log": "f6a2f592346b266e06966796a9d71075f34dd44c7d23c46908c25d6eff637fad"
+  },
+  "historicalTestExpectedChanges": 0,
+  "historicalTest51OnlyLogDestinationChanged": true,
+  "validationSequence": "Full suite passed 77 cases (51 historical + 26 capture), then final capture suite passed all 27 after TLS-query/strict-target-type checks. Historical install functions unchanged by final capture-only refinements."
+}

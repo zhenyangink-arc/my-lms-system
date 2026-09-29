@@ -1,0 +1,61 @@
+{
+  "stage": "R7D-C3A",
+  "recordedAt": "2026-09-18T06:42:28.196409+00:00",
+  "productBusinessChanges": 0,
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "Stage1G": "NOT_READY",
+  "status": "READY_FOR_SEPARATE_TARGET_SETUP_CONTRACT_REVIEW",
+  "approved": false,
+  "executionAuthorized": false,
+  "proposedAliases": {
+    "tenant": "r7dc-acceptance-qa",
+    "subject": "r7dc-acceptance-student-1",
+    "content": "r7dc-acceptance-native-v1"
+  },
+  "identityPolicy": "New dedicated non-real-student QA account using normal Auth; app_metadata marks test purpose; active non-owner profile and student membership. Credentials/private IDs assigned and locked privately in later approved setup, never docs.",
+  "contentPlan": "Independent QA Korean-app course/lesson/textbook; real text + single_choice association; no existing B1/R6F changes; no required media/cue.",
+  "requestedFutureWritesByResponsibility": {
+    "Auth": "ONE dedicated QA user; normal system profile/auth maintenance must be separately enumerated before executable setup approval",
+    "TenantAndAccess": "ONE dedicated tenant, ONE student membership, ONE tenant app enablement, ONE app enrollment; normal scope/visibility/unlock rules",
+    "Catalog": "At most ONE QA category, ONE course, ONE lesson, separate from real-student/private content",
+    "Textbook": "ONE textbook/version/chapter/module/execution node/Activity/private grader definition",
+    "TeachingSource": "ONE published-compatible teaching profile/lesson/script version/source node with explicit reference_activity_id; objectives within existing lesson field",
+    "Publication": "Separate official native v2 publication after migration002 and app; snapshot/pointer/history/dependency writes require an exact captured manifest before execution",
+    "AgentCoreTables": 0,
+    "attempts": 0,
+    "progress": 0
+  },
+  "expectedAfterSetup": "ZERO attempts; fresh successful Tool read required to confirm INCOMPLETE/0; never reinterpret UNKNOWN as zero",
+  "setupContractReady": true,
+  "executableWriteBudgetLocked": false,
+  "preExecutionRequirements": [
+    "Inspect normal Auth/profile/membership triggers and finalize exact derived write budget",
+    "Lock private creation payload/identity ownership/credential handling and safe fingerprints",
+    "Lock exact authored graph and generated refs",
+    "Obtain explicit setup authorization; publication remains independently scoped"
+  ],
+  "excluded": [
+    "No real-student identity/data",
+    "No B2 reuse",
+    "No Frozen/B1/R6F update",
+    "No cleanup",
+    "No feature/allowlist activation",
+    "No attempt/progress seeding",
+    "No Provider/Agent Run"
+  ],
+  "writesThisTurn": 0
+}

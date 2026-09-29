@@ -1,0 +1,52 @@
+{
+  "status": "FOUND",
+  "targetIntegration": "PARTIAL",
+  "authorities": [
+    {
+      "fact": "Activity attempts/correctness",
+      "owner": "existing server grader + digital_textbook_attempts",
+      "newStore": false
+    },
+    {
+      "fact": "Node/step completion",
+      "owner": "digital_textbook_node_progress -> projectPersistedHistory -> StepController serverCompletion",
+      "newStore": false
+    },
+    {
+      "fact": "Page/repetition/speaking progress",
+      "owner": "activity_page_progress/guided_repeat_progress/speaking_evidence",
+      "newStore": false
+    },
+    {
+      "fact": "Teaching node/phase",
+      "owner": "learning_agent_sessions + task events/node attempts through deterministic Script Runtime",
+      "newStore": false
+    },
+    {
+      "fact": "Course/lesson aggregate",
+      "owner": "existing lesson_progress / completion domain; not implicitly advanced by video",
+      "newStore": false
+    },
+    {
+      "fact": "Video position",
+      "owner": "TeacherVideoPlayer sessionStorage UI hint",
+      "authority": "NOT completion evidence; no verified cross-device cue-aware resume"
+    },
+    {
+      "fact": "Runtime snapshot identity",
+      "owner": "runtime_publish_private.sessions + immutable snapshots",
+      "gap": "Current issuer is chapter-one scoped"
+    }
+  ],
+  "proposal": "One existing learning progress authority, with script position as orchestration state and AI runs as infrastructure, not three competing lesson-completion stores. Extend owned existing state only if durable cue waiting facts cannot be reconstructed; no video_*attempt/progress tables.",
+  "sources": [
+    "progress",
+    "step-controller",
+    "session",
+    "video",
+    "script-domain",
+    "learning-history"
+  ],
+  "activityVsParentCompletion": "Read same-activity server.activityProgress; never wait for whole parent node to complete before resuming the first of two activities. Use existing domain qualifying-attempt rules.",
+  "revisionGap": "Existing learning-history server.revision is content sourceRevision. Future read-port must distinguish content revision, student-state revision/evidence, and client playback generation."
+}

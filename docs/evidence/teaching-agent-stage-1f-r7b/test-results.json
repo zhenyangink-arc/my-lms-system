@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-17T02:56:22.910678+00:00",
+  "r7b": {
+    "tests": 58,
+    "passed": 58,
+    "failed": 0,
+    "logSha256": "529d4da7d0bb4675e4f3afea0dd5c0a0877f3dd7c4e0686d59b2c3164ce1dd77"
+  },
+  "existingRuntimeRegression": {
+    "tests": 50,
+    "passed": 50,
+    "failed": 0,
+    "logSha256": "529d4da7d0bb4675e4f3afea0dd5c0a0877f3dd7c4e0686d59b2c3164ce1dd77"
+  },
+  "files": [
+    "tests/teaching-agent-r7b-projection.test.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/teaching-agent-r7b-browser.test.mjs",
+    "tests/smart-textbook-runtime-4a.test.mjs",
+    "tests/smart-textbook-runtime-4a14.test.mjs",
+    "tests/smart-textbook-runtime-4a-browser.test.mjs"
+  ],
+  "browser": "real isolated Chromium / HTML5 video; loopback network only",
+  "fixedSleepsAsProof": false,
+  "evidenceLimitation": "Fixture server state; production durable progress not tested",
+  "combinedFinalRun": {
+    "tests": 108,
+    "passed": 108,
+    "failed": 0,
+    "logSha256": "529d4da7d0bb4675e4f3afea0dd5c0a0877f3dd7c4e0686d59b2c3164ce1dd77"
+  }
+}

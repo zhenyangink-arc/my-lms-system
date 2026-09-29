@@ -15,7 +15,7 @@ export function processResult(command, args, input = '') {
 export async function isolatedRecordingPostgres(secret, { existingPgcrypto = true, beforeV2 } = {}) {
   // No host database URL, no env-file, network, published port or volume mount.
   const name = `uply-recording-4a5-${randomUUID()}`;
-  const start = await processResult('docker', ['run','--detach','--rm','--network','none',
+  const start = await processResult('docker', ['run','--pull=never','--detach','--rm','--network','none',
     '--label','uply.test=recording-4a5','--name',name,'--tmpfs','/var/lib/postgresql/data',
     '-e','POSTGRES_HOST_AUTH_METHOD=trust','postgres:15-alpine']);
   if (start.code) throw new Error(`Isolated PostgreSQL unavailable: ${start.stderr}`);

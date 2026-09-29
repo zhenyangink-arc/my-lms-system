@@ -1,0 +1,126 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "status": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "approved": false,
+  "executionAuthorized": false,
+  "approvalKind": "TARGETED_FORWARD_ACL_FIX_AUTHORING_AND_ISOLATED_VALIDATION",
+  "primaryDecision": "REMOVE_SERVICE_ROLE_FORWARD_ONLY",
+  "targetFunction": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+  "exactProposedMigrationPath": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+  "migrationSha256": null,
+  "shaReason": "Migration not authored; current install requires later exact-file/hash approval after validation.",
+  "expectedPrecondition": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "service_role",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": true,
+    "noOtherOverloadAffected": true
+  },
+  "desiredAclRoles": [
+    "postgres",
+    "authenticated"
+  ],
+  "scope": {
+    "productSourceChanges": 0,
+    "existingMigrationsChanged": 0,
+    "newMigrationsToAuthor": 1,
+    "existingTestHelperToModify": [
+      "tests/fixtures/teaching-agent-r7d-production/postgres.mjs"
+    ],
+    "newTestFiles": [
+      "tests/chapter-practice-acl-contract.test.mjs"
+    ],
+    "newTestFixtures": [
+      "tests/fixtures/chapter-practice-acl/historical-environment.sql"
+    ],
+    "documentationEvidenceOnly": "Append reports and create reconciled manifests/results/approval references without overwriting historical evidence"
+  },
+  "design": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-forward-fix-design.json",
+    "sha256": "e372869a354a5873d14a2358e3341bb7580ef51c2da21b598369045083d4c2e5"
+  },
+  "tests": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-test-baseline-design.json",
+    "sha256": "56f98d203d014840ffe0e1db5e313c957b42e2fe7bce07f6293cd1172068633f"
+  },
+  "nextStepsAuthorizedOnlyIfApproved": [
+    "Author exact guarded forward migration",
+    "Implement isolated historical-vs-desired contract tests and minimal-harness fixture correction",
+    "Run isolated security/migration regressions; prove no body/default/unrelated ACL changes",
+    "Generate exact-hash install approval and revised001/002 ledger-baseline packages; STOP"
+  ],
+  "notIncluded": [
+    "current DB ACL mutation",
+    "current migration install",
+    "GRANT or REVOKE on current DB",
+    "global default privilege change",
+    "001/002 modification",
+    "application rebuild/deploy",
+    "PM2 mutation",
+    "business/Auth writes",
+    "Agent Run",
+    "Provider",
+    "Publish",
+    "acceptance setup"
+  ],
+  "candidateRebuildRequired": false,
+  "futureCurrentInstallApprovalSeparate": true,
+  "releaseOrderChange": "000 before001; expected future ledger458->459->460->461, subject to fresh validation and explicit approval",
+  "noHistoricalBaselineRewrite": true
+}

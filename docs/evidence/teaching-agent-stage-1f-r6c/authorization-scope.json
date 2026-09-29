@@ -1,0 +1,32 @@
+{
+  "status": "APPROVED AND EXECUTED FOR EIGHT DRAFT NODES ONLY",
+  "userSection": 13,
+  "existingNodes": 0,
+  "plannedNodes": 8,
+  "productionNodeWritesSoFar": 32,
+  "practiceTextMappingAccepted": true,
+  "nodeWriteAuthorizationGranted": true,
+  "publish": false,
+  "providerRequests": 0,
+  "agentRuns": 0,
+  "method": "EXISTING USER-OWNED CHROME / OFFICIAL SCRIPT STUDIO UI",
+  "allowedAfterApproval": [
+    "8 node INSERTs",
+    "official field UPDATEs/autosaves for these nodes only",
+    "official add_node/update_node audit logs"
+  ],
+  "forbidden": [
+    "publish",
+    "runtime execution",
+    "Provider",
+    "Agent",
+    "Pins",
+    "Feature ON",
+    "allowlist changes",
+    "other version/content writes"
+  ],
+  "explicitUserApproval": "批准创建",
+  "recordedAtUtc": "2026-09-16T08:00:33.947101+00:00",
+  "nodeInsertCount": 8,
+  "nodeUpdateCount": 24
+}

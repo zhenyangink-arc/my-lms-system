@@ -1,0 +1,27 @@
+{
+  "reconcileCommandSha256": "12842a373fd85fdc19cebafef40505387c970711376718c5f164b1ef71d21437",
+  "operatorSqlSha256": "b774e2cf72e12dba59d9ba06a4d14cec684b9555c47787dfdff33da1554bf36d",
+  "reconciliationMigrationSha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+  "expected": {
+    "reconcileCommandSha256": "12842a373fd85fdc19cebafef40505387c970711376718c5f164b1ef71d21437",
+    "operatorSqlSha256": "b774e2cf72e12dba59d9ba06a4d14cec684b9555c47787dfdff33da1554bf36d",
+    "reconciliationMigrationSha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a"
+  },
+  "paths": {
+    "reconcileCommandSha256": "scripts/teaching-agent-r3a/reconcile-command.py",
+    "operatorSqlSha256": "scripts/teaching-agent-r3a/operator-reconcile.sql",
+    "reconciliationMigrationSha256": "supabase/migrations/202609140006_agent_run_reconciliation.sql"
+  },
+  "matches": {
+    "reconcileCommandSha256": true,
+    "operatorSqlSha256": true,
+    "reconciliationMigrationSha256": true
+  },
+  "reconcilerVersion": "deadline-terminal-v1",
+  "receiptVersion": "reconciler-receipt-v1",
+  "batchDefault": 50,
+  "batchMax": 100,
+  "deadlineGrace": "6 seconds after persisted deadline",
+  "manualMonitoringCadence": "EVERY 5 MINUTES MANUAL",
+  "status": "LOCKED"
+}

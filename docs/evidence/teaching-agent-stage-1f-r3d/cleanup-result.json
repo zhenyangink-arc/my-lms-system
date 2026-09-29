@@ -1,0 +1,21 @@
+{
+  "removed": {
+    "container": [
+      "supabase_storage_uply-agent-r2-c4fa58d6088a",
+      "supabase_rest_uply-agent-r2-c4fa58d6088a",
+      "supabase_realtime_uply-agent-r2-c4fa58d6088a",
+      "supabase_auth_uply-agent-r2-c4fa58d6088a",
+      "supabase_kong_uply-agent-r2-c4fa58d6088a",
+      "supabase_db_uply-agent-r2-c4fa58d6088a"
+    ],
+    "network": [
+      "supabase_network_uply-agent-r2-c4fa58d6088a"
+    ],
+    "volume": [
+      "supabase_db_uply-agent-r2-c4fa58d6088a",
+      "supabase_storage_uply-agent-r2-c4fa58d6088a"
+    ]
+  },
+  "remainingOwnedResources": 0,
+  "privateDirectoryRemoved": true
+}

@@ -1,0 +1,9 @@
+{
+  "status": "SUPERSEDED BY B1/B2 SPLIT",
+  "currentCanonicalPath": "B — formal authenticated RPC",
+  "currentPackage": "r7c-b1-approval-package.json",
+  "identityPackage": "r7c-b2-approval-package.json",
+  "previousProposal": "implementation-plan-before-b1-b2.json",
+  "directPgDriver": "NOT RECOMMENDED",
+  "noWritesAuthorized": true
+}

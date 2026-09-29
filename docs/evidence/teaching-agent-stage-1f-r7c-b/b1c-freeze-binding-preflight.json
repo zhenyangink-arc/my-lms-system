@@ -1,0 +1,16 @@
+{
+  "freeze": "VERIFIED",
+  "version": {
+    "count": 1,
+    "rowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158"
+  },
+  "nodeCount": 8,
+  "objectives": "UNCHANGED",
+  "binding": {
+    "executionNodeCount": 0,
+    "activityCount": 0,
+    "privateAnswerCount": 0,
+    "rpcInstalled": false
+  },
+  "currentDbWrites": 0
+}

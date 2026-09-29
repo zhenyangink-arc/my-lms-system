@@ -1,0 +1,41 @@
+{
+  "checkedAt": "2026-09-13T03:04:48.958Z",
+  "phase": "stopped before backup",
+  "maintenance8443Closed": true,
+  "uplyStatus": "stopped",
+  "otherServicesChanged": [],
+  "otherProxyEntriesChanged": false,
+  "externalRequests": [
+    {
+      "pid": 2139928,
+      "usename": "authenticator",
+      "state": "active",
+      "wait_event_type": null,
+      "query_age_seconds": 0.1,
+      "updating_teaching_versions": false,
+      "inserting_teaching_versions": false,
+      "deleting_teaching_versions": true,
+      "transaction_has_xid": true
+    },
+    {
+      "pid": 2139754,
+      "usename": "authenticator",
+      "state": "active",
+      "wait_event_type": "Lock",
+      "query_age_seconds": 0,
+      "updating_teaching_versions": false,
+      "inserting_teaching_versions": false,
+      "deleting_teaching_versions": true,
+      "transaction_has_xid": false
+    }
+  ],
+  "sourceOfExternalRequests": "not identified; not issued by this deployment task",
+  "queryContentsExported": false,
+  "backupDirectory": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6",
+  "candidateDirectory": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS",
+  "newBackupCreated": false,
+  "migrationsExecuted": [],
+  "deployed": false,
+  "privateClientDisposed": true,
+  "studentDataReset": false
+}

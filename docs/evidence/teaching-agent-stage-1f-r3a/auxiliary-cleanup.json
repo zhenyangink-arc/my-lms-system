@@ -1,0 +1,8 @@
+{
+  "removedOwnedTestDirectories": [
+    "/tmp/uply-stage1d-next-GwSmdH",
+    "/tmp/uply-stage1e-browser-wtRY1H"
+  ],
+  "candidateSmokeDirectoryRemoved": true,
+  "retained": "Only fixed private R3A release artifact; no staging keys"
+}

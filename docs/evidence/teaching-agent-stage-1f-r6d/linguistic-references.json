@@ -1,0 +1,23 @@
+{
+  "sources": [
+    {
+      "title": "国立国语院：한글의 구성",
+      "url": "https://www.korean.go.kr/hangeul/principle/001.html",
+      "supports": [
+        "음절 단위 모아쓰기",
+        "初声ㅇ可无声",
+        "初声/中声/终声角色"
+      ]
+    },
+    {
+      "title": "国立国语院 한국어기초사전：중성",
+      "url": "https://krdict.korean.go.kr/jpn/dicSearch/SearchView?ParaWordNo=76629&nation=jpn&nationCode=7&viewTypes=on",
+      "supports": [
+        "중성定义指音节中的元音，不是字形几何中心"
+      ],
+      "access": "Search-index excerpt verified; shorter direct URL fetch unavailable"
+    }
+  ],
+  "separation": "语言学定义由官方资料核实；初学者负担、优先级与改写是本报告教学判断；UPLY实现事实仅取源码/DB/UI。",
+  "visualReasoning": "가中ㅏ在ㄱ右边、고中ㅗ在ㄱ下面为字符字形的直接观察；两字使用本课已列字母。"
+}

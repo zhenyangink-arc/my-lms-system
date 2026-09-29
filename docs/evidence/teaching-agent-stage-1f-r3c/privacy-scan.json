@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "exactCredentialValuesChecked": 39,
+  "matches": 0,
+  "archived": "allowlisted metadata and synthetic screenshots only",
+  "rawPromptsOrToolPayloads": false,
+  "productionStudentData": false
+}

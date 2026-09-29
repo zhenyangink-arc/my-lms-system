@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { loadStudentTeachingLessonSlot, loadStudentTeachingSlots } from "@/features/teaching-agent/server/page-projection/lesson-slots";
 import { notFound, redirect } from "next/navigation";
 import {
     ArrowLeft,
@@ -744,6 +745,9 @@ export default async function LessonDetailPage({
                     unlockedChapterCount={unlockedHangulChapterCount}
                     initialEbookProgress={ebookProgress}
                     initialChapterSlug={requestedChapter}
+                    teachingAgentSlot={role === "student" && tenant && !isPlatformAudit
+                        ? await loadStudentTeachingLessonSlot({ supabase, actorId: user.id, tenantId: tenant.id, lessonId: lesson.id })
+                        : undefined}
                 />
             </LessonActivityBoundary>
         );
@@ -790,6 +794,9 @@ export default async function LessonDetailPage({
                 <SmartTextbookShell
                     backHref={courseDirectoryHref}
                     textbook={smartTextbook}
+                    teachingAgentSlots={role === "student" && tenant && !isPlatformAudit
+                        ? await loadStudentTeachingSlots({ supabase, actorId: user.id, tenantId: tenant.id, lessonId: lesson.id, moduleIds: smartTextbook.modules.map(module => module.id) })
+                        : undefined}
                     trackingDisabled={isPlatformAudit}
                     completionHref={smartTextbook.chapter.number === 0 && currentChapters[1]
                         ? `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}?chapter=${encodeURIComponent(currentChapters[1].slug)}`

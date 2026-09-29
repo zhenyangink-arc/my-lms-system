@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-09-15T14:13:04+09:00",
+  "bindingAttempted": true,
+  "ownedBindingCreated": true,
+  "removalExit": 0,
+  "removedAt": "2026-09-15T14:13:04+09:00",
+  "bindingDurationMs": 7478.382,
+  "serveAfter": {
+    "TCP": {
+      "443": {
+        "HTTPS": true
+      },
+      "4000": {
+        "HTTPS": true
+      },
+      "8443": {
+        "HTTPS": true
+      }
+    },
+    "Web": {
+      "kmgwak-system-product-name.taila18cd5.ts.net:4000": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:4000"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3001"
+          }
+        }
+      },
+      "kmgwak-system-product-name.taila18cd5.ts.net:8443": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:3000"
+          }
+        }
+      }
+    }
+  },
+  "configMatchesBefore": true,
+  "ownedTemporaryBindingCount": 0,
+  "probeListenerStopped": true,
+  "remoteEndpointUnavailable": true,
+  "remoteClosedCheckExit": 7,
+  "finishedAt": "2026-09-15T14:13:04+09:00"
+}

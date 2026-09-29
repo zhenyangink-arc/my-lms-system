@@ -1,0 +1,32 @@
+{
+  "status": "UNCHANGED",
+  "canonicalSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+  "tcpPorts": [
+    "4000",
+    "443",
+    "8443"
+  ],
+  "bindings": [
+    {
+      "port": "4000",
+      "path": "/",
+      "targetAddress": "127.0.0.1",
+      "targetPort": 4000
+    },
+    {
+      "port": "443",
+      "path": "/",
+      "targetAddress": "127.0.0.1",
+      "targetPort": 3001
+    },
+    {
+      "port": "8443",
+      "path": "/",
+      "targetAddress": "127.0.0.1",
+      "targetPort": 3000
+    }
+  ],
+  "funnelEnabled": false,
+  "port9443Present": false,
+  "mutations": 0
+}

@@ -1,0 +1,151 @@
+{
+  "overall": "GO — R4F technical closure only",
+  "operationalPackage": "READY FOR USER ACCEPTANCE",
+  "stage1G": "NOT READY",
+  "gates": [
+    {
+      "gate": "G-R4F-1",
+      "name": "Normal Commit Confirmation",
+      "status": "PASS",
+      "evidence": "真实非空/空batch完整psql+ACK，严格JSON校验"
+    },
+    {
+      "gate": "G-R4F-2",
+      "name": "Explicit CONFIRMED State",
+      "status": "PASS",
+      "evidence": "SUCCESS/true，仅完整确认路径"
+    },
+    {
+      "gate": "G-R4F-3",
+      "name": "Explicit UNKNOWN State",
+      "status": "PASS",
+      "evidence": "HOLD/false/NO RETRY/新只读连接"
+    },
+    {
+      "gate": "G-R4F-4",
+      "name": "NOT_COMMITTED Conservative",
+      "status": "PASS",
+      "evidence": "仅证明未dispatch；SQL拒绝保守UNKNOWN"
+    },
+    {
+      "gate": "G-R4F-5",
+      "name": "Receipt Always Produced",
+      "status": "PASS",
+      "evidence": "可捕获路径与可用输出；SIGKILL/掉电等明确缺receipt=UNKNOWN"
+    },
+    {
+      "gate": "G-R4F-6",
+      "name": "Timeout Handling",
+      "status": "PASS",
+      "evidence": "TimeoutExpired后单次调用、receipt存在"
+    },
+    {
+      "gate": "G-R4F-7",
+      "name": "Connection Loss Handling",
+      "status": "PASS",
+      "evidence": "exit2/OSError/broken pipe/killed child未知"
+    },
+    {
+      "gate": "G-R4F-8",
+      "name": "Malformed Output Handling",
+      "status": "PASS",
+      "evidence": "missing/partial/array/null/标量/ACK/计数/重复键"
+    },
+    {
+      "gate": "G-R4F-9",
+      "name": "Unexpected Exception Handling",
+      "status": "PASS",
+      "evidence": "Exception/SystemExit/KeyboardInterrupt结构化输出"
+    },
+    {
+      "gate": "G-R4F-10",
+      "name": "No Automatic Retry",
+      "status": "PASS",
+      "evidence": "所有测试runner调用≤1，retryAllowed=false，无循环重试"
+    },
+    {
+      "gate": "G-R4F-11",
+      "name": "Follow-up Read Contract",
+      "status": "PASS",
+      "evidence": "新连接、只读、独立记录、原UNKNOWN不改写"
+    },
+    {
+      "gate": "G-R4F-12",
+      "name": "Operator Identity Field",
+      "status": "PASS",
+      "evidence": "必填显式标签，测试synthetic；不等于授权认证"
+    },
+    {
+      "gate": "G-R4F-13",
+      "name": "Receipt Schema Complete",
+      "status": "PASS",
+      "evidence": "必需字段齐全；未知null、eligible范围明确"
+    },
+    {
+      "gate": "G-R4F-14",
+      "name": "Receipt Sensitive Boundary",
+      "status": "PASS",
+      "evidence": "不回显raw错误/凭据；safe projection、600文件"
+    },
+    {
+      "gate": "G-R4F-15",
+      "name": "DB Reconciler Regression",
+      "status": "PASS",
+      "evidence": "原R3A文件37项、未改迁移"
+    },
+    {
+      "gate": "G-R4F-16",
+      "name": "Tenant Scope Regression",
+      "status": "PASS",
+      "evidence": "错tenant not_found/null拒绝、SQL ACL"
+    },
+    {
+      "gate": "G-R4F-17",
+      "name": "Batch Limit Regression",
+      "status": "PASS",
+      "evidence": "默认50/max100，非法边界拒绝/有界批次"
+    },
+    {
+      "gate": "G-R4F-18",
+      "name": "Deadline Regression",
+      "status": "PASS",
+      "evidence": "persisted deadline+6s、future/grace/lease规则"
+    },
+    {
+      "gate": "G-R4F-19",
+      "name": "CAS Regression",
+      "status": "PASS",
+      "evidence": "双session、terminal不可变、迟到completion拒绝"
+    },
+    {
+      "gate": "G-R4F-20",
+      "name": "Teaching Domain Writes Zero",
+      "status": "PASS",
+      "evidence": "路径无Teaching写，合成Teaching表hash一致"
+    },
+    {
+      "gate": "G-R4F-21",
+      "name": "Provider Reexecution None",
+      "status": "PASS",
+      "evidence": "reconciler不恢复Runtime/Provider/Tool"
+    },
+    {
+      "gate": "G-R4F-22",
+      "name": "Production Reconciler Runs Zero",
+      "status": "PASS",
+      "evidence": "本轮无生产维护调用"
+    },
+    {
+      "gate": "G-R4F-23",
+      "name": "Production DB Writes Zero",
+      "status": "PASS",
+      "evidence": "生产只读；不隐瞒synthetic fixture写入"
+    },
+    {
+      "gate": "G-R4F-24",
+      "name": "Production State Unchanged",
+      "status": "PASS",
+      "evidence": "开始/结束catalog、ledger、PM2/runtime/Serve一致"
+    }
+  ]
+}

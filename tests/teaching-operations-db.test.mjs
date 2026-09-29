@@ -59,7 +59,7 @@ test("teaching operations use real evidence and isolate tenants, students and te
       insert into tenant_memberships select '${id(14)}',s,'active','student' from unnest(array['${id(2)}'::uuid,'${id(3)}'::uuid]) s;
       select set_config('test.uid','${id(2)}',false),set_config('test.tenant','${id(14)}',false),set_config('test.role','student',false),set_config('test.manager','false',false);
     `);
-    await db.exec(await read("202609080004_teaching_operations.sql"));
+    await db.exec(await read("202609140003_teaching_operations_reissue.sql"));
     await db.exec(`insert into curriculum_plan_template_items values
       ('${id(21)}','${id(12)}',0,540,50,'course','lesson','${id(6)}',null),
       ('${id(22)}','${id(12)}',0,600,50,'course','chapter','${id(8)}',null),

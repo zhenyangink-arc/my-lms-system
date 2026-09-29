@@ -1,0 +1,144 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "plannedTests": [
+    {
+      "case": "wrong tenant",
+      "expected": "not_found_or_not_visible",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "wrong actor",
+      "expected": "not_found_or_not_visible",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "wrong lesson",
+      "expected": "not_found_or_not_visible",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "wrong Activity",
+      "expected": "not_found_or_not_visible",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "wrong version",
+      "expected": "stale",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "missing progress after attempts",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "attempt sequence/count mismatch",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "completed progress without correct attempt",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "correct attempt with incomplete progress",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "wrong mastery/completion percent",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "DB read failure",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "stale observation or expired read authority",
+      "expected": "stale/unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "isolated receipt labeled current",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "private fields injected into projection",
+      "expected": "unavailable",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "model-supplied actor/tenant/database ID",
+      "expected": "TOOL_INVALID_INPUT before read",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "copied/forged binding or mismatched execution context",
+      "expected": "not_found_or_not_visible",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "UNKNOWN receipt carrying zero attempt count",
+      "expected": "unavailable, no proven-zero claim",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "old completed timestamp but fresh observation",
+      "expected": "valid completed result",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "cached B3 receipt supplied instead of read",
+      "expected": "reject/no successful evidence",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    },
+    {
+      "case": "current cursor absent",
+      "expected": "partial safe DTO; currentTeachingNode null",
+      "method": "isolated read-port override / in-memory rows, never current DB content mutation",
+      "status": "PLANNED"
+    }
+  ],
+  "existingRegression": {
+    "passed": 55,
+    "skipped": 1,
+    "failed": 0,
+    "scope": "existing selected-sentence tools/permissions/evidence, not new durable Tool integration"
+  },
+  "currentDbNegativeWrites": 0,
+  "doNotRun": [
+    "B3 wrong/correct again",
+    "negative UPDATE prompt",
+    "cleanup",
+    "scope activation"
+  ]
+}

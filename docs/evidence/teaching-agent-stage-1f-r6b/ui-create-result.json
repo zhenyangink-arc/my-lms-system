@@ -1,0 +1,22 @@
+{
+  "receiptVersion": "r6b-ui-create-v1",
+  "operator": "杨震",
+  "targetContentAlias": "hangul-introduction",
+  "targetScriptAlias": "hangul-introduction-prelesson",
+  "creationMethod": "OFFICIAL SCRIPT STUDIO WORKFLOW",
+  "authorization": "EXPLICIT USER APPROVAL",
+  "startedAtUtc": "2026-09-16T07:11:49.270Z",
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+  "logicalCreateAttempts": 1,
+  "result": "SUCCESS_VISIBLE",
+  "retryAllowed": false,
+  "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "versionLabel": "脚本版本 1 · 草稿",
+  "newNodeButtonVisible": true,
+  "newNodeButtonClicked": false,
+  "chapterHashAfter": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "zeroNodesVisible": true,
+  "chromeLeftOpen": true,
+  "endedAtUtc": "2026-09-16T07:11:51.607Z"
+}

@@ -1,0 +1,171 @@
+{
+  "status": "PASS",
+  "next": "16.2.10",
+  "command": "next build --webpack",
+  "isolatedWorkspace": true,
+  "productionCredentialsCopied": false,
+  "productionDeploy": 0,
+  "builtProductSourcesMatchFinal": true,
+  "typecheck": "PASS",
+  "logSha256": "a042f484701a905e6d49c9f4b0027984f4f7bb5821464f71728fc48eca76bec3",
+  "lint": {
+    "status": "PARTIAL — EXISTING BASELINE ERRORS",
+    "errors": 3,
+    "baselineErrors": 3,
+    "newFileErrors": 0,
+    "files": [
+      {
+        "path": "src/features/smart-textbook-runtime/components/block-renderer.tsx",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/choice-block.tsx",
+        "errors": 1,
+        "warnings": 0,
+        "baselineErrors": 1,
+        "baselineWarnings": 0,
+        "rules": [
+          "react-hooks/set-state-in-effect"
+        ]
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+        "errors": 1,
+        "warnings": 0,
+        "baselineErrors": 1,
+        "baselineWarnings": 0,
+        "rules": [
+          "react-hooks/preserve-manual-memoization"
+        ]
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+        "errors": 1,
+        "warnings": 2,
+        "baselineErrors": 1,
+        "baselineWarnings": 2,
+        "rules": [
+          "react-hooks/exhaustive-deps",
+          "react-hooks/set-state-in-effect",
+          "react-hooks/exhaustive-deps"
+        ]
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/runtime-root.tsx",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/template-renderer.tsx",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/components/video-block.tsx",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/block-registry.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/services.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/core/target-registry.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/registry.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      },
+      {
+        "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+        "errors": 0,
+        "warnings": 0,
+        "baselineErrors": 0,
+        "baselineWarnings": 0,
+        "rules": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "phase": "baseline",
+  "at": "2026-09-17T13:26:19.672618+00:00",
+  "source": "CURRENT_DEVELOPMENT_DB",
+  "connection": "NEW INDEPENDENT READ ONLY",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "freeze": "MATCH",
+  "actorSafety": "PASS",
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "journal": {
+    "directory": false,
+    "approval": false,
+    "scenario": false,
+    "dispatch0": false,
+    "dispatch1": false,
+    "disabled": false
+  },
+  "attempts": [],
+  "progress": [],
+  "pageProgress": 0
+}

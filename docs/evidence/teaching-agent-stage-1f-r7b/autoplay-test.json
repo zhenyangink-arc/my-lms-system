@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "promiseRejection": "AUTOPLAY_BLOCKED / RESUME_READY",
+  "automaticRetry": false,
+  "userAction": "继续播放",
+  "completionRetained": true
+}

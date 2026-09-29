@@ -1,0 +1,118 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "overall": "BLOCKED_TLS_CONTRACT_EVIDENCE_INCOMPLETE",
+  "currentBlocker": "BLOCKED_CAPTURE_TLS_REQUIRED",
+  "actualTopology": "Runner -> pinned libpq verify-full TLS -> Supavisor session pooler -> separate upstream -> PostgreSQL backend",
+  "clientPoolerTLS": "PROVEN_HISTORICALLY",
+  "clientEndpointIdentity": "PROVEN_HISTORICALLY; CURRENT_SOURCE_CONFIG_LOCKED",
+  "poolerBackendTransport": "PROVIDER_MANAGED_BUT_NOT_VERIFIED",
+  "backendTrust": "UNKNOWN_UNAPPROVED",
+  "optionAStatus": "MISSING_PROVIDER_TRUST_EVIDENCE",
+  "optionBStatus": "BLOCKED_DIRECT_ENDPOINT_AND_REACHABILITY_EVIDENCE",
+  "backupPreferredTransport": "UNRESOLVED",
+  "migrationApplyCompatibleWithPooler": "UNKNOWN_END_TO_END; SESSION_TRANSACTION_SEMANTICS_COMPATIBLE",
+  "pgStatSslFutureMeaning": {
+    "OptionA": "BACKEND_OBSERVATION",
+    "OptionB": "DIRECT_CLIENT_TLS_GATE; NOT_CLIENT_CERT_VALIDATION_PROOF"
+  },
+  "proposedTransportContractVersion": "maintenance-transport-security/2",
+  "contractVersionApproved": false,
+  "decisionRules": [
+    "If applicable provider-internal hop trust is reviewable, reconciled and explicitly approved, A becomes eligible for a closed implementation proposal; it is not automatically selected.",
+    "If that remains unresolved but the official direct endpoint, CA, network and maintenance requirements are established, B becomes eligible for a closed implementation proposal; it is not automatically selected.",
+    "If both qualify, operator chooses the contract explicitly; no ranking, implicit preference or fallback.",
+    "If neither qualifies, remain BLOCKED and do not create implementation approval."
+  ],
+  "evidenceToUnblock": {
+    "A": [
+      "Applicable provider architecture/security statement or attributable support response mapping this session-pooler upstream, including authentication, network boundary and encryption/alternative internal protection.",
+      "Reviewed reconciliation of the broad DPA assurances with the historical backend ssl=false observation.",
+      "Approved per-tool backup proof policy, plus connection capacity/timeouts for the exported-snapshot workflow."
+    ],
+    "B": [
+      "Official project-specific direct hostname/port from a trusted existing export or provider Connect configuration; never synthesize DNS from project ref.",
+      "Applicable direct CA identity and SSL policy.",
+      "Usable IPv6 route or verified IPv4 add-on endpoint; no network changes authorized.",
+      "Database credential applicability, connection budget/timeouts and maintenance suitability."
+    ]
+  },
+  "currentV3Authority": "UNCHANGED_IF_NO_SOURCE_CHANGE; INVALID_AFTER_SOURCE_CHANGE",
+  "nextImplementationApproval": "NOT_GENERATED",
+  "nextApproval": "NONE_READY",
+  "sourceLockMatch": true,
+  "operationalPackageSha256": "65af9de2a1ffaef90cab6d5ca7865079fd77b003654d6db8a137f7544b3ffe11",
+  "implementationApproval": "BLOCKED",
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "historicalP1DInterpretationPreserved": true,
+  "historicalEvidenceReferences": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-result.json",
+      "sha256": "fa8de8a42ee4dd6fcb802b05ba0d9be21954631a1245212f06b1f54c722b5128"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-decision.json",
+      "sha256": "654e673af72e1e21f4d39f884e7a467c74a32742b8c885f0caa3c1dfb0ddf5bb"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-transport-contract.json",
+      "sha256": "0d5ce511b8d7f14dac4de3ea12fc6f8b4f979bbac84e37a78bd9850ba0c3eba1"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "sha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee"
+    }
+  ],
+  "finalValidation": {
+    "existingFilesRehashed": 2547,
+    "existingFilesChanged": [],
+    "newEvidenceFiles": [
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-exact-scope.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-direct-endpoint-audit.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-security-matrix.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-backup-impact.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-provider-evidence.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-decision.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-option-b-contract.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-option-a-contract.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-migration-impact.json"
+    ],
+    "sourceTestFixtureAdds": 0,
+    "jsonParse": "PASS",
+    "credentialPatternScan": "PASS",
+    "implementationTests": "NOT_RUN_DESIGN_ONLY",
+    "sourceLocks": "52/52_MATCH",
+    "implementationApprovalAbsent": true
+  }
+}

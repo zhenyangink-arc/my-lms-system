@@ -1,0 +1,20 @@
+{
+  "ownerGate": "requirePlatformOwner before createAdminClient",
+  "privilegedReads": [
+    "learning_agent_lessons SELECT * constrained to hash-verified module",
+    "digital_textbook_activity_secrets HEAD count(activity_id) constrained to verified activity; no answer_key read"
+  ],
+  "callerReads": "Other authoring ancestors/script/nodes/public activity remain authenticated caller reads",
+  "publicDTO": [
+    "EMPTY",
+    "BLOCKED",
+    "EXISTING"
+  ],
+  "freeze": "Stable JSON row digests pinned from independently R6F-verified current rows, not caller-controlled; atomic RPC rechecks its original PostgreSQL hashes",
+  "existingBinding": "Exact public shape and private row presence; private answer correctness remains server grader/atomic RPC authority",
+  "writeFunctionBytesUnchanged": true,
+  "rpcMigrationBytesUnchanged": true,
+  "newTestPolicy": "Owned disposable PG instantiates current lesson SELECT policy and exact module gate from migration; published-textbook leaf uses isolated draft/published fixture predicate",
+  "currentDbRlsModified": false,
+  "realAuthCallsInTests": false
+}

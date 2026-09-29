@@ -1,0 +1,10 @@
+{
+  "status": "SCHEMA VERIFIED / RUNTIME NOT EXECUTED",
+  "targetCount": 0,
+  "authenticatedSelectPrivilege": false,
+  "authenticatedInsertPrivilege": false,
+  "rlsEnabled": true,
+  "secretValuesReadOrExported": false,
+  "publicProjection": "explicit whitelist in publicNativeActivity; excludes secret and private digest",
+  "followUp": "Before current-DB persistence, audit response.definitionDigest visibility through learner-readable attempts; do not expose a private definition digest or claim hashing alone proves non-inferability."
+}

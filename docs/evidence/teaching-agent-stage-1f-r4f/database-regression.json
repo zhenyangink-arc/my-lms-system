@@ -1,0 +1,119 @@
+{
+  "status": "PASS",
+  "dbAssertions": 37,
+  "dbChecks": [
+    "wrong tenant not_found",
+    "wrong version conflict",
+    "wrong fence conflict",
+    "anon denied find_reconcilable_agent_runs_v1",
+    "anon denied reconcile_agent_run_v1",
+    "anon denied reconcile_agent_run_batch_v1",
+    "authenticated denied find_reconcilable_agent_runs_v1",
+    "authenticated denied reconcile_agent_run_v1",
+    "authenticated denied reconcile_agent_run_batch_v1",
+    "deadline failed",
+    "two atomic events",
+    "idempotent terminal",
+    "no synthetic message",
+    "early cancellation priority",
+    "late cancellation priority",
+    "created future protected",
+    "running future protected",
+    "waiting_tool future protected",
+    "cleanup grace protects fresh expiry",
+    "lease cannot extend hard deadline",
+    "two reconcilers only one winner",
+    "live completion first immutable",
+    "atomic final preserved",
+    "completed unchanged",
+    "reconciler wins late completion rejected",
+    "late final absent",
+    "final and status rollback together",
+    "batch bounded two",
+    "batch only eligible",
+    "repeat batch empty",
+    "invalid limit 0",
+    "invalid limit 101",
+    "null tenant denied",
+    "deadline index chosen",
+    "owner status failed",
+    "owner status cancelled",
+    "all active zero"
+  ],
+  "dbRaces": {
+    "sessions": 2,
+    "first": "reconciled",
+    "second": "already_terminal",
+    "terminalEvents": 1
+  },
+  "workerFirst": {
+    "sessions": 2,
+    "completion": "completed",
+    "reconciler": "already_terminal",
+    "answerPreserved": true
+  },
+  "reconcilerFirst": {
+    "sessions": 2,
+    "terminal": "failed",
+    "lateCompletion": "PERSISTENCE_FAILED",
+    "assistantMessages": 0
+  },
+  "batch": {
+    "max": 100,
+    "requested": 2,
+    "returned": 2,
+    "eligibleChanged": 3,
+    "futureAndTerminalsUnchanged": true
+  },
+  "realCliReceipts": [
+    {
+      "case": "real nonempty committed transaction",
+      "exit": 0,
+      "commitState": "CONFIRMED",
+      "result": "SUCCESS",
+      "success": true,
+      "processed": 1,
+      "followUpReadRequired": false,
+      "retryAllowed": false
+    },
+    {
+      "case": "real empty committed transaction",
+      "exit": 0,
+      "commitState": "CONFIRMED",
+      "result": "SUCCESS",
+      "success": true,
+      "processed": 0,
+      "followUpReadRequired": false,
+      "retryAllowed": false
+    },
+    {
+      "case": "real SQL ACL rejection",
+      "exit": 1,
+      "commitState": "UNKNOWN",
+      "result": "HOLD",
+      "success": false,
+      "processed": null,
+      "followUpReadRequired": true,
+      "retryAllowed": false
+    }
+  ],
+  "isolation": {
+    "network": "none",
+    "readonlyRootfs": true,
+    "hostPorts": 0,
+    "productionCredentials": false,
+    "transport": "owned Docker psql / Unix socket",
+    "fullSupabaseJwtRlsRetest": false
+  },
+  "providerFixtureCalls": 2,
+  "liveProviderRequests": 0,
+  "productionDbWrites": 0,
+  "productionReconcilerRuns": 0,
+  "teachingDomainHashesUnchanged": true,
+  "syntheticFixtureWrites": "NONZERO",
+  "existingR3aSuiteOutput": {
+    "status": "PASS",
+    "assertions": 37
+  },
+  "ownedContainerRemoved": true
+}

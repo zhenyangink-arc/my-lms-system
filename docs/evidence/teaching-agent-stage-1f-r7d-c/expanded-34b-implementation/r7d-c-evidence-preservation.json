@@ -1,0 +1,52 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "historicalEvidenceAndApprovals": "All baseline hashes unchanged",
+  "historicalMigrations": "All baseline hashes unchanged",
+  "existingTests": "All baseline hashes unchanged",
+  "reportAppendOnly": {
+    "path": "docs/teaching-agent-stage-1f-r7d-c-skill-tool-binding-audit.md",
+    "priorSha256": "f933f349c6a809fbe435ec9b98d563a48d61d1a47e3e96066e39fac541883beb",
+    "newSha256": "ada83a910172d1fda7643d8026852201137de53623364c3af32ae2f249078071"
+  },
+  "evidenceSubdirectory": "expanded-34b-implementation",
+  "artifactInventory": [
+    {
+      "path": "build/r7dc34b-validation-artifacts/validation-build.tar.gz",
+      "sha256": "0b5899c5f482395e4c36b3ae47e5437e19a75007bb4d9912404de244d993efd5",
+      "mode": "0o664",
+      "bytes": 6905417,
+      "classification": "VALIDATION_ARTIFACT_ONLY",
+      "deployable": false
+    },
+    {
+      "path": "build/r7dc34b-validation-artifacts/validation-source-34.tar.gz",
+      "sha256": "9b7c4d33e4ed82cca7edd6aac8ee43b7a9925f16fa55f79b4ef6a50602354b3b",
+      "mode": "0o664",
+      "bytes": 47800,
+      "classification": "VALIDATION_ARTIFACT_ONLY",
+      "deployable": false
+    }
+  ]
+}

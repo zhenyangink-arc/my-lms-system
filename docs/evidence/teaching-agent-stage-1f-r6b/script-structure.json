@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "independentScriptRootTable": false,
+  "logicalScriptCount": 1,
+  "physicalVersionCount": 1,
+  "actualScriptIdentifierSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+  "parentChain": "Script Version -> Teaching Lesson -> Module -> Chapter -> Textbook Version -> Textbook -> Catalog Lesson/Course/App",
+  "parentChainMatchesR6A": true,
+  "createLogCount": 1,
+  "createLogMatchesVersionAndAuthenticatedActor": true
+}

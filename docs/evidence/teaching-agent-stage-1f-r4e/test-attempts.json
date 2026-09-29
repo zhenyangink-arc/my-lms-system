@@ -1,0 +1,21 @@
+{
+  "attempts": [
+    {
+      "test": "isolated R4E DB audit",
+      "attempt": 1,
+      "result": "FAIL",
+      "assertion": "remaining bounded batch1",
+      "cause": "Synthetic future row expired during sequential Docker fixture setup; extra eligible row made exact batch count invalid.",
+      "productChange": false,
+      "correction": "After proving future/deadline and cancellation behavior, extend ONLY synthetic sentinel deadline to one hour for the batch-count test. Product code/migrations unchanged.",
+      "cleanup": "fixture finally ran on failure"
+    },
+    {
+      "test": "isolated R4E DB audit",
+      "attempt": 2,
+      "result": "PASS",
+      "assertions": 33,
+      "cleanup": "fixture finally completed; no fixture-label container remains"
+    }
+  ]
+}

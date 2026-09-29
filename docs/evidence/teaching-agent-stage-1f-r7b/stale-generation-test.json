@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "stepLease": "existing StepController",
+  "lateCompletion": "ignored after disposal; cannot resume new owner",
+  "latePlayPromise": "cannot reset awaiting activity",
+  "requestAndEvidenceBinding": "validated"
+}

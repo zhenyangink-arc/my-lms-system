@@ -1,0 +1,141 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "cancel_requested_at",
+        "notNull": false,
+        "number": 25,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "0",
+        "generated": "",
+        "identity": "",
+        "name": "public_event_seq",
+        "notNull": true,
+        "number": 26,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "bigint"
+      }
+    ],
+    "removed": []
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.check_agent_run_cancel_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs;\nbegin\n select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor and fencing_token=p_fence;\n if not found then raise exception 'RUN_NOT_FOUND'; end if;\n return r.cancel_requested_at is not null;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid",
+        "name": "check_agent_run_cancel_v1",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.get_student_agent_run_status_v1(p_tenant uuid, p_actor uuid, p_run uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs; a public.agent_messages; d jsonb;\nbegin\n if not agent_core_private.student_transport_guard(p_tenant,p_actor) then return null; end if;\n select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor and agent_code='student-ai-teacher';\n if not found then return null; end if;\n if r.status='completed' then\n   select * into a from public.agent_messages where run_id=r.id and role='assistant' and state='final';\n   select metadata->'details' into d from public.agent_run_events where run_id=r.id and kind='output.checked' order by seq desc limit 1;\n   if a.id is null or d->>'completeness' not in ('complete','partial') then raise exception 'PERSISTENCE_FAILED'; end if;\n end if;\n return jsonb_strip_nulls(jsonb_build_object('protocolVersion',1,'runId',r.id,'conversationId',r.conversation_id,\n 'status',r.status,'createdAt',r.created_at,'endedAt',r.ended_at,'finalAnswer',a.content,\n 'sourceRefs',a.source_refs,'completeness',d->>'completeness','failureCode',case when r.status='failed' then r.terminal_reason end));\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "get_student_agent_run_status_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.request_agent_run_cancel_v1(p_tenant uuid, p_actor uuid, p_run uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs;\nbegin\n if not agent_core_private.student_transport_guard(p_tenant,p_actor) then return null; end if;\n select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor and agent_code='student-ai-teacher' for update;\n if not found then return null; end if;\n if r.status in ('completed','failed','cancelled') then return jsonb_build_object('result','already_terminal'); end if;\n -- Metadata only: do not consume the active worker's version/fence or terminal CAS.\n update public.agent_runs set cancel_requested_at=coalesce(cancel_requested_at,clock_timestamp()) where id=r.id;\n return jsonb_build_object('result','accepted');\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "request_agent_run_cancel_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.reserve_student_agent_event_sequence_v1(p_tenant uuid, p_actor uuid, p_run uuid)\n RETURNS bigint\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare base bigint;\nbegin\n if not agent_core_private.student_transport_guard(p_tenant,p_actor) then raise exception 'RUN_NOT_FOUND'; end if;\n update public.agent_runs set public_event_seq=public_event_seq+128 where id=p_run and tenant_id=p_tenant and actor_id=p_actor\n and agent_code='student-ai-teacher' and public_event_seq < 9007199254740000 returning public_event_seq-128 into base;\n if not found then raise exception 'RUN_NOT_FOUND'; end if;\n return base;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "reserve_student_agent_event_sequence_v1",
+        "owner": "postgres",
+        "result": "bigint",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "definition": "CREATE OR REPLACE FUNCTION public.transition_agent_run_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs;\nbegin\n select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor for update;\n if not found then raise exception 'RUN_NOT_FOUND'; end if;\n if r.status in ('completed','failed','cancelled') or r.state_version is distinct from p_expected_version or r.fencing_token is distinct from p_fence\n or r.status is distinct from p_expected_status then raise exception 'PERSISTENCE_FAILED'; end if;\n if r.cancel_requested_at is not null and p_to not in ('failed','cancelled') then raise exception 'RUN_CANCELLED'; end if;\n return agent_core_private.transition_agent_run_evidence_v1(p_tenant,p_actor,p_run,p_expected_status,p_expected_version,p_fence,p_to,p_budget,p_final,p_reason);\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    ],
+    "removed": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "definition": "CREATE OR REPLACE FUNCTION public.transition_agent_run_v1(p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare r public.agent_runs; definition jsonb; evidence jsonb; output jsonb; tool jsonb; result jsonb;\nbegin\n  select * into r from public.agent_runs where id=p_run and tenant_id=p_tenant and actor_id=p_actor for update;\n  if not found then raise exception 'RUN_NOT_FOUND'; end if;\n  select manifest into definition from public.agent_definition_versions where id=r.definition_id;\n  if p_to='completed' and definition ? 'artifacts' then\n    select metadata into evidence from public.agent_run_events where run_id=p_run and kind='evidence.checked' order by seq desc limit 1;\n    select metadata into output from public.agent_run_events where run_id=p_run and kind='output.checked' order by seq desc limit 1;\n    select metadata into tool from public.agent_run_events where run_id=p_run and kind='tool.completed'\n      and metadata#>'{details,toolRef}'=definition#>'{artifacts,requiredEvidenceToolRef}' order by seq desc limit 1;\n    if evidence#>>'{details,status}' is distinct from 'pass' or (evidence->>'stateVersion')::int is distinct from r.state_version\n      or evidence#>>'{details,revision}' is null or evidence#>>'{details,segmentRef}' is null\n      or not coalesce((evidence#>'{details,sourceRefs}') @> jsonb_build_array(evidence#>>'{details,segmentRef}'),false)\n      or not coalesce(tool#>>'{details,status}' in ('ok','partial'),false)\n      or tool#>>'{details,revision}' is distinct from evidence#>>'{details,revision}'\n      or tool#>>'{details,segmentRef}' is distinct from evidence#>>'{details,segmentRef}'\n    then raise exception 'REQUIRED_EVIDENCE_MISSING'; end if;\n    if output#>>'{details,status}' is distinct from 'pass' or (output->>'stateVersion')::int is distinct from r.state_version\n      or output->'details' is distinct from evidence->'details' then raise exception 'SKILL_OUTPUT_INVALID'; end if;\n  end if;\n  result:=agent_core_private.transition_agent_run_base_v1(p_tenant,p_actor,p_run,p_expected_status,p_expected_version,p_fence,p_to,p_budget,p_final,p_reason);\n  if p_to='completed' and definition ? 'artifacts' then\n    update public.agent_messages set source_refs=output#>'{details,sourceRefs}' where run_id=p_run and role='assistant';\n  end if;\n  return result;\nend $function$\n",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    ]
+  }
+}

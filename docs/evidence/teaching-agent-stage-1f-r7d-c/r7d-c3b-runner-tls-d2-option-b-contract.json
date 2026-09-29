@@ -1,0 +1,108 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "DIRECT_POSTGRES_VERIFY_FULL/1",
+  "status": "BLOCKED_DIRECT_ENDPOINT_AND_REACHABILITY_EVIDENCE",
+  "topology": [
+    "Runner",
+    "pinned Docker libpq client",
+    "verify-full TCP TLS",
+    "official direct PostgreSQL endpoint"
+  ],
+  "exactHostname": null,
+  "hostnameConstructionForbidden": true,
+  "directEndpoint": "UNKNOWN",
+  "directTLSContract": "NOT_PROVEN_FOR_THIS_PROJECT",
+  "providerSupportedPattern": true,
+  "clientProof": {
+    "psqlAuthority": "Same persistent pinned psql/libpq process used for the operation; fixed conninfo metadata plus locked effective verify-full parameters, CA identity, service identity and runtime image. A separate diagnostic connection is not authority for the operation session.",
+    "safeFields": [
+      "protocol",
+      "cipher",
+      "peerHostnameOrApprovedIdentityHash",
+      "sslmode",
+      "CAIdentitySha256",
+      "toolImageId",
+      "contractId",
+      "sessionAttemptId"
+    ],
+    "certificateSubjectSANFingerprint": "Optional only if the reviewed actual client metadata mechanism supplies it; never fabricate it from backend SQL.",
+    "poolerIdentity": "Bind official session endpoint host hash, port 5432, project suffix identity, database postgres, authenticated database role, pinned CA and versioned contract. A shared endpoint certificate alone does not uniquely identify the tenant.",
+    "noRawOutputPersistence": true,
+    "parser": "Pinned tool version, fixed locale, strict finite parser; unexpected output fails TLS_METADATA_UNAVAILABLE. No password/DSN/raw connection output in public receipts.",
+    "timing": "Validate on every new production session before ledger/catalog or mutation; capture retains RR READ ONLY, one snapshot, ROLLBACK. No downgrade/retry/fallback.",
+    "dumpLimitation": "Current pg_dump/pg_dumpall do not expose the same psql metadata path. A per-tool enforcement attestation can bind exact pinned libpq tool, effective verify-full service/CA hashes and success, but this must be explicitly reviewed as enforced-connection proof, not represented as observed protocol/cipher. If observed per-connection metadata is required, a separately scoped mechanism remains unresolved."
+  },
+  "pgStatSslRole": "DIRECT_CLIENT_CONNECTION_TLS_GATE_PLUS_INDEPENDENT_CLIENT_CERTIFICATE_VALIDATION",
+  "trustBoundaries": [
+    {
+      "boundary": 1,
+      "between": "Operator host and provider database endpoint",
+      "operator": "Pin officially obtained direct hostname, port, database, user, CA and approved network route; verify-full plus same-session client metadata.",
+      "provider": "Present the appropriate certificate and authenticate the database role."
+    },
+    {
+      "boundary": 2,
+      "between": "Provider endpoint identity and project database isolation",
+      "provider": "Bind the direct endpoint to the project and protect database infrastructure.",
+      "operator": "Require non-secret project endpoint provenance and database/role identity. Do not call a pooled alias direct."
+    }
+  ],
+  "requiredGates": [
+    "Client metadata confirms TLS and locked verify-full invocation verifies hostname/CA.",
+    "pg_stat_ssl for the same direct session is true.",
+    "Endpoint/project/database/role and fixed profile match.",
+    "No proxy fallback, transaction-pooler fallback or CLI/environment endpoint override."
+  ],
+  "network": {
+    "localIPv6DefaultRoutePresent": false,
+    "reachabilityTested": false,
+    "IPv4AddonStatus": "UNKNOWN",
+    "connectionLimits": "UNKNOWN_PROJECT_SPECIFIC",
+    "limitation": "No IPv6 default route is a local prerequisite gap, not proof that every possible direct route is unavailable."
+  },
+  "credentialContract": {
+    "requiresNewPassword": "UNKNOWN_NOT_REQUESTED",
+    "officialModel": "Direct and shared-pooler examples use a database password but different usernames. Existing password validity for a direct login was not inspected or tested.",
+    "configurationChanges": "A separately approved private service/passfile mapping and credential identity would be necessary for a different endpoint/user; no secret copying or generation now.",
+    "currentGuardDependency": "_validate_credentials assumes postgres.<project>; direct postgres requires a reviewed alternative project-binding mechanism, not deleting identity checks."
+  },
+  "evidenceNeeded": [
+    "Official project-specific direct hostname/port from a trusted existing export or provider Connect configuration; never synthesize DNS from project ref.",
+    "Applicable direct CA identity and SSL policy.",
+    "Usable IPv6 route or verified IPv4 add-on endpoint; no network changes authorized.",
+    "Database credential applicability, connection budget/timeouts and maintenance suitability."
+  ],
+  "profileChangeRequired": true,
+  "runnerCodeChangeRequired": true,
+  "captureApplyBackup": "One approved direct maintenance profile for all operations; application transport is independent.",
+  "selected": false
+}

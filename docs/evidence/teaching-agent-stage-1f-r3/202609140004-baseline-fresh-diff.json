@@ -1,0 +1,79 @@
+{
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "get_completion_refresh_health",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "d68d7d0c63051c272c9da390851e0b59d85bf7801b40c58ea9baddc90378b949"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_id uuid",
+        "identityArguments": "p_id uuid",
+        "name": "publish_completion_policy_draft",
+        "owner": "postgres",
+        "result": "void",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "3a145c9fc1a04b7b44464d1342c0a7d2436a9624bb9360db61f6905e406c259a"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "retry_failed_completion_refresh",
+        "owner": "postgres",
+        "result": "integer",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "57d3aa722059862d559104792b80766aaebae3653937a4c8b12d18a7d725cbd7"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_id uuid, p_course_id uuid, p_title text, p_requirements jsonb",
+        "identityArguments": "p_id uuid, p_course_id uuid, p_title text, p_requirements jsonb",
+        "name": "save_completion_policy_draft",
+        "owner": "postgres",
+        "result": "uuid",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "d022ef9d1b9f363836f7484736b6d7dc0851b0d4c91d7d968b912cca20836e70"
+      }
+    ],
+    "removed": []
+  }
+}

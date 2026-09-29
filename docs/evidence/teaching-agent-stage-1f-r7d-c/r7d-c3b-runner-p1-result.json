@@ -1,0 +1,91 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1",
+  "recordedAt": "2026-09-19T05:03:13.074562+00:00",
+  "status": "BLOCKED",
+  "blockingCode": "BLOCKED_DRAFT_PRODUCTION_READONLY_CAPTURE_ENTRYPOINT_UNAVAILABLE",
+  "authorization": "EXPLICIT_USER_READ_ONLY_CAPTURE_APPROVAL_RECOGNIZED",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "authWrites": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "migrationInstall": 0,
+  "realBackup": 0,
+  "restoreExecution": 0,
+  "credentialAccess": 0,
+  "operationalChanges": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildFreshlyObserved": false,
+  "feature": "OFF_LAST_KNOWN_NOT_REOBSERVED",
+  "allowlists": "EMPTY_LAST_KNOWN_NOT_REOBSERVED",
+  "B3Scope": "DISABLED_LAST_KNOWN_NOT_REOBSERVED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "overall": "BLOCKED",
+  "stopRule": "User section40: if runner needs new code for READ ONLY capture, STOP and generate scope request",
+  "runnerSource": "10/10 LOCKED",
+  "historicalDependencies": "31/31 MATCH",
+  "historicalTests": "51/51 HISTORICAL PASS",
+  "currentDBReadOnly": "NOT_EXECUTED_BLOCKED_BEFORE_CONNECTION",
+  "freshLedgerPrefixDigest": null,
+  "fullOperationalPackageDigest": null,
+  "sourceOnlyPackageDigest": "a07fe71a94bbab22d2cd418241c9c7c4fbe6c1b7a82110a121b6a82596fe92f7",
+  "candidateArtifactHashes": "ALL_MATCH",
+  "production000Draft": "DRAFT_NOT_EXECUTABLE",
+  "planSealApproval": "BLOCKED_NOT_GENERATED",
+  "reason": "The implemented preflight verifies an already READY plan. No supported first-baseline capture path exists. Production constructor and authorize share that READY prerequisite and require baseline hashes that P1 is supposed to capture.",
+  "sourceInspectionReferences": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "line": 24,
+      "behavior": "Unconditional plan.ensure_ready() before every CLI mode and before reading authorization/credentials"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "line": 115,
+      "behavior": "ensure_ready rejects DRAFT_NOT_EXECUTABLE"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "line": 158,
+      "behavior": "authorize unconditionally requires READY; lines174-175 require the descriptor/catalog digests this capture is intended to obtain"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "line": 96,
+      "behavior": "Production constructor calls the same READY-only authorization before credentials"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "line": 75,
+      "behavior": "Engine constructor requires READY; preflight validates an already sealed ledger/catalog baseline"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "line": 93,
+      "behavior": "Historical RUNNER-D1-08 asserts all four existing CLI modes reject DRAFT before credential access"
+    }
+  ],
+  "authorizationMissing": false,
+  "priorReadinessClarification": "I1 READY referred to a proposal for future capture/review, not executable first-capture capability. Its 51 passing tests explicitly covered DRAFT rejection and did not establish a production DRAFT capture path.",
+  "nextScopeRequest": "approval-r7d-c3b-runner-readonly-capture-entrypoint-implementation.json",
+  "nextScopeApproved": false,
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "000Install": "NOT_AUTHORIZED",
+  "001Install": "NOT_AUTHORIZED",
+  "002Install": "NOT_AUTHORIZED",
+  "legacyCleanupCandidates": 0
+}

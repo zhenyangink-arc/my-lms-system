@@ -1,0 +1,36 @@
+{
+  "status": "PARTIAL",
+  "foundationRoutesAndSchema": "PASS",
+  "authenticatedAuthoringUI": "AUTH SESSION REQUIRED",
+  "routes": [
+    {
+      "name": "textbook-authoring",
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "httpStatus": 200,
+      "responseBytes": 29154,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    },
+    {
+      "name": "script-studio",
+      "method": "GET",
+      "path": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+      "httpStatus": 200,
+      "responseBytes": 29311,
+      "contentType": "text/html; charset=utf-8",
+      "redirectPath": null,
+      "status": "AUTH SESSION REQUIRED",
+      "streamedLoginRedirectObserved": true
+    }
+  ],
+  "compiledRoutes": {
+    "/[space]/dashboard/admin/apps/[appSlug]/textbooks/page": true,
+    "/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/page": true
+  },
+  "skeletonRpcCatalog": "PASS",
+  "savePublishCreateCalls": 0,
+  "reason": "No explicitly authorized existing owner session supplied; no impersonation, magic link, Auth modification or service-role login"
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "baselineTestsRetained": 108,
+  "newReadbackRegression": 1,
+  "coverage": [
+    "video play/pause",
+    "real time crossing",
+    "wrong answer",
+    "UNKNOWN",
+    "dedupe",
+    "backward seek",
+    "forward mandatory cue",
+    "refresh",
+    "stale generation",
+    "user pause",
+    "autoplay reject",
+    "media error",
+    "public/private projection",
+    "single media owner"
+  ],
+  "authorityChange": "Submit COMPLETED receipt alone no longer resumes; separate readback is always required."
+}

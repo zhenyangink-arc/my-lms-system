@@ -1,0 +1,68 @@
+{
+  "source": "actual Owner browser POST responses; credentials/headers/answer request payloads omitted",
+  "wrongIndependentReadback": {
+    "binding": {
+      "sessionId": "r7cb-b3-wrong-correct-recovery-1",
+      "snapshotId": "hangul-execution-fixture",
+      "snapshotDigest": "sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3",
+      "stepId": "hangul-prelesson",
+      "sourceBlockId": "test-video",
+      "mediaRevision": "development-pattern-v1",
+      "cueId": "vowel-cue",
+      "blockId": "test-activity",
+      "activityRef": "hangul-introduction-vowel-recognition"
+    },
+    "requestId": "d33a2ab8-da75-4c34-9655-0bea549a14b1",
+    "generation": 0,
+    "contract": "activity-completion/2",
+    "status": "INCOMPLETE",
+    "attemptNumber": 1,
+    "evidence": {
+      "source": "activity-domain",
+      "storage": "CURRENT_DEVELOPMENT_DB",
+      "kind": "durable-attempt-sequence",
+      "attemptSequence": 1,
+      "stateDigest": "1754184a62f789313b9b4fc40ef5153c36e85dceaa30afaa90e4496fc44adbde",
+      "observedAt": "2026-09-17T13:37:44.510Z",
+      "latestAttemptAt": "2026-09-17T13:37:44.048635+00:00",
+      "progressUpdatedAt": "2026-09-17T13:37:44.048635+00:00"
+    },
+    "completedAt": null
+  },
+  "correctIndependentReadback": {
+    "binding": {
+      "sessionId": "r7cb-b3-wrong-correct-recovery-1",
+      "snapshotId": "hangul-execution-fixture",
+      "snapshotDigest": "sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3",
+      "stepId": "hangul-prelesson",
+      "sourceBlockId": "test-video",
+      "mediaRevision": "development-pattern-v1",
+      "cueId": "vowel-cue",
+      "blockId": "test-activity",
+      "activityRef": "hangul-introduction-vowel-recognition"
+    },
+    "requestId": "10ff8a0e-0229-4285-8297-5b1d01317033",
+    "generation": 0,
+    "contract": "activity-completion/2",
+    "status": "COMPLETED",
+    "attemptNumber": 2,
+    "evidence": {
+      "source": "activity-domain",
+      "storage": "CURRENT_DEVELOPMENT_DB",
+      "kind": "durable-attempt-sequence",
+      "attemptSequence": 2,
+      "stateDigest": "59af26f06d205226fbabc9d26227bf9e8da3757c835cf3accd42f753b02f2dad",
+      "observedAt": "2026-09-17T13:39:17.127Z",
+      "latestAttemptAt": "2026-09-17T13:39:16.72588+00:00",
+      "progressUpdatedAt": "2026-09-17T13:39:16.72588+00:00"
+    },
+    "completedAt": "2026-09-17T13:39:16.72588+00:00"
+  },
+  "responseSuppression": {
+    "request": 185,
+    "httpStatus": 500,
+    "successReceiptReturned": false,
+    "subsequentOperation": "readback",
+    "automaticResubmission": 0
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "cancel_requested_at",
+        "notNull": false,
+        "number": 25,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "0",
+        "generated": "",
+        "identity": "",
+        "name": "public_event_seq",
+        "notNull": true,
+        "number": 26,
+        "schema": "public",
+        "table": "agent_runs",
+        "type": "bigint"
+      }
+    ],
+    "removed": []
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid",
+        "name": "check_agent_run_cancel_v1",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "9e0968e7678b8c149f33113704290fe4c0c626e1f57613d06e322caa0c584fff"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "get_student_agent_run_status_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "0caf9de8b8304a253dd01b97d876e6c88d1bfdc7db887646fb7e9bd28e94b61a"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "request_agent_run_cancel_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "f4e467651241c10797ff987aaa05529c7bff16e137a9f7817a85e38776c7afc4"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid",
+        "name": "reserve_student_agent_event_sequence_v1",
+        "owner": "postgres",
+        "result": "bigint",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "75b78b094523346cda1ba9ebced3b7ad48a734abbf04d101f3efcb90e5d08dd6"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "59f7206157085ece25c680403447bf325faf06627eecd7f18485763cf0918938"
+      }
+    ],
+    "removed": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text DEFAULT NULL::text, p_reason text DEFAULT NULL::text",
+        "identityArguments": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+        "name": "transition_agent_run_v1",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "057d66983125feea2dcc818ec7a6420e96a20c61e096eb45db5b2eb10f6b98e4"
+      }
+    ]
+  }
+}

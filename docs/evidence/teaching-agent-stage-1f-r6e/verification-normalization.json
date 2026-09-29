@@ -1,0 +1,9 @@
+{
+  "nodeNumber": 1,
+  "initialCheck": "REVISED_CONTENT_MISMATCH",
+  "readOnlyDiagnosticCause": "Browser form stores CRLF while proposed text uses LF; characters/content identical.",
+  "resolved": "Normalize CRLF to LF in text and scriptSegments comparisons only; no whitespace stripping or word changes.",
+  "extraUiFillOrSave": 0,
+  "productionRetry": false,
+  "subsequentIndependentReadOnlyCheck": "PASS"
+}

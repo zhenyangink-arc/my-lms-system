@@ -1,0 +1,207 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D4",
+  "recordedAt": "2026-09-20T04:35:22.532744+00:00",
+  "mode": "LOCAL_SCOPE_AUDIT_AND_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "r7d-c3b-pooled-risk-contract-implementation-approval/1",
+  "status": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "approved": false,
+  "executionAuthorized": false,
+  "approvalType": "STAGE_SCOPED_POOLED_RISK_CONTRACT_IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "selectedContract": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+  "riskAcceptanceArtifact": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+    "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957"
+  },
+  "exactModifyPaths": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "kind": "OPERATIONAL",
+      "existingSha256": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+      "responsibility": "Implement same-session psql proof, fixed per-tool invocation enforcement, port/TCP/GSS checks, common risk gate, backend observation, immutable transport sidecar receipts and owned-only validation hooks. Keep private session/tool signatures compatible with transaction engine; no public SQL/DSN API."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "kind": "OPERATIONAL",
+      "existingSha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "responsibility": "Preserve backend query as typed observation, require bound client proof/risk contract, retain false and capture query ordering/full catalog, emit forward capture/2 transport evidence."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "kind": "OPERATIONAL",
+      "existingSha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "responsibility": "Add strict production risk-binding authorization versions, stage expiry/closure checks and fixed artifact validation; update CAPTURE_APPROVAL to v4. Preserve all READY and fixture separation guards."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "kind": "OPERATIONAL",
+      "existingSha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "responsibility": "Add explicit versioned transportSecurity policy and exact port/risk/closure bindings; all existing endpoint/runtime/build/credential identity fields preserved."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "kind": "OPERATIONAL",
+      "existingSha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "responsibility": "Collect proof records for exporter, full dump, schema dump, roles dump and after-observation; bind output hashes and immutable proof file hashes in forward backup/2 manifest; validate exact proof set and risk/source identity before using backup. Existing snapshot/restore algorithm and retention preserved."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "kind": "TEST",
+      "existingSha256": "b87f80dfe8af51e1f77d4857399162304017fd0834ed39b1d87e2c596242707b",
+      "responsibility": "Risk/schema/expiry/v4/override tests, metadata parsing, backend false and unavailable semantics, strict per-tool profiles; update only approved security expectations."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "kind": "TEST",
+      "existingSha256": "4f9484c238ae27551f3c9d288e08561b5536838ebb553b7642ad0c7f6873eca1",
+      "responsibility": "Owned real TLS psql and transport-boundary validation, ordering/rollback/atomicity regressions. Define ephemeral setup within this existing test file; no persistent fixture additions."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "kind": "TEST",
+      "existingSha256": "f02e882d614dbcb6a16b6064d63c0dd45a8195f103220f38c2a3b5773a14d587",
+      "responsibility": "Owned real pg_dump/pg_dumpall TLS success/wrong-CA/hostname/non-TLS cases, per-output proof set/replay rejection and backup/restore manifest tests."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "kind": "README",
+      "existingSha256": "400ff14b3ea617b4bf7b10cc662c6b5ead4eb54a7be87b36c2f8338b7bd031e1",
+      "responsibility": "Document scoped risk, proof-kind differences, v4/operator boundary, closure duty, failure states and separate future approvals. Correct stale capture v2 documentation forward."
+    }
+  ],
+  "exactAddPaths": [],
+  "implementationFiles": {
+    "operationalModify": 5,
+    "testModify": 3,
+    "readmeModify": 1,
+    "totalModify": 9,
+    "add": 0
+  },
+  "designAuthorities": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-source-audit.json",
+      "sha256": "6554631f1d549e0c977844744e401e4e196a82ed7c2df76b0d4b1ce9cfdee2c2"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-client-proof-contract.json",
+      "sha256": "ef8774862dd7109d59f7cbf31e0f8c4467a87b657d2bbd0ee66ffa69da92f06e"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-backend-observation.json",
+      "sha256": "8f687590d19a90aa3b1a65fd27d40d8c0b6cd407ae636d26d1c687af87d4c0af"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-authorization-expiry.json",
+      "sha256": "b2f5c87151bb868a9dca2d65252e016103758c199bbf39885cd6b10f991ca2d5"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-exact-scope.json",
+      "sha256": "76ebff5e9975275529ccbf1a22351870e926c8d19f3abe54a1cc6418ede5e0c2"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d4-test-plan.json",
+      "sha256": "f1ab9e8488250d6bde5d1703911c7c1e058568a509b86cdbd2ca39a4b8fc9a29"
+    }
+  ],
+  "tests": {
+    "existing": 98,
+    "new": 36,
+    "minimum": 134,
+    "historicalRegression": 172,
+    "safetyCriticalSkipsAllowed": 0,
+    "allPassRequired": true
+  },
+  "perToolProofAcceptance": "Approve the explicitly distinguished actual same-session metadata proof for psql and successful real-invocation libpq enforcement proof for pg_dump/pg_dumpall; no config-only or borrowed-handshake proof. If owned pinned tests cannot prove this, STOP.",
+  "unchangedBoundaries": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb"
+    }
+  ],
+  "migrationLocks": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "expectedSha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "expectedSha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "expectedSha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "match": true
+    }
+  ],
+  "stopRules": [
+    "Any tenth existing implementation/test/README path or any new implementation/test/fixture file required -> STOP for new scope.",
+    "Any transaction.py/runner.py/receipts.py/registry/draft/fixture/migration/product change required -> STOP.",
+    "Any package install/new image/toolchain dependency required -> STOP.",
+    "Any actual-client proof cannot be demonstrated with pinned owned tools -> BLOCKED; no config-only substitute.",
+    "No new production 001/002 plan or registration; no production credential/current DB/backup/install/deploy during implementation validation."
+  ],
+  "futureApprovalVersionRequirement": "v4 only after implementation and all validations; no v3 fallback or dual authority",
+  "noCurrentExecutionAuthorization": [
+    "current DB connection",
+    "production credential use",
+    "capture retry",
+    "production backup",
+    "plan seal",
+    "000/001/002 install",
+    "deployment",
+    "001/002 production-plan creation or registration"
+  ],
+  "allowedForwardEvidence": "New implementation evidence and eventual v4 proposal only; no historical artifact overwrite."
+}

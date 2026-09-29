@@ -1,0 +1,81 @@
+{
+  "stage": "R7D-C Future Separate Approval Package",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "approved": false,
+  "executionAuthorized": false,
+  "basis": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-implementation-result.json",
+  "currentBuildBaseline": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBaselineRevalidated": false,
+  "sourceLock": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-source-lock.json",
+  "historicalApprovalsModified": false,
+  "prohibitions": [
+    "No Agent Run",
+    "No Provider",
+    "No B3 activation",
+    "No current Draft publication",
+    "No public summarize transport activation",
+    "No cleanup",
+    "No bulk pending migration install"
+  ],
+  "status": "READY_AWAITING_SEPARATE_EXPLICIT_APPROVAL",
+  "approvalKind": "COMPLETION_MIGRATION_INSTALL_ONLY",
+  "migration": {
+    "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+    "mode": "0o664",
+    "bytes": 23761
+  },
+  "responsibility": {
+    "addedFunctions": [
+      {
+        "signature": "agent_core_private.validate_artifact_v2(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "aad0bf616f5c642634bffaeafbcdd64cc8b475b864792bd023317f5fc7da3b89"
+      },
+      {
+        "signature": "agent_core_private.validate_typed_evidence(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "eabdb61d81abe02e92de89ab7b58e6ec96d610cbdc0155724f82ff7173eecf2d"
+      }
+    ],
+    "changedFunctions": [
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "5c182d2540348b933de4c5737463acff7b607d0991b4104e185b00aeb99a65a1"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "961f11c720644f61dab6105b6be8fc24b5ea25d5ad1cb265023bb6c41539dd99"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b389166d4defea7aee230bb237eb9edb1557f5bbe69161e1b4b9d9b5dc793703"
+      }
+    ],
+    "relationsUnchanged": true,
+    "changedConstraints": []
+  },
+  "validation": "PASS on owned isolated PostgreSQL; standalone and combined orders",
+  "newTables": 0,
+  "historicalMigrationEdits": 0,
+  "currentInstallPerformed": false,
+  "expectedHistoricalBaselineLedger": 458,
+  "requiresFreshAuthorizedPreflight": [
+    "Exact migration/source hashes",
+    "Actual installed historical function/constraint/ACL hashes match reviewed chain",
+    "Ledger and separately approved install order (do not assume 458 after another approved install)",
+    "No unapproved pending migrations",
+    "Current business/auth/frozen evidence baseline retained"
+  ],
+  "installPlan": [
+    "Install only this exact migration with recorded transaction/ledger procedure after fresh authorized checks",
+    "Stop on any historical definition/ledger drift",
+    "Verify existing v1 read/Explain compatibility without invoking Tool/Agent/Provider"
+  ],
+  "rollbackPolicy": "Forward-only; no historical row/payload rewrite. Preserve prior function definitions for review; no automatic destructive down migration after v2 use.",
+  "otherMigration": "Separate approval required",
+  "appDeployment": "Separate approval required"
+}

@@ -1,0 +1,19 @@
+{
+  "chunks": 325,
+  "matches": [],
+  "status": "PASS",
+  "publicAnonKeyExpected": true,
+  "secretValuesChecked": 32,
+  "serverMarkers": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "DEEPSEEK_API_KEY",
+    "SupabaseStudentTeachingReadRepository",
+    "r2Provider",
+    "r2ObservedFetch",
+    "createStudentAiTeacherRuntime",
+    "append_agent_run_event_v2"
+  ],
+  "productionBuildExit": 0,
+  "productionChunksPreservedUnder": ".next/static",
+  "devChunksSeparate": true
+}

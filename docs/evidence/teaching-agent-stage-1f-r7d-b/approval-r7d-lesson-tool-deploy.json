@@ -1,0 +1,127 @@
+{
+  "approval": "R7D-B Deploy",
+  "status": "READY - AWAITING USER APPROVAL",
+  "createdAt": "2026-09-17T14:22:52.953552+00:00",
+  "target": "canonical UPLY :8443",
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "artifacts": {
+    "candidate-build.tar.gz": {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-build.tar.gz",
+      "sha256": "c95ba807a5e4094062a2af1e465d01e3ec5413765a31fd14359a84499eb046fd",
+      "bytes": 7810148
+    },
+    "candidate-source.tar.gz": {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-source.tar.gz",
+      "sha256": "2cd8714bad62443c813d436267b8dd37f3a330e0f9723b8febc075be139fda7d",
+      "bytes": 9942
+    }
+  },
+  "modifiedProductFiles": [
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/teaching-agent/server/domain-ports/index.ts",
+    "src/features/teaching-agent/server/tools/contracts.ts"
+  ],
+  "newProductFiles": [
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts",
+    "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx"
+  ],
+  "sourceHashes": {
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+    "src/features/teaching-agent/server/domain-ports/index.ts": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+    "src/features/teaching-agent/server/tools/contracts.ts": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+    "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+    "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+    "src/features/development-execution/server/lesson-facts-readonly.server.ts": "ad2738084be110615c65c4d841e8668f41647d6a57b53fb59a6aa8093d145bf6",
+    "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx": "c57d67687f691605d6bd63658a6b5d3491964b2c1359f02ca498134d59cc2e19"
+  },
+  "productFileCount": 8,
+  "scopeExtensionEvidence": "scope-extension.json",
+  "dependenciesChanged": 0,
+  "packageChanged": false,
+  "lockfileChanged": false,
+  "migration": "NONE",
+  "dbSchemaWrites": 0,
+  "rls": "UNCHANGED",
+  "studentPolicy": "UNCHANGED",
+  "auth": "UNCHANGED",
+  "ledger": 458,
+  "rpc": "UNCHANGED",
+  "businessWrites": 0,
+  "scope": "DISABLED",
+  "agentRuns": 0,
+  "provider": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "pm2Target": "uply-first-enable",
+  "deploymentPerformed": false,
+  "candidateBuildIncludes": "existing B3 child and media artifact rebuilt from same locked source; no scenario execution",
+  "rollback": {
+    "root": "/home/yangzhen/operations/uply/teaching-agent/r7d-b/<approved-deployment-UTC>/rollback",
+    "paths": {
+      "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": {
+        "exists": true,
+        "mode": "0o644",
+        "sha256": "4a4cd76c69d9e7639767a49fd40eb0e707a9075a25e74528e579d535b88d9c50"
+      },
+      "src/features/teaching-agent/server/domain-ports/index.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/features/teaching-agent/server/tools/contracts.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/features/development-execution/server/lesson-facts-readonly.server.ts": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      },
+      "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx": {
+        "exists": false,
+        "mode": null,
+        "sha256": null
+      }
+    },
+    "method": "Preserve previous .next and exact eight path presence/mode/hash before stop. Switch only .next and exact eight files. On deployment failure restore .next and original files; delete only manifest-proven absent new paths. Start same PM2 only. No DB/config/journal/dependency/public changes."
+  },
+  "acceptanceAfterApproval": {
+    "route": "/platform/dashboard/admin/development-execution/lesson-facts",
+    "operator": "existing normal Platform Owner browser session",
+    "pipeline": "Core executor -> Tool -> Domain Port -> single-snapshot trusted read",
+    "expected": "attempts2/latest CORRECT/completed100/mastery100/CURRENT_DEVELOPMENT_DB",
+    "dbWrites": 0,
+    "noScopeActivation": true,
+    "prePostFingerprints": "r7d-current-db-readonly-plan.json"
+  },
+  "validation": {
+    "newTests": "49 PASS / 0 FAIL",
+    "regression": "201 PASS / 1 SKIP / 0 FAIL",
+    "typescript": "PASS",
+    "build": "PASS",
+    "lint": "PASS (eight scoped product files)",
+    "diffCheck": "PASS",
+    "privateBoundary": "PASS - current DB Tool DOM/network pending deployment"
+  }
+}

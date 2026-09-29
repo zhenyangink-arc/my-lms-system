@@ -1,0 +1,18 @@
+{
+  "windowStartUtc": "2026-09-16T02:58:09.328821+00:00",
+  "windowStartAsiaSeoul": "2026-09-16T11:58:09.328821+09:00",
+  "windowDeadlineUtc": "2026-09-16T03:58:09.328821+00:00",
+  "startMonotonic": 237542.553292569,
+  "scope": "DEVELOPMENT FOUNDATION INSTALL ONLY",
+  "authorizedWindowEndUtc": "2026-09-16T03:58:09.328821+00:00",
+  "windowEndUtc": "2026-09-16T03:58:09.328821+00:00",
+  "authorizedWindowDurationSeconds": 3600,
+  "finalReadonlyObservationUtc": "2026-09-16T04:37:59.556448+00:00",
+  "elapsedToFinalReadonlySeconds": 5990.227627,
+  "lastProductionMutationStartedAtUtc": "2026-09-16T03:32:34.971149+00:00",
+  "lastStartupSafetyVerifiedAtUtc": "2026-09-16T03:32:35.346844+00:00",
+  "productionMutationsStartedAfterDeadline": 0,
+  "status": "WINDOW EXPIRED / EXECUTION INCOMPLETE",
+  "executionClosed": true,
+  "windowExtended": false
+}

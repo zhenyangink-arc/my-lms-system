@@ -1,0 +1,46 @@
+{
+  "contract": "exact-single-maintenance-targets/1",
+  "profiles": {
+    "uply-canonical-maintenance/1": {
+      "kind": "PRODUCTION",
+      "connectionDirectory": "/home/yangzhen/.config/uply-first-enable-20260910/db",
+      "service": "uply",
+      "authorizationDirectory": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals",
+      "backupRoot": "/home/yangzhen/backups/uply",
+      "receiptRoot": "build/r7dc3b-exact-migration-ops/receipts",
+      "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+      "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+      "database": "postgres",
+      "role": "postgres",
+      "sslmode": "verify-full",
+      "serverMajor": 17,
+      "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+      "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+      "buildPath": "/home/yangzhen/releases/uply-first-enable-20260910/source/.next/BUILD_ID",
+      "buildId": "PjpaYHAz0asyvwh0G-lBo",
+      "runtimePath": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+      "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+      "launcherPath": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+      "transportSecurity": {
+        "contractId": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+        "riskAcceptanceId": "r7d-c3b-pooled-transport-risk-acceptance/1",
+        "riskArtifactPath": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+        "riskArtifactSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+        "scope": "R7D-C3B_ONLY",
+        "releaseId": "R7D-C3B",
+        "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        "port": 5432,
+        "poolMode": "SESSION",
+        "transport": "TCP",
+        "sslmode": "verify-full",
+        "gssencmode": "disable",
+        "caPolicy": "PINNED_CREDENTIAL_IDENTITY_ROOT_CRT",
+        "backendObservation": "BACKEND_OBSERVATION_ONLY",
+        "providerHop": "PROVIDER_MANAGED_UNVERIFIED",
+        "closureMarker": "R7D-C3B.release-completed.json"
+      }
+    }
+  }
+}

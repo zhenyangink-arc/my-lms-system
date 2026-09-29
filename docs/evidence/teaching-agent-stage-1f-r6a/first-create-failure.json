@@ -1,0 +1,13 @@
+{
+  "status": "FAILED / FULLY ROLLED BACK",
+  "source": "Prior read-only database and server-log diagnosis; not re-executed",
+  "serverErrorAtUtc": "2026-09-16T05:42:23.805Z",
+  "sqlstate": "PT409",
+  "error": "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW",
+  "triggerFunction": "runtime_publish_private.check_authoring_statement()",
+  "rpc": "public.create_teaching_content_skeleton",
+  "failureLocation": "First digital_textbooks INSERT; statement guard rejected global stale dependency fence",
+  "canonicalChainsAfterFailure": 0,
+  "partialSkeletonAfterFailure": false,
+  "retryBeforeRetirement": false
+}

@@ -1,0 +1,37 @@
+{
+  "nodeNumber": 2,
+  "title": "韩文字母怎么组成？",
+  "formalType": "explanation",
+  "purpose": "解释两类字母如何组成一个可见的音节块。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "NEEDS_REVISION",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "两句音的比喻不是可靠定义：辅音并非只在开头，元音也不只是接续声音。ㄱ+ㅏ=가完全正确。当前实例已展示合体结果，不能据此把明确的视觉音节块教学目标判FULL。",
+  "classification": "MUST_FIX",
+  "issueIds": [
+    "M1",
+    "M2"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "M1",
+      "classification": "MUST_FIX",
+      "proposedText": "자음과 모음을 함께 써요.\n한 글자를 만들어요."
+    },
+    {
+      "id": "M2",
+      "classification": "MUST_FIX",
+      "proposedText": "ㄱ과 ㅏ를 한 글자 안에 모아 써요.\n“가”를 보세요.\nㄱ은 왼쪽에 있어요.\nㅏ는 오른쪽에 있어요.\n이렇게 한 글자 모양으로 써요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=2",
+  "renderedReference": "ui-render-validation.json / order=2",
+  "nodeWrites": 0
+}

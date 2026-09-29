@@ -1,0 +1,32 @@
+{
+  "stage": "R6B",
+  "strategy": "DEVELOPMENT-FIRST",
+  "operator": "杨震",
+  "scope": "Official initial script draft only; no nodes",
+  "currentWriteApproval": "EXPLICITLY GRANTED AND EXECUTED ONCE",
+  "expectedInserts": {
+    "learning_agent_script_versions": 1,
+    "learning_agent_publish_logs": 1
+  },
+  "expectedUpdates": 0,
+  "expectedDeletes": 0,
+  "expectedNodes": 0,
+  "logicalCreateAttemptLimit": 1,
+  "browser": "Existing user-owned Platform Owner Chrome CDP",
+  "sessionSecretsReadOrExported": false,
+  "actualProductionWrites": {
+    "scriptVersionInsert": 1,
+    "createDraftAuditInsert": 1,
+    "update": 0,
+    "delete": 0
+  },
+  "forbidden": "Node authoring / Publish / Runtime / Provider / Agent / Pins / Definition publication / Feature / Allowlists / Auth / Migration / Deploy / PM2 / Runtime config / Tailscale",
+  "userApproval": "批准这一次精确创建",
+  "approvedScope": {
+    "learning_agent_script_versionsInsert": 1,
+    "learning_agent_publish_logsCreateDraftInsert": 1,
+    "updates": 0,
+    "deletes": 0,
+    "teachingNodes": 0
+  }
+}

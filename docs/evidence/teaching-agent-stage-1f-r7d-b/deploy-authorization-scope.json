@@ -1,0 +1,25 @@
+{
+  "approval": "USER EXPLICIT R7D-B Deploy + ONE current-DB read-only acceptance",
+  "used": true,
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "artifactHashes": {
+    "candidate-build.tar.gz": "c95ba807a5e4094062a2af1e465d01e3ec5413765a31fd14359a84499eb046fd",
+    "candidate-source.tar.gz": "2cd8714bad62443c813d436267b8dd37f3a330e0f9723b8febc075be139fda7d"
+  },
+  "productFiles": 8,
+  "normalOwnerSession": true,
+  "toolDocumentRequests": 1,
+  "noDBBusinessWriteCommands": true,
+  "unexpectedBoundary": "normal Owner auth refresh side effect violates strict all-table zero fingerprint expectation",
+  "notAuthorizedOrPerformed": [
+    "Agent Run",
+    "Provider",
+    "production Tool/Skill binding",
+    "B3 scope activation",
+    "attempt/progress mutation",
+    "cleanup",
+    "Publish",
+    "Pins",
+    "Stage1G"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "PASS ISOLATED / CURRENT DB PLANNED",
+  "noBlindRetry": true,
+  "currentPlannedFault": "lose/suppress correct submission response after repository confirmed COMMIT; same second logical write only; NativeMediaController performs fresh readback; COMPLETED allows resume",
+  "readFailure": "read-port transport fault injection -> UNKNOWN and pause; retry read only; never mutate prompt/secret",
+  "noCommit": "isolated before-dispatch failure verified INCOMPLETE/zero new attempt; current scenario no-commit variant DEFERRED to avoid confusing two-write budget",
+  "ambiguousCommit": "reserve claim, stop writes, new independent connection classify by exact request/actor/activity; committed fact can resume presentation, no row -> hold, cannot classify -> UNKNOWN",
+  "deadline": "expiry stops mutation; final independent administrative readback remains read-only",
+  "canonicalNegativeContentUpdates": 0
+}

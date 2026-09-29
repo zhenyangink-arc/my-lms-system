@@ -2,9 +2,11 @@ import 'server-only';
 import { z } from 'zod';
 import { requireActiveUser } from '../../../lib/auth';
 import { createAdminClient } from '../../../lib/supabase/admin';
-import { loadPublishedRuntimeSnapshot, authorizePublishedCourse, chapterOnePublicationScope } from '../../../lib/smart-textbook-publishing/loader.server';
-import { publicationRepository } from '../../../lib/smart-textbook-publishing/repository.server';
-import { assertPublishedDomainDependencies } from '../../../lib/smart-textbook-publishing/domain-guard.server';
+import { loadPublishedRuntimeSnapshot, authorizePublishedCourse, chapterOnePublicationScope } from '../../../lib/smart-textbook-publishing/loader.server.ts';
+import { publicationRepository } from '../../../lib/smart-textbook-publishing/repository.server.ts';
+import { assertPublishedDomainDependencies } from '../../../lib/smart-textbook-publishing/domain-guard.server.ts';
+
+import { requireLegacyPublication } from '../../../lib/smart-textbook-publishing/artifact.server.ts';
 
 const requestSchema=z.strictObject({sessionRef:z.string().regex(/^learning-session-[0-9a-f-]{36}$/)});
 /** Durable opaque locator + immutable published artifact. Replica/restart needs
@@ -30,7 +32,8 @@ export function createRuntimeLearningSessionResolver(now:()=>number=Date.now){
       if(authority.auth.user.id!==auth.user.id||authority.tenantId!==auth.tenant.id)throw Error('LEARNING_SESSION_OWNER');
       await assertPublishedDomainDependencies(admin,saved.bundle);
       if(saved.expiresAt<=now())throw Error('LEARNING_SESSION_EXPIRED');
-      const data={admin,...saved.bundle.privatePayload},m=data.result.manifest;
+      const legacy=requireLegacyPublication(saved.bundle);
+      const data={admin,...legacy.privatePayload},m=data.result.manifest;
       return {sessionId:sessionRef,snapshotId:m.snapshot.id,manifestDigest:saved.bundle.manifestDigest,privateBindingDigest:saved.bundle.privateDigest,
         expiresAt:saved.expiresAt,locale:saved.locale,db:auth.supabase,admin,manifest:m,bindings:data.result.bindings,services:data.result.services,nodes:data.source.nodes,
         publishedData:data,

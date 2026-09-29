@@ -1,0 +1,96 @@
+{
+  "status": "PARTIAL",
+  "releaseDefinition": {
+    "identifier": "uply-teaching-agent-foundation-r3d-r4f-R5A-PROPOSED",
+    "productionReleaseCreated": false,
+    "targetProjectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "targetHostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "startingLedgerCount": 449,
+    "startingLatest": "202609130003",
+    "startingOrderedLedgerSha256": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+    "artifactPath": "/tmp/uply-r3d-release-candidate/candidate-build.tar.gz",
+    "artifactSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+    "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+    "migrationVersions": [
+      "202609140000",
+      "202609140001",
+      "202609140002",
+      "202609140003",
+      "202609140004",
+      "202609140005",
+      "202609140006",
+      "202609140007"
+    ],
+    "migrationHashes": {
+      "202609140000": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "202609140001": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "202609140002": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "202609140003": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "202609140004": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "202609140005": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "202609140006": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "202609140007": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4"
+    },
+    "operatorCliSha256": "12842a373fd85fdc19cebafef40505387c970711376718c5f164b1ef71d21437",
+    "operatorSqlSha256": "b774e2cf72e12dba59d9ba06a4d14cec684b9555c47787dfdff33da1554bf36d",
+    "migration006Sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+    "knownGoodPath": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "knownGoodBuildId": "LuAZe2VMY32YjOo1WvtrC",
+    "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "providerRequests": 0,
+    "agentRuns": 0,
+    "contentChanges": 0,
+    "definitionPublication": false,
+    "stage1g": "NOT READY"
+  },
+  "semantics": [
+    {
+      "version": "202609140000",
+      "changes": "新建 agent_core_private 和五张 Agent 表，租户/actor/definition/conversation/run/message 外键与延迟环形引用、幂等及预算约束；三条不可变/definition guard trigger；admit、transition、event、usage RPC。扩展现有 ai_token_usage 五列和 run FK、usage 去重索引及三条 restrictive 浏览器写 policy。Agent 表启用 RLS，浏览器无直接表权限；service_role 仅显式 SELECT、definition INSERT 与 RPC EXECUTE。",
+      "risk": "ai_token_usage ALTER 需要强表锁；FK 验证和普通唯一索引可能扫描既有 usage 表；新表 FK 引用 tenants/profiles。没有业务 backfill。"
+    },
+    {
+      "version": "202609140001",
+      "changes": "更新 definition guard 校验 artifact refs/digest；新增 append_agent_run_event_v2 的审计 metadata 白名单；原 transition 移入 private base，新 public wrapper 验证 output/tool/evidence/source/revision/segment 后完成 Run。",
+      "risk": "函数替换/移动有对象锁；函数内 UPDATE 不在安装时运行；没有新表、索引或业务扫描。"
+    },
+    {
+      "version": "202609140002",
+      "changes": "agent_runs 增加 cancel_requested_at 与 public_event_seq；新增 student transport guard、owner status、持久 cancel request、cancel check 和 event sequence RPC。001 wrapper 再移入 private evidence，public transition 外层加取消屏障。",
+      "risk": "ALTER Agent 表锁；public_event_seq非空默认0；RPC条件控制递增上限（非新增CHECK）；新安装表应为空。无旧业务表回填。"
+    },
+    {
+      "version": "202609140003",
+      "changes": "扩展 curriculum_plan_template_items 的 source_type/activity_type 两条 CHECK；source/publication/roster/cancellation 四 trigger；staff 读取 adopted curriculum 的两 policy；新 curriculum_plan_assessments 关联表及 RLS；dispatch_curriculum_plan_exam 与 get_curriculum_execution RPC。",
+      "risk": "DROP/ADD CHECK 会验证已有 template items；ALTER/trigger 安装锁既有课程计划表；FK 引用既有 assignment/plan 等。影响非 Agent 教学计划、发布、考试与名单修改，不是纯新增无影响。"
+    },
+    {
+      "version": "202609140004",
+      "changes": "新增 save_completion_policy_draft、publish_completion_policy_draft、get_completion_refresh_health、retry_failed_completion_refresh；auth.uid + Platform Owner 与 Korean/course 约束，管理完成策略草稿/发布和受限 retry。",
+      "risk": "仅函数 DDL；内部写入、advisory lock、健康聚合和重试均在未来调用时才执行。本次安装不发布策略、不重试任务。"
+    },
+    {
+      "version": "202609140005",
+      "changes": "新增 caller-bound textbook/module 可读检查及安全 segments 投影；修改六条教材/教学课/脚本 version SELECT policy，删除宽泛 script nodes SELECT policy；新增 owner-executed security_barrier view student_learning_agent_script_nodes，仅暴露安全投影；NOTIFY pgrst reload schema 在 commit 后生效。",
+      "risk": "改变现有非 Agent 教材、脚本读取权限；Feature OFF 不撤销这些变化。policy/view DDL 有元数据锁，运行期增加授权查询。没有教学数据清理或复制。旧 app 对新 RLS 的兼容性必须回归。"
+    },
+    {
+      "version": "202609140006",
+      "changes": "新增 agent_runs_reconcile_deadline 部分索引与 find_reconcilable_agent_runs_v1、reconcile_agent_run_v1、reconcile_agent_run_batch_v1；service-only ACL；deadline+6s、CAS、终态 no-op，默认50/max100，合同 deadline-terminal-v1。",
+      "risk": "普通索引建在 active Agent runs 上，可能锁写及扫描；全新安装预期空表。仅定义函数，不执行 reconciler、不产生事件。"
+    },
+    {
+      "version": "202609140007",
+      "changes": "新增 create_teaching_content_skeleton(uuid,timestamptz,text,text[])：Platform Owner、非 provisioned 账号、authoring_lock、lesson updated_at CAS、course/app/profile 和无旧树校验；未来调用原子创建教材/version/chapter/module/teaching lesson。authenticated EXECUTE；显式撤销 PUBLIC/anon/service_role。",
+      "risk": "仅函数 DDL，无新表、profile seed、script/nodes/content 实例；函数内部课程/课行锁与五记录写入不在安装时执行。published Profile 属后续内容前置。"
+    }
+  ],
+  "migrationFailure": "STOP N; no N+1, ledger repair or blind retry. UNKNOWN commit: new readonly connection, verify and operator review.",
+  "applicationFailure": "Feature OFF/allowlists EMPTY; restore preserved known-good application files only, retain DB migrations; if old app incompatible HOLD and separate forward-fix authorization.",
+  "productionRestore": "Only confirmed data corruption plus separate incident authorization",
+  "freshBackup": "REQUIRED AT EXECUTION WINDOW; <=15m unless explicit exception",
+  "actualWrites": 0
+}

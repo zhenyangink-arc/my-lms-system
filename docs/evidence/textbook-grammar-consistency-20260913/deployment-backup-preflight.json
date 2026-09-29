@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-09-13T02:47:30.627Z",
+  "readOnly": true,
+  "newBackup": false,
+  "newRestore": false,
+  "results": [
+    {
+      "directory": "/home/yangzhen/backups/uply-first-enable-20260910/20260910T1353Z.LlXXsY",
+      "directoryMode": "700",
+      "snapshotTime": "2026-09-10T14:06:47.353Z",
+      "backupEnd": "2026-09-10T14:06:58.450Z",
+      "filesChecked": 75,
+      "totalBytes": 12869224,
+      "failures": [],
+      "archive": {
+        "path": "database.dump",
+        "bytes": 4911185,
+        "sha256": "81dc7a65084ddbfd8b3c66bee12bd33cebc935eac5a76f45036cc923f6687f54"
+      },
+      "priorRestore": {
+        "verifiedAt": "2026-09-10T14:31:03.538Z",
+        "archiveReadable": true,
+        "actualDatabaseRestorePassed": true,
+        "allChecksPassed": true,
+        "checks": 22
+      },
+      "mediaObjectsBackedUp": false,
+      "freshPreDeploymentRestorePoint": false
+    },
+    {
+      "directory": "/home/yangzhen/backups/uply-first-enable-20260910/pre-migration-20260910.Bvr8gH",
+      "directoryMode": "700",
+      "snapshotTime": "2026-09-10T14:52:46.476Z",
+      "backupEnd": "2026-09-10T14:52:56.839Z",
+      "filesChecked": 54,
+      "totalBytes": 9049245,
+      "failures": [],
+      "archive": {
+        "path": "database.dump",
+        "bytes": 4911185,
+        "sha256": "87a30a271f8c551f014549907912c212ccf09eed2c4c1eeb0cf653c82cf0ecf3"
+      },
+      "priorRestore": {
+        "verifiedAt": "2026-09-10T18:44:57.148Z",
+        "archiveReadable": true,
+        "actualDatabaseRestorePassed": true,
+        "allChecksPassed": true,
+        "checks": 22
+      },
+      "mediaObjectsBackedUp": false,
+      "freshPreDeploymentRestorePoint": false
+    }
+  ]
+}

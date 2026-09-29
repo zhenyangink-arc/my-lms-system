@@ -1,0 +1,27 @@
+{
+  "status": "CONFIRMED",
+  "version": "202609170001",
+  "sqlSha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c",
+  "dispatchCount": 1,
+  "verifiedAt": "2026-09-17T06:17:10.778415+00:00",
+  "independentReadback": {
+    "ledger": 458,
+    "latest": "202609170001",
+    "rpcExists": true,
+    "authenticatedExecute": true,
+    "anonExecute": false,
+    "serviceRoleExecute": false,
+    "securityDefiner": true,
+    "config": [
+      "search_path=\"\""
+    ]
+  },
+  "binding": {
+    "nodes": 0,
+    "activities": 0
+  },
+  "businessWrites": 0,
+  "backupPath": "/home/yangzhen/backups/uply/20260917T061353Z",
+  "ledgerInSameTransaction": true,
+  "schemaCacheReloadNotified": true
+}

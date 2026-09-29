@@ -1,0 +1,43 @@
+{
+  "status": "NOT FOUND — reusable current-development-DB formal durable scope",
+  "userConfirmation": true,
+  "existingPatterns": [
+    {
+      "path": "scripts/verify-course-completion-statistics.mjs",
+      "sha256": "09ed5e1f53b4b5a23609de233daa1c4e122e0035420c970385672716c55a935a"
+    },
+    {
+      "path": "scripts/verify-chapter-one-security.mjs",
+      "sha256": "940cf01dbfbdf5229912869770876e4be7ceed3c266b509e7758c5245afbb912"
+    },
+    {
+      "path": "scripts/verify-assignment-submission-concurrency.mjs",
+      "sha256": "9c85f95bcf5b7e9f9a70f6d7d0e2f21911e7d4a2175b5a4f942eed285cf93110"
+    },
+    {
+      "path": "scripts/teaching-agent-r3d/actors.mjs",
+      "sha256": "b70f4064fb77fec530907eaabd42bc4097f6fd249c97192c4b63c9c8c7cd3a45"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a"
+    },
+    {
+      "path": "src/app/dashboard/admin/accounts/actions.ts",
+      "sha256": "8706c0bbd0e45e6260cb5e476d34ab56a1be8934a8f9d920b144c3a10a3def97"
+    },
+    {
+      "path": "src/app/dashboard/admin/tenants/actions.ts",
+      "sha256": "e669739206a5dcf892d0b9d1ad57c78c06b4893d25064bd5c6cafe9980008137"
+    }
+  ],
+  "findings": [
+    "R3D/R5B require owned disposable local DB/Auth environment",
+    "chapter-one security enforces localhost Supabase and synthetic accounts; legacy/publication behavior not canonical Draft scope",
+    "other ad hoc tests construct Auth users/login/profile changes and local Docker writes; they do not define a safe current DB execution identity contract",
+    "official tenant/account authoring provisions normal accounts, not a non-login domain test subject",
+    "current catalog has no identified dedicated test identity/scope registry/function; audit/test-named objects concern audit history or course exams"
+  ],
+  "notExecuted": true,
+  "noRealAccountSelected": true
+}

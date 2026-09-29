@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "nextVersion": "16.2.10",
+  "realIsolatedAuth": true,
+  "realPost007Database": true,
+  "artifactBytesChanged": false,
+  "transportShim": "Public build-bound Supabase origin redirected only to isolated real Auth/PostgREST; all other external requests blocked",
+  "routes": [
+    {
+      "name": "homepage",
+      "status": 200,
+      "redirectedToLogin": true,
+      "expectedUiPresent": true,
+      "agentUiAbsent": true
+    },
+    {
+      "name": "auth-entry",
+      "status": 200,
+      "redirectedToLogin": false,
+      "expectedUiPresent": true,
+      "agentUiAbsent": true
+    },
+    {
+      "name": "platform-dashboard",
+      "status": 200,
+      "redirectedToLogin": false,
+      "expectedUiPresent": true,
+      "agentUiAbsent": true
+    },
+    {
+      "name": "textbook-authoring",
+      "status": 200,
+      "redirectedToLogin": false,
+      "expectedUiPresent": true,
+      "agentUiAbsent": true
+    },
+    {
+      "name": "script-studio",
+      "status": 200,
+      "redirectedToLogin": false,
+      "expectedUiPresent": true,
+      "agentUiAbsent": true
+    }
+  ],
+  "externalBlocked": 0,
+  "agentRequests": 0,
+  "providerRequests": 0,
+  "browserErrors": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "offTransportProbe": {
+    "requests": 1,
+    "status": 404,
+    "code": "RUN_NOT_FOUND",
+    "admission": false,
+    "target": "ISOLATED CANDIDATE ONLY"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "exit": 0,
+  "seconds": 90.58,
+  "productionDeploy": false,
+  "publicConfigMatchesProduction": true,
+  "sourceChanged": false,
+  "liveProviderRequests": 0,
+  "buildId": "S4DNZa8E0lxznv1YbGzYG",
+  "artifactFiles": 1376,
+  "artifactDigest": "3e996687362897c69c07eb3d242f9bf1b0d7f03f1edd1e001eb3f98f1da6a7b0",
+  "candidateDecision": "Verification build only; unchanged R3A release candidate remains pinned",
+  "privateBuildCopyRemoved": true
+}

@@ -1,0 +1,43 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "designStatus": "PASS / NOT IMPLEMENTED",
+  "reuse": [
+    "ToolResult",
+    "ContextSource",
+    "private capability receipt ledger pattern",
+    "activity-completion/2 durable evidence"
+  ],
+  "storageMap": {
+    "CURRENT_DEVELOPMENT_DB": "CURRENT_DEVELOPMENT_DB",
+    "ISOLATED_TEST_DB": "existing wire literal isolated-test-db",
+    "MOCK_FIXTURE": "existing isolated-fixture receipt; never accepted by current-DB acceptance"
+  },
+  "storageTrust": "pinned server transport + verified DB/environment identity; model/fixture cannot choose current label. String enum validation alone is not origin proof.",
+  "freshness": {
+    "read": "new READ ONLY repository transaction per tool call; no memory/journal/result cache",
+    "asOf": "observedAt at fresh read; within call time and server maxAge 30s",
+    "latestAttemptAt": "may be old if no new learning; not confused with observation age",
+    "invalidated": "deadline/authority expiry, expected state mismatch, content/scope change, internal inconsistency"
+  },
+  "futureReceiptLinks": [
+    "runId",
+    "skillRunId",
+    "modelCallId",
+    "toolCallId",
+    "exact tool name/version",
+    "opaque scope/snapshot/state references",
+    "asOf",
+    "storage discriminant",
+    "safe result digest"
+  ],
+  "auditMode": "no persisted Agent Run/Skill Run/tool event; test correlation is not an Agent authority",
+  "mandatoryLessonEvidence": "Existing Explain requires selected-sentence Lesson Tool evidence. Durable evidence is additional for completion-aware decisions, not a substitute for sentence evidence. Future checker must require exact tool/scope/freshness from private execution ledger, never model-supplied evidence.",
+  "planningAudit": "studentPlanningContext contains refs/revision/locales only; no authoritative sentence, completion sentence or progress injected; coordinator auto tool choice and mandatory completion guard already present",
+  "plannedPlanningChanges": 0
+}

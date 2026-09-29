@@ -1,0 +1,53 @@
+{
+  "status": "READY",
+  "name": "Teaching Agent Lesson Execution MVP",
+  "mainline": "TEACHING AGENT",
+  "reuse": [
+    "LessonManifestV1 validator and snapshot model",
+    "LessonRuntime / StepController / target registry",
+    "existing native multiple_choice renderer and Activity/Progress services",
+    "deterministic script/domain authority",
+    "bounded Domain Port design"
+  ],
+  "orderedWork": [
+    "Define one native frozen-node execution projection into existing manifest; bind Node5 explanation and one Node7 Activity fixture without editing frozen content",
+    "Provide one 20–60 second local development video and minimal native video renderer in existing registry; no formal teacher video or Provider generation",
+    "Bind one existing-type single_choice Activity fixture with private grader; no new Activity/Progress schema",
+    "Add one mock timed cue through same runtime owner: pause, reveal Activity, server result/readback, resume",
+    "Expose runtime fact read-port projection for future Lesson Tool integration; no real Agent Run or new model skill execution",
+    "Validate dedupe/seek/reload/abort and same-session state restoration; document isolated fixture limitations"
+  ],
+  "testBoundaries": "Offline/isolated fixtures and deterministic local domain tests first. If using isolated DB, reuse existing migrations/RPCs without touching production. Do not invoke existing runtime preview pages that may issue sessions or TTS/Provider. Production publication/admission is a separate authorization.",
+  "acceptanceCases": [
+    "play -> time trigger -> pause -> Activity visible -> official grade/result -> authoritative completion -> resume",
+    "incorrect/incomplete result does not resume",
+    "HTTP failure/unknown submit does not auto retry",
+    "one cue cannot fire twice under repeated timeupdate",
+    "seek forward crosses mandatory cue safely; backward does not re-force completed cue",
+    "user pause and autoplay rejection preserved",
+    "refresh reconstructs same waiting/completed cue from server facts; never infer completion from saved time",
+    "old-generation callback cannot affect new step/media",
+    "foreign session/snapshot/activity refs rejected",
+    "private answer absent from public manifest/cue/tool output",
+    "read-port exposes current node/activity/allowed actions with provenance",
+    "frozen hashes unchanged; feature OFF, no Provider/Agent/Publish",
+    "Activity1 completion resumes without waiting for Activity2 or parent nodeCompleted",
+    "Immutable content revision cannot masquerade as changing student-state revision"
+  ],
+  "definitionOfDone": "MVP deterministic execution contract and isolated loop proven; not real student mastery, pronunciation/audio accuracy, published Agent E2E or Stage1G readiness.",
+  "excluded": [
+    "full 8-node media production",
+    "scenario mode",
+    "AI dialogue",
+    "real Provider",
+    "Agent enable",
+    "new AI skill invocation",
+    "Pins",
+    "definition publication",
+    "production Publish",
+    "production content cleanup",
+    "second version",
+    "second runtime/activity/progress system"
+  ],
+  "authorizationStatus": "NOT STARTED; implementation and any test fixture writes require the next task scope"
+}

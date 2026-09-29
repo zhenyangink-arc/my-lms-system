@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "origin": "canonical :8443",
+  "path": "/platform/dashboard/admin/development-execution/runtime",
+  "existingOwnerSession": "VALID / no re-login or token transfer",
+  "OwnerGuard": "PASS",
+  "anonymousRequest": "DENIED / streamed login redirect",
+  "currentBuildMarker": "KaSWaVYOIk7ZjWGpvVWIf",
+  "message": "当前未获执行批准，范围关闭。",
+  "activationButton": "DISABLED",
+  "restoreExistingReadOnlyButton": "PRESENT / NOT CLICKED",
+  "videoOrActivityMounted": false,
+  "uiActionsClicked": 0,
+  "scope": "DISABLED",
+  "executionApproval": "NOT ACTIVE",
+  "privatePublicMarkerHits": 0,
+  "databasePasswordLiteralMatches": 0,
+  "consoleErrorsWarnings": 0,
+  "health": [
+    {
+      "requestedPath": "/",
+      "status": 200,
+      "finalPath": "/"
+    },
+    {
+      "requestedPath": "/platform/dashboard/admin/development-execution/runtime",
+      "status": 200,
+      "finalPath": "/platform/dashboard/admin/development-execution/runtime",
+      "authorization": "DENIED / Next streamed login redirect; runtime UI absent"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "status": "READY",
+  "readinessMeaning": "Mapping and authority contract ready; no production Activity or binding created.",
+  "frozenNode7": "instruction / DRAFT_TEXT_ONLY; unchanged",
+  "answerCorrectnessRuntime": "DEFERRED until separately authorized Activity creation/integration",
+  "questions": [
+    {
+      "alias": "hangul-introduction-vowel-recognition",
+      "prompt": "下面哪一个是元音？",
+      "options": [
+        "ㄱ",
+        "ㅏ",
+        "ㄴ"
+      ],
+      "answerLabel": "B",
+      "existingType": "single_choice",
+      "privateAnswerIndex": 1
+    },
+    {
+      "alias": "hangul-introduction-ga-combination",
+      "prompt": "ㄱ + ㅏ 组成什么？",
+      "options": [
+        "가",
+        "나",
+        "다"
+      ],
+      "answerLabel": "A",
+      "existingType": "single_choice",
+      "privateAnswerIndex": 0
+    }
+  ],
+  "publicProjection": [
+    "prompt",
+    "option labels",
+    "opaque activity ref"
+  ],
+  "privateAuthority": [
+    "answer key in existing activity secret",
+    "server grading and attempt rules",
+    "post-answer feedback disclosure"
+  ],
+  "frozenTextHandling": "Do not expose whole Node7 authoring text to student or provider because it contains answers. Approved projection selects public prompt/feedback facts; private answer is not copied into manifest/cue/tool. No source-text mutation here; future content changes require revision authorization.",
+  "parentBinding": "Target has no digital_textbook_nodes or activities. Future official authoring workflow must supply minimal existing activity parent and explicit Node7 mapping; no manual fake FK and no second activity schema.",
+  "r7bScope": "One isolated fixture Activity first; second is later same-system configuration.",
+  "writes": 0
+}

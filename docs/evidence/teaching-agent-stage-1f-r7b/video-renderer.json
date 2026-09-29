@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "component": "NativeVideoBlock",
+  "registeredType": "video",
+  "owner": "NativeMediaController subordinate to existing StepController/TargetRegistry",
+  "asset": "tests/fixtures/teaching-agent-r7b/video.webm",
+  "assetSha256": "1e4460ccf62254dc01b75ba5ed444a05cc954f64a10f067e8d39bdbd7d4bb227",
+  "durationSeconds": 30,
+  "cueTimeSeconds": 5,
+  "developmentFixtureOnly": true,
+  "productionAssetsAdded": 0,
+  "mediaEndedIsProgress": false,
+  "events": [
+    "MEDIA_ENDED",
+    "USER_PAUSED",
+    "USER_SEEKED",
+    "AUTOPLAY_BLOCKED",
+    "MEDIA_ERROR"
+  ]
+}

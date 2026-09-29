@@ -1,0 +1,423 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "timeline": [
+    {
+      "order": "202608160006",
+      "source": {
+        "path": "supabase/migrations/202608160006_client_privilege_baseline.sql",
+        "sha256": "c195c1d3aaee264f601ba4d77f27b4e2fcf9657b3a8b7e94c25865e730789208",
+        "lines": [
+          34,
+          104,
+          108,
+          116
+        ]
+      },
+      "effect": "Selected existing RPCs granted authenticated/service_role and revoked PUBLIC/anon. Target not in name list and not yet created. Per-schema PUBLIC default revoke does not remove built-in global PUBLIC function default; no service_role default revoke."
+    },
+    {
+      "order": "202609080001",
+      "source": {
+        "path": "supabase/migrations/202609080001_chapter_practice_bindings.sql",
+        "sha256": "172585efdcb178dc2a1394b9c9e2a4dc1bbfac065b217a25e9011dd663d70dd2",
+        "lines": [
+          24,
+          94,
+          95
+        ]
+      },
+      "effect": "First CREATE target and sibling read RPC. Revoke PUBLIC, grant authenticated. Neither explicit grant nor revoke of service_role. Creation-time postgres/public defaults are a possible source of explicit service_role ACL."
+    },
+    {
+      "order": "202609080002",
+      "source": {
+        "path": "supabase/migrations/202609080002_chapter_practice_explicit_function_grants.sql",
+        "sha256": "b10c3762ef489a752f28461e197227da0336341cf7ca591ec6b278d5b9a1f334",
+        "lines": [
+          3,
+          5,
+          7
+        ]
+      },
+      "effect": "Explicitly acknowledges Supabase default-role function grants; revokes anon on both functions; grants authenticated. Does not revoke service_role."
+    },
+    {
+      "order": "2026-09-13T02:52:53.957Z",
+      "source": {
+        "path": "docs/evidence/textbook-grammar-consistency-20260913/deployment-database-preflight.json",
+        "sha256": "545fa207c6a69d4ade3484909d54f120cfabc9e5307f952c489698d435c3354a",
+        "lines": [
+          130
+        ]
+      },
+      "effect": "Earliest located dated current-DB target privilege evidence: authenticated=true, serviceExecute=true, anon=false; body matches initial 080001. Records state, not original GRANT event or need for service-role caller."
+    },
+    {
+      "order": "202609130002",
+      "source": {
+        "path": "supabase/migrations/202609130002_textbook_grammar_practice_binding.sql",
+        "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8",
+        "lines": [
+          34,
+          44,
+          114,
+          115
+        ]
+      },
+      "effect": "CREATE OR REPLACE, same identity args. Existing live ACL retained. Guard narrowed to active Platform Owner via helper; grammar validation/authoring lock added. Revoke PUBLIC and grant authenticated only; no service_role ACL adjustment."
+    },
+    {
+      "order": "2026-09-14T04:39:15Z",
+      "source": {
+        "path": "supabase/bootstrap/app-schema-baseline.sql",
+        "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+        "lines": [
+          19163,
+          19244,
+          46107,
+          46108,
+          46109,
+          48190,
+          48193
+        ]
+      },
+      "effect": "Schema-only bootstrap explicitly serializes target service_role grant and postgres/public function defaults including service_role. Generated/restoration artifact, not a current-DB incremental migration or evidence of initial grant event. SQL digest matches baseline-manifest."
+    },
+    {
+      "order": "34b isolated validation",
+      "source": {
+        "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+        "sha256": "9f066e0b8ab5899df0a9925af663a8c5309b059a6706dcf2cc8dbc00f2ee7fad",
+        "lines": [
+          8,
+          25,
+          43
+        ]
+      },
+      "effect": "Fresh postgres:15-alpine minimal bootstrap plus 13 migrations starting at 202609100001. No080001/080002 and no Supabase function default ACL. 130002 creates target rather than replacing it. Thus isolated ACL contains postgres/authenticated only."
+    },
+    {
+      "order": "C3B fresh preflight",
+      "source": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+        "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+      },
+      "effect": "Body hash matches; historical service_role ACL differs from isolated baseline. Release correctly stopped."
+    },
+    {
+      "order": "2026-09-18T07:45:53.053966+00:00",
+      "source": "r7d-c3b-acl-current-db-readonly.json",
+      "effect": "Read-only catalog confirms same explicit ACL and default ACL; no DDL executed."
+    }
+  ],
+  "historyStatus": "INCOMPLETE_AT_ORIGINAL_GRANT_EVENT",
+  "localFunctionLifecycle": "CREATE 080001 -> CREATE OR REPLACE 130002; no incremental DROP/CREATE or owner reassignment found",
+  "fullSearch": {
+    "searchedTextFiles": 2185,
+    "roots": [
+      "supabase",
+      "tests",
+      "scripts",
+      "docs/evidence"
+    ],
+    "findings": {
+      "target": [
+        {
+          "path": "supabase/bootstrap/app-schema-baseline.sql",
+          "lines": [
+            19160,
+            19163,
+            19244,
+            46104,
+            46107,
+            46108,
+            46109
+          ],
+          "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5"
+        },
+        {
+          "path": "supabase/migrations/202609130002_textbook_grammar_practice_binding.sql",
+          "lines": [
+            34,
+            114,
+            115
+          ],
+          "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8"
+        },
+        {
+          "path": "supabase/migrations/202609080001_chapter_practice_bindings.sql",
+          "lines": [
+            24,
+            94,
+            95
+          ],
+          "sha256": "172585efdcb178dc2a1394b9c9e2a4dc1bbfac065b217a25e9011dd663d70dd2"
+        },
+        {
+          "path": "supabase/migrations/202609080002_chapter_practice_explicit_function_grants.sql",
+          "lines": [
+            5,
+            7
+          ],
+          "sha256": "b10c3762ef489a752f28461e197227da0336341cf7ca591ec6b278d5b9a1f334"
+        },
+        {
+          "path": "tests/chapter-practice-binding-db.test.mjs",
+          "lines": [
+            41
+          ],
+          "sha256": "91a267b063ce27e4f75015807b24ac24b7cfb7a39277375dcdadd5d9660dcb98"
+        },
+        {
+          "path": "scripts/verify-chapter-practice-anonymous-access.mjs",
+          "lines": [
+            18
+          ],
+          "sha256": "1d7fa8f208e6c29d8fa2b8d6a6ccca8998746eac6780d0f59f8321cfafe88eaf"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+          "lines": [
+            96,
+            100,
+            108
+          ],
+          "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+        },
+        {
+          "path": "docs/evidence/textbook-data-audit-20260913/readonly-summary.json",
+          "lines": [
+            814
+          ],
+          "sha256": "8a42e55872bcf79852b4d6e9ac92fff0c5d0f6f821ad33fda27577304cac696f"
+        },
+        {
+          "path": "docs/evidence/textbook-grammar-consistency-20260913/deployment-database-preflight.json",
+          "lines": [
+            130
+          ],
+          "sha256": "545fa207c6a69d4ade3484909d54f120cfabc9e5307f952c489698d435c3354a"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+          "lines": [
+            179,
+            1130,
+            2081
+          ],
+          "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+        }
+      ],
+      "defaultPrivileges": [
+        {
+          "path": "supabase/bootstrap/app-schema-baseline.sql",
+          "lines": [
+            48172,
+            48173,
+            48174,
+            48175,
+            48181,
+            48182,
+            48183,
+            48184,
+            48190,
+            48191,
+            48192,
+            48193,
+            48199,
+            48200,
+            48201,
+            48202,
+            48208,
+            48209,
+            48210,
+            48211,
+            48217,
+            48218,
+            48219,
+            48220
+          ],
+          "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5"
+        },
+        {
+          "path": "supabase/migrations/202608160006_client_privilege_baseline.sql",
+          "lines": [
+            116
+          ],
+          "sha256": "c195c1d3aaee264f601ba4d77f27b4e2fcf9657b3a8b7e94c25865e730789208"
+        },
+        {
+          "path": "supabase/.temp/pgdelta/catalog-local-migrations-8566c60c932213dd1e845fe7597e58cb26d41267e1b071cd2c2ee5883f50fe0f-1787203072894.json",
+          "lines": [
+            1384,
+            1387
+          ],
+          "sha256": "6d69d99904aa2efd52503094e79755c653f6e1a779adeef0568e15ad2c023fba"
+        },
+        {
+          "path": "supabase/.temp/pgdelta/catalog-local-migrations-92393853fed2bc909fba9bffb10a2bc6c06904c31175f3c7bc23c1b54030124d-1787202583533.json",
+          "lines": [
+            1384,
+            1387
+          ],
+          "sha256": "649dcb5ef6da952d8fbc29df0800c088a0b6a33932d20fe72397d5e9c925674f"
+        },
+        {
+          "path": "tests/completion-policy-management-db.test.mjs",
+          "lines": [
+            14
+          ],
+          "sha256": "87af3d81b3c12f01af58b7fd11fd074e96b74ffb67ecafd87eef2dfdab22327a"
+        },
+        {
+          "path": "tests/teaching-operations-db.test.mjs",
+          "lines": [
+            13
+          ],
+          "sha256": "6ee27dd34b4f7d22d3736626a41d6a73c7dd0ffe470bbf390b77a1716742a0d0"
+        },
+        {
+          "path": "tests/chapter-practice-binding-db.test.mjs",
+          "lines": [
+            19
+          ],
+          "sha256": "91a267b063ce27e4f75015807b24ac24b7cfb7a39277375dcdadd5d9660dcb98"
+        },
+        {
+          "path": "tests/teaching-script-source-review-db.test.mjs",
+          "lines": [
+            13
+          ],
+          "sha256": "7166c20a16c54c1767341dfa6a4f46f33631a6cb6739b1cd6856b22af76f4593"
+        }
+      ],
+      "allFunctionAcl": [
+        {
+          "path": "supabase/migrations/202609090001_recording_evidence_atomic_v2.sql",
+          "lines": [
+            284
+          ],
+          "sha256": "664025f0a2c3f2874bad561e45fad2b63ccb6d12faa559b1ffbff6c39b9d34fa"
+        },
+        {
+          "path": "supabase/migrations/202609100004_runtime_single_version_authoring.sql",
+          "lines": [
+            168
+          ],
+          "sha256": "b7b8836e639933e5548ba9080f6823d975a77be07651ba74be04be64322ca9d5"
+        },
+        {
+          "path": "supabase/migrations/202609100001_runtime_publish_foundation.sql",
+          "lines": [
+            162
+          ],
+          "sha256": "8dbff15e8f74d70228e1a5440afa603dfe1af963c078decd6c89ebb0b27c2874"
+        },
+        {
+          "path": "supabase/migrations/202609100002_runtime_publication_dependency_fence.sql",
+          "lines": [
+            194
+          ],
+          "sha256": "cecd409633d4849115716b75b686eb86241ddcc94baa8d24d7fe3b5a422b0332"
+        },
+        {
+          "path": "tests/fixtures/teaching-agent-r7c/bootstrap.sql",
+          "lines": [
+            159
+          ],
+          "sha256": "9a95c653bc1cb0c46e3d7fda235eaf75c43fbbd45559b1ce355f449437006906"
+        }
+      ],
+      "dynamicFunctionAcl": [
+        {
+          "path": "supabase/migrations/202609140000_agent_core_foundation.sql",
+          "lines": [
+            257,
+            258
+          ],
+          "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b"
+        },
+        {
+          "path": "supabase/migrations/202608160006_client_privilege_baseline.sql",
+          "lines": [
+            104,
+            108
+          ],
+          "sha256": "c195c1d3aaee264f601ba4d77f27b4e2fcf9657b3a8b7e94c25865e730789208"
+        },
+        {
+          "path": "supabase/migrations/202609140006_agent_run_reconciliation.sql",
+          "lines": [
+            82,
+            83
+          ],
+          "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r1/migration-identity/202609130001_agent_core_foundation.sql",
+          "lines": [
+            257,
+            258
+          ],
+          "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b"
+        }
+      ]
+    }
+  },
+  "schemaWideAudit": [
+    {
+      "paths": [
+        "202609090001_recording_evidence_atomic_v2.sql"
+      ],
+      "scope": "recording_private only; target excluded"
+    },
+    {
+      "paths": [
+        "202609100001_runtime_publish_foundation.sql",
+        "202609100002_runtime_publication_dependency_fence.sql",
+        "202609100004_runtime_single_version_authoring.sql"
+      ],
+      "scope": "runtime_publish_private only; target excluded"
+    },
+    {
+      "paths": [
+        "202609140000_agent_core_foundation.sql",
+        "202609140006_agent_run_reconciliation.sql"
+      ],
+      "scope": "Named Agent functions/private schema only; target excluded"
+    }
+  ],
+  "semantics": [
+    {
+      "url": "https://www.postgresql.org/docs/17/sql-createfunction.html",
+      "fact": "CREATE OR REPLACE preserves ownership and permissions when replacing an existing function; on absence it creates a new function."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/sql-alterdefaultprivileges.html",
+      "fact": "Creator current-role defaults apply on creation; schema defaults add to global defaults; per-schema REVOKE cannot remove global/PUBLIC defaults."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "status": "READY FOR B3A DEPLOY APPROVAL",
+  "PASS": [
+    "interruption recovery",
+    "exact dependency recovery",
+    "scope issuer implemented",
+    "server-only pinned current-db transport",
+    "same-connection repository/RPC",
+    "two-slot exclusive budget guard",
+    "strict completion consistency",
+    "current-DB receipt discriminant",
+    "owned child/read-only restart",
+    "private boundary",
+    "29 new tests",
+    "117 regressions",
+    "TypeScript",
+    "candidate build",
+    "new lint errors zero",
+    "source/artifact hashes locked",
+    "current DB zero writes",
+    "no deployment"
+  ],
+  "NOT_AUTHORIZED": [
+    "B3A deployment",
+    "current DB execution",
+    "scope activation"
+  ],
+  "DEFERRED": [
+    "current DB wrong/correct attempts",
+    "current DB browser durable E2E",
+    "current DB child restart/readback execution"
+  ],
+  "preexistingLintErrors": 3
+}

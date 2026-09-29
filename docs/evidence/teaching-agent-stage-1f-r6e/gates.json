@@ -1,0 +1,202 @@
+{
+  "overall": "GO",
+  "gates": [
+    {
+      "id": "G-R6E-1",
+      "name": "R6D Review Complete",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-2",
+      "name": "Revision Scope Exact",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-3",
+      "name": "Authenticated Platform Owner",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-4",
+      "name": "Target Context Exact",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-5",
+      "name": "Script Version1 Draft",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-6",
+      "name": "Node Count Eight",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-7",
+      "name": "Write Authorization",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-8",
+      "name": "S1 Node1",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-9",
+      "name": "M1 Node2",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-10",
+      "name": "M2 Node2",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-11",
+      "name": "S2 Node4",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-12",
+      "name": "S3 Node5",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-13",
+      "name": "M3 Node6",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-14",
+      "name": "S4 Node8",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-15",
+      "name": "Node3 Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-16",
+      "name": "Node7 Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-17",
+      "name": "Node Types Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-18",
+      "name": "Node Order Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-19",
+      "name": "Main/ko-KR Consistency",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-20",
+      "name": "Objective1 Improved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-21",
+      "name": "Objective2 Improved",
+      "status": "PASS",
+      "note": "Textual recognition/reading instruction coverage; audio and learner performance NOT TESTED."
+    },
+    {
+      "id": "G-R6E-22",
+      "name": "Objective3 Improved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-23",
+      "name": "Objective4 Remains Full",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-24",
+      "name": "All MUST_FIX Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-25",
+      "name": "All SHOULD_FIX Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-26",
+      "name": "Optional Items Not Applied",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-27",
+      "name": "Script Still Draft",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-28",
+      "name": "No Publish",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-29",
+      "name": "No Runtime",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-30",
+      "name": "Feature OFF",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-31",
+      "name": "Allowlists EMPTY",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-32",
+      "name": "Agent Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-33",
+      "name": "Provider Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-34",
+      "name": "Pins Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-35",
+      "name": "Canonical Content Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-36",
+      "name": "Auth Writes Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-37",
+      "name": "Runtime Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-38",
+      "name": "Tailscale Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6E-39",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "note": "JSON parse, helper syntax, secret/raw UUID/email scan, workspace scope and historical-source hash checks passed."
+    }
+  ]
+}

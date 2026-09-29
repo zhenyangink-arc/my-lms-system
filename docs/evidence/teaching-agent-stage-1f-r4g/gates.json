@@ -1,0 +1,224 @@
+{
+  "scope": "Operational acceptance closure only; no production execution authorization",
+  "overall": "GO",
+  "stage1g": "NOT READY",
+  "gates": [
+    {
+      "gate": "G-R4G-1",
+      "name": "User Operational Acceptance Recorded",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "明确用户接受与真实记录时间"
+    },
+    {
+      "gate": "G-R4G-2",
+      "name": "Primary Operator Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "杨震已接受Primary职责"
+    },
+    {
+      "gate": "G-R4G-3",
+      "name": "Manual 5-Minute Monitoring Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "每5分钟人工值守；不是SLA或scheduler"
+    },
+    {
+      "gate": "G-R4G-4",
+      "name": "UNKNOWN Stop/No-Retry Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "UNKNOWN STOP/NO RETRY"
+    },
+    {
+      "gate": "G-R4G-5",
+      "name": "Follow-up Read Rule Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "新只读连接；原UNKNOWN永不倒签"
+    },
+    {
+      "gate": "G-R4G-6",
+      "name": "Drain Active=0 Rule Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "ALL ACTIVE=0；eligible=0不足"
+    },
+    {
+      "gate": "G-R4G-7",
+      "name": "Incident STOP Rules Accepted",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "立即STOP，不等下一sweep"
+    },
+    {
+      "gate": "G-R4G-8",
+      "name": "Operator Bundle Hash Locked",
+      "status": "PASS",
+      "evidence": "operator-bundle.json",
+      "scope": "三个文件SHA全部一致"
+    },
+    {
+      "gate": "G-R4G-9",
+      "name": "R4F CLI Hash Match",
+      "status": "PASS",
+      "evidence": "operator-bundle.json",
+      "scope": "CLI匹配R4F"
+    },
+    {
+      "gate": "G-R4G-10",
+      "name": "Operator SQL Hash Match",
+      "status": "PASS",
+      "evidence": "operator-bundle.json",
+      "scope": "SQL匹配R4F"
+    },
+    {
+      "gate": "G-R4G-11",
+      "name": "Migration006 Hash Match",
+      "status": "PASS",
+      "evidence": "operator-bundle.json",
+      "scope": "冻结006匹配R4F"
+    },
+    {
+      "gate": "G-R4G-12",
+      "name": "Private Operations Directory Safe",
+      "status": "PASS",
+      "evidence": "receipt-storage.json",
+      "scope": "lstat/owner/group/ACL/mount检查通过"
+    },
+    {
+      "gate": "G-R4G-13",
+      "name": "Receipt Directory 0700",
+      "status": "PASS",
+      "evidence": "receipt-storage.json",
+      "scope": "目录0700且operator可写"
+    },
+    {
+      "gate": "G-R4G-14",
+      "name": "Atomic Receipt Storage Probe",
+      "status": "PASS",
+      "evidence": "receipt-storage.json",
+      "scope": "同目录temp→fsync→rename→readback→清理"
+    },
+    {
+      "gate": "G-R4G-15",
+      "name": "Receipt File Mode 0600",
+      "status": "PASS",
+      "evidence": "receipt-storage.json",
+      "scope": "探针及private acceptance文件0600"
+    },
+    {
+      "gate": "G-R4G-16",
+      "name": "Private Acceptance Record Created",
+      "status": "PASS",
+      "evidence": "receipt-storage.json",
+      "scope": "私有原件已创建，未复制入Git"
+    },
+    {
+      "gate": "G-R4G-17",
+      "name": "No Scheduler Installed",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "本任务安装0；不宣称全服务器无其他调度"
+    },
+    {
+      "gate": "G-R4G-18",
+      "name": "Receipt Retention Status Explicit",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "最终期限TBD；无自动删除；不是期限获批"
+    },
+    {
+      "gate": "G-R4G-19",
+      "name": "Independent Standby Status Explicit",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "明确TBD/BLOCKED；不是独立备班READY"
+    },
+    {
+      "gate": "G-R4G-20",
+      "name": "Provider Policy Status Preserved",
+      "status": "PASS",
+      "evidence": "acceptance-summary.json",
+      "scope": "仍TBD / BLOCKED / APPROVAL REQUIRED"
+    },
+    {
+      "gate": "G-R4G-21",
+      "name": "Future Client Environment Known",
+      "status": "PASS",
+      "evidence": "client-environment.json",
+      "scope": "host无psql；Docker17.6可用，不等于执行批准"
+    },
+    {
+      "gate": "G-R4G-22",
+      "name": "Production Reconciler Runs Zero",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "本任务0，未调用CLI"
+    },
+    {
+      "gate": "G-R4G-23",
+      "name": "Production DB Writes Zero",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "固定READ ONLY catalog；本任务写0"
+    },
+    {
+      "gate": "G-R4G-24",
+      "name": "Production Ledger Unchanged",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "449/latest130003/完整ledger hash一致"
+    },
+    {
+      "gate": "G-R4G-25",
+      "name": "PM2 Unchanged",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "PID/restarts/uptime等一致"
+    },
+    {
+      "gate": "G-R4G-26",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "runtime/launcher hash、OFF/EMPTY一致"
+    },
+    {
+      "gate": "G-R4G-27",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "完整Serve canonical hash一致，9443不存在"
+    },
+    {
+      "gate": "G-R4G-28",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "配置OFF；无启用操作"
+    },
+    {
+      "gate": "G-R4G-29",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "三个名单EMPTY；无写入"
+    },
+    {
+      "gate": "G-R4G-30",
+      "name": "Provider Requests Zero",
+      "status": "PASS",
+      "evidence": "production-end-state.json",
+      "scope": "本任务0，无Agent/Provider路径"
+    },
+    {
+      "gate": "G-R4G-31",
+      "name": "Backup Freshness Recheck Rule Preserved",
+      "status": "PASS",
+      "evidence": "backup-freshness.json",
+      "scope": "已STALE；技术READY不替代窗口新鲜度"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "scope": "All public/auth ordinary tables",
+  "tableCount": 207,
+  "transactionIds": [
+    "2431358",
+    "2431359"
+  ],
+  "visibleTransactionRows": [
+    {
+      "xid": "2431359",
+      "name": "public.digital_textbook_node_progress",
+      "rows": 1
+    },
+    {
+      "xid": "2431359",
+      "name": "public.digital_textbook_attempts",
+      "rows": 1
+    },
+    {
+      "xid": "2431358",
+      "name": "public.digital_textbook_attempts",
+      "rows": 1
+    }
+  ],
+  "limitation": "Visible surviving MVCC rows. Prior wrong progress version proven by immediate wrong readback. DELETE exclusion derives from locked RPC/trigger sources and execution path."
+}

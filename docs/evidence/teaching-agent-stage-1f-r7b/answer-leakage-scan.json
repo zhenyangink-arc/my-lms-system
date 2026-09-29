@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "publicManifest": "PASS",
+  "browserBundlePrivateDependencyGraph": "PASS",
+  "preSubmitDOM": "PASS",
+  "runtimeFacts": "PASS",
+  "clientLogs": "PASS",
+  "privateGraderInBrowser": false,
+  "fullNode7AuthoringBodyInBrowser": false,
+  "publicOptionRule": "Correct option text may appear among choices. Answer designation/private key must not appear."
+}

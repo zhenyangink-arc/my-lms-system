@@ -1,0 +1,30 @@
+{
+  "query": {
+    "at": "2026-09-18T06:27:45.793258+00:00",
+    "sqlSha256": "1ec724d88b89a69f368a80fb0844bad923daf349de472f30faa11c7858643bcf",
+    "transaction": "REPEATABLE READ READ ONLY",
+    "defaultTransactionReadOnly": true,
+    "ended": "ROLLBACK",
+    "credentialOutput": false,
+    "businessWrites": 0,
+    "authWrites": 0
+  },
+  "result": {
+    "transactionReadOnly": "on",
+    "subjectDiscoveryPolicy": "Trusted app_metadata non-human/test plus explicit QA/acceptance purpose; no name/email inference; B2 purpose excluded",
+    "testSubjects": [],
+    "qaBooksBySlug": 0,
+    "associatedAuthoringCandidates": [],
+    "unclassifiedGlobalAssociatedCount": 13,
+    "requiredStudentView": true,
+    "studentViewColumns": [
+      "id",
+      "script_version_id",
+      "updated_at",
+      "sort_order",
+      "teacher_script",
+      "segments",
+      "video_mode"
+    ]
+  }
+}

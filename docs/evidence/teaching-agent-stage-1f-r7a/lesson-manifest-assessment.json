@@ -1,0 +1,38 @@
+{
+  "decision": "EXISTING — REUSE LessonManifestV1; native projection required",
+  "existing": [
+    "Strict schema/runtime version",
+    "snapshot/content digest/compiler version",
+    "teaching/activity/media/progress references",
+    "server completion authority",
+    "layout and target declarations",
+    "private bindings and publication validation",
+    "opaque snapshot session"
+  ],
+  "currentGap": [
+    "LegacyChapterOneSource compiler input and fixed chapter-one loader/issuer",
+    "Progress/service bindings coupled to compatibility capsules",
+    "No target frozen-script-to-native-block map",
+    "Only text/multiple_choice native renderers executable",
+    "No time-cue projection"
+  ],
+  "recommendedProjection": [
+    "Frozen Script version/node hashes and unchanged objectives",
+    "Explicit mapping from teaching node/segment to execution step/block",
+    "Existing Activity and private grader binding",
+    "Authorized media references and transcript revision",
+    "Bounded time cues and layout policy",
+    "Existing manifest validation/capability/digest/publication seal"
+  ],
+  "authority": "Authoring DB is source; manifest is immutable execution projection. No manifest editor, independent content DB or second publish state. Existing publication pointer selects a compiled artifact under one domain publication workflow, not a second content authority.",
+  "directTableAssessment": "Old responder and student policy repository read several authoring tables server-side; runtime compiler currently captures source privately. Keep authorization/policy reads in Domain Ports; student client and Agent must consume safe projection, never arbitrary authoring joins.",
+  "draftPolicy": "Freeze != publish. R7B uses isolated nontracking fixture; do not weaken published-only production StudentPolicy to execute this draft.",
+  "sources": [
+    "manifest",
+    "manifest-artifact",
+    "manifest-loader",
+    "session",
+    "renderer-registry",
+    "policy-repository"
+  ]
+}

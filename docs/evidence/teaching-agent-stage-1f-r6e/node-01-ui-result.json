@@ -1,0 +1,15 @@
+{
+  "nodeNumber": 1,
+  "status": "UI_SAVED_DB_VERIFICATION_REQUIRED",
+  "observedAtUtc": "2026-09-16T10:28:58.210Z",
+  "mainMatch": true,
+  "koKrMatch": true,
+  "autosave": true,
+  "saveClicks": 0,
+  "nodeCreateClicks": 0,
+  "publishClicks": 0,
+  "runtimeClicks": 0,
+  "nonReadHttpRequestsObserved": 1,
+  "ownAuthenticatedSession": true,
+  "chromeLeftOpen": true
+}

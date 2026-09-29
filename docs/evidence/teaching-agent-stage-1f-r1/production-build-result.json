@@ -1,0 +1,8 @@
+{
+  "exit": 0,
+  "directory": "/tmp/uply-stage1fr1-build-q8h263kp",
+  "durationSeconds": 97.23,
+  "command": "next build --webpack",
+  "deployed": false,
+  "buildId": "t9BzyG22OCvGXMFrHP-1a"
+}

@@ -1,0 +1,1846 @@
+{
+  "counts": {
+    "runs": 21,
+    "messages": 36,
+    "conversations": 21
+  },
+  "privateLeak": false,
+  "runs": [
+    {
+      "index": 1,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 250,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 259,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 511,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 524,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 531,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 536,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 545,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 657,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 689,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 949,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 1085,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1202,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1332,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1458,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1484,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 224,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 229,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 459,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 471,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 476,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 482,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 491,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 3502,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 3524,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 3757,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 3876,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 6892,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 7030,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 7175,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 7195,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 236,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 241,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 484,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 496,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 501,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 505,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 513,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 625,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 656,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 889,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 1019,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1137,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1262,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1381,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1406,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 196,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 201,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 437,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 442,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 447,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 452,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 460,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 570,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 594,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 838,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 963,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1080,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1195,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1317,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1331,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 218,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 222,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 442,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 446,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 450,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 454,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 462,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 572,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 593,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 824,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 954,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1069,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1197,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1317,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1333,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "status": "cancelled",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 198,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 203,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 432,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 444,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 449,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 453,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 461,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 916,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 921,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.cancelled",
+          "ms": 926,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "status": "failed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 202,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 207,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 440,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 451,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 458,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 464,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 474,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 45020,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 45045,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.failed",
+          "ms": 45054,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 220,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 228,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 446,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 458,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 462,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 467,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 474,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 585,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 607,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 803,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 923,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1041,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1149,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1245,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1253,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 193,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 197,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 386,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 397,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 401,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 405,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 412,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 3420,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 3441,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 3647,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 3767,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 6784,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 6905,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 7019,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 7034,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 225,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 230,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 465,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 478,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 483,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 488,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 495,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 606,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 627,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 842,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 955,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1073,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1199,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1318,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1335,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 196,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 201,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 418,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 429,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 433,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 437,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 444,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 552,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 574,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 803,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 924,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1032,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1158,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1271,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1287,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 189,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 194,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 405,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 417,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 421,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 425,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 431,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 540,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 561,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 771,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 885,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1002,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1131,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1244,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1251,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "status": "cancelled",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 203,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 207,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 427,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 439,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 444,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 449,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 457,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 927,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 932,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.cancelled",
+          "ms": 937,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "status": "failed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 189,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 193,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 415,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 426,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 432,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 437,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 444,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 45017,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 45041,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.failed",
+          "ms": 45050,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 278,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 295,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 545,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 561,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 569,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 577,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 586,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 700,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 728,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 973,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 1117,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1237,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1373,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1498,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1515,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 194,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 198,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 417,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 428,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 434,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 439,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 447,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 3459,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 3487,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 3775,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 3906,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 6924,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 7053,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 7191,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 7210,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 210,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 215,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 446,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 451,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 456,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 461,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 469,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 579,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 603,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 832,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 965,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1082,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1209,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1334,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1350,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 192,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 196,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 416,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 427,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 433,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 438,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 447,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 557,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 579,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 812,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 947,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1065,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1188,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1303,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1312,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "status": "completed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 205,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 212,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 439,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 444,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 449,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 455,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 467,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 580,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "tool.requested",
+          "ms": 598,
+          "stage": "tool",
+          "status": null
+        },
+        {
+          "kind": "tool.completed",
+          "ms": 856,
+          "stage": null,
+          "status": "ok"
+        },
+        {
+          "kind": "model.started",
+          "ms": 974,
+          "stage": "final",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 1085,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "evidence.checked",
+          "ms": 1204,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "output.checked",
+          "ms": 1316,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "run.completed",
+          "ms": 1326,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "status": "cancelled",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 217,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 221,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 433,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 444,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 449,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 453,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 459,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 961,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 966,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.cancelled",
+          "ms": 971,
+          "stage": null,
+          "status": null
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "status": "failed",
+      "events": [
+        {
+          "kind": "run.started",
+          "ms": 176,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "definition.pinned",
+          "ms": 181,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "permission.checked",
+          "ms": 376,
+          "stage": null,
+          "status": "pass"
+        },
+        {
+          "kind": "context.resolved",
+          "ms": 386,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "skill.selected",
+          "ms": 391,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "prompt.assembled",
+          "ms": 395,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "model.started",
+          "ms": 399,
+          "stage": "planning",
+          "status": null
+        },
+        {
+          "kind": "model.usage",
+          "ms": 45018,
+          "stage": null,
+          "status": null
+        },
+        {
+          "kind": "run.failure",
+          "ms": 45045,
+          "stage": "planning",
+          "status": "fail"
+        },
+        {
+          "kind": "run.failed",
+          "ms": 45065,
+          "stage": null,
+          "status": null
+        }
+      ]
+    }
+  ]
+}

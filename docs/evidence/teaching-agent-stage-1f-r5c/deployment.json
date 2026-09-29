@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "candidateSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "candidateBuildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "deployedBuildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "sourcePath": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "preservedOldFilesPath": "/home/yangzhen/operations/uply/teaching-agent/foundation-install/20260916T025809Z/pre-foundation",
+  "stagingPath": "/home/yangzhen/operations/uply/teaching-agent/foundation-install/20260916T025809Z/candidate-staging",
+  "topLevelReplacements": [
+    ".next",
+    "public",
+    "package.json",
+    "next.config.ts"
+  ],
+  "memberCount": 1394,
+  "allMemberHashesMatch": true,
+  "requiredServerFiles": 19,
+  "nextVersion": "16.2.10",
+  "dependenciesMatchR5B": true,
+  "rebuilds": 0,
+  "dependencyInstalls": 0,
+  "startedAtUtc": "2026-09-16T03:32:32.775484+00:00",
+  "endedAtUtc": "2026-09-16T03:32:34.410845+00:00"
+}

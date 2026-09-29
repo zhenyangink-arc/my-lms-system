@@ -1,0 +1,8 @@
+{
+  "liveProviderRequestsInTask": 0,
+  "agentRunsInTask": 0,
+  "agentAdmissionTest": "NOT EXECUTED BY DESIGN",
+  "policy": "DEFERRED / NOT APPROVED",
+  "policyDocumentModified": false,
+  "evidenceBoundary": "Task call paths and OFF/EMPTY config; not provider-account-wide traffic audit"
+}

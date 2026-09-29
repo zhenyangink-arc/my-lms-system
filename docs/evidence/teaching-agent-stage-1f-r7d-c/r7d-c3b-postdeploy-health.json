@@ -1,0 +1,44 @@
+{
+  "stage": "R7D-C3B",
+  "recordedAt": "2026-09-18T07:08:48.519104+00:00",
+  "authorization": "EXPLICIT_USER_APPROVAL_THIS_TURN",
+  "blockingCode": "CURRENT_DB_ACL_BASELINE_MISMATCH",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstalls": 0,
+  "migrationLedgerWrites": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRunsCreated": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "toolCalls": 0,
+  "productChanges": 0,
+  "migrationFileChanges": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED_RETAINED_NO_ACTIVATION",
+  "historicalApprovalsModified": false,
+  "result": "NOT_EXECUTED",
+  "reason": "No deployment; no health HTTP request",
+  "preflightPM2": {
+    "name": "uply-first-enable",
+    "status": "online",
+    "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source"
+  },
+  "preflightFeatureAndAllowlists": {
+    "featureEnabled": false,
+    "allowlistNonempty": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": false,
+      "TEACHING_AGENT_ALLOWED_COURSES": false,
+      "TEACHING_AGENT_ALLOWED_USERS": false
+    }
+  },
+  "runtimeConfigSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "configModified": false,
+  "healthHTTPRequests": 0
+}

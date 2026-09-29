@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "wrong attempt durable INCOMPLETE; correct attempt durable COMPLETED; node progress distinct",
+  "wrongAttemptPersisted": true,
+  "completion": "INCOMPLETE",
+  "video": "PAUSED",
+  "nodeProgress": "in_progress"
+}

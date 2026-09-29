@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "tsc": "tsc --noEmit --incremental false: exit0",
+  "lint": "Changed product TSX, page-rollout test and all R3C MJS: exit0, no warnings",
+  "pythonSyntax": "PASS ast.parse",
+  "agentRegression": {
+    "tests": 207,
+    "pass": 203,
+    "skipped": 4,
+    "fail": 0,
+    "scope": "Student Domain, Tools/Skills, Runtime, UI contracts, rollout/page/pins, migration inventory, RLS surface; skipped isolated optional tests covered by actual Full Supabase/targeted paths below"
+  },
+  "classroomRegression": {
+    "tests": 90,
+    "pass": 90,
+    "fail": 0
+  },
+  "stage1EBrowser": {
+    "tests": 1,
+    "pass": 1,
+    "skip": 0,
+    "realNext": true
+  },
+  "baselinePython": {
+    "tests": 10,
+    "pass": 7,
+    "skipped": 3,
+    "fail": 0,
+    "note": "Optional database flags not set; real Full Supabase fresh bootstrap separately ran all 7 migrations and exact456 ledger"
+  },
+  "fullSupabase": {
+    "authUsers": 8,
+    "baselineLedger": 449,
+    "postBaselineMigrations": 7,
+    "finalLedger": 456,
+    "rlsMatrix": 138,
+    "rlsFailures": 0,
+    "reconcilerJwtDenials": 27,
+    "formalHangulE2E": "PASS",
+    "domainPorts": "PASS",
+    "singleEligibleLesson": 1,
+    "targetedReconcileAssertions": 18
+  },
+  "gitDiffCheck": "PASS",
+  "testHarnessCorrections": [
+    "scope.mjs needs server-only --import preload for static TS dependencies",
+    "Use captured UI request idempotency key/durable Run after Playwright response resource invalidation",
+    "Wait for Sheet to become hidden before Escape focus assertion"
+  ],
+  "productFixesForTestFailures": 0,
+  "productionRequests": 0,
+  "liveProviderRequests": 0
+}

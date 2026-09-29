@@ -1,0 +1,496 @@
+{
+  "function": {
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPath": [
+      "search_path=public, private, auth"
+    ],
+    "authenticatedExecute": true,
+    "anonExecute": false
+  },
+  "columns": [
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "id",
+      "type": "uuid",
+      "default": "gen_random_uuid()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "lesson_id",
+      "type": "uuid",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "script_version_id",
+      "type": "uuid",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "action",
+      "type": "text",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "actor_id",
+      "type": "uuid",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "details",
+      "type": "jsonb",
+      "default": "'{}'::jsonb",
+      "required": true
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "id",
+      "type": "uuid",
+      "default": "gen_random_uuid()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "script_version_id",
+      "type": "uuid",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "node_key",
+      "type": "text",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "node_type",
+      "type": "text",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "sort_order",
+      "type": "integer",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "title",
+      "type": "jsonb",
+      "default": "'{}'::jsonb",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "teacher_script",
+      "type": "jsonb",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "configuration",
+      "type": "jsonb",
+      "default": "'{}'::jsonb",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "reference_activity_id",
+      "type": "uuid",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "action_type",
+      "type": "text",
+      "default": "'none'::text",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "next_node_key",
+      "type": "text",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "remediation_node_key",
+      "type": "text",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "is_required",
+      "type": "boolean",
+      "default": "true",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "default": "now()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "id",
+      "type": "uuid",
+      "default": "gen_random_uuid()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "lesson_id",
+      "type": "uuid",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "version_number",
+      "type": "integer",
+      "default": null,
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "status",
+      "type": "text",
+      "default": "'draft'::text",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "title",
+      "type": "jsonb",
+      "default": "'{}'::jsonb",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "change_note",
+      "type": "text",
+      "default": "''::text",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "created_by",
+      "type": "uuid",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "published_by",
+      "type": "uuid",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "published_at",
+      "type": "timestamp with time zone",
+      "default": null,
+      "required": false
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "default": "now()",
+      "required": true
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "default": "now()",
+      "required": true
+    }
+  ],
+  "constraints": [
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_change_note_check",
+      "definition": "CHECK ((char_length(change_note) <= 500))"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_created_by_fkey",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_lesson_id_fkey",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_lesson_id_version_number_key",
+      "definition": "UNIQUE (lesson_id, version_number)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_published_by_fkey",
+      "definition": "FOREIGN KEY (published_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_status_check",
+      "definition": "CHECK ((status = ANY (ARRAY['draft'::text, 'published'::text, 'archived'::text])))"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_title_check",
+      "definition": "CHECK ((jsonb_typeof(title) = 'object'::text))"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_version_number_check",
+      "definition": "CHECK ((version_number > 0))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_action_type_check",
+      "definition": "CHECK ((action_type = ANY (ARRAY['none'::text, 'focus_activity'::text, 'play_expression'::text, 'complete_lesson'::text])))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_configuration_check",
+      "definition": "CHECK ((jsonb_typeof(configuration) = 'object'::text))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_node_key_check",
+      "definition": "CHECK ((node_key ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'::text))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_node_type_check",
+      "definition": "CHECK ((node_type = ANY (ARRAY['opening'::text, 'explanation'::text, 'example'::text, 'question'::text, 'instruction'::text, 'summary'::text])))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_reference_activity_id_fkey",
+      "definition": "FOREIGN KEY (reference_activity_id) REFERENCES digital_textbook_activities(id) ON DELETE SET NULL"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_script_version_id_fkey",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_script_version_id_node_key_key",
+      "definition": "UNIQUE (script_version_id, node_key)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_sort_order_check",
+      "definition": "CHECK (((sort_order >= 1) AND (sort_order <= 200)))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_teacher_script_check",
+      "definition": "CHECK ((jsonb_typeof(teacher_script) = 'object'::text))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_title_check",
+      "definition": "CHECK ((jsonb_typeof(title) = 'object'::text))"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_version_order_key",
+      "definition": "UNIQUE (script_version_id, sort_order) DEFERRABLE"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_action_check",
+      "definition": "CHECK ((action = ANY (ARRAY['create_draft'::text, 'publish'::text, 'archive'::text, 'add_node'::text, 'update_node'::text, 'delete_node'::text, 'reorder_node'::text])))"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_actor_id_fkey",
+      "definition": "FOREIGN KEY (actor_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_details_check",
+      "definition": "CHECK ((jsonb_typeof(details) = 'object'::text))"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_lesson_id_fkey",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_script_version_id_fkey",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    }
+  ],
+  "indexes": [
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_pkey",
+      "definition": "CREATE UNIQUE INDEX learning_agent_publish_logs_pkey ON public.learning_agent_publish_logs USING btree (id)"
+    },
+    {
+      "table": "learning_agent_publish_logs",
+      "name": "learning_agent_publish_logs_lesson_idx",
+      "definition": "CREATE INDEX learning_agent_publish_logs_lesson_idx ON public.learning_agent_publish_logs USING btree (lesson_id, created_at DESC)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_pkey",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_nodes_pkey ON public.learning_agent_script_nodes USING btree (id)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_script_version_id_node_key_key",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_nodes_script_version_id_node_key_key ON public.learning_agent_script_nodes USING btree (script_version_id, node_key)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_version_order_key",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_nodes_version_order_key ON public.learning_agent_script_nodes USING btree (script_version_id, sort_order)"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_version_idx",
+      "definition": "CREATE INDEX learning_agent_script_nodes_version_idx ON public.learning_agent_script_nodes USING btree (script_version_id, sort_order)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_pkey",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_versions_pkey ON public.learning_agent_script_versions USING btree (id)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_lesson_id_version_number_key",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_versions_lesson_id_version_number_key ON public.learning_agent_script_versions USING btree (lesson_id, version_number)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_one_draft_idx",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_versions_one_draft_idx ON public.learning_agent_script_versions USING btree (lesson_id) WHERE (status = 'draft'::text)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_one_published_idx",
+      "definition": "CREATE UNIQUE INDEX learning_agent_script_versions_one_published_idx ON public.learning_agent_script_versions USING btree (lesson_id) WHERE (status = 'published'::text)"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_lesson_idx",
+      "definition": "CREATE INDEX learning_agent_script_versions_lesson_idx ON public.learning_agent_script_versions USING btree (lesson_id, version_number DESC)"
+    }
+  ],
+  "triggers": [
+    {
+      "table": "learning_agent_script_versions",
+      "name": "learning_agent_script_versions_set_updated_at",
+      "definition": "CREATE TRIGGER learning_agent_script_versions_set_updated_at BEFORE UPDATE ON public.learning_agent_script_versions FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "runtime_publish_fence",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_versions FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "runtime_publish_lock",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_versions FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_versions",
+      "name": "teaching_script_source_review_before_publish",
+      "definition": "CREATE TRIGGER teaching_script_source_review_before_publish BEFORE UPDATE OF status ON public.learning_agent_script_versions FOR EACH ROW EXECUTE FUNCTION private.require_teaching_script_source_review()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "learning_agent_script_nodes_set_updated_at",
+      "definition": "CREATE TRIGGER learning_agent_script_nodes_set_updated_at BEFORE UPDATE ON public.learning_agent_script_nodes FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "runtime_publish_fence",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()",
+      "enabled": "O"
+    },
+    {
+      "table": "learning_agent_script_nodes",
+      "name": "runtime_publish_lock",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.learning_agent_script_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()",
+      "enabled": "O"
+    }
+  ],
+  "status": "PASS",
+  "bodySourceMatch": true,
+  "bodySha256": "4897855eb4154ef12d7ad0e6b91a26140e1dfdf3e3a447b925a2c8347816539f",
+  "source": "supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql",
+  "independentScriptRootTable": false,
+  "firstVersion": 1,
+  "firstTitle": {},
+  "firstNodeCount": 0,
+  "expectedInserts": {
+    "learning_agent_script_versions": 1,
+    "learning_agent_publish_logs": 1
+  },
+  "expectedUpdates": 0,
+  "expectedDeletes": 0
+}

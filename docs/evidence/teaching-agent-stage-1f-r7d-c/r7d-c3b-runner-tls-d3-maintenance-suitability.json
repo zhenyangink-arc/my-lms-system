@@ -1,0 +1,119 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "officialOperationalEvidence": [
+    "SESSION",
+    "MIGRATION",
+    "CONNECT",
+    "LIMITS",
+    "PG-SNAPSHOT"
+  ],
+  "historicalEvidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-historical-evidence.json",
+      "sha256": "1851b0d623115c8133e0f9e05c495b02132f52200a141a7483716a64b567dcf1"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-result.json",
+      "sha256": "fa8de8a42ee4dd6fcb802b05ba0d9be21954631a1245212f06b1f54c722b5128"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f"
+    }
+  ],
+  "migrationSuitability": "PROVEN_OPERATIONAL_PATTERN_NOT_FULL_CURRENT_SECURITY_ACCEPTANCE",
+  "historicalMigration": "R7C B1C receipt confirms a real migration and same-transaction ledger; R5B source uses transaction advisory lock. These remain historical observations.",
+  "actualRunnerLock": "pg_try_advisory_xact_lock(4171,100), transaction-scoped, not session-level",
+  "sessionLockAnalysis": "Official session affinity supports session-level state; the actual runner uses a narrower transaction-scoped lock. Owned tests alone are not remote proof.",
+  "singleTransaction": "DDL and ledger remain in the same persistent connection/transaction. No fallback, batch, retry or changes proposed.",
+  "backupSuitability": "NOT_PROVEN_FULL_TRANSPORT_CONTRACT",
+  "backupOperationalHistory": "R5C records a sealed R4D backup; R4D source exports a snapshot and imports it in pg_dump; R7C records logical restore verification. No current backup archive was opened.",
+  "snapshotRequirements": [
+    "One exporter RR READ ONLY transaction must remain open until all importers start/use its snapshot.",
+    "Exporter and dump sessions must address the same project database/primary instance.",
+    "Session affinity retains each client connection; it does not establish fresh global capacity or prove every client TLS connection.",
+    "Current sequential dump pipeline needs at least exporter plus one tool connection concurrently; services and other operators need separate headroom.",
+    "pg_dumpall roles output is not covered by the exported user-database MVCC snapshot; retain before/after role metadata checks."
+  ],
+  "perToolProofPolicy": {
+    "status": "DESIGNED_NOT_APPROVED",
+    "psql": "Actual same-session libpq metadata plus pinned verify-full, CA, endpoint and tool identity.",
+    "pgDumpAndPgDumpall": "Each invocation must independently bind pinned tool/libpq, immutable effective verify-full configuration/CA/target and exit success. This is enforced-connection attestation, not observed cipher metadata. A psql diagnostic must not be reused as proof of a dump connection.",
+    "remaining": "Operator must approve whether enforcement attestation is sufficient or require a separately scoped actual per-tool TLS observation mechanism. No new code now."
+  },
+  "directSuitability": "Official maintenance pattern PROVEN; current project endpoint, credentials and capacity NOT_PROVEN. Direct removes pooler affinity/budget layer, not exported-snapshot lifetime requirements.",
+  "projectConnectionBudget": {
+    "computeSize": "UNKNOWN",
+    "maxConnections": "UNKNOWN",
+    "poolSize": "UNKNOWN",
+    "maintenanceHeadroom": "UNKNOWN",
+    "guessing": false
+  },
+  "missingEvidence": [
+    {
+      "id": "A6",
+      "exactFactNeeded": "Reviewable backup policy binding TLS/identity proof to each psql, pg_dump and pg_dumpall process; accepted proof type and no substitution by a separate handshake.",
+      "whoCanSupply": "Project security/operator reviewer, informed by official libpq guarantees",
+      "likelyLocation": "Forward transport contract review",
+      "evidenceClass": "LOCAL_POLICY_AND_PUBLIC_DOCUMENTATION",
+      "futureProbeNeeded": "OWNED_VALIDATION_LATER; no production backup/probe now."
+    },
+    {
+      "id": "A5-A6-CAPACITY",
+      "exactFactNeeded": "Sufficient pool/database capacity and timeout policy for one exporter plus one sequential dump connection, including roles dump; snapshot sessions route to the same primary.",
+      "whoCanSupply": "Project operator and Supabase support",
+      "likelyLocation": "Project connection settings/metrics export and provider workflow statement",
+      "evidenceClass": "PROJECT_CONFIG_AND_PROVIDER_SUPPORT",
+      "futureProbeNeeded": "MAY_REQUIRE_SEPARATELY_APPROVED_READONLY_OBSERVATION; not inferred from historical successes."
+    },
+    {
+      "id": "B5",
+      "exactFactNeeded": "Project connection limits and reserved maintenance headroom/timeouts for migration and two-connection exported-snapshot workflow.",
+      "whoCanSupply": "Project operator / Supabase support",
+      "likelyLocation": "Compute/connection settings or safe project metrics export",
+      "evidenceClass": "PROJECT_CONFIGURATION",
+      "futureProbeNeeded": "MAY_REQUIRE_SEPARATE_READONLY_OBSERVATION; general documentation cannot supply a project limit."
+    }
+  ]
+}

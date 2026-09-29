@@ -5,7 +5,7 @@ import { validateLessonManifestV1 } from '../../../lib/smart-textbook-runtime-v1
 import { validateRuntimeActivation } from '../core/block-registry';
 import { validateLearningActivation } from '../core/learning-readiness';
 import type { RuntimeServices } from '../core/services';
-import { RuntimeServiceContext, LearningStateProvider, useLearningState, useRuntimeServices } from './runtime-context';
+import { RuntimeServiceContext, LearningStateProvider, useLearningState, useRuntimeServices, useNativeMediaState } from './runtime-context';
 import { TemplateRenderer } from './template-renderer';
 import { RegionRenderer } from './region-renderer';
 import { StepNavigation } from './step-navigation';
@@ -15,6 +15,7 @@ export function RuntimeRoot({manifest:input,services,resume,validationMode='comp
   const checked=validationMode==='learning'?validateLearningActivation(input):validateRuntimeActivation(input);
   const context=runtimeContextSchema.safeParse(services.context);
   if(!checked.success||!context.success||context.data.snapshotId!==(checked.success?checked.data.snapshot.id:null))return <p role="alert">教材暂不能激活：必需的 Runtime 能力或上下文未通过验证。</p>;
+  if(checked.data.blocks.some(b=>b.type==='video')&&(!checked.data.execution||!services.nativeExecution))return <p role="alert">教材暂不能激活：视频执行服务未绑定。</p>;
   return <RuntimeServiceContext key={`${context.data.runtimeSessionId}:${context.data.snapshotId}`} services={services}><LearningStateProvider manifest={checked.data} resume={resume}><RuntimeClassroom manifest={checked.data} omitTeacher={validationMode==='learning'} backHref={backHref}/></LearningStateProvider></RuntimeServiceContext>;
 }
 export const LessonRuntime=RuntimeRoot;
@@ -22,11 +23,12 @@ export const LessonRuntime=RuntimeRoot;
 export function RuntimeClassroom({manifest,omitTeacher=false,backHref}:{manifest:LessonManifestV1;omitTeacher?:boolean;backHref?:string}){
   const {steps,setActivePart}=useLearningState(),{context}=useRuntimeServices();
   useSyncExternalStore(steps.subscribe,steps.snapshot,steps.snapshot);
+  const mediaState=useNativeMediaState();
   const step=manifest.steps.find(s=>s.id===steps.activeStepId)!;
   const restored=useRef(false);
   useEffect(()=>{if(restored.current)return;restored.current=true;try{const saved=sessionStorage.getItem(`uply-runtime:${context.snapshotId}:step`);if(saved&&steps.canEnter(saved))steps.go(saved);}catch{/* Invalid or inaccessible persisted IDs cannot override navigation policy. */}},[steps,context.snapshotId]);
   useEffect(()=>{setActivePart(null);if(step.id!==steps.activeStepId)return;try{sessionStorage.setItem(`uply-runtime:${context.snapshotId}:step`,step.id);}catch{/* Resume is optional UI state. */}},[step.id,steps,context.snapshotId,setActivePart]);
-  return <TemplateRenderer layout={manifest.layout} activeStepId={step.id}
+  return <TemplateRenderer presentation={mediaState?.layout} layout={manifest.layout} activeStepId={step.id}
     chapter={{title:manifest.chapter.title[context.locale]??manifest.chapter.title['zh-CN']??'',position:manifest.navigation.items.indexOf(step.id)+1,total:manifest.navigation.items.length,locale:context.locale,backHref}}
     teaching={<RegionRenderer key={`teaching:${step.id}`} manifest={manifest} step={step} regionId="teaching" omitLegacyTeacher={omitTeacher}/>}
     interaction={<div key={`interaction:${step.id}`}><h1>{step.title[context.locale]??step.title['zh-CN']}</h1><RegionRenderer manifest={manifest} step={step} regionId="interaction"/></div>}

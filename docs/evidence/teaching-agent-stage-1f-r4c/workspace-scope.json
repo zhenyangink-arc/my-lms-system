@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "existingFilesProtected": 3154,
+  "outsideScopeChanged": [],
+  "outsideScopeAdded": [],
+  "stageFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4c/application-inventory.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/backup-inventory.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/capacity.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/database-end.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/database-start.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/historical-deployment-links.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/operations-end.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/operations-start.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r4c/workspace-before.json",
+    "docs/teaching-agent-stage-1f-r4c-backup-recovery-preflight.md",
+    "scripts/teaching-agent-r4c/inventory.py",
+    "scripts/teaching-agent-r4c/offline-inventory.py"
+  ],
+  "secretsFound": 0,
+  "syntaxJsonMarkdownChecks": "PASS",
+  "gateRows": 27,
+  "productionWrites": 0
+}

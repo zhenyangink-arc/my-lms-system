@@ -1,0 +1,181 @@
+{
+  "foundation": {
+    "status": "PASS",
+    "observedAtUtc": "2026-09-17T02:54:46.134580+00:00",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "postgres": "17.6",
+    "ledger": 457,
+    "latest": "202609140007",
+    "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+    "build": "6IhDHN8Dm1nCewiCEZnV5",
+    "pm2": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789529555153,
+      "name": "uply-first-enable",
+      "pid": 934715
+    },
+    "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "tailscaleSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "agentRows": {
+      "agent_definition_versions": 0,
+      "agent_conversations": 0,
+      "agent_runs": 0,
+      "agent_messages": 0,
+      "agent_run_events": 0
+    },
+    "providerRequestsInTask": 0
+  },
+  "script": {
+    "versionCount": 1,
+    "versions": [
+      {
+        "idSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+        "lessonSha256": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+        "versionNumber": 1,
+        "status": "draft",
+        "title": {},
+        "publishedAt": null,
+        "createdAt": "2026-09-16T07:11:49.544966+00:00"
+      }
+    ],
+    "nodeCount": 8,
+    "logs": {
+      "add_node": 8,
+      "create_draft": 1,
+      "update_node": 30
+    },
+    "activeInconsistentFences": 0
+  },
+  "canonical": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "versionFingerprint": {
+    "count": 1,
+    "rowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158"
+  },
+  "schema": {
+    "columns": "473188077db2737cb79b75aca5563b556067d60a3b64a677ce98022d47c8564d",
+    "functions": "92f5d0909f50b1d05e24959dead933918d54f461804f3934fc2aa5c838df5f02",
+    "constraints": "032c92f8f2076aeca4db4579740a6bb2a2b7f4fe983acda52993f7cd64ea1b46",
+    "policies": "802c2abc0c25164352a851560cc0c09ebda98ce790e7596424f0471c68d89798",
+    "relations": "5833d70267adbf78aa2befd27bcb3eb3113797145d39bab9b9735307160cc4e6"
+  },
+  "unrelated": {
+    "lessons": {
+      "count": 69,
+      "safeMetadataSha256": "2197189d8a038d4cf9bd3bb5c032bff150d087094b85cb65779607b41cbe5d9d"
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "safeMetadataSha256": "e3e8077b5543d33ed7539c7867b2bd9bbb6af47925a7910763de018ce31b373d"
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "safeMetadataSha256": "fb14c71325d886fbcaa07406de89c1e0dfe22a41d45ebae6d1804adf6022ceda"
+    },
+    "digital_textbook_chapters": {
+      "count": 17,
+      "safeMetadataSha256": "b9cb3d339952f8086e67d91656f164b9759e0d296681d07375cd955953b0f997"
+    },
+    "digital_textbook_modules": {
+      "count": 132,
+      "safeMetadataSha256": "a3dc3fead69084906bed381a04679042b12866c6a906bff56251f3e818a3e3b0"
+    },
+    "digital_textbook_nodes": {
+      "count": 132,
+      "safeMetadataSha256": "06f9452fe325e16516d65be30dcdc8593b3e61f4b04ae484774b6fcca4684d38"
+    },
+    "digital_textbook_activities": {
+      "count": 203,
+      "safeMetadataSha256": "bf12cbb4b5dac331cbe983323cf236740cce675d8aa81013c3d373d7104963a8"
+    },
+    "learning_agent_lessons": {
+      "count": 132,
+      "safeMetadataSha256": "adfdd30db22adc5c3dc908fd8352d998937813b13a6b9eea8188e10446b5b558"
+    },
+    "learning_agent_steps": {
+      "count": 528,
+      "safeMetadataSha256": "ec53a4f2ece9b6504725df7390ac56db98a12638969de71947dc06cd87b22486"
+    },
+    "learning_agent_script_versions": {
+      "count": 10,
+      "safeMetadataSha256": "bfb362734ba3ed39f2fe680de3267aca418b82ebd2df444e2cf1adb48b1bb7e0"
+    },
+    "learning_agent_script_nodes": {
+      "count": 75,
+      "safeMetadataSha256": "806ddcb33e9977004e6f0867193ac695e9e4524cbf77c387955d66d3aecf270e"
+    }
+  },
+  "status": "PASS",
+  "observedAtUtc": "2026-09-17T02:54:51.573487+00:00",
+  "frozenContent": "UNCHANGED",
+  "boundaries": {
+    "productionDbBusinessWrites": 0,
+    "migrations": 0,
+    "productionActivityInserts": 0,
+    "timelineDbRowsCreated": 0,
+    "teachingNodeWrites": 0,
+    "scriptVersionWrites": 0,
+    "agentWrites": 0,
+    "providerRequests": 0,
+    "pinsWrites": 0,
+    "publish": 0,
+    "productionDeploy": 0,
+    "pm2Mutations": 0,
+    "runtimeMutations": 0,
+    "launcherMutations": 0,
+    "tailscaleMutations": 0,
+    "authWrites": 0
+  }
+}

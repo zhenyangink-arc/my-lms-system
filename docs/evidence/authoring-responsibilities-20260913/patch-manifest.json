@@ -1,0 +1,115 @@
+{
+  "base": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "candidate": "/tmp/uply-authoring-navigation.XhmNlk",
+  "mainHead": "b1672390ae96357a2143358235cc10edeff8d488",
+  "patchSha256": "a1f107a8dd16a6b5253d53afa9e01edeb39708e8f3d255c81862ea8371119b72",
+  "files": [
+    {
+      "file": "src/lib/course-content-workflow.ts",
+      "baseSha256": "f87fe225de5bd67a068013fbd18fb6b6ce0b77cafcdcf163886d33c8894de597",
+      "candidateSha256": "beb3859b87d10e9fa810b1eaa5bd8c79b8c217368798d54e63de50976829f172",
+      "mainSha256": "f87fe225de5bd67a068013fbd18fb6b6ce0b77cafcdcf163886d33c8894de597",
+      "mainMatchesBase": true
+    },
+    {
+      "file": "src/app/dashboard/admin/apps/CourseWorkflowLinks.tsx",
+      "baseSha256": null,
+      "candidateSha256": "4aeec36aa510e769bd1aa82bab21ecb1c152e93c29b01d182d1484d3dfd75171",
+      "mainSha256": null,
+      "mainMatchesBase": true
+    },
+    {
+      "file": "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+      "baseSha256": "fe394a4da52e338ce1f2a40ed1efc0616bbbf354fe704475cb71d99b98cf7520",
+      "candidateSha256": "f22379a775888e37e49b66c4bbe5de48d84fb8ae2e1550342645875a811a4420",
+      "mainSha256": "6260afa9170b6b172586991861eb5a579ddb10a039838371443c8321373d2bd3",
+      "mainMatchesBase": false
+    },
+    {
+      "file": "src/features/courses/components/course-catalog-listing.tsx",
+      "baseSha256": "e5fb8be2a713263db8e8d95800705fc21a2ff8915313583c09011512938c9ab9",
+      "candidateSha256": "8de94fdcb82dfd382f323a1ab181fbf70de4bfb091588ec581ba42a2b19220b9",
+      "mainSha256": "2d3de6ac5597ff97ce3e76a3422d9f38481d8e3ec456089e8d00f1a81e696775",
+      "mainMatchesBase": false
+    },
+    {
+      "file": "src/features/digital-textbook/components/textbook-studio.tsx",
+      "baseSha256": "94ad7fd07cf96382c46847ce7b832e3aefda5c2a9d7983ff64573f14e4cd4599",
+      "candidateSha256": "1b5e0d534f2853477ff9fa68ee912068712affcc462eb4bd2280125532d13d93",
+      "mainSha256": null,
+      "mainMatchesBase": false
+    },
+    {
+      "file": "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+      "baseSha256": "04294ce99388377441c9add9feaccfca929cc8e3be980d1640aa881e77cc2d53",
+      "candidateSha256": "f2c72f69d0f8f0fd3b5cebed6faf5e6c165f3af6dc988c82bef31e7260e3d3be",
+      "mainSha256": "04294ce99388377441c9add9feaccfca929cc8e3be980d1640aa881e77cc2d53",
+      "mainMatchesBase": true
+    },
+    {
+      "file": "src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx",
+      "baseSha256": "31a31cbd46e394d6b1f44840b24c9c27a65c83b2e72658bc8d554e865f25837e",
+      "candidateSha256": "68b92d889acbf30b0d4a2dd2982def9756d1995e2483c408b8065f00d3a43d6b",
+      "mainSha256": "31a31cbd46e394d6b1f44840b24c9c27a65c83b2e72658bc8d554e865f25837e",
+      "mainMatchesBase": true
+    },
+    {
+      "file": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "baseSha256": "b4cd9d7dc8dd4d820bfea30d8721925faf5a1d9e42cd576e734eed48588ea564",
+      "candidateSha256": "4d5ed49024f0fdd7481b21c222abfa86eff0e8155f9786b2c5057dc9d7af6b93",
+      "mainSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "mainMatchesBase": false
+    },
+    {
+      "file": "src/features/growth-toolbox/components/growth-toolbox-workspace.tsx",
+      "baseSha256": "74d94dc6c241d32db4a85ab75da8b6408cc0de33bb3f2c44f1c70f691ae7dd10",
+      "candidateSha256": "0040a950ff3924d647a41586054e86d96880fb2d9d122a8e83cea58f6230790b",
+      "mainSha256": "74d94dc6c241d32db4a85ab75da8b6408cc0de33bb3f2c44f1c70f691ae7dd10",
+      "mainMatchesBase": true
+    },
+    {
+      "file": "tests/authoring-responsibilities.test.mjs",
+      "baseSha256": null,
+      "candidateSha256": "8121b39a9c94fbd9a887fc1b9d54bc04d6522301a79ca07d7e13a72ababa2b27",
+      "mainSha256": null,
+      "mainMatchesBase": true
+    },
+    {
+      "file": "tests/learning-agent-script-studio.test.mjs",
+      "baseSha256": "fa79471a3e9a37dddac6f6e74618df2a5f9cf3de64d6cdc037e53a33fee02a06",
+      "candidateSha256": "c6d614cfdcadbfbfa7afa879b2536dff135484693bf7ac2c1ee33c70e59e44a9",
+      "mainSha256": "fa79471a3e9a37dddac6f6e74618df2a5f9cf3de64d6cdc037e53a33fee02a06",
+      "mainMatchesBase": true
+    },
+    {
+      "file": "tests/textbook-navigation.test.mjs",
+      "baseSha256": "3e98ec3ec4e25f296ce1fb8cd1c260d6061762abe210315fe9ea4627704e9ca3",
+      "candidateSha256": "77d1c56b0e087ad5f63e7b2ac160f4f7e6ad29b624aa5d688de221f56660eddc",
+      "mainSha256": null,
+      "mainMatchesBase": false
+    },
+    {
+      "file": "scripts/verify-authoring-navigation.mjs",
+      "baseSha256": null,
+      "candidateSha256": "202156b0c19237c24c63b8ae7255c963f1b45b905a733263ea9fb5bb3fc66e8c",
+      "mainSha256": null,
+      "mainMatchesBase": true
+    },
+    {
+      "file": "scripts/verify-teaching-script-workspace.mjs",
+      "baseSha256": null,
+      "candidateSha256": "d4935790ee97a9ba70c8f816e89582c2e4da2d4d0247aba2ea69000704429382",
+      "mainSha256": "141fffec5693c3a8e09cf0bacc618dd50cfd94a91bef60069f0a8011a853876f",
+      "mainMatchesBase": false
+    },
+    {
+      "file": "scripts/verify-toolbox-workspace.mjs",
+      "baseSha256": null,
+      "candidateSha256": "b3c79d78b2cedb242a2a01fa290291bc71494812e6b588987c82f86d825e175c",
+      "mainSha256": "4e86f78d3202fce77d563f465d193aa26b7d706fb5fd5012b6c5e48cef7ed260",
+      "mainMatchesBase": false
+    }
+  ],
+  "applyCheck": "passed against preserved deployed baseline",
+  "deployed": false
+}

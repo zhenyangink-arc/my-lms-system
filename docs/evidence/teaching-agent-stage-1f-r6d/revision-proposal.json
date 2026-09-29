@@ -1,0 +1,131 @@
+{
+  "executionStatus": "REVIEW COMPLETE / NOT APPLIED",
+  "revisionRequired": true,
+  "counts": {
+    "MUST_FIX": 3,
+    "SHOULD_FIX": 4,
+    "OPTIONAL": 2
+  },
+  "countingRule": "按独立问题条目计数，不按受影响节点数；同一修改修复多个概念时不重复计数。",
+  "proposals": [
+    {
+      "id": "S1",
+      "nodeNumber": 1,
+      "title": "今天认识韩文字母",
+      "formalType": "opening",
+      "currentText": "한글은 자음과 모음으로 만들어요.",
+      "issueType": "Naturalness",
+      "classification": "SHOULD_FIX",
+      "reason": "话题은与省略的制作主体在语法上可解释，并非明显语法错误；但介绍文字构成时使用存在句更直接自然。이루어져 있어요准确却更书面、更难。",
+      "proposedText": "한글에는 자음과 모음이 있어요.",
+      "objectiveImpact": "目标1：用简单存在句引入两类字母；后句继续负责组合。",
+      "applied": false
+    },
+    {
+      "id": "M1",
+      "nodeNumber": 2,
+      "title": "韩文字母怎么组成？",
+      "formalType": "explanation",
+      "currentText": "자음은 소리의 시작을 만들어요.\n모음은 그 소리를 이어 줘요.",
+      "issueType": "Misleading consonant/vowel definition",
+      "classification": "MUST_FIX",
+      "reason": "不能把辅音的功能泛化为声音开头，辅音也可以出现在终声；初声字母ㅇ还可以只占位而不发音。元音不是单纯延续辅音的附属声音。句子语法通顺，但教学定义容易误导。",
+      "proposedText": "자음과 모음을 함께 써요.\n한 글자를 만들어요.",
+      "objectiveImpact": "目标1/3：消除会与后续终声解释冲突的概括。",
+      "applied": false
+    },
+    {
+      "id": "M2",
+      "nodeNumber": 2,
+      "title": "韩文字母怎么组成？",
+      "formalType": "explanation",
+      "currentText": "자음과 모음을 같이 쓰면\n한 글자가 돼요.\n\n예를 들어,\nㄱ과 ㅏ를 같이 쓰면\n“가”가 돼요.",
+      "issueType": "Syllable-block objective gap",
+      "classification": "MUST_FIX",
+      "reason": "现有가/나/다/마及한呈现了合体字形，但只说一起写/凑成一字，没有明确解释字母进入同一个视觉块。Node2/5/6 display.slides均为空，不能假定另有视觉讲解补足。目标1明确要求音节块结构，当前关键子目标仅有隐含示范。",
+      "proposedText": "ㄱ과 ㅏ를 한 글자 안에 모아 써요.\n“가”를 보세요.\nㄱ은 왼쪽에 있어요.\nㅏ는 오른쪽에 있어요.\n이렇게 한 글자 모양으로 써요.",
+      "objectiveImpact": "目标1：明确块内组合；不新增음절术语或把所有元音位置概括为右边。本例位置只限定가。",
+      "applied": false
+    },
+    {
+      "id": "M3",
+      "nodeNumber": 6,
+      "title": "一个音节里面有什么？",
+      "formalType": "explanation",
+      "currentText": "가운데 모음을\n중성이라고 해요.",
+      "issueType": "Medial role vs visual position",
+      "classification": "MUST_FIX",
+      "reason": "中声是音节结构中的元音角色，不是方块固定中央。当前앞/가운데/아래平行说明容易把结构角色混同视觉位置；用已教ㄱ、ㅏ、ㅗ形成가/고局部对照即可澄清，不扩展新元音或复杂音韵。",
+      "proposedText": "한 글자에서 모음을 중성이라고 해요.\n모음의 자리는 모양에 따라 달라요.\n“가”에서 ㅏ는 ㄱ의 오른쪽에 있어요.\n“고”에서 ㅗ는 ㄱ의 아래에 있어요.",
+      "objectiveImpact": "目标3及目标1：消除位置误解。한的ㅎ/ㅏ/ㄴ映射保留。",
+      "applied": false
+    },
+    {
+      "id": "S2",
+      "nodeNumber": 4,
+      "title": "再认识基础辅音",
+      "formalType": "explanation",
+      "currentText": "지금은 완벽하게 외우는 것보다\n자음과 모음이 다르다는 것을 아는 게 중요해요.",
+      "issueType": "Long embedded beginner sentence",
+      "classification": "SHOULD_FIX",
+      "reason": "-는 것보다、-다는 것을、아는 게连续名词化/比较，对零基础处理负担过大；语法本身正确。原本减压意图值得保留。",
+      "proposedText": "지금 다 외우지 않아도 괜찮아요.\n자음과 모음은 달라요.\n모양을 천천히 보세요.",
+      "objectiveImpact": "目标2：降低理解指令所需语言负担，仍为认识而非立即熟记。",
+      "applied": false
+    },
+    {
+      "id": "S3",
+      "nodeNumber": 5,
+      "title": "把辅音和元音放在一起",
+      "formalType": "example",
+      "currentText": "이렇게 자음과 모음을 모아서\n한 글자를 만들어요.",
+      "issueType": "Reading objective under-supported",
+      "classification": "SHOULD_FIX",
+      "reason": "Node3有元音跟读，Node4主要看形状，Node5给出4个正确组合但没有明确朗读指导；目标2的辅音朗读支持不足。建议在组合已解释之后以两组已有辅音+ㅏ带读，新增的仅为已教字母组合，不要求背诵，不把字母名称当作发音。",
+      "proposedText": "이렇게 자음과 모음을 모아서\n한 글자를 만들어요.\n\n한 번 따라 읽어 보세요.\n가, 나, 다, 마.\n라, 바, 사, 아.\n“아”의 ㅇ은 소리가 나지 않아요.\n지금은 한 번씩 읽어 봐요.",
+      "objectiveImpact": "目标2：补充常用辅音在音节中的读音接触。实际示范音频正确性仍需未来另行验证；本次不制作或播放音频。",
+      "applied": false
+    },
+    {
+      "id": "S4",
+      "nodeNumber": 8,
+      "title": "今天学了什么？",
+      "formalType": "summary",
+      "currentText": "그리고 한 글자에는\n초성, 중성,\n그리고 종성이 올 수 있어요.",
+      "issueType": "Optional-final scope clarity",
+      "classification": "SHOULD_FIX",
+      "reason": "现句可正确理解为终声可有，但单一올 수 있어요作用于整个并列串，零基础不易辨别哪些必需、哪个可选。显式拆开更清楚；不是说原句断言每个字必须有终声。",
+      "proposedText": "한 글자에는 초성과 중성이 있어요.\n종성은 있을 수도, 없을 수도 있어요.",
+      "objectiveImpact": "目标3：保持文字构成语境，明确终声可选；不展开받침规则。",
+      "applied": false
+    },
+    {
+      "id": "O1",
+      "nodeNumber": 3,
+      "title": "先认识基础元音",
+      "formalType": "explanation",
+      "currentText": "먼저 모음을 볼까요?",
+      "issueType": "Subset framing",
+      "classification": "OPTIONAL",
+      "reason": "所列六个元音合理、顺序成对易观察；当前没有声称韩语只有六个元音。显式限定今天先看六个可让范围更清楚，但不构成实质错误。",
+      "proposedText": "오늘은 모음 여섯 개를 먼저 볼까요?",
+      "objectiveImpact": "目标2：保留今天先认识的范围，不增加复合元音。",
+      "applied": false
+    },
+    {
+      "id": "O2",
+      "nodeNumber": 7,
+      "title": "一起试一试",
+      "formalType": "instruction",
+      "currentText": "잘했어요.\n자음과 모음을 잘 구분했어요.",
+      "issueType": "Question-specific feedback",
+      "classification": "OPTIONAL",
+      "reason": "当前反馈自然且适合题1，也不构成题2的错误评价；若未来细化文本，可让题2反馈具体指向组合。保持文本提案，不写自动判分。",
+      "proposedText": "题1反馈：\n잘했어요.\n자음과 모음을 잘 구분했어요.\n\n题2反馈：\n잘했어요.\nㄱ과 ㅏ를 모으면 “가”가 돼요.",
+      "objectiveImpact": "目标4：可选地加强组合回顾；不改变已批准DRAFT_TEXT_ONLY。",
+      "applied": false
+    }
+  ],
+  "nextStage": "R6E — TEACHING SCRIPT REVISION",
+  "nextStageEntered": false
+}

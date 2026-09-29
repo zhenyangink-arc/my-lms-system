@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "ledgerStart": 449,
+  "ledgerEnd": 449,
+  "fullVersionNameLedgerEqual": true,
+  "ledgerDigest": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+  "ledgerDigestAlgorithm": "SHA256 sorted keys compact JSON",
+  "agentTablesStart": 0,
+  "agentTablesEnd": 0,
+  "cutover": {
+    "name": "runtime_authoring_nonretryable_error",
+    "version": "202609130003"
+  },
+  "runtimeStart": {
+    "observedAt": "2026-09-15T03:28:22.327748+00:00",
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    },
+    "featureFlagVariable": "TEACHING_AGENT_STUDENT_TRANSPORT_ENABLED",
+    "correctKeyVerifiedAt": "2026-09-15T03:30:40.987757+00:00"
+  },
+  "runtimeEnd": {
+    "observedAt": "2026-09-15T03:32:53.430580+00:00",
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "featureFlagVariable": "TEACHING_AGENT_STUDENT_TRANSPORT_ENABLED",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    }
+  },
+  "runtimeConfigUnchanged": true,
+  "productionCandidate": 0,
+  "candidateEvidence": "Inherited R4 production-content-inventory.json; R4A does not re-run content/Pins eligibility or authoring",
+  "productionWrites": 0,
+  "productionAgentRuns": 0,
+  "liveProviderRequests": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionMigrationAuthorization": "NOT AUTHORIZED",
+  "deploy": false,
+  "pm2Mutations": 0,
+  "tailscaleMutations": 0,
+  "definitionPublications": 0,
+  "allowlistWrites": 0,
+  "readOnlyCommand": "node /tmp/uply-stage1f-readonly.mjs query /tmp/uply-stage1fr1-catalog.sql r4a-{start,end}",
+  "queryControls": [
+    "TLS verify-full",
+    "default_transaction_read_only=on",
+    "BEGIN READ ONLY",
+    "statement_timeout=20000",
+    "lock_timeout=5000"
+  ],
+  "scope": "Zero writes/requests means this task only; runtime configuration file checked, not unseen in-process environment"
+}

@@ -1,0 +1,56 @@
+(node:18) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ real B3 composition / Runtime wrong hold / suppressed committed correct / independent readback resumes
+  ✔ wrong durable incomplete holds existing media owner (342.959503ms)
+  ✔ second commit response suppressed, readback only resumes and closes scope (349.836946ms)
+  ✔ third submission denied; facts carry no answer/identity secrets (114.622766ms)
+  ✔ reconstructed read-only composition restores completed and cannot submit (117.685717ms)
+  ✔ owned server child actually exits/restarts; only readback, durable counts unchanged (1298.121265ms)
+✔ real B3 composition / Runtime wrong hold / suppressed committed correct / independent readback resumes (3714.091414ms)
+(node:19) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Owner issuance, non-owner denial and no reader dispatch before guard (5.653193ms)
+✔ strict environment, budget, TTL, expired and disabled scopes fail closed (1.341932ms)
+✔ fresh actor guard rejects sessions (0.294276ms)
+✔ fresh actor guard rejects refreshTokens (0.265517ms)
+✔ fresh actor guard rejects human (0.199087ms)
+✔ fresh actor guard rejects productionAllowed (0.180702ms)
+✔ fresh actor guard rejects banUntil (0.202963ms)
+✔ fresh actor guard rejects provisionedProductionAccount (0.185982ms)
+✔ scope/actor identity mismatch, active profile/default membership and stale read denied (0.701338ms)
+✔ journal exclusive activation and two dispatch slots; UNKNOWN no release; disable survives reconstruction (13.974887ms)
+✔ transaction guard requires actor-scoped sessions, real frozen snapshot, exact target, expiry and max budget (0.744941ms)
+✔ strict two-attempt completion rejects inconsistent durable state; isolated receipts keep isolated provenance (2056.878356ms)
+(node:20) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Owner guard runs before activation/recovery/submit work (2.046641ms)
+✔ browser target, actor, budget/config rejected before any database dispatch (2.763616ms)
+✔ allowed Owner command is dispatched once, without retry (2.007303ms)
+(node:21) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ current provenance cannot be requested from implementation workspace (3.073539ms)
+✔ unknown COMMIT closes one connection with no retry (0.595623ms)
+ISOLATED_SQL_CODE P0001 B3_ACTOR_OR_CONTENT_UNSAFE
+▶ actual node-postgres + trusted repository + real RPC + in-transaction guard
+  ✔ actual safety SQL denies active sessions before any RPC (13.46382ms)
+  ✔ wrong persists incomplete on independent new pg connection (41.139921ms)
+  ✔ duplicate same slot is blocked without a new attempt (15.635483ms)
+  ✔ correct commits and response loss is recovered without retry (51.598155ms)
+  ✔ third logical dispatch denied; durable completed state remains (16.718582ms)
+✔ actual node-postgres + trusted repository + real RPC + in-transaction guard (1184.838228ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4051.680051

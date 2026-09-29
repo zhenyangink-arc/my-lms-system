@@ -1,0 +1,52 @@
+{
+  "status": "PROPOSED ONLY",
+  "schemaNotImplemented": true,
+  "fields": {
+    "id": "stable cue alias within sealed snapshot",
+    "sourceBlockId": "existing bound video block ref",
+    "triggerType": "time | ended",
+    "triggerTime": "finite nonnegative seconds required only for time, within verified media duration",
+    "action": "show_activity | show_block | change_layout",
+    "targetBlockId": "bound current step activity/block; for layout use existing teaching/interaction region target",
+    "pauseSource": "boolean; mandatory Activity cue true",
+    "resumePolicy": "manual | after_authoritative_activity_completion",
+    "sortOrder": "deterministic integer tie breaker",
+    "config": "strict bounded layout enum only where action=change_layout; otherwise empty"
+  },
+  "fiveParts": {
+    "WHEN": [
+      "triggerType",
+      "triggerTime"
+    ],
+    "SOURCE": [
+      "sourceBlockId"
+    ],
+    "ACTION": [
+      "action"
+    ],
+    "TARGET": [
+      "targetBlockId"
+    ],
+    "POLICY": [
+      "pauseSource",
+      "resumePolicy",
+      "sortOrder",
+      "config"
+    ]
+  },
+  "validation": [
+    "Reject unknown actions/keys, dangling or cross-snapshot targets",
+    "Activity target references existing Activity; public text and private key stored there, not cue",
+    "Reject infinite simultaneous action chains; one waiting blocking activity per media owner",
+    "Cue may change presentation only; no grading/progression/publishing writes"
+  ],
+  "excluded": [
+    "question body",
+    "correct answer",
+    "AI prompt",
+    "student profile",
+    "adaptive decision",
+    "provider config"
+  ],
+  "existingTeacherRuntimeCue": "Server teaching-turn cue is a different existing concept. Reuse existing runtime owner/target services, not its shape for time triggers and not a second competing TimelineRuntime."
+}

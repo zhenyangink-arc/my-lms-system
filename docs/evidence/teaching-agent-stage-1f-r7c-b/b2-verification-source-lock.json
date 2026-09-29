@@ -1,0 +1,24 @@
+{
+  "harnessFiles": {
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-audit.py": "4dce4ef6f2597c39f96de4fe172931c2db7b427f69b69e39eb522fe2c30f94ed",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-isolated.py": "0bd1918a423d755cfeb9993f7f16d229e7c0e061c6a64cb3c1257f055ac7056d",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-negative.py": "105faebf920616a807246da6d5a89b53761a6625af9e17ec759082a2795a4d97",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-extra-negative.py": "1de61c48974673b77e8e24c7af1e2325dbf3bb0453e4543916068919bd1b75b5",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-side-effects.py": "d20f047896b56cf68c59e6713f42bf2a2bdb9ffc7dc5bca12889593e63a74944",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-final-read.py": "24bd2f58254fe85a485df4b4bec06ee1421ebe4b8e444a5a0eb2e5d2dda0dd85",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-isolated-harness/r7cb-b2-cleanup.py": "b4a7e3b4c6df89c588fb9ec04f2315a77143358a6cf36399b38dd517a4f617e8"
+  },
+  "invocationOrder": [
+    "audit (current DB GET/READ ONLY)",
+    "isolated (owned schema only UTF8)",
+    "negative",
+    "side-effects",
+    "extra-negative",
+    "final-read",
+    "cleanup"
+  ],
+  "notProductCode": true,
+  "notCurrentDbProvisioner": true,
+  "dependencies": "Existing read-only audit primitives in /tmp from prior stages, PG17 image and sealed schema-only backup; references documented in source",
+  "currentDbWrites": 0
+}

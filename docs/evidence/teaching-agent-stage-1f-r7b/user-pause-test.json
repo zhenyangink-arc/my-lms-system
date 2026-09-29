@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "rule": "auto resume only if runtime paused a playing source and user did not request pause",
+  "activityDuringUserPause": "RESUME_READY with no forced play",
+  "restoredCompleted": "requires user play"
+}

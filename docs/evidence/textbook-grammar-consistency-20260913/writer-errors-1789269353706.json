@@ -1,0 +1,86 @@
+{
+  "checkedAt": "2026-09-13T03:15:52.601Z",
+  "windowStart": "2026-09-13T03:10:52.601Z",
+  "readOnly": true,
+  "errors": [
+    {
+      "timestamp": "2026-09-13T03:15:46.995000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    },
+    {
+      "timestamp": "2026-09-13T03:15:46.915000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    },
+    {
+      "timestamp": "2026-09-13T03:15:46.834000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    },
+    {
+      "timestamp": "2026-09-13T03:15:46.754000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    },
+    {
+      "timestamp": "2026-09-13T03:15:46.673000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    },
+    {
+      "timestamp": "2026-09-13T03:15:46.592000",
+      "code": "40001",
+      "command": "SELECT",
+      "application": "PostgREST 14.5",
+      "knownErrors": [
+        "PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW"
+      ],
+      "constraints": [],
+      "foreignKeyViolation": false,
+      "errorHash": "e412c0a8fbcf4c58ae740a253f04adc11bda564f31e29c405c2048e2670b9c34",
+      "messageExported": false
+    }
+  ],
+  "remoteWrites": false
+}

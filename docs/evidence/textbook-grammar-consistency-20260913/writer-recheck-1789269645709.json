@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-09-13T03:20:45.58401+00:00",
+  "readOnly": "on",
+  "activity": [
+    {
+      "pid": 2405232,
+      "usename": "authenticator",
+      "application_name": "PostgREST 14.5",
+      "backend_type": "client backend",
+      "state": "active",
+      "wait_event_type": null,
+      "wait_event": null,
+      "backend_start": "2026-09-13T03:20:45.23186+00:00",
+      "xact_start": "2026-09-13T03:20:45.477735+00:00",
+      "query_start": "2026-09-13T03:20:45.549403+00:00",
+      "state_change": "2026-09-13T03:20:45.549406+00:00",
+      "backend_xid": null,
+      "blockers": [],
+      "operations": [],
+      "querySha256": "f8bb6ca79bed0bf12b17cb413b77b781a6689c899a992d1decebb9503fe5b84c",
+      "queryLength": 1023,
+      "queryTruncated": true,
+      "topLevel": "WITH",
+      "queryContentsExported": false
+    }
+  ],
+  "locks": [],
+  "runtimeRequests": 0,
+  "recordingRequests": 0,
+  "remoteWrites": false,
+  "targetVerified": true,
+  "tlsVerified": true
+}

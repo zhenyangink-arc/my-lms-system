@@ -1,0 +1,25 @@
+{
+  "overall": "READY FOR B2 PROVISION APPROVAL",
+  "B1": "COMPLETE",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "identityModel": "STABLE REUSABLE",
+  "developmentTenant": "CREATE1 PLANNED",
+  "security": "INITIAL-BAN SESSION-DENIAL",
+  "challengeIssuance": "MAY OCCUR",
+  "workflow": "PASS",
+  "sideEffects": "MATCH",
+  "ApprovalB": "READY / NOT APPROVED",
+  "currentDbIdentityWrites": 0,
+  "attempt": 0,
+  "progress": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "feature": "OFF",
+  "R7D": "NOT READY",
+  "Stage1G": "NOT READY",
+  "recordedAt": "2026-09-17T08:16:57.271248+00:00"
+}

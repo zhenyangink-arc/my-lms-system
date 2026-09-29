@@ -1,0 +1,155 @@
+{
+  "nodes": [
+    {
+      "idHash": "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 1,
+      "type": "opening",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "今天认识韩文字母"
+      },
+      "script": {
+        "ko-KR": "안녕하세요.\r\n오늘은 한글의 기본 모양을 같이 배워요.\r\n한글에는 자음과 모음이 있어요.\r\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\r\n천천히 하나씩 볼까요?",
+        "zh-CN": "안녕하세요.\r\n오늘은 한글의 기본 모양을 같이 배워요.\r\n한글에는 자음과 모음이 있어요.\r\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\r\n천천히 하나씩 볼까요?"
+      },
+      "updatedAt": "2026-09-16T10:28:54.462249+00:00",
+      "rowSha256": "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6"
+    },
+    {
+      "idHash": "19e75a5c68c0704a1424cedb93823c4cc0cc691aafb598b94153d4428e23d5b8",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 2,
+      "type": "explanation",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "韩文字母怎么组成？"
+      },
+      "script": {
+        "ko-KR": "한글에는 자음과 모음이 있어요.\r\n\r\n자음은 소리의 시작을 만들어요.\r\n모음은 그 소리를 이어 줘요.\r\n\r\n자음과 모음을 같이 쓰면\r\n한 글자가 돼요.\r\n\r\n예를 들어,\r\nㄱ과 ㅏ를 같이 쓰면\r\n“가”가 돼요.",
+        "zh-CN": "한글에는 자음과 모음이 있어요.\r\n\r\n자음은 소리의 시작을 만들어요.\r\n모음은 그 소리를 이어 줘요.\r\n\r\n자음과 모음을 같이 쓰면\r\n한 글자가 돼요.\r\n\r\n예를 들어,\r\nㄱ과 ㅏ를 같이 쓰면\r\n“가”가 돼요."
+      },
+      "updatedAt": "2026-09-16T08:05:05.726748+00:00",
+      "rowSha256": "ddd6ce25baf90f498c3caeb6cf32821006156b23e3382e2e585bb81e5cee450e"
+    },
+    {
+      "idHash": "e923e2b12ad3945b5f2ef93e4f005fee599452655709a96ae114f3ec7fd65e86",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 3,
+      "type": "explanation",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "先认识基础元音"
+      },
+      "script": {
+        "ko-KR": "먼저 모음을 볼까요?\r\n\r\nㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ\r\n\r\n지금은 전부 외우지 않아도 괜찮아요.\r\n모양과 소리를 천천히 같이 봐요.\r\n\r\nㅏ\r\nㅓ\r\nㅗ\r\nㅜ\r\nㅡ\r\nㅣ\r\n\r\n한 번 따라 읽어 보세요.",
+        "zh-CN": "먼저 모음을 볼까요?\r\n\r\nㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ\r\n\r\n지금은 전부 외우지 않아도 괜찮아요.\r\n모양과 소리를 천천히 같이 봐요.\r\n\r\nㅏ\r\nㅓ\r\nㅗ\r\nㅜ\r\nㅡ\r\nㅣ\r\n\r\n한 번 따라 읽어 보세요."
+      },
+      "updatedAt": "2026-09-16T08:05:34.48572+00:00",
+      "rowSha256": "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71"
+    },
+    {
+      "idHash": "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 4,
+      "type": "explanation",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "再认识基础辅音"
+      },
+      "script": {
+        "ko-KR": "이번에는 자음을 볼게요.\r\n\r\nㄱ, ㄴ, ㄷ, ㄹ,\r\nㅁ, ㅂ, ㅅ, ㅇ\r\n\r\n모양을 먼저 천천히 보세요.\r\n\r\n지금은 완벽하게 외우는 것보다\r\n자음과 모음이 다르다는 것을 아는 게 중요해요.",
+        "zh-CN": "이번에는 자음을 볼게요.\r\n\r\nㄱ, ㄴ, ㄷ, ㄹ,\r\nㅁ, ㅂ, ㅅ, ㅇ\r\n\r\n모양을 먼저 천천히 보세요.\r\n\r\n지금은 완벽하게 외우는 것보다\r\n자음과 모음이 다르다는 것을 아는 게 중요해요."
+      },
+      "updatedAt": "2026-09-16T08:06:02.583445+00:00",
+      "rowSha256": "509788099c7b362f8d31d21cd3f30ba7dc0d53b42a3263fb5c32c857990d33f0"
+    },
+    {
+      "idHash": "13aac7fe2ce19bc229f6c71484d2443451d8fca313d4f1d1934d29742379ff62",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 5,
+      "type": "example",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "把辅音和元音放在一起"
+      },
+      "script": {
+        "ko-KR": "이제 자음과 모음을 같이 써 볼까요?\r\n\r\nㄱ + ㅏ = 가\r\n\r\nㄴ + ㅏ = 나\r\n\r\nㄷ + ㅏ = 다\r\n\r\nㅁ + ㅏ = 마\r\n\r\n이렇게 자음과 모음을 모아서\r\n한 글자를 만들어요.",
+        "zh-CN": "이제 자음과 모음을 같이 써 볼까요?\r\n\r\nㄱ + ㅏ = 가\r\n\r\nㄴ + ㅏ = 나\r\n\r\nㄷ + ㅏ = 다\r\n\r\nㅁ + ㅏ = 마\r\n\r\n이렇게 자음과 모음을 모아서\r\n한 글자를 만들어요."
+      },
+      "updatedAt": "2026-09-16T08:06:16.922626+00:00",
+      "rowSha256": "b465ed53b874a6fda55bf46171dbcd0a8002ef5b572971a5dec5cdad308d9bc4"
+    },
+    {
+      "idHash": "d5a053756489e51339ea72e33f6484f8291089bd9043622769626de59ba0f096",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 6,
+      "type": "explanation",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "一个音节里面有什么？"
+      },
+      "script": {
+        "ko-KR": "한글 한 글자에는\r\n자음과 모음이 들어가요.\r\n\r\n앞에 오는 자음을\r\n초성이라고 해요.\r\n\r\n가운데 모음을\r\n중성이라고 해요.\r\n\r\n아래에 자음이 하나 더 올 수도 있어요.\r\n이것을 종성이라고 해요.\r\n\r\n예를 들어\r\n“한”을 볼까요?\r\n\r\nㅎ은 초성,\r\nㅏ는 중성,\r\nㄴ은 종성이에요.",
+        "zh-CN": "한글 한 글자에는\r\n자음과 모음이 들어가요.\r\n\r\n앞에 오는 자음을\r\n초성이라고 해요.\r\n\r\n가운데 모음을\r\n중성이라고 해요.\r\n\r\n아래에 자음이 하나 더 올 수도 있어요.\r\n이것을 종성이라고 해요.\r\n\r\n예를 들어\r\n“한”을 볼까요?\r\n\r\nㅎ은 초성,\r\nㅏ는 중성,\r\nㄴ은 종성이에요."
+      },
+      "updatedAt": "2026-09-16T08:06:32.308588+00:00",
+      "rowSha256": "ec3853feb3bfe2f6e83379cc471f282e199cb0cea537a6d7b6f3bf4663b03f7f"
+    },
+    {
+      "idHash": "43b90695aa195bf4432f04cba8629b107e6f229e1854adeaed8293766fa3507a",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 7,
+      "type": "instruction",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "一起试一试"
+      },
+      "script": {
+        "ko-KR": "잘했어요.\r\n자음과 모음을 잘 구분했어요.\r\n\r\n괜찮아요.\r\n다시 천천히 볼까요?",
+        "zh-CN": "练习1：\r\n下面哪一个是元音？\r\nA. ㄱ\r\nB. ㅏ\r\nC. ㄴ\r\n正确答案：B. ㅏ\r\n\r\n练习2：\r\nㄱ + ㅏ 组成什么？\r\nA. 가\r\nB. 나\r\nC. 다\r\n正确答案：A. 가\r\n\r\n教师反馈台词：\r\n잘했어요.\r\n자음과 모음을 잘 구분했어요.\r\n\r\n如果答错：\r\n괜찮아요.\r\n다시 천천히 볼까요?"
+      },
+      "updatedAt": "2026-09-16T08:06:46.149325+00:00",
+      "rowSha256": "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e"
+    },
+    {
+      "idHash": "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369",
+      "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+      "order": 8,
+      "type": "summary",
+      "title": {
+        "ko-KR": "새 수업 단계",
+        "zh-CN": "今天学了什么？"
+      },
+      "script": {
+        "ko-KR": "오늘은 한글의 기본 구조를 배웠어요.\r\n\r\n한글에는\r\n자음과 모음이 있어요.\r\n\r\n자음과 모음을 모으면\r\n한 글자를 만들 수 있어요.\r\n\r\n그리고 한 글자에는\r\n초성, 중성,\r\n그리고 종성이 올 수 있어요.\r\n\r\n아주 잘했어요.\r\n\r\n다음에는 글자를 하나씩 더 자세히 배워 볼게요.",
+        "zh-CN": "오늘은 한글의 기본 구조를 배웠어요.\r\n\r\n한글에는\r\n자음과 모음이 있어요.\r\n\r\n자음과 모음을 모으면\r\n한 글자를 만들 수 있어요.\r\n\r\n그리고 한 글자에는\r\n초성, 중성,\r\n그리고 종성이 올 수 있어요.\r\n\r\n아주 잘했어요.\r\n\r\n다음에는 글자를 하나씩 더 자세히 배워 볼게요."
+      },
+      "updatedAt": "2026-09-16T08:07:01.111394+00:00",
+      "rowSha256": "cc9ab470ee11179cf2becc619fa35d0e94ad364538d2465eb2008af17121c495"
+    }
+  ],
+  "status": "READ_ONLY_AFTER_VERIFICATION_MISMATCH",
+  "retryExecuted": false,
+  "logs": {
+    "versionCount": 1,
+    "versions": [
+      {
+        "idSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+        "lessonSha256": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+        "versionNumber": 1,
+        "status": "draft",
+        "title": {},
+        "publishedAt": null,
+        "createdAt": "2026-09-16T07:11:49.544966+00:00"
+      }
+    ],
+    "nodeCount": 8,
+    "logs": {
+      "add_node": 8,
+      "create_draft": 1,
+      "update_node": 25
+    },
+    "activeInconsistentFences": 0
+  }
+}

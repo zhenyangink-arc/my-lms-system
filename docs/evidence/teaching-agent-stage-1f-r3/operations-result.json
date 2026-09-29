@@ -1,0 +1,97 @@
+{
+  "startupOnly": true,
+  "realNextStart": true,
+  "providerFixtureOnly": true,
+  "productionMutations": 0,
+  "negative": [
+    {
+      "mode": "start-off",
+      "pageStatus": 200,
+      "buttons": 0,
+      "post": 404,
+      "extraRuns": 0
+    },
+    {
+      "mode": "start-wrong-course",
+      "pageStatus": 200,
+      "buttons": 0,
+      "post": 403,
+      "extraRuns": 0
+    },
+    {
+      "mode": "start-wrong-user",
+      "pageStatus": 200,
+      "buttons": 0,
+      "post": 403,
+      "extraRuns": 0
+    }
+  ],
+  "noEnrollment": {
+    "pageStatus": 200,
+    "buttons": 0
+  },
+  "startupReality": {
+    "configFileAloneDoesNotSwitchOff": true
+  },
+  "listenerStop": {
+    "signalled": 1,
+    "forcedKill": false
+  },
+  "replacement": {
+    "started": true,
+    "mode": "start-off",
+    "startupOnly": true,
+    "port": 36411
+  },
+  "kill": {
+    "newPost": 404,
+    "ownerGet": 200,
+    "cancelStatus": 200,
+    "terminal": "run.cancelled",
+    "persisted": "cancelled",
+    "extraRuns": 0
+  },
+  "drain": {
+    "active": 0,
+    "lateProvider": 0,
+    "lateTool": 0,
+    "observedMs": 2200,
+    "runMs": 11541
+  },
+  "beforeRollback": {
+    "agent_runs": 15,
+    "agent_messages": 25,
+    "agent_conversations": 15,
+    "agent_run_events": 200
+  },
+  "rollback": {
+    "pageStatus": 200,
+    "classroom": 3,
+    "agentButtons": 0,
+    "post": 404,
+    "counts": {
+      "agent_runs": 15,
+      "agent_messages": 25,
+      "agent_conversations": 15,
+      "agent_run_events": 200
+    }
+  },
+  "productionTimeoutSimulation": {
+    "signalled": 1,
+    "forcedKill": true,
+    "persisted": {
+      "status": "running",
+      "deadline_at": "2026-09-14T12:37:25.938+00:00",
+      "cancel_requested_at": "2026-09-14T12:36:41.7223+00:00"
+    },
+    "elapsedMs": 47021,
+    "drainConverged": false,
+    "verdict": "FAIL"
+  },
+  "lookupRunIds": {
+    "completed": "d2ae9913-44d0-42ee-87fe-50aaa4873568",
+    "cancelled": "dbdc21a7-c94e-41e8-8f80-d9ffd9aef64f",
+    "orphan": "6a5fd4d1-80f7-437b-9d6e-487dad58d8ac"
+  },
+  "liveProviderRequests": 0
+}

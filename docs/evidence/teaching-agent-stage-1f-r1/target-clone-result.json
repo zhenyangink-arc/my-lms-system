@@ -1,0 +1,25 @@
+{
+  "mode": "clone",
+  "network": "none",
+  "container": "uply-stage1fr1-clone-00c557b3",
+  "steps": [
+    {
+      "file": "202609140000_agent_core_foundation.sql",
+      "exit": 0
+    },
+    {
+      "file": "202609140001_agent_runtime_completion_evidence.sql",
+      "exit": 0
+    },
+    {
+      "file": "202609140002_agent_run_cancel_request.sql",
+      "exit": 0
+    }
+  ],
+  "snapshotSha256": "127e4fce8c0fb389b626fb7001586196fe1db0f28470ebe5de90c59791037aa4",
+  "rolesExit": 0,
+  "restoreExit": 0,
+  "roleAdaptation": "bootstrap postgres remains superuser; membership grants preserved but issued by bootstrap postgres instead of hosted supabase_admin",
+  "agentTables": "5",
+  "success": true
+}

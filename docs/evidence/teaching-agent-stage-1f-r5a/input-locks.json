@@ -1,0 +1,57 @@
+{
+  "files": [
+    {
+      "path": "docs/teaching-agent-stage-1f-r4g-pilot-operations-acceptance-closure.md",
+      "sha256": "781fc4152104407bf1e706e9e480816b7f5c50a431ae0abdae402075901c0ac0"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r4f-reconciler-receipt-closure.md",
+      "sha256": "209a2c490762898d3205d0f37e0388cddb4c72cfc66ea827fefcbd53837c6c5d"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r4d-backup-recovery-verification.md",
+      "sha256": "e1e1d2a5230aac9de36b200ff2c93dfbfcf3db2f1ff984a1efda4a1a1dd03543"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r4a-release-metadata-closure.md",
+      "sha256": "360c5c453449456c9489e21a5e932829e6ae04a822989a1aa30030a2417f48b8"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r4-production-authorization-gate.md",
+      "sha256": "6d3514254b9f5cf58cf0ae9114bca46fba42c5a8c6504bfb42ba806cb6c11265"
+    },
+    {
+      "path": "docs/teaching-agent-pilot-operations-runbook.md",
+      "sha256": "9625ad755937ee45359b3b70e17356f77fb35cfebe9d2fc43d2292041b0aa67e"
+    },
+    {
+      "path": "docs/teaching-agent-pilot-operations-roles.md",
+      "sha256": "1cad4e6e5fa79d9b2056101d326a7f0c32853aa6f51b1035192dd0b150a7e916"
+    },
+    {
+      "path": "docs/teaching-agent-provider-policy-approval.md",
+      "sha256": "945875b9a51b9aa97e9d94e2885c1366a6f1e6d95be206cdb5588cb2b3d63393"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4a/release-metadata-manifest.json",
+      "sha256": "d724728896067d00126651364e2a1bac682f0ee7b76c0362c494d450dfbca7e1"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4/release-integrity.json",
+      "sha256": "1daf6d1e6275e2d1f5e296803d73106d496b88de706d040c10e43a1ab42b22f6"
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6"
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5"
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf"
+    }
+  ],
+  "historicalDocumentsModified": false
+}

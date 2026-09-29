@@ -1,0 +1,30 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "designStatus": "PASS / IMPLEMENTATION VALIDATION PENDING",
+  "forbiddenOutput": [
+    "private answer",
+    "answer_key",
+    "secret row",
+    "private definition digest",
+    "reversible answer hash",
+    "grader configuration",
+    "raw selected answer",
+    "raw actor/tenant IDs",
+    "PII",
+    "JWT",
+    "DB credentials"
+  ],
+  "allowed": "attempt correctness classification and aggregate mastery are facts, not answer keys",
+  "privateDomainRead": "existing repository reads definition+secret internally to validate binding. Tool receives only explicit bounded read port result, never repository or private rows.",
+  "leastCapability": "read port accepts Pick<DurableActivityRepository, read|evidenceStorage>; no submit/checkpoint/restore/play/progress method exposed",
+  "noClientFactsAuthority": true,
+  "currentB3BoundaryEvidence": "../teaching-agent-stage-1f-r7c-b/b3-execution-private-boundary.json",
+  "newToolLeakageScan": "NOT EXECUTED (tool not implemented)",
+  "existingToolsRegression": "55 PASS / 1 SKIP; network disabled; redaction tests pass"
+}

@@ -1,0 +1,26 @@
+{
+  "nodeNumber": 5,
+  "title": "把辅音和元音放在一起",
+  "formalType": "example",
+  "purpose": "练习字母组合并接触简单音节朗读。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "四组组合全部正确；两行가 나 다 마 / 라 바 사 아对应已展示的八个辅音与ㅏ。未把字母名称等同读音。“아”의 ㅇ无声限定该字的初声位置，不把终声ㅇ错误地说成无声。引导每个读一次，保留Exposure，未加入音变。文本包含读音示范指令，但没有证明音频正确性或学生掌握。",
+  "resolvedItems": [
+    "S3"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+  "teacherScriptSha256": "42ede111e83784400b227c7dd87b1d3cec65018f7303818e1b5969b1bb220507",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

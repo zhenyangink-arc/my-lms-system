@@ -1,0 +1,56 @@
+{
+  "afterCatalogDigest": "696d18645fa36198d0598de54a12cbbd33c33fd7207dc140a90ec18252855d33",
+  "agentTables": 5,
+  "baselineApplied": true,
+  "beforeCatalogDigest": "eebf698f74d4d076478ea07bc0d15c73b4d20e2284a028b504d14bbae68431de",
+  "catalogCounts": {
+    "columns": 2334,
+    "constraints": 1609,
+    "defaultGrants": 6,
+    "eventTriggers": 1,
+    "functions": 601,
+    "indexes": 620,
+    "inheritance": 0,
+    "policies": 292,
+    "publicationMemberships": 1,
+    "relations": 223,
+    "schemas": 4,
+    "sequences": 21,
+    "triggers": 287,
+    "types": 416,
+    "views": 8
+  },
+  "emptyApplicationTablesAfterFixtureRollback": 194,
+  "emptyApplicationTablesBeforeFixtures": 188,
+  "existingDatabaseGuard": "PASS",
+  "liveProviderRequests": 0,
+  "mode": "baseline-fresh",
+  "platform": "Offline schema-only PostgreSQL prerequisite stand-in; NOT full Supabase staging",
+  "preCutoverLedgerExact": true,
+  "productionWrites": 0,
+  "roleAdaptation": "Bootstrap postgres remains superuser; role memberships issued by bootstrap postgres.",
+  "steps": [
+    {
+      "exit": 0,
+      "filename": "202609140000_agent_core_foundation.sql"
+    },
+    {
+      "exit": 0,
+      "filename": "202609140001_agent_runtime_completion_evidence.sql"
+    },
+    {
+      "exit": 0,
+      "filename": "202609140002_agent_run_cancel_request.sql"
+    },
+    {
+      "exit": 0,
+      "filename": "202609140003_teaching_operations_reissue.sql"
+    },
+    {
+      "exit": 0,
+      "filename": "202609140004_completion_policy_management_reissue.sql"
+    }
+  ],
+  "success": true,
+  "syntheticFixture": "PASS; Auth insert -> app profile triggers; rolled back"
+}

@@ -1,0 +1,78 @@
+{
+  "items": [
+    {
+      "type": "single choice",
+      "status": "FOUND",
+      "domainType": "single_choice",
+      "nativeBlock": "multiple_choice",
+      "render": "Native MultipleChoiceBlock; existing ActivityExecutor",
+      "grade": "Server private index answer",
+      "complete": "Existing attempt RPC and progress readback"
+    },
+    {
+      "type": "fill blank",
+      "status": "FOUND",
+      "domainType": "fill_blank",
+      "nativeRenderer": "unsupported",
+      "render": "Existing ActivityExecutor fill-group/compat learning",
+      "grade": "Server text/text_array normalization",
+      "complete": "Existing attempts/node progress"
+    },
+    {
+      "type": "sentence order",
+      "status": "FOUND",
+      "domainType": "ordering",
+      "nativeRenderer": "unsupported",
+      "render": "Existing ActivityExecutor ordering",
+      "grade": "Server complete permutation check",
+      "complete": "Existing attempts/node progress"
+    },
+    {
+      "type": "listening",
+      "status": "FOUND",
+      "domainType": "listening",
+      "nativeRenderer": "unsupported",
+      "render": "Existing learning tools/media + activity forms",
+      "grade": "Server objective grading; ready audio required",
+      "complete": "Existing attempts/page/guided-repeat evidence"
+    },
+    {
+      "type": "speaking",
+      "status": "FOUND",
+      "domainType": "speaking",
+      "nativeRenderer": "unsupported",
+      "render": "Existing recording workflow and ActivityExecutor",
+      "grade": "Open activity requirements + own recording evidence; not automatic pronunciation mastery",
+      "complete": "record_smart_textbook_speaking_attempt / recording domain"
+    },
+    {
+      "type": "pronunciation",
+      "status": "PARTIAL",
+      "render": "Manifest schema/rubric and speaking evidence support; native pronunciation renderer unsupported",
+      "grade": "No verified independent automatic pronunciation evaluator in canonical path",
+      "complete": "Must extend existing speaking/activity evidence, not invent another progress system"
+    },
+    {
+      "type": "AI dialogue",
+      "status": "PARTIAL",
+      "render": "Separate existing conversation/roleplay paths; manifest role_play declared unsupported",
+      "grade": "Not a canonical native no-provider Activity completion implementation",
+      "complete": "Exclude from R7B; no old conversation Provider reuse as Agent fallback"
+    }
+  ],
+  "completionContract": "ActivityResult exists (ok/correct/attemptNumber/preview/nodeCompleted/completionPercent); ActivityForm optional onResult and native choice refresh exist. Missing correlated activity_complete notification to cue owner.",
+  "gradingAuthority": "Existing server domain; browser answer and AI output never grading truth.",
+  "legacyFallbackRisk": "submitActivityInDomain has PGRST202 objective-attempt fallback. Native canonical path should require verified existing atomic RPC and fail closed if absent; no new compatibility fallback. Current catalog shows record_smart_textbook_attempt overloads.",
+  "sources": [
+    "activity-domain",
+    "activity-renderer",
+    "native-choice",
+    "learning-backend",
+    "progress"
+  ],
+  "completionReadbackDetail": {
+    "source": "learning-history",
+    "current": "createLearningHistoryReader builds server.activityProgress from same-activity persisted is_correct=true OR meets_completion_requirements. Parent nodeCompleted is a different aggregate.",
+    "gap": "ServerLearningState.revision currently equals sourceRevision (content), not a monotonic student-state revision. Need separate state evidence/digest or authoritative completion receipt for correlation, without treating content revision as progress concurrency token."
+  }
+}

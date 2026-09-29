@@ -1,0 +1,19 @@
+{
+  "receiptVersion": 1,
+  "operator": "杨震",
+  "creationMethod": "OFFICIAL_AUTHORING_WORKFLOW",
+  "transport": "EXISTING_CHROME_CDP",
+  "targetSlot": "韩语初级 / 预备课：韩文字母入门",
+  "logicalAlias": "hangul-introduction",
+  "startedAtUtc": "2026-09-16T06:42:37.800Z",
+  "authenticatedOwnPlatformOwner": true,
+  "sessionSecretsReadOrExported": false,
+  "logicalCreateAttemptsAfterRetirement": 1,
+  "priorUserAttempt": "FAILED AND FULLY ROLLED BACK; no blind retry",
+  "result": "SUCCESS_VISIBLE",
+  "retryAllowed": false,
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "objectiveCount": 4,
+  "statusText": "教学内容草稿已创建。请继续编写脚本并审核发布。",
+  "endedAtUtc": "2026-09-16T06:42:39.659Z"
+}

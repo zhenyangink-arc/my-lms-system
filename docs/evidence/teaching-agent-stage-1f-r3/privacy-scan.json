@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "textFiles": 57,
+  "privateCredentialMatches": 0,
+  "credentialPatternMatches": 0,
+  "screenshot": "synthetic only; visually reviewed",
+  "productionContentArchived": false,
+  "finalReportAndMetadataRescan": "PASS",
+  "finalFilesScanned": 60
+}

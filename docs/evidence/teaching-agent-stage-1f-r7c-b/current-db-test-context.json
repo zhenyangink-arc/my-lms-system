@@ -1,0 +1,28 @@
+{
+  "status": "BLOCKED",
+  "blocker": "CURRENT-DB TEST IDENTITY BLOCKER",
+  "validatedCurrentDbActorContract": false,
+  "existingOwnerPreview": "preview=true; tenantId=null; returns grading without attempt/progress write",
+  "existingStudentSession": "published-only admission; current script/content draft",
+  "isolatedR7CActor": "synthetic FK rows in disposable test DB only",
+  "currentDbIdentityFks": [
+    "digital_textbook_attempts.student_id -> auth.users.id",
+    "digital_textbook_node_progress.student_id -> auth.users.id",
+    "tenant_id -> public.tenants.id"
+  ],
+  "searchScope": [
+    "src",
+    "scripts",
+    "supabase/migrations",
+    "tests/fixtures",
+    "current DB metadata catalogs"
+  ],
+  "qualification": "No legal current-DB test identity contract was located in audited sources/catalog. This does not assert that no manually provisioned account exists. No account was selected or impersonated.",
+  "requiredInput": "No existing contract known by user. Proposed new formal contract requires separate design/implementation/write approval.",
+  "authUserRowsRead": 0,
+  "authWrites": 0,
+  "currentDevelopmentDbDevTestActorContract": "NOT FOUND",
+  "formalDurableTestScope": "NOT FOUND",
+  "userConfirmedNoKnownContract": true,
+  "canonicalDesignMayContinueWithoutActor": true
+}

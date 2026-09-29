@@ -1,0 +1,314 @@
+{
+  "overall": "CONDITIONAL",
+  "executionMvp": "PASS WITH FIXTURE LIMITATION",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "stage1G": "NOT READY",
+  "gates": [
+    {
+      "id": "G-R7B-1",
+      "name": "R7A Ready",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-2",
+      "name": "R6F Freeze Verified",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-3",
+      "name": "Write Authorization",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-4",
+      "name": "Existing LessonManifest Reused",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-5",
+      "name": "Existing LessonRuntime Reused",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-6",
+      "name": "No Second Runtime",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-7",
+      "name": "No Second Activity System",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-8",
+      "name": "No Second Progress System",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-9",
+      "name": "Native Projection Implemented",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-10",
+      "name": "Node5 Binding Valid",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-11",
+      "name": "Node7 Public Projection Safe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-12",
+      "name": "Private Answer Isolated",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-13",
+      "name": "Native Video Renderer",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-14",
+      "name": "Video Play/Pause",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-15",
+      "name": "Time Cue Trigger",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-16",
+      "name": "Cue Validation",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-17",
+      "name": "Cue Dedupe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-18",
+      "name": "Activity Reveal",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-19",
+      "name": "Existing Activity Renderer Reused",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-20",
+      "name": "Existing Grading Domain Reused",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-21",
+      "name": "Completion Authority Defined",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-22",
+      "name": "Correct Completion Resumes",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-23",
+      "name": "Wrong Answer Does Not Resume",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-24",
+      "name": "UNKNOWN Does Not Resume",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-25",
+      "name": "Completion Readback",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-26",
+      "name": "Duplicate Callback Safe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-27",
+      "name": "Backward Seek Safe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-28",
+      "name": "Forward Seek Mandatory Cue Safe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-29",
+      "name": "Refresh Waiting Safe",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-30",
+      "name": "Refresh Completed Safe",
+      "status": "PASS",
+      "evidence": "PASS at isolated fixture level using existing server grader; production durable completion NOT YET VERIFIED."
+    },
+    {
+      "id": "G-R7B-31",
+      "name": "Stale Generation Ignored",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-32",
+      "name": "User Pause Respected",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-33",
+      "name": "Autoplay Failure Safe",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-34",
+      "name": "Media Error Fail Closed",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-35",
+      "name": "Layout Single Owner",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-36",
+      "name": "Answer Leakage Scan",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-37",
+      "name": "Runtime Facts Read-Port",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-38",
+      "name": "Runtime Facts No Private Answer",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-39",
+      "name": "Old Learning Agent Fallback Not Used",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-40",
+      "name": "Legacy Chapter-One Not Canonical Path",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-41",
+      "name": "Frozen Teaching Script Unchanged",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-42",
+      "name": "DB Business Writes Zero",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-43",
+      "name": "Migration Zero",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-44",
+      "name": "Publish Zero",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-45",
+      "name": "Agent Runs Zero",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-46",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-47",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-48",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-49",
+      "name": "Tests Pass",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    },
+    {
+      "id": "G-R7B-50",
+      "name": "Build / Type Validation Pass",
+      "status": "PASS",
+      "evidence": "Isolated Next build and TypeScript PASS. Scoped lint retains 3 pre-existing React Hook errors, no new-file errors."
+    },
+    {
+      "id": "G-R7B-51",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "evidence": "Verified in source, isolated test and/or independent read-only end-state as applicable."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "nodeNumber": 6,
+  "title": "一个音节里面有什么？",
+  "formalType": "explanation",
+  "purpose": "区分初声、中声、终声角色及字形位置。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "中声以모음角色说明，가中ㅏ在ㄱ右侧、고中ㅗ在ㄱ下方，明确位置随形态变化，原가운데定义已消失。앞可理解为音节顺序的前部而非固定左侧；终声下面可再有一个辅音限定入门单终声例子，并未宣称所有终声只能含一个字母。한=ㅎ/ㅏ/ㄴ完全正确。ㅎ在例字中直接指出，未要求提前背会它；无必要的前置知识缺口。三角色是本目标必要术语，以短句分段，不扩展받침规则。",
+  "resolvedItems": [
+    "M3"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+  "teacherScriptSha256": "ee72717378420337f4f2f7d0ddcc463a1d5cf992bd353a365ccb7922590eba47",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

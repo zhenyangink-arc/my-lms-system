@@ -1,0 +1,64 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "LOCKED_DESIGN",
+  "matrix": [
+    {
+      "producer": "legacy v1",
+      "reader": "legacy v1 consumer",
+      "result": "ALLOW if its existing certification/auth/fence/session conditions hold"
+    },
+    {
+      "producer": "legacy v1",
+      "reader": "native v2 facts reader",
+      "result": "REJECT_PUBLICATION_KIND before private projection; never reinterpret legacy Activities"
+    },
+    {
+      "producer": "native v2",
+      "reader": "native v2 facts reader",
+      "result": "ALLOW after full native certification, Student authorization and same-snapshot fence/facts validation"
+    },
+    {
+      "producer": "native v2",
+      "reader": "legacy loader/session consumer",
+      "result": "REJECT_PUBLICATION_KIND before any legacy field access"
+    },
+    {
+      "producer": "either known version",
+      "reader": "generic publication repository/current/session",
+      "result": "RETURN certified discriminated union; dispatch exactly one validator"
+    },
+    {
+      "producer": "unknown/mixed/forged tuple",
+      "reader": "any",
+      "result": "REJECT; no probing another validator"
+    },
+    {
+      "producer": "native fails certification",
+      "reader": "automatic legacy fallback",
+      "result": "NEVER; no such path in proposed contract"
+    }
+  ],
+  "historicalCompatibility": "All old payload bytes and digest meanings retained; parse compatibility is not permission to revive expired/revoked/retired runtime sessions.",
+  "legacyWriterDecision": "RETAIN explicit existing producer, no retirement in this package. It can be separately reviewed later; native path never invokes it."
+}

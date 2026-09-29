@@ -1,0 +1,12 @@
+{
+  "exit": 0,
+  "seconds": 95.31,
+  "instrumented": false,
+  "publicConfigMatchesProduction": true,
+  "productionDeploy": false,
+  "liveProviderCalls": 0,
+  "buildId": "E17_661sEdKfiul8NvQS9",
+  "artifactDigest": "0d0880c7d1468f7da74a087ba5cbc335a9dbda6897d6b0af500c8e8306b13793",
+  "artifactFiles": 1376,
+  "archiveDigest": "55037d8983e217261fa11bc0dece86747f73ead777fe9c149281ec0ee7330b09"
+}

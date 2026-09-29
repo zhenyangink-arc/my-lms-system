@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "physicalCount": 8,
+  "logicalCount": 8,
+  "orders": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "types": [
+    "opening",
+    "explanation",
+    "explanation",
+    "explanation",
+    "example",
+    "explanation",
+    "instruction",
+    "summary"
+  ],
+  "nodeIdHashes": [
+    "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+    "19e75a5c68c0704a1424cedb93823c4cc0cc691aafb598b94153d4428e23d5b8",
+    "e923e2b12ad3945b5f2ef93e4f005fee599452655709a96ae114f3ec7fd65e86",
+    "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+    "13aac7fe2ce19bc229f6c71484d2443451d8fca313d4f1d1934d29742379ff62",
+    "d5a053756489e51339ea72e33f6484f8291089bd9043622769626de59ba0f096",
+    "43b90695aa195bf4432f04cba8629b107e6f229e1854adeaed8293766fa3507a",
+    "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369"
+  ],
+  "duplicateCount": 0,
+  "terminalNodeOrder": 8,
+  "manualReorderWrites": 0
+}

@@ -1,0 +1,91 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "ipv6DefaultRoutePresent": false,
+  "publicGlobalIPv6AddressCount": 0,
+  "ULAAddressCount": 1,
+  "linkLocalCount": 52,
+  "ipv6Disabled": false,
+  "ipv4DefaultRoutePresent": true,
+  "ipv6RoutingPolicies": [
+    {
+      "priority": 0,
+      "src": "all",
+      "table": "local"
+    },
+    {
+      "priority": 5210,
+      "src": "all",
+      "fwmark": "0x80000",
+      "fwmask": "0xff0000",
+      "table": "main"
+    },
+    {
+      "priority": 5230,
+      "src": "all",
+      "fwmark": "0x80000",
+      "fwmask": "0xff0000",
+      "table": "default"
+    },
+    {
+      "priority": 5250,
+      "src": "all",
+      "fwmark": "0x80000",
+      "fwmask": "0xff0000",
+      "action": "unreachable"
+    },
+    {
+      "priority": 5270,
+      "src": "all",
+      "table": "52"
+    },
+    {
+      "priority": 32766,
+      "src": "all",
+      "table": "main"
+    }
+  ],
+  "resolver": {
+    "path": "/etc/resolv.conf",
+    "symlink": true,
+    "nameservers": [
+      "127.0.0.53"
+    ]
+  },
+  "classification": "LOCAL_IPV6_NOT_READY",
+  "targetSpecificReachability": "UNKNOWN_NO_ENDPOINT_OR_PROBE",
+  "noDNSOrNetworkProbe": true,
+  "publicUnicastIPv6RouteCount": 0
+}

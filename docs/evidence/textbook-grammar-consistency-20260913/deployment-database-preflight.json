@@ -1,0 +1,693 @@
+{
+  "session": {
+    "readOnly": "on",
+    "serverVersion": "17.6",
+    "checkedAt": "2026-09-13T02:52:53.420266+00:00"
+  },
+  "functions": [
+    {
+      "schema": "private",
+      "name": "is_platform_owner",
+      "args": "",
+      "result": "boolean",
+      "language": "sql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": true,
+      "serviceExecute": true,
+      "definitionSha256": "e0bf08c5f13e4ed0953bb8c89f039ddb53fdd03400823c5a966315578b517059",
+      "bodySha256": "feda20838a8210f9d615b457e953599565b3668ef06596fe255858d350f44043",
+      "repositoryFile": "202607210007_platform_owner_tenant_bypass.sql",
+      "repositoryBodySha256": "feda20838a8210f9d615b457e953599565b3668ef06596fe255858d350f44043",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "assert_runtime_dependency_fence_v1",
+      "args": "p_snapshot text, p_capture jsonb",
+      "result": "boolean",
+      "language": "sql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": true,
+      "definitionSha256": "1d5556b016184617e160b7283af9fb27912db76543bb2070b7b1a4058047e7eb",
+      "bodySha256": "c4e0dc71adaa58bdbf630a7a8ba5e5591bab5ebe92de89cc1997ee695134ee9e",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "c4e0dc71adaa58bdbf630a7a8ba5e5591bab5ebe92de89cc1997ee695134ee9e",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "begin_runtime_textbook_edit_v1",
+      "args": "p_actor uuid, p_textbook uuid",
+      "result": "jsonb",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": true,
+      "definitionSha256": "6dd9c2425720cc39feac99ddb1a636fccf8f0d047c5f04a8bc552d9910138e4f",
+      "bodySha256": "c4a9de1eb2f45ab9134aca2f9a52197e0eba4699a4c49a5395aad11cdf1ed5dd",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "c4a9de1eb2f45ab9134aca2f9a52197e0eba4699a4c49a5395aad11cdf1ed5dd",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "edit_runtime_chapter_activity_v1",
+      "args": "p_actor uuid, p_scope jsonb, p_activity uuid, p_prompt jsonb, p_answer jsonb",
+      "result": "jsonb",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": true,
+      "definitionSha256": "b043762c815b04089a54e1af3da08642a20becf726ea6073accf9fc8d9b002e6",
+      "bodySha256": "3e83f4d28d6001709d4774bb553c951aaaf12f00a11bf6e9f7f983218ff8be7d",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "3e83f4d28d6001709d4774bb553c951aaaf12f00a11bf6e9f7f983218ff8be7d",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "publish_runtime_snapshot_v2",
+      "args": "p_actor uuid, p_scope jsonb, p_expected jsonb, p_operation text, p_bundle jsonb, p_target text",
+      "result": "jsonb",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": true,
+      "definitionSha256": "df8155ea26e8e7617feb3fcb1d4c55bbb5fd12524cb5ad07f9c80735b7ab2442",
+      "bodySha256": "74bc69fa18925391cda65bd9a7f319258e6cc970ab53210f213b7f33eca59110",
+      "repositoryFile": "202609110002_restore_single_version_publish_wrapper.sql",
+      "repositoryBodySha256": "74bc69fa18925391cda65bd9a7f319258e6cc970ab53210f213b7f33eca59110",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "read_chapter_practice_snapshots",
+      "args": "p_app_id uuid",
+      "result": "TABLE(chapter_id uuid, version_id uuid, lesson_id uuid, chapter_test_id uuid, snapshot jsonb)",
+      "language": "sql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": true,
+      "serviceExecute": true,
+      "definitionSha256": "d79eb3feb9473b9b87249d419d7f89d75d1b69d9b0fe2b089dc21d512f6194ed",
+      "bodySha256": "44141eccc0e6ab1fb117420c0dcaaaaf0a15749ebbf106d76b3872b98f8d6de5",
+      "repositoryFile": "202609080001_chapter_practice_bindings.sql",
+      "repositoryBodySha256": "44141eccc0e6ab1fb117420c0dcaaaaf0a15749ebbf106d76b3872b98f8d6de5",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "public",
+      "name": "review_chapter_practice_binding",
+      "args": "p_app_id uuid, p_chapter_id uuid, p_expected_revision integer, p_expected_snapshot jsonb, p_enabled boolean",
+      "result": "uuid",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": true,
+      "serviceExecute": true,
+      "definitionSha256": "92b9133f6215ebbf295442d56c956a35ca47e15f3149cd9f7678fd67e39d36d8",
+      "bodySha256": "a214e9497aa100a1f430f5336a84e2a87a7338a9b875d881f8bdf22f199c2211",
+      "repositoryFile": "202609080001_chapter_practice_bindings.sql",
+      "repositoryBodySha256": "a214e9497aa100a1f430f5336a84e2a87a7338a9b875d881f8bdf22f199c2211",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "authoring_lock",
+      "args": "",
+      "result": "void",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "820320fcdb4b8668e48bb96c65043bfdc4e3c782758fd96981e4b533c1bbf9a7",
+      "bodySha256": "6dca974dd1ea908bdad9eac0fc24406f08de582ab8fcd0ffedf5a196bc861886",
+      "repositoryFile": "202609100002_runtime_publication_dependency_fence.sql",
+      "repositoryBodySha256": "6dca974dd1ea908bdad9eac0fc24406f08de582ab8fcd0ffedf5a196bc861886",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "capture",
+      "args": "p_scope jsonb",
+      "result": "jsonb",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "845432f88be6926c0e8fb217d5823b5f27d0556e3a1c273a7bf6f298bda7ad19",
+      "bodySha256": "6dc4d7bea45d36e3b0239d3d312e45b697b2a4bfba961d083985bf494e887c6b",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "6dc4d7bea45d36e3b0239d3d312e45b697b2a4bfba961d083985bf494e887c6b",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "capture_rows",
+      "args": "p_scope jsonb",
+      "result": "jsonb",
+      "language": "sql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "357531c78777fe1a4cec821f5b64a205e1f3f1ff5c6c7a017df59d8ec586ef22",
+      "bodySha256": "294227e2c48cbd639cdc0832f00f13cbe278ac6689a9000260d5bfa681b36ef3",
+      "repositoryFile": "202609100002_runtime_publication_dependency_fence.sql",
+      "repositoryBodySha256": "294227e2c48cbd639cdc0832f00f13cbe278ac6689a9000260d5bfa681b36ef3",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "check_authoring_statement",
+      "args": "",
+      "result": "trigger",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "f782d446d0bc57bba32081c59174d8d6bef1544b092bd9e6137aa1c3a2e9a5ab",
+      "bodySha256": "585342d5d2eca538b65c9008c120f0eafdd1fcd365fdb90a9d18d36c6a0a6894",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "585342d5d2eca538b65c9008c120f0eafdd1fcd365fdb90a9d18d36c6a0a6894",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "lock_authoring_statement",
+      "args": "",
+      "result": "trigger",
+      "language": "plpgsql",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "04c7ab7f5dd35818a5cbb12fd40f3c63edac20209ccfc599c1e04b5c16992086",
+      "bodySha256": "684a3e94ae7f5674e05f8605e931629c527599e67b2e2e4bef60c394979b126f",
+      "repositoryFile": "202609100002_runtime_publication_dependency_fence.sql",
+      "repositoryBodySha256": "684a3e94ae7f5674e05f8605e931629c527599e67b2e2e4bef60c394979b126f",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "owner_guard",
+      "args": "p_actor uuid",
+      "result": "void",
+      "language": "plpgsql",
+      "securityDefiner": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "a4b7274abadc1ff280835fcb8393011577632ac3b1d2aef61af697558b145531",
+      "bodySha256": "b2cf53f36c8dbc517a8f7098d49fc576188e9bad0dcf513dd3a7a04d5a672f74",
+      "repositoryFile": "202609100001_runtime_publish_foundation.sql",
+      "repositoryBodySha256": "b2cf53f36c8dbc517a8f7098d49fc576188e9bad0dcf513dd3a7a04d5a672f74",
+      "bodyMatchesRepository": true
+    },
+    {
+      "schema": "runtime_publish_private",
+      "name": "semantic_capture",
+      "args": "p_capture jsonb",
+      "result": "jsonb",
+      "language": "plpgsql",
+      "securityDefiner": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "owner": "postgres",
+      "anonExecute": false,
+      "authenticatedExecute": false,
+      "serviceExecute": false,
+      "definitionSha256": "7f19e99fe1b142fc0d2478c925bf5c9765a3e7fc75b2f3dd4d86a8b27b7e7dbf",
+      "bodySha256": "ec948c22551ff5be2fb918a823ce6ea8555b0979690beff7a0d9c10f3cae25fd",
+      "repositoryFile": "202609100004_runtime_single_version_authoring.sql",
+      "repositoryBodySha256": "ec948c22551ff5be2fb918a823ce6ea8555b0979690beff7a0d9c10f3cae25fd",
+      "bodyMatchesRepository": true
+    }
+  ],
+  "columns": [
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "student_app_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "chapter_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "version_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "snapshot",
+      "type": "jsonb",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "revision",
+      "type": "integer",
+      "notNull": true,
+      "default": "1"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "is_enabled",
+      "type": "boolean",
+      "notNull": true,
+      "default": "true"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "reviewed_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "now()"
+    },
+    {
+      "schema": "public",
+      "table": "chapter_practice_bindings",
+      "column": "reviewed_by",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "id",
+      "type": "uuid",
+      "notNull": true,
+      "default": "gen_random_uuid()"
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "module_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "node_code",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "node_type",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "sort_order",
+      "type": "integer",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "estimated_minutes",
+      "type": "integer",
+      "notNull": true,
+      "default": "5"
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "title",
+      "type": "jsonb",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "content",
+      "type": "jsonb",
+      "notNull": true,
+      "default": "'{}'::jsonb"
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "now()"
+    },
+    {
+      "schema": "public",
+      "table": "digital_textbook_nodes",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "notNull": true,
+      "default": "now()"
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "authoring_control",
+      "column": "textbook_id",
+      "type": "uuid",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "authoring_control",
+      "column": "state",
+      "type": "text",
+      "notNull": true,
+      "default": null
+    },
+    {
+      "schema": "runtime_publish_private",
+      "table": "authoring_control",
+      "column": "revision",
+      "type": "bigint",
+      "notNull": true,
+      "default": "1"
+    }
+  ],
+  "constraints": [
+    {
+      "table": "chapter_practice_bindings",
+      "name": "chapter_practice_bindings_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "chapter_practice_bindings",
+      "name": "chapter_practice_bindings_revision_check",
+      "definition": "CHECK ((revision > 0))"
+    },
+    {
+      "table": "chapter_practice_bindings",
+      "name": "chapter_practice_bindings_snapshot_check",
+      "definition": "CHECK ((jsonb_typeof(snapshot) = 'array'::text))"
+    },
+    {
+      "table": "chapter_practice_bindings",
+      "name": "chapter_practice_bindings_student_app_id_chapter_id_key",
+      "definition": "UNIQUE (student_app_id, chapter_id)"
+    },
+    {
+      "table": "chapter_practice_bindings",
+      "name": "chapter_practice_bindings_student_app_id_fkey",
+      "definition": "FOREIGN KEY (student_app_id) REFERENCES student_apps(id)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_content_check",
+      "definition": "CHECK ((jsonb_typeof(content) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_estimated_minutes_check",
+      "definition": "CHECK (((estimated_minutes >= 1) AND (estimated_minutes <= 90)))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_fkey",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_node_code_key",
+      "definition": "UNIQUE (module_id, node_code)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_sort_order_key",
+      "definition": "UNIQUE (module_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_no_decorative_labels_check",
+      "definition": "CHECK ((NOT (content ?| ARRAY['eyebrow'::text, 'typeLabel'::text, 'type_label'::text, 'interactionLabel'::text, 'interaction_label'::text])))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_node_type_check",
+      "definition": "CHECK ((node_type = ANY (ARRAY['learn'::text, 'practice'::text, 'mission'::text, 'review'::text])))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_sort_order_check",
+      "definition": "CHECK ((sort_order > 0))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_title_check",
+      "definition": "CHECK ((jsonb_typeof(title) = 'object'::text))"
+    }
+  ],
+  "triggers": [
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_set_updated_at",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER digital_textbook_nodes_set_updated_at BEFORE UPDATE ON public.digital_textbook_nodes FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "runtime_publish_fence",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER runtime_publish_fence AFTER INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.check_authoring_statement()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "runtime_publish_lock",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER runtime_publish_lock BEFORE INSERT OR DELETE OR UPDATE OR TRUNCATE ON public.digital_textbook_nodes FOR EACH STATEMENT EXECUTE FUNCTION runtime_publish_private.lock_authoring_statement()"
+    }
+  ],
+  "policies": [
+    {
+      "schemaname": "public",
+      "tablename": "chapter_practice_bindings",
+      "policyname": "standard content managers inspect practice bindings",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "SELECT",
+      "qual": "current_user_can_manage_standard_question_bank()",
+      "with_check": null
+    },
+    {
+      "schemaname": "public",
+      "tablename": "digital_textbook_nodes",
+      "policyname": "authenticated read textbook nodes",
+      "roles": [
+        "authenticated"
+      ],
+      "cmd": "SELECT",
+      "qual": "(current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM (((digital_textbook_modules module\n     JOIN digital_textbook_chapters chapter ON ((chapter.id = module.chapter_id)))\n     JOIN digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((module.id = digital_textbook_nodes.module_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+      "with_check": null
+    }
+  ],
+  "tablePrivileges": [
+    {
+      "table": "chapter_practice_bindings",
+      "rls": true,
+      "anonSelect": false,
+      "anonInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": false,
+      "authenticatedUpdate": false
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "rls": true,
+      "anonSelect": true,
+      "anonInsert": false,
+      "authenticatedSelect": true,
+      "authenticatedInsert": true,
+      "authenticatedUpdate": true
+    }
+  ],
+  "ledger": [
+    {
+      "version": "202609080001",
+      "name": "chapter_practice_bindings"
+    },
+    {
+      "version": "202609080002",
+      "name": "chapter_practice_explicit_function_grants"
+    },
+    {
+      "version": "202609080003",
+      "name": "teaching_script_source_reviews"
+    },
+    {
+      "version": "202609080006",
+      "name": "platform_application_settings"
+    },
+    {
+      "version": "202609080007",
+      "name": "conversation_platform_manager_guard"
+    },
+    {
+      "version": "202609080008",
+      "name": "institution_learning_followups"
+    },
+    {
+      "version": "202609090001",
+      "name": "recording_evidence_atomic_v2"
+    },
+    {
+      "version": "202609090002",
+      "name": "recording_domain_coordination"
+    },
+    {
+      "version": "202609100001",
+      "name": "runtime_publish_foundation"
+    },
+    {
+      "version": "202609100002",
+      "name": "runtime_publication_dependency_fence"
+    },
+    {
+      "version": "202609100003",
+      "name": "runtime_admission_control"
+    },
+    {
+      "version": "202609100004",
+      "name": "runtime_single_version_authoring"
+    },
+    {
+      "version": "202609100005",
+      "name": "chapter_publish_semantic_compatibility"
+    },
+    {
+      "version": "202609110001",
+      "name": "allow_evidence_graded_roleplay_publication"
+    },
+    {
+      "version": "202609110002",
+      "name": "restore_single_version_publish_wrapper"
+    }
+  ],
+  "counts": {
+    "nodes": 132,
+    "cards": 63,
+    "bindings": 0,
+    "openRequests": 0,
+    "authoringStates": [
+      {
+        "state": "open",
+        "count": 1
+      }
+    ],
+    "publishedPointers": 1
+  },
+  "provenance": {
+    "checkedAt": "2026-09-13T02:52:53.957Z",
+    "projectMatched": true,
+    "clientTls": "SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off, ALPN: none)",
+    "mode": "explicit REPEATABLE READ READ ONLY",
+    "sqlSha256": "cf62c1ef8b7c329af70b1086474b6ec6e8db1c80c6f6bab6e03b47d53952ba27",
+    "studentRowsRead": false,
+    "mediaObjectsAccessed": false,
+    "remoteWrites": false
+  }
+}

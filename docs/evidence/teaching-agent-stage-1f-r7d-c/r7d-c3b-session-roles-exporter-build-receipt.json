@@ -1,0 +1,173 @@
+{
+  "acquisitionProfileSha256": {
+    "DIRECT": "92fe3d598614b91eba59fd8d5c6f9f6fcf2b9d1496ac29f30855e87cc4eeb4e9",
+    "SESSION": "e9e2d0ae3d596ad9f30343c2b84cd7f581434b0fde5cc93d1ffb17337e60e07c"
+  },
+  "acquisitionSourceDigest": "6317a9632b69dc7793b632a8c22428ee691d3cec42749c2beda35e7744be4785",
+  "acquisitionSourceHashes": {
+    "scripts/teaching-agent-r7d-c3b/backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "scripts/teaching-agent-r7d-c3b/capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "scripts/teaching-agent-r7d-c3b/checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "scripts/teaching-agent-r7d-c3b/maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "scripts/teaching-agent-r7d-c3b/plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "scripts/teaching-agent-r7d-c3b/plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py": "0702a657d8f4e2a58ef83f98955aa5923080e57cc43063fdd8eba068cd60913a",
+    "scripts/teaching-agent-r7d-c3b/receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/Dockerfile.v1": "6190dcdabf49a20b38c4a2f54527d66ea8bf73f0b0d67586e4a02a3597d180fe",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/artifact-lock-v1.json": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/build-recipe-v1.json": "fd5a7faef5385332880d25917ac2b126dfd30a6b7609bef14c58cb704dbf24f9",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/entrypoint-v1.sh": "127077521ca6f0c2132a0acbdfa9aa3f78d6431551f74f838522d887e4cd303b",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/pg17.6-session-readonly-receipt-v1.patch": "7bd5b096a990bb2f1d608a1037c15b7dcd02d34e0ef50f335fe287edd896186f",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/receipt-contract-v1.json": "e13aae9d817453cf8e50e1e4a2a0e455f880e89a54b3bf91373b3983aab9ac51",
+    "scripts/teaching-agent-r7d-c3b/runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "scripts/teaching-agent-r7d-c3b/target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "scripts/teaching-agent-r7d-c3b/transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "actualOutputs": {
+    "buildCommandTranscriptRawSha256": "89d1a7cb1f6643647ae17cc256e9754e7771a4ae8cb67c65133ef969493cc950",
+    "buildEnvironmentCanonicalSha256": "eb87aad34c2d27fea9d5ab2857be04fb352d4081dffd231ee56dbcc30e032925",
+    "companion": {
+      "bytes": 507728,
+      "path": "/opt/teaching-agent/roles-exporter/pg17.6-v1/bin/pg_dump",
+      "sha256": "bc91b24d57c2bf0a025b3092384c2a09c6d55cfeeae1ece8ecdf4fb6f4f56298"
+    },
+    "exporter": {
+      "bytes": 185176,
+      "path": "/opt/teaching-agent/roles-exporter/pg17.6-v1/bin/pg_dumpall",
+      "sha256": "34602c94f46682f680f2a40218cc5cbc5e7dd35262e7c3bb54a8cdad48ea7665"
+    },
+    "launcher": {
+      "bytes": 17352,
+      "path": "/opt/teaching-agent/roles-exporter/pg17.6-v1/bin/receipt-launcher",
+      "sha256": "ecc8d0a558fb7ff1bce2ba0737c3a603c0fddb2af015a591636f35d3e3e0bc06"
+    },
+    "launcherGeneratedSourceSha256": "acff41190be84f0732b83a8e618f60d3c135fa07cd9c1c1ecc83eaee23890cac",
+    "libpq": {
+      "bytes": 388448,
+      "path": "/opt/teaching-agent/roles-exporter/pg17.6-v1/lib/libpq.so.5.17",
+      "sha256": "ed6c64e0e89ac1d895a61fb0440cb82d782fdf06d2681e5aac3455e177a6aee8",
+      "soname": "libpq.so.5"
+    },
+    "loaderPolicySha256": "3d4b6d93b5f059ba0ac83f920830bbab2e8ed44895f0b3a0592cad42b1ddcb7e",
+    "patchedSourceSha256": "d82bbeab02900695de2d4618c6b5b53fc100bbcbc80af384d9aff3d6fee217dd",
+    "runtimeBaseImageId": "sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029",
+    "runtimeDependencies": [
+      {
+        "bytes": 254864,
+        "name": "ld-linux-x86-64.so.2",
+        "sha256": "bda779ea9e9ad234f60315477d7cfd0bdde861cd8ddd9df8cdaf62f18c4cec14"
+      },
+      {
+        "bytes": 2190608,
+        "name": "libc.so.6",
+        "sha256": "85e64f97e348786a8fb4d9f3d52fec289e2fb86bba20f0731dfe61990525e0f7"
+      },
+      {
+        "bytes": 6386528,
+        "name": "libcrypto.so.3",
+        "sha256": "7cf7da0a671c553b7140d40ed0ee8f07d12d0fceedff87c930d1918d205b106f"
+      },
+      {
+        "bytes": 1198376,
+        "name": "libm.so.6",
+        "sha256": "1c488db6f4fe8cecb72456bc018de000b7a9b539c2994864b0416b5e8371b3d8"
+      },
+      {
+        "bytes": 388448,
+        "name": "libpq.so.5",
+        "sha256": "ed6c64e0e89ac1d895a61fb0440cb82d782fdf06d2681e5aac3455e177a6aee8"
+      },
+      {
+        "bytes": 1106088,
+        "name": "libssl.so.3",
+        "sha256": "a78c54c7203f51eb49c3d9acc5e935e5402a147f75abf3152b628a9753cfea70"
+      },
+      {
+        "bytes": 121272,
+        "name": "libz.so.1",
+        "sha256": "47b61967895b30e8c0c6818dd633ffeb87711cf637c688f981896f0dd84ce23b"
+      },
+      {
+        "bytes": 796824,
+        "name": "libzstd.so.1",
+        "sha256": "060eeb79531d435306665fd78329d8a9dd579f95876c5960bb67937825362a80"
+      }
+    ],
+    "runtimeImageId": "sha256:698ab1d661990052b6c9567c36fee621b05f448c649cad906bed2116838b4948"
+  },
+  "actualRuntimeImageId": "sha256:698ab1d661990052b6c9567c36fee621b05f448c649cad906bed2116838b4948",
+  "artifactLockRef": {
+    "bytes": 3529,
+    "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/artifact-lock-v1.json",
+    "sha256": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763"
+  },
+  "buildCommandTranscriptRef": {
+    "bytes": 152754,
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-session-roles-exporter-build-command-transcript.json",
+    "sha256": "89d1a7cb1f6643647ae17cc256e9754e7771a4ae8cb67c65133ef969493cc950"
+  },
+  "contract": "source-provenance-session-roles-exporter-build/1",
+  "d19DesignSha256": "a205da202b3361969c47e247d1f169eda409f89537cc1193a7c978b6889bc706",
+  "d26DesignSha256": "d83a4acaa12b85c3a4fdab193993762774053fe95b0d576946afa313ed085334",
+  "dependencyInspectionRef": {
+    "bytes": 734,
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-session-roles-exporter-dependency-inspection.json",
+    "sha256": "8d4c9d2edfee78379fb6b7bc38bf44a02fe472152765b71f066ea206835911eb"
+  },
+  "exactTestSelectionSha256": "57e26012c7d73c0f9166f4e409ec78c37f7e8ef4c9e6691448989f6baf10340d",
+  "exporterArtifactLockSha256": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763",
+  "operationalPackageDigest": "1f80cfc251818c882b1cd37f58157f03ee985ba89ee422c40447a90c35fc333f",
+  "operationalPackageHashes": {
+    "backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "productionCounters": {
+    "AgentRun": 0,
+    "PM2": 0,
+    "Provider": 0,
+    "approvalRotation": 0,
+    "authorizationReplay": 0,
+    "deployment": 0,
+    "migrationInstall": 0,
+    "mint": 0,
+    "preinstall": 0,
+    "productionBackup": 0,
+    "productionCOMMIT": 0,
+    "productionCredentialAccess": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionHostAccess": 0,
+    "productionProvenanceAcquisition": 0,
+    "productionRestore": 0,
+    "productionRolesExport": 0,
+    "publish": 0
+  },
+  "queryRegistrySha256": "852bcc36e10a21da2d61ed220238f8b6f329d386722b311217cb322066173d0f",
+  "recordedAt": 1790615591,
+  "rolesGateRegistrySha256": "124ebebaa8b0ae513d463e5b1443159a377620e419ad116c8324ce3198b0c5c4",
+  "schemaVersion": 1,
+  "sessionDesignSha256": "b445df04c4ee6a46f066d0ecd2b050e2200a8b3827e421a1622c3d5278c3ebfa",
+  "smokeValidationRef": {
+    "bytes": 152754,
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-session-roles-exporter-build-command-transcript.json",
+    "sha256": "89d1a7cb1f6643647ae17cc256e9754e7771a4ae8cb67c65133ef969493cc950"
+  },
+  "status": "BUILT_ARTIFACT_VALIDATION_PENDING",
+  "transportPolicySha256": {
+    "DIRECT": "8921a33f721940fe3a4684a7429bc1dfb97867452769aad308ad296812e68b08",
+    "SESSION": "90d5d1d36ad26f1088aac8b4f31159994bb40d687bcc5ce70ce78e722e931982"
+  },
+  "validationContextHashes": {
+    "docs/teaching-agent-source-provenance-acquisition.md": "6cc29943403ef7ec3eb5a46c72ec05ad5a381b43fb87da493a3cdd0765972d3e",
+    "tests/teaching_agent_source_provenance_acquisition_test.py": "6dac6760834e43780f17027c1e4ce9983b40c3c9306072e785e5a5a217961d3e"
+  }
+}

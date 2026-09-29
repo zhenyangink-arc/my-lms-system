@@ -1,0 +1,35 @@
+{
+  "status": "AUDITED",
+  "canonical8443": "CONFIRMED",
+  "observedAtUtc": "2026-09-17T05:56:33.362361+00:00",
+  "environment": "Single canonical UPLY; no 443/4000 interaction in B1C",
+  "nextDirectory": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "pm2": {
+    "status": "online",
+    "exec_mode": "fork_mode",
+    "instances": 1,
+    "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+    "kill_timeout": 15000,
+    "restart_time": 0,
+    "pm_uptime": 1789529555153,
+    "name": "uply-first-enable",
+    "pid": 934715
+  },
+  "startCommand": "node /home/yangzhen/.config/uply-first-enable-20260910/start.mjs -> next start --hostname 127.0.0.1 --port 3000",
+  "environmentSource": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json (private file; values not exported)",
+  "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+  "tailscaleSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+  "proxy": "Tailscale tailnet HTTPS :8443 -> http://127.0.0.1:3000; no additional proxy needed",
+  "httpRoot": 200,
+  "priorDeployment": "R5C installed R3D compiled .next/public/package.json/next.config.ts only; release src is not a complete source-of-build snapshot",
+  "priorArchive": "b1c-rollback-artifact-verification.json",
+  "candidateDecision": "Reconstruct exact R3D final source hashes + only4 new B1 application files. Never deploy the full current workspace build",
+  "wholeWorkspaceArtifactRejected": {
+    "buildId": "jSxpyVg5NZMbpHc7Gptpz",
+    "reason": "Contains unrelated post-R3D changes; comparison with release source alone is also not an authoritative deployed-source diff"
+  },
+  "productOrInfrastructureMutations": 0
+}

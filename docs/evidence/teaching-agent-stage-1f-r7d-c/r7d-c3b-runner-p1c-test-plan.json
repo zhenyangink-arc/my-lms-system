@@ -1,0 +1,185 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C",
+  "recordedAt": "2026-09-19T07:07:33.407788+00:00",
+  "phase": "LOCAL_SOURCE_AUDIT_AND_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "sourceImplementationEdits": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "productionBackup": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "testsExecuted": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "status": "DESIGNED",
+  "existingTestsRequired": {
+    "historicalRunner": 51,
+    "P1ACapture": 27,
+    "total": 78,
+    "rerunRequired": true,
+    "historicalPassNotSubstitute": true
+  },
+  "newQueryOrderCases": [
+    {
+      "id": "CAPTURE-ORDER-01",
+      "case": "ledger mismatch",
+      "mode": "owned+unit",
+      "acceptance": "count/versions/duplicates/descriptor/optional pinned-prefix mismatch -> BOTH target query constants absent and catalog absent",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-02",
+      "case": "definition metadata hash mismatch",
+      "mode": "owned+unit",
+      "acceptance": "changed function body -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-03",
+      "case": "raw definition hash mismatch",
+      "mode": "unit",
+      "acceptance": "metadata passes but injected raw definition differs -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-04",
+      "case": "owner mismatch",
+      "mode": "owned",
+      "acceptance": "wrong owner -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-05",
+      "case": "security definer mismatch",
+      "mode": "owned",
+      "acceptance": "SECURITY INVOKER -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-06",
+      "case": "search path mismatch",
+      "mode": "owned",
+      "acceptance": "wrong config -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-07",
+      "case": "other metadata mismatch",
+      "mode": "unit",
+      "acceptance": "parameterize language, volatility, parallel, leakproof -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-08",
+      "case": "ACL mismatch",
+      "mode": "owned+unit",
+      "acceptance": "unexpected grant/missing authenticated/wrong grantor/grantable -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-09",
+      "case": "effective privilege mismatch",
+      "mode": "owned+unit",
+      "acceptance": "explicit target ACL unchanged; owned role-membership setup producing effective anon execute -> full catalog zero; also parameterize all fixed role values",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-10",
+      "case": "missing exact function",
+      "mode": "owned+unit",
+      "acceptance": "missing exact signature or only other overload -> full catalog zero",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-11",
+      "case": "success family trace",
+      "mode": "owned",
+      "acceptance": "one ledger, target metadata, target definition, full catalog; all validator pass events precede next family",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-12",
+      "case": "pre-gate/full metadata consistency",
+      "mode": "owned+unit",
+      "acceptance": "real successful equality plus injected full target field changes -> fail closed before receipt",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-13",
+      "case": "pre-gate/full ACL effective consistency",
+      "mode": "unit",
+      "acceptance": "injected ACL/effective mismatch or target missing in full result -> fail closed",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-14",
+      "case": "ledger/full consistency retained",
+      "mode": "unit",
+      "acceptance": "injected full ledger difference still fails; target gate must already have passed",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-15",
+      "case": "same session and real readonly probe",
+      "mode": "owned",
+      "acceptance": "all queries share session id, RR and read_only=on; mutation probe at target phase denied; no committed state change",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-16",
+      "case": "rollback all failure phases",
+      "mode": "owned+unit",
+      "acceptance": "ledger/target metadata/raw definition/full consistency errors end ROLLBACK with no success receipt",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-17",
+      "case": "fixed target and no arbitrary SQL",
+      "mode": "unit",
+      "acceptance": "constant exact signature and fixed role set; no SQL/identifier parameters, no new CLI/auth fields",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-18",
+      "case": "safe evidence unchanged",
+      "mode": "owned+unit",
+      "acceptance": "existing receipt schema survives; query hash map includes targetGate; no raw definitions/statements/credentials",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-19",
+      "case": "full coverage and digest retained",
+      "mode": "owned+static",
+      "acceptance": "CATALOG_SQL and shared observe/fingerprint source hashes unchanged; same full state => same fingerprint",
+      "status": "PLANNED_NOT_EXECUTED"
+    },
+    {
+      "id": "CAPTURE-ORDER-20",
+      "case": "capture-only isolation",
+      "mode": "unit+historical regression",
+      "acceptance": "new pre-gate only in capture; install/backup/READY semantics unchanged; all immutable boundary hashes match",
+      "status": "PLANNED_NOT_EXECUTED"
+    }
+  ],
+  "newCaseCount": 20,
+  "expectedUniqueRunnerCaseCount": 98,
+  "safetyCriticalSkipsAllowed": 0,
+  "existingRegression": "Existing D1-51 embeds the 155 Node + 17 R5B regressions; preserve and rerun that case. Do not double-count its embedded checks as new order tests.",
+  "ownedEnvironment": "unchanged owned PG17 fixture; network none, no host port, disposable storage, teardown; no current DB or production credentials",
+  "faultInjection": "Tests only; no production hook/flag. Controlled response fault injection is needed to exercise impossible/inconsistent double observations without pretending a real same-snapshot drift occurred.",
+  "logPolicy": "New evidence directory for this implementation run; redirect test log destinations only where needed in the approved test path. Do not overwrite I1/P1A/P1B logs or weaken expected values."
+}

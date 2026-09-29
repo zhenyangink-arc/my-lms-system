@@ -1,0 +1,9 @@
+{
+  "archive": "/home/yangzhen/artifacts/uply-teaching-agent-foundation-r3d/candidate-build.tar.gz",
+  "archiveSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "knownGoodBuild": "6IhDHN8Dm1nCewiCEZnV5",
+  "archiveMembersChecked": 1394,
+  "liveMemberMismatches": [],
+  "status": "PASS",
+  "purpose": "Existing archive is rollback artifact; fresh pre-switch copy still required"
+}

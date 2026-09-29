@@ -1,0 +1,274 @@
+{
+  "overall": "GO",
+  "productionContentPreparation": "PASS",
+  "contentPreparationStatus": "READY FOR SCRIPT AUTHORING",
+  "stage1g": "NOT READY",
+  "gates": [
+    {
+      "id": "G-R6A-1",
+      "name": "Foundation Ready",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "preflight.json"
+    },
+    {
+      "id": "G-R6A-2",
+      "name": "Auth Boundary",
+      "status": "PASS",
+      "note": "Existing own Platform Owner session verified; CDP reused; no secret extraction",
+      "evidence": "authorization-scope.json"
+    },
+    {
+      "id": "G-R6A-3",
+      "name": "Target Slot Exact",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "target-slot.json"
+    },
+    {
+      "id": "G-R6A-4",
+      "name": "Target Snapshot",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "target-before.json"
+    },
+    {
+      "id": "G-R6A-5",
+      "name": "Conflict Inventory Complete",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "conflict-inventory.json"
+    },
+    {
+      "id": "G-R6A-6",
+      "name": "Canonical Policy Applied",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "conflict-decision.json"
+    },
+    {
+      "id": "G-R6A-7",
+      "name": "Dependency Safety",
+      "status": "PASS",
+      "note": "Four dependency counts zero inside retirement transaction; valid sibling snapshot and pointer preserved",
+      "evidence": "retirement-post-verification.json"
+    },
+    {
+      "id": "G-R6A-8",
+      "name": "Cleanup Scope Exact",
+      "status": "PASS",
+      "note": "Exact retirement INSERT1 / UPDATE0 / DELETE0; no content deletion",
+      "evidence": "cleanup-result.json"
+    },
+    {
+      "id": "G-R6A-9",
+      "name": "Cleanup Commit Known",
+      "status": "PASS",
+      "note": "CONFIRMED commit acknowledgment plus new read-only verification",
+      "evidence": "cleanup-result.json"
+    },
+    {
+      "id": "G-R6A-10",
+      "name": "No Unrelated Deletion",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "unrelated-content-diff.json"
+    },
+    {
+      "id": "G-R6A-11",
+      "name": "Duplicate Removed/Avoided",
+      "status": "PASS",
+      "note": "Exactly one canonical chain; no duplicate",
+      "evidence": "duplicate-check.json"
+    },
+    {
+      "id": "G-R6A-12",
+      "name": "Official Authoring Workflow",
+      "status": "PASS",
+      "note": "Actual user-session UI -> server action -> installed official RPC",
+      "evidence": "official-workflow-contract.json"
+    },
+    {
+      "id": "G-R6A-13",
+      "name": "Single Logical Create",
+      "status": "PASS",
+      "note": "Prior failed transaction retained; one newly authorized creation after retirement; no blind retry",
+      "evidence": "creation-result.json"
+    },
+    {
+      "id": "G-R6A-14",
+      "name": "Atomic Skeleton Creation",
+      "status": "PASS",
+      "note": "Official atomic RPC; complete five-row chain observed",
+      "evidence": "official-workflow-contract.json"
+    },
+    {
+      "id": "G-R6A-15",
+      "name": "Canonical Chain Count One",
+      "status": "PASS",
+      "note": "Canonical chain count1",
+      "evidence": "duplicate-check.json"
+    },
+    {
+      "id": "G-R6A-16",
+      "name": "Textbook Association",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-17",
+      "name": "Version Association",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-18",
+      "name": "Chapter Association",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-19",
+      "name": "Module Association",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-20",
+      "name": "Teaching Lesson Association",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-21",
+      "name": "Profile Association",
+      "status": "PASS",
+      "note": "Both new objects reference same existing published uply-korean-teacher profile; no profile created",
+      "evidence": "canonical-structure.json"
+    },
+    {
+      "id": "G-R6A-22",
+      "name": "Draft State",
+      "status": "PASS",
+      "note": "All four status-bearing objects draft; module has no status field",
+      "evidence": "draft-status.json"
+    },
+    {
+      "id": "G-R6A-23",
+      "name": "Four Objectives",
+      "status": "PASS",
+      "note": "4 objectives persisted",
+      "evidence": "learning-objectives.json"
+    },
+    {
+      "id": "G-R6A-24",
+      "name": "Objectives Exact",
+      "status": "PASS",
+      "note": "Exact text and order match",
+      "evidence": "learning-objectives.json"
+    },
+    {
+      "id": "G-R6A-25",
+      "name": "No Publish",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-26",
+      "name": "Script Studio Handoff",
+      "status": "PASS",
+      "note": "Exact created chapter hash in Script Studio URL; title/chapter0/orientation visible; stopped before new script",
+      "evidence": "script-studio-handoff.json"
+    },
+    {
+      "id": "G-R6A-27",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "production-end-state.json"
+    },
+    {
+      "id": "G-R6A-28",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "production-end-state.json"
+    },
+    {
+      "id": "G-R6A-29",
+      "name": "Agent Rows Zero",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-30",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-31",
+      "name": "Pins Zero",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-32",
+      "name": "Definition Publication Zero",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-33",
+      "name": "Auth Writes Zero",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "agent-provider-boundary.json"
+    },
+    {
+      "id": "G-R6A-34",
+      "name": "Foundation Schema Unchanged",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "production-end-state.json"
+    },
+    {
+      "id": "G-R6A-35",
+      "name": "Runtime Unchanged",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "production-end-state.json"
+    },
+    {
+      "id": "G-R6A-36",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "note": "Verified by current R6A evidence",
+      "evidence": "production-end-state.json"
+    },
+    {
+      "id": "G-R6A-37",
+      "name": "Canonical Receipt",
+      "status": "PASS",
+      "note": "Completed UI and read-only DB receipt",
+      "evidence": "creation-result.json"
+    },
+    {
+      "id": "G-R6A-38",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "note": "Safe metadata only; no session secrets, raw resource UUID or credentials",
+      "evidence": "workspace-scope.json"
+    }
+  ]
+}

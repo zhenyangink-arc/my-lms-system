@@ -1,0 +1,27 @@
+{
+  "status": "PARTIAL",
+  "candidateMechanismCount": 1,
+  "migrationCandidate": "Locally available Docker PG17.6 psql; each ordered migration body and exact-source ledger insert in one transaction",
+  "historicalSources": [
+    {
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/scripts/first-enable/migrate.mjs",
+      "sha256": "08cc1ee3968a87b60c0b669505036915e0144bc1cae46981752697efe934cd0d"
+    },
+    {
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS/uply-grammar-delivery.mjs",
+      "sha256": "5c99179ec687caf5d7cae35e1014ec13362daee21290d1e2d512a5b4098418f6"
+    },
+    {
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS/uply-grammar-promote.mjs",
+      "sha256": "152d57e252e67df8f8aa0f425737038a8dd36b2bf52fa06c3625277285721a39"
+    }
+  ],
+  "historyReceipt": "docs/evidence/textbook-grammar-consistency-20260913/migrate-result.json",
+  "historicalRunnerDirectReuse": false,
+  "remainingTechnicalCheck": "Bounded 000-007 runner adaptation, generated transaction/ledger guards and local isolated validation must be reviewed before execution; not implemented in R5A",
+  "atomicApplicationSwitch": "NOT VERIFIED",
+  "deploymentPath": "Fixed source path, controlled maintenance stop, staged artifact replacement and named app restart; no Tailscale changes",
+  "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+  "rollbackPlan": "PARTIAL — concrete file rollback procedure; known-good application compatibility with retained 005 RLS not independently rehearsed",
+  "productionCommandsExecuted": false
+}

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "atomicDdlAndLedgerRollback": "PASS",
+  "negativeCloneStart": 449,
+  "negativeCloneEnd": 449,
+  "failureInjected": "Ledger INSERT trigger rejects after unmodified 000 DDL body",
+  "migrationWriteDispatches": 1,
+  "nextMigrationDispatches": 0,
+  "automaticRetries": 0,
+  "originalCommitReceipt": {
+    "version": "202609140000",
+    "sourceSha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+    "commitState": "UNKNOWN",
+    "postVerification": "NOT RUN",
+    "nextMigrationAllowed": false,
+    "reason": "COMMIT_ACK_UNCONFIRMED"
+  },
+  "newReadOnlyVerification": "All 000 DDL absent; ledger449 full prefix unchanged; original UNKNOWN not upgraded",
+  "realTransportFaults": {
+    "timeout": "UNKNOWN / STOP",
+    "connectionLost": "UNKNOWN / STOP",
+    "badAcknowledgement": "UNKNOWN / STOP"
+  },
+  "productionWrites": 0
+}

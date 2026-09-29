@@ -1,0 +1,154 @@
+{
+  "approval": "A",
+  "scope": "R7C-B1 ONLY — implementation + additive RPC installation + one canonical three-row binding",
+  "status": "APPROVED — IMPLEMENTED / CURRENT-DB APPLICATION BLOCKED BY OWNER DEV UI ACCESS",
+  "approved": true,
+  "target": "hangul-introduction",
+  "mainline": "TEACHING AGENT",
+  "filesToAdd": [
+    {
+      "path": "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+      "purpose": "One owner-authenticated atomic RPC + explicit grants; no tables/seeds/identity operations"
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-native-activity.ts",
+      "purpose": "Server Action reauthenticates Platform Owner, uses authenticated Supabase RPC, sanitizes result, no retry"
+    },
+    {
+      "path": "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "purpose": "server-only target/freeze contract, read-only preflight and receipt validation; private answer stays server-side"
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-native-activity-form.tsx",
+      "purpose": "Minimal confirmation/status form; public question only; UNKNOWN state disables resubmit"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx",
+      "purpose": "Official app-scoped Owner authoring page; no runtime/preview/student admission"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring.test.mjs",
+      "purpose": "Authorization/public DTO/unknown response/source-boundary tests"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring-db.test.mjs",
+      "purpose": "Owned isolated DB RPC atomicity/FK/freeze/duplicate/rollback tests"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+      "purpose": "Reuse owned R7C PG transport; exact canonical-freeze fixture, no current DB credentials/Auth service"
+    }
+  ],
+  "existingProductFilesToModify": [],
+  "packageChanges": 0,
+  "docsToUpdate": [
+    "docs/teaching-agent-stage-1f-r7c-b-canonical-activity-binding.md",
+    "docs/evidence/teaching-agent-stage-1f-r7c-b/"
+  ],
+  "migration": {
+    "required": true,
+    "count": 1,
+    "proposedVersion": "202609170001",
+    "existingLedgerBefore": 457,
+    "expectedLedgerAfter": 458,
+    "newFunctions": [
+      "public.create_teaching_lesson_activity_binding"
+    ],
+    "newTables": 0,
+    "newColumns": 0,
+    "seedRows": 0,
+    "existingFunctionsModified": 0,
+    "install": "Only this migration after approved exact diff/hash and preflight; no broad db push/repair or unrelated pending migration",
+    "ddlWrites": "Function/catalog ACL changes + exactly one migration ledger entry; not counted as content rows"
+  },
+  "rpcContract": {
+    "arguments": "Typed target binding/frozen expected hashes and bounded public/private activity specification from trusted server; no caller-supplied SQL or arbitrary table operations",
+    "databaseAuthorization": "auth.uid required; active Platform Owner; reject provisioned identities; mirror existing skeleton RPC checks plus explicit active status validation; service_role not granted direct EXECUTE",
+    "databaseGuards": [
+      "authoring advisory lock first",
+      "exact Korean target parent chain, one Script Version1 DRAFT, exactly8 frozen node full-row hashes/order/types and objective/parent/version hashes match approved R6F contract",
+      "expected baseline is server/approved contract, not arbitrary browser assertion; RPC restricts this first binding to approved target/alias",
+      "lock frozen source and target parent rows with compatible row-lock order; verify hashes inside same transaction",
+      "target execution nodes/activities/secrets all0 before new-create branch",
+      "existing complete exact object => EXISTING zero writes; partial/duplicate/mismatched object => STOP",
+      "three INSERTs with RETURNING/row-count checks; existing statement publication fences remain active",
+      "no swallowed exception or commit after error; no compensating DELETE",
+      "after unknown result never retry; fresh READ ONLY verification decides actual state"
+    ],
+    "receipt": "Safe operator/resource hashes, creation method, transaction identity and server timestamp, expected/actual count; no raw identifiers, private answer or private definition digest; timestamp observed inside transaction is not falsely called exact commit timestamp; COMMITTED requires completed RPC + independent readback"
+  },
+  "currentDbExpectedBusinessWrites": {
+    "digital_textbook_nodes": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_secrets": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "otherBusinessTables": 0
+  },
+  "expectedAuditWrites": {
+    "databaseAuditRows": 0,
+    "reason": "Current three authoring tables have timestamp/authoring-lock/dependency-check triggers only; no dedicated content audit insertion. Mirror skeleton workflow receipt practice; do not fake script publish log events",
+    "localSafeCanonicalReceiptFiles": 1,
+    "migrationLedgerRows": 1,
+    "infrastructureRequestLogs": "May be emitted by existing infrastructure; no new DB audit business write is requested"
+  },
+  "expectedAuthWrites": 0,
+  "frozenContentWrites": 0,
+  "scriptVersionWrites": 0,
+  "objectiveWrites": 0,
+  "attemptWrites": 0,
+  "progressWrites": 0,
+  "identityProvisioning": false,
+  "runtimeExecution": 0,
+  "publish": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "deploy": 0,
+  "pm2Mutations": 0,
+  "privateAnswer": "Existing server-only secrets answer_key contract. Do not expose it in client form/DTO/RPC return/migration seed/evidence; secret specification built on server and sent to RPC on server connection only",
+  "canonicalPublicPayload": {
+    "prompt": "哪个是元音？",
+    "sourceQuestion": "Frozen Node7 question1 only; source untouched",
+    "options": [
+      "ㄱ",
+      "ㅏ",
+      "ㄴ"
+    ],
+    "activity_key": "hangul-introduction-vowel-recognition",
+    "type": "single_choice",
+    "nodeType": "practice",
+    "minimalNodeContent": {}
+  },
+  "isolatedTests": {
+    "environment": "Owned network-isolated disposable PG; no current DB credential, real Auth service or subject sessions",
+    "fixtures": "One exact parent/frozen graph: catalog lesson1/course1/app1/profile1, textbook1/version1/chapter1/module1/teaching lesson1/script version1/frozen nodes8, minimal local auth/profile authorization stubs. This is test-only baseline, never current-DB content copying/writes",
+    "businessBehavior": "Only the three authoring tables receive test inserts; no attempts/progress. One success triple retained in isolated DB for duplicate/concurrency read checks, all negative branches run in rolled-back transactions or independent disposable fixtures. Do not mutate prompt/frozen rows for negative cases; use wrong expected input, role stubs and transport faults",
+    "expectedCurrentDbTestWrites": 0,
+    "acceptance": [
+      "unauthorized/non-owner/provisioned/inactive rejected",
+      "wrong target/draft/count/hash rejected before writes",
+      "success exactly three rows",
+      "concurrent duplicate => one complete triple only",
+      "partial state rejected without repair",
+      "failure after each insert rolls back all rows",
+      "unknown commit no blind retry",
+      "private answer excluded from public results"
+    ]
+  },
+  "conditions": "If isolated test bootstrap requires additional business/identity operations beyond this description, STOP and amend approval before executing. Current-DB install/authoring must use normal existing Owner session; if isolated dev UI cannot use it without login/token transfer/deploy, STOP at environment blocker, do not replace with admin impersonation.",
+  "afterB1": "Keep canonical authoring rows. Current-DB durable E2E still BLOCKED BY TEST IDENTITY; no rollback of valid canonical content and no R7D.",
+  "authorizationMessage": "User: 批准 (Approval A only)"
+}

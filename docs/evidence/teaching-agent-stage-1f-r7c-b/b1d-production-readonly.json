@@ -1,0 +1,11 @@
+{
+  "ledger": 458,
+  "latest": "202609170001",
+  "lessonRls": [
+    {
+      "policy": "authenticated read published learning agent lessons",
+      "qual": "((status = 'published'::text) AND private.can_read_published_teaching_module(module_id))"
+    }
+  ],
+  "functionSha256": "460027e2168e9a7713d1f837ad91a70e561a82d5cfbfa3814d00dba97f3599c8"
+}

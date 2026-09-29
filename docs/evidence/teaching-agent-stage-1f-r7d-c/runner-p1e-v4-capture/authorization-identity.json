@@ -1,0 +1,18 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-V4-CAPTURE",
+  "authorizationRawSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+  "authorizationCanonicalSha256": "2a5ebda10a60a56f54a3ad8bc25d36138973b9955a9351d68e200df55d79295a",
+  "authorizationContract": "readonly-baseline-capture-authorization/2",
+  "observedAt": 1789884101.4978054,
+  "expiresAt": 1789885001.4978054,
+  "nonce": "62a816c1c5df4e4ba5a571653752670f",
+  "operatorUid": 1001,
+  "credentialIdentitySource": "Existing expired authorization identity hash only; credential bytes read solely by formal runner",
+  "lossAcceptanceRecordSha256": "b74ee5ba2a55d5a496763ad84b64fd25b5f5d3a9b65f9a7e06d1ccdfd380bfe3",
+  "lossBinding": "Exact v4 raw hash transitively binds acceptance record; no extra strict-schema fields",
+  "transportRiskArtifactSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+  "v4Sha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+  "mode": "0600_REGULAR_NO_SYMLINK",
+  "priorAuthorizationRetainedSha256": "f0528d99a37efeac9d4e4cc68eedd6501fbb865c1ffd4505a003e1e9812c2ce8",
+  "explicitUserCaptureApproval": true
+}

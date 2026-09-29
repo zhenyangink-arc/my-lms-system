@@ -1,3 +1,4 @@
+import { validateNativeExecution } from './execution.ts';
 import { manifestStructureSchema, type LessonManifestV1, type ActivityRefV1 } from './contracts.ts';
 import { blockRegistryV1, contractCapabilitiesV1, declaredPartIds, canPlayTarget } from './registry.ts';
 import { makeRuntimeTarget, parseRuntimeTarget } from './targets.ts';
@@ -120,5 +121,6 @@ export function validateLessonManifestV1(input: unknown, options: ValidationOpti
   // Annotated artifacts use the same full admission rule in the browser too.
   // Unannotated legacy/draft technical fixtures retain their old validation path.
   if ((options.published || m.mediaRefs.some(r=>r.admission)) && (m.snapshot.scope!=='chapter' || m.mediaRefs.some(r=>!admittedMedia(m,r)))) fail('snapshot','Published scope/media not ready');
+  for(const message of validateNativeExecution(m)) fail('execution',message);
   return issues.length ? {success:false,issues} : {success:true,data:m};
 }

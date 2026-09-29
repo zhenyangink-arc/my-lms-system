@@ -1,0 +1,151 @@
+{
+  "policy": "NEW CONTENT / NEW VERSION / NEW RUNTIME PATH IS CANONICAL",
+  "compatibilityRequired": false,
+  "items": [
+    {
+      "object": "R6F target canonical branch",
+      "role": "CANONICAL",
+      "referencedBy": [
+        "R6F freeze baseline",
+        "current Script Studio"
+      ],
+      "canonical": true,
+      "decision": "KEEP",
+      "deleteCandidate": false,
+      "dependencyCheck": "Verified unchanged full-row hashes"
+    },
+    {
+      "object": "existing LessonManifestV1 / LessonRuntime / target registry",
+      "role": "CURRENT SUPPORTING",
+      "referencedBy": [
+        "audit route",
+        "runtime services"
+      ],
+      "canonical": "recommended execution foundation",
+      "decision": "KEEP / EXTEND NATIVE",
+      "deleteCandidate": false,
+      "dependencyCheck": "Remove old adapter dependency from new composition, keep reusable authority/validation"
+    },
+    {
+      "object": "existing Activity / Progress domain tables and RPCs",
+      "role": "CURRENT SUPPORTING",
+      "referencedBy": [
+        "current textbook pages",
+        "runtime services"
+      ],
+      "canonical": true,
+      "decision": "KEEP",
+      "deleteCandidate": false,
+      "dependencyCheck": "Native binding and atomic request contract"
+    },
+    {
+      "object": "old learning-agent/respond -> learning-agent-runtime Edge function",
+      "role": "LEGACY",
+      "referencedBy": [
+        "old reader",
+        "production teacher adapter"
+      ],
+      "canonical": false,
+      "decision": "REPLACE CANDIDATE",
+      "deleteCandidate": false,
+      "dependencyCheck": "Caller/import/route inventory, active sessions and allowed deployed route removal scope; preserve deterministic resolveScriptStep separately"
+    },
+    {
+      "object": "chapter-one legacy adapter / fixed loader / compatibility capsules",
+      "role": "LEGACY",
+      "referencedBy": [
+        "current compiler/publication bundles",
+        "audit runtime and production service adapters"
+      ],
+      "canonical": false,
+      "decision": "REPLACE CANDIDATE",
+      "deleteCandidate": false,
+      "dependencyCheck": "Native projection parity for authorized new content only; snapshot pointer/session/fence/history references before retiring old bundle"
+    },
+    {
+      "object": "PGRST202 objective-attempt fallback",
+      "role": "LEGACY",
+      "referencedBy": [
+        "submitActivityInDomain"
+      ],
+      "canonical": false,
+      "decision": "REPLACE CANDIDATE",
+      "deleteCandidate": false,
+      "dependencyCheck": "Existing atomic RPC overload validated; canonical runtime must fail closed instead of compatibility writes"
+    },
+    {
+      "object": "unretired old snapshot",
+      "safeHash": "2f43c82641ac92c60ee94bb25d50fd64d93ca5506a307246dae220ae5430edbf",
+      "role": "CURRENT SUPPORTING",
+      "referencedBy": [
+        "publication pointer",
+        "history",
+        "bindings",
+        "dependency fence",
+        "expired session rows"
+      ],
+      "canonical": false,
+      "decision": "KEEP pending targeted retirement plan",
+      "deleteCandidate": false,
+      "dependencyCheck": "Pointer currently 1, all session rows13 though active0; cannot assume unused"
+    },
+    {
+      "object": "R6A retired old dependency snapshot",
+      "safeHash": "6ea0da2b328782056b721bb5ecb1eec194435871d9746dcedd9bb44e8b9df6bb",
+      "role": "LEGACY",
+      "referencedBy": [
+        "history2",
+        "binding1",
+        "fence1",
+        "retirement marker"
+      ],
+      "canonical": false,
+      "decision": "DELETE CANDIDATE — conditional only",
+      "deleteCandidate": true,
+      "dependencyCheck": "Pointer0/activeSession0/allSession0/runtimeRequest0, but history/bindings/fence references remain. Retention and full FK/semantic dependency disposition required before any approval. Preserve original under existing R6A scope now."
+    },
+    {
+      "object": "other old textbooks/chapters/versions/scripts/activity/demo content",
+      "role": "UNCLASSIFIED CONTENT; legacy candidates require per-branch audit",
+      "referencedBy": [
+        "46 enumerated relevant FK definitions",
+        "possible publication/session/progress/assignment and media references"
+      ],
+      "canonical": "not inferred from name or age",
+      "decision": "KEEP pending exact dependency inventory",
+      "deleteCandidate": false,
+      "dependencyCheck": "Do not select first textbook, read business rows, or call all old data disposable; no current target conflict/fence"
+    }
+  ],
+  "snapshotMetadata": [
+    {
+      "retired": false,
+      "snapshotHash": "2f43c82641ac92c60ee94bb25d50fd64d93ca5506a307246dae220ae5430edbf",
+      "textbookHash": "507a151eb0cf7f851d3bb2d6fd1612ffe388407b8fa9049826ae58d03d0f2904",
+      "fenceReferences": 1,
+      "bindingReferences": 1,
+      "historyReferences": 1,
+      "pointerReferences": 1,
+      "allSessionReferences": 13,
+      "activeSessionReferences": 0,
+      "unfinishedTextbookRuntimeRequests": 0
+    },
+    {
+      "retired": true,
+      "snapshotHash": "6ea0da2b328782056b721bb5ecb1eec194435871d9746dcedd9bb44e8b9df6bb",
+      "textbookHash": "507a151eb0cf7f851d3bb2d6fd1612ffe388407b8fa9049826ae58d03d0f2904",
+      "fenceReferences": 1,
+      "bindingReferences": 1,
+      "historyReferences": 2,
+      "pointerReferences": 0,
+      "allSessionReferences": 0,
+      "activeSessionReferences": 0,
+      "unfinishedTextbookRuntimeRequests": 0
+    }
+  ],
+  "conditionalDeleteCandidateCount": 1,
+  "deletionReadyCount": 0,
+  "countUnit": "One retired snapshot, not its textbook or related rows. Candidate is not permission or proof of safe deletion.",
+  "unboundedCascade": false,
+  "writes": 0
+}

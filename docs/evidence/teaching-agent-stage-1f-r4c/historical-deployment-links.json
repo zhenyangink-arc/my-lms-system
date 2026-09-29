@@ -1,0 +1,23 @@
+{
+  "historicalDeploymentReport": "docs/evidence/textbook-grammar-consistency-20260913/deployment-result.json",
+  "historicalBuildId": "5Fa4thXL2m4EcFA5-Qx5R",
+  "historicalBackupShaMatches": true,
+  "relatedArtifacts": [
+    {
+      "label": "historicalCandidate",
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS",
+      "exists": true
+    },
+    {
+      "label": "previousBuild",
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/.next-before-grammar-1789271693244",
+      "exists": true,
+      "buildId": "l9HmPxSMluZWoirjL544P"
+    },
+    {
+      "label": "previousSourceFiles",
+      "path": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS/previous-source-files",
+      "exists": true
+    }
+  ]
+}

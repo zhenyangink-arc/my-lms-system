@@ -1,0 +1,18 @@
+{
+  "docs/teaching-agent-stage-1f-r3d-authoring-workflow-closure.md": "30b11b9b36746aa319b5539a2eab1c8d69388c4d84c2e2d979c3b65ff7e2188b",
+  "docs/teaching-agent-stage-1f-r4-production-authorization-gate.md": "6d3514254b9f5cf58cf0ae9114bca46fba42c5a8c6504bfb42ba806cb6c11265",
+  "scripts/build-supabase-app-baseline.py": "b89db7f1bf05c98ac9dba6551b303c1e75da150d74c4124a9812abc7522e33ee",
+  "scripts/supabase_baseline_lib.py": "75e88f293ee12abe8f65758c3df6f7923c5a291b7e3d57cc20b470180ce9851f",
+  "tests/test_supabase_baseline.py": "0d8746073cb45385c69890f3cdbd5384f268bc504d222a1e3b3dbcb531f6693a",
+  "tests/teaching-agent-release-migrations.test.mjs": "bf6ba13819241a1955dbca5e28d48627da731b0a2359fdafcce506178aab3103",
+  "tests/teaching-agent-rls-surface.test.mjs": "3344a7efbed2c93f1bce76e91d97ba9184bb11ae834fd2e50c8eff42580be25e",
+  "scripts/teaching-agent-r3d/candidate-build.py": "ccedb7a885867150a7918bd5abd85e6f7bbde1bd54d2fd108b24ebfd4feab863",
+  "supabase/migrations/202609140000_agent_core_foundation.sql": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+  "supabase/migrations/202609140001_agent_runtime_completion_evidence.sql": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+  "supabase/migrations/202609140002_agent_run_cancel_request.sql": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+  "supabase/migrations/202609140003_teaching_operations_reissue.sql": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+  "supabase/migrations/202609140004_completion_policy_management_reissue.sql": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+  "supabase/migrations/202609140005_student_teaching_content_isolation.sql": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+  "supabase/migrations/202609140006_agent_run_reconciliation.sql": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+  "supabase/migrations/202609140007_teaching_content_skeleton.sql": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4"
+}

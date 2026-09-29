@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "protectedExistingFiles": 2720,
+  "changedExisting": 0,
+  "deletedExisting": 0,
+  "reportSections": 35,
+  "reportLinks": "PASS",
+  "newFileScope": "PASS",
+  "sourceInputsUnchanged": 1303,
+  "migrationHashes": "PASS",
+  "candidateArchiveDigest": "PASS",
+  "pythonSyntax": "PASS",
+  "gitDiffCheck": "PASS",
+  "privacyFinal": "PASS",
+  "productionDeploy": false,
+  "stage1G": "NOT READY"
+}

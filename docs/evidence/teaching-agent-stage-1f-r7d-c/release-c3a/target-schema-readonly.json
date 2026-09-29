@@ -1,0 +1,1739 @@
+{
+  "query": {
+    "at": "2026-09-18T06:26:26.438044+00:00",
+    "sqlSha256": "9ece39c4eca332f06f309cbbd5edd68e94ae24848e36d047276ed9bcb21d0a68",
+    "transaction": "REPEATABLE READ READ ONLY",
+    "defaultTransactionReadOnly": true,
+    "ended": "ROLLBACK",
+    "credentialOutput": false,
+    "businessWrites": 0,
+    "authWrites": 0
+  },
+  "result": {
+    "transactionReadOnly": "on",
+    "columns": [
+      {
+        "schema": "auth",
+        "table": "users",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "auth",
+        "table": "users",
+        "column": "raw_app_meta_data",
+        "type": "jsonb"
+      },
+      {
+        "schema": "auth",
+        "table": "users",
+        "column": "raw_user_meta_data",
+        "type": "jsonb"
+      },
+      {
+        "schema": "auth",
+        "table": "users",
+        "column": "banned_until",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "parent_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "title",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "description",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "icon_name",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "cover_url",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "accent_color",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "is_published",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "content_scope",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "cover_object_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "cover_alt",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "cover_focal_point",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "course_categories",
+        "column": "student_app_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "category_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "category",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "title",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "description",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "level",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "icon_name",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "cover_url",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "is_published",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "support_teacher_name",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "support_teacher_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "ai_support_enabled",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "support_message",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "content_scope",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "cover_object_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "cover_alt",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "cover_focal_point",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "unlock_mode",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "prerequisite_course_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "available_from",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "is_manually_locked",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "courses",
+        "column": "student_app_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "node_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "activity_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "activity_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "prompt",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "instruction",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "options",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "public_config",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "max_attempts",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activities",
+        "column": "counts_toward_completion",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "activity_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "answer_key",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "explanation",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "transcript_ko",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "audio_object_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_activity_secrets",
+        "column": "audio_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "version_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "chapter_test_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "chapter_number",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "scenario",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "goal",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "production_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "editorial_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "native_review_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "audio_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "image_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_chapters",
+        "column": "source_revision",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "chapter_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "module_code",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "accent_role",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "description",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_modules",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "module_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "node_code",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "node_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "estimated_minutes",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "content",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_nodes",
+        "column": "authoring_grammar_identities",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "textbook_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "version_number",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "release_notes",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "published_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbook_versions",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "lesson_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "level_code",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "student_app_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "digital_textbooks",
+        "column": "agent_profile_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "module_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "revision",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "objectives",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "guardrails",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_lessons",
+        "column": "agent_profile_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "agent_code",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "subject_code",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "display_name",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "description",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "access_feature",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "capabilities",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_profiles",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "script_version_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "node_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "node_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "teacher_script",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "configuration",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "reference_activity_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "action_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "next_node_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "remediation_node_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "is_required",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_nodes",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "lesson_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "version_number",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "title",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "change_note",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "created_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "published_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "published_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "learning_agent_script_versions",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "course_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "title",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "description",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "lesson_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "duration_minutes",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "is_free_preview",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "is_published",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "content_text",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "video_url",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "video_provider",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "attachment_url",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "attachment_label",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "teacher_note",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "allow_questions",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "learning_objectives",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "lesson_tasks",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "key_points",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "case_study",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "common_mistakes",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "summary_text",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "reflection_questions",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "extra_note",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "video_object_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "video_mime_type",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "content_scope",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "cover_object_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "cover_alt",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "cover_focal_point",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "unlock_mode",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "prerequisite_lesson_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "prerequisite_chapter_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "required_score",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "available_from",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "lessons",
+        "column": "is_manually_locked",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "full_name",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "role",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "avatar_url",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "deactivated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "deactivated_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "deactivate_reason",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "email",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "registered_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "registration_source",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "last_active_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "profile_completed_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "gender",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "birth_date",
+        "type": "date"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "avatar_path",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "address_province",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "address_city",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "education_level",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "education_status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "education_completion_month",
+        "type": "date"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "academic_average",
+        "type": "numeric"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "gaokao_has_score",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "gaokao_score",
+        "type": "numeric"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "english_level",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "math_level",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "has_korean",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "topik_level",
+        "type": "smallint"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "has_work_experience",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "profile_data_version",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "membership_tier",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "membership_updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "membership_updated_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "login_id",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "global_role",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "motto",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "profiles",
+        "column": "interest_tags",
+        "type": "ARRAY"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "student_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "app_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "access_tier",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "starts_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "ends_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "enrolled_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "settings",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "student_app_enrollments",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "user_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "role",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "membership_tier",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "is_default",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "invited_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "joined_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_memberships",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "tenant_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "app_id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "is_enabled",
+        "type": "boolean"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "custom_title",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "sort_order",
+        "type": "integer"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenant_student_apps",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "id",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "slug",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "name",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "status",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "plan_key",
+        "type": "text"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "settings",
+        "type": "jsonb"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "created_by",
+        "type": "uuid"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "created_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "schema": "public",
+        "table": "tenants",
+        "column": "updated_at",
+        "type": "timestamp with time zone"
+      }
+    ]
+  }
+}

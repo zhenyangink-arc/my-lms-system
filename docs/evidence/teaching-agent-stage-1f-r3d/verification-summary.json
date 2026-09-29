@@ -1,0 +1,14 @@
+{
+  "tests": 379,
+  "pass": 371,
+  "skip": 8,
+  "fail": 0,
+  "tsc": true,
+  "lint": true,
+  "baselineUnit": {
+    "tests": 10,
+    "pass": 7,
+    "skip": 3
+  },
+  "secretScan": "PASS"
+}

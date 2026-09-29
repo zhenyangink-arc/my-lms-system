@@ -1,0 +1,378 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "id",
+        "notNull": false,
+        "number": 1,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "script_version_id",
+        "notNull": false,
+        "number": 2,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "updated_at",
+        "notNull": false,
+        "number": 3,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "sort_order",
+        "notNull": false,
+        "number": 4,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "integer"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "teacher_script",
+        "notNull": false,
+        "number": 5,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "segments",
+        "notNull": false,
+        "number": 6,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "jsonb"
+      },
+      {
+        "acl": null,
+        "collation": "\"default\"",
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "video_mode",
+        "notNull": false,
+        "number": 7,
+        "schema": "public",
+        "table": "student_learning_agent_script_nodes",
+        "type": "text"
+      }
+    ],
+    "removed": []
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_module_id uuid",
+        "identityArguments": "p_module_id uuid",
+        "name": "can_read_published_teaching_module",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "379bacb07c32611ca764a65bf0c0650f1c791cc32341123be45684ae238f4e03"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_textbook_id uuid",
+        "identityArguments": "p_textbook_id uuid",
+        "name": "can_read_published_textbook",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "c07c108160857152be2e7c057f2536b609bd4198bfd754fbef432633ceae7d72"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_script jsonb, p_segments jsonb",
+        "identityArguments": "p_script jsonb, p_segments jsonb",
+        "name": "student_script_segments",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": false,
+        "definitionSha256": "44bb271ac89cfb2be02117180eb92a37ceabd9315a8db29662b5b876ec27dfb5"
+      }
+    ],
+    "removed": []
+  },
+  "policies": {
+    "added": [
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook chapters",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.digital_textbook_versions v\n  WHERE ((v.id = digital_textbook_chapters.version_id) AND (v.status = 'published'::text) AND private.can_read_published_textbook(v.textbook_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_chapters",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook modules",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR private.can_read_published_teaching_module(id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_modules",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook versions",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND private.can_read_published_textbook(textbook_id)))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_versions",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook catalog",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR private.can_read_published_textbook(id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbooks",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent lessons",
+        "qual": "((status = 'published'::text) AND private.can_read_published_teaching_module(module_id))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_lessons",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script versions",
+        "qual": "((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.learning_agent_lessons l\n  WHERE ((l.id = learning_agent_script_versions.lesson_id) AND (l.status = 'published'::text) AND private.can_read_published_teaching_module(l.module_id)))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_versions",
+        "with_check": null
+      }
+    ],
+    "removed": [
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook chapters",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM (public.digital_textbook_versions version\n     JOIN public.digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((version.id = digital_textbook_chapters.version_id) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_chapters",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook modules",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM ((public.digital_textbook_chapters chapter\n     JOIN public.digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN public.digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((chapter.id = digital_textbook_modules.chapter_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_modules",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook versions",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND (EXISTS ( SELECT 1\n   FROM public.digital_textbooks textbook\n  WHERE ((textbook.id = digital_textbook_versions.textbook_id) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id))))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbook_versions",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read textbook catalog",
+        "qual": "(public.current_user_can_manage_standard_question_bank() OR ((status = 'published'::text) AND private.current_user_can_read_student_app(student_app_id)))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "digital_textbooks",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent lessons",
+        "qual": "(status = 'published'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_lessons",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script nodes",
+        "qual": "(EXISTS ( SELECT 1\n   FROM public.learning_agent_script_versions version\n  WHERE ((version.id = learning_agent_script_nodes.script_version_id) AND (version.status = 'published'::text))))",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_nodes",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "authenticated read published learning agent script versions",
+        "qual": "(status = 'published'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "learning_agent_script_versions",
+        "with_check": null
+      }
+    ]
+  },
+  "relations": {
+    "added": [
+      {
+        "acl": [
+          "authenticated=r/postgres",
+          "postgres=arwdDxtm/postgres",
+          "service_role=arwdDxtm/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "v",
+        "name": "student_learning_agent_script_nodes",
+        "options": [
+          "security_barrier=true"
+        ],
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "n",
+        "rls": false,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  },
+  "types": {
+    "added": [
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_student_learning_agent_script_nodes",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "student_learning_agent_script_nodes",
+        "notNull": false,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  },
+  "views": {
+    "added": [
+      {
+        "name": "student_learning_agent_script_nodes",
+        "schema": "public",
+        "definitionSha256": "15451e504a561578600f50021e1be0f529218132fc0e774c0d248d34837e1c69"
+      }
+    ],
+    "removed": []
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "envelope": "existing ToolResult partial + bounded Zod DTO",
+  "sourceRefs": "opaque activity ref",
+  "revision": "opaque ta1:state derived from same read durable digest and content binding; no private definition digest exported",
+  "asOf": "same receipt observedAt, no separate progress read",
+  "storage": [
+    "CURRENT_DEVELOPMENT_DB",
+    "isolated-test-db"
+  ],
+  "nonDurableFixture": "activity-completion/1 isolated-fixture rejected, not relabeled",
+  "mandatoryExplainEvidence": "unchanged get_current_lesson_context",
+  "futureCompletionSkills": "must explicitly request durable Tool evidence; not registered in this stage",
+  "agentOrToolLedgerWrites": 0
+}

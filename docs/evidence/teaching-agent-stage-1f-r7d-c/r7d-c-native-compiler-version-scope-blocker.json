@@ -1,0 +1,101 @@
+{
+  "stage": "R7D-C Expanded Production Prerequisite Implementation",
+  "recordedAt": "2026-09-18T04:08:59.461563+00:00",
+  "status": "BLOCKED_BEFORE_PRODUCT_EDIT",
+  "blockingCode": "NATIVE_COMPILER_VERSION_REJECTED_BY_MANIFEST_SCHEMA_OUTSIDE_APPROVED_34_FILES",
+  "evidenceKind": "LOCAL_SOURCE_AND_SCHEMA_DIAGNOSTIC_ONLY",
+  "implementationPerformed": false,
+  "productChanges": 0,
+  "migrationFilesCreated": 0,
+  "testsExecuted": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "approvedCompilerVersion": "native-publication/1",
+  "officialSchemaChain": [
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "line": 82,
+      "finding": "snapshot.compilerVersion uses I"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "line": 10,
+      "finding": "I aliases idSchema"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "line": 5,
+      "finding": "idSchema uses stableIdPattern"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/targets.ts",
+      "line": 3,
+      "finding": "stableIdPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/"
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "line": 35,
+      "finding": "Every official Manifest certification invokes manifestStructureSchema.safeParse"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 73,
+      "finding": "Existing publication association requires Manifest compilerVersion equal envelope compilerVersion; preserve this identity relation for the new native contract."
+    }
+  ],
+  "diagnostic": {
+    "command": "node --experimental-strip-types --input-type=module; import manifestStructureSchema; inspect shape.snapshot.shape.compilerVersion.safeParse",
+    "networkUsed": false,
+    "productFilesWritten": 0,
+    "cases": [
+      {
+        "value": "native-publication/1",
+        "accepted": false,
+        "error": "invalid_format",
+        "expectedForApprovedNativeContract": true
+      },
+      {
+        "value": "native-publication-1",
+        "accepted": true,
+        "role": "syntax control only; NOT an authorized replacement"
+      },
+      {
+        "value": "legacy-compiler.v1",
+        "accepted": true,
+        "role": "legacy syntax control only; NOT full publication certification"
+      }
+    ]
+  },
+  "priorAuditCorrection": "P1 recorded Manifest schema as sufficient and explicitly unchanged. That design conclusion missed compilerVersion syntax. Historical audit/approval is retained, not rewritten.",
+  "requiredSource": {
+    "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+    "presence": "EXISTS",
+    "mode": "0o664",
+    "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc"
+  },
+  "proposedNarrowFix": "Only snapshot.compilerVersion accepts its historical idSchema values or the exact new literal native-publication/1. Keep stable IDs unchanged. Versioned artifact certification pins v2 literal, requires envelope/Manifest equality and keeps v1 compiler syntax/admission unchanged. Do not globally allow slash or add normalization/fallback.",
+  "verificationRequired": [
+    "Exact native compiler literal accepted by official Manifest parser",
+    "Unknown slash versions remain rejected",
+    "Stable IDs still reject slash",
+    "Native envelope/Manifest compiler mismatch rejected",
+    "Legacy v1 still rejects previously invalid compiler syntax",
+    "Legacy artifact bytes/digests unchanged",
+    "Existing generic Manifest/compiler consumers regressions pass"
+  ]
+}

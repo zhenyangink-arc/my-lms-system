@@ -1,0 +1,91 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C",
+  "recordedAt": "2026-09-19T07:07:33.407788+00:00",
+  "phase": "LOCAL_SOURCE_AUDIT_AND_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "sourceImplementationEdits": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "productionBackup": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "testsExecuted": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "status": "LOCKED",
+  "newOperationalModules": 0,
+  "target": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+  "queryDesign": {
+    "name": "TARGET_GATE_SQL",
+    "inputs": "NONE; implementation-owned constant only",
+    "functionSelection": "WHERE p.oid = to_regprocedure(the fixed exact signature); no scan of other function definitions, no caller identifiers",
+    "projection": {
+      "functions": "exactly one target row, same field names/serialization as CATALOG_SQL.functions",
+      "targetAcl": "same aclexplode(coalesce(proacl,acldefault)) projection, grantor/grantee/privilege/grantable and identical ordering",
+      "effective": "same has_function_privilege projection for fixed postgres/authenticated/service_role/anon roles"
+    },
+    "metadataFields": [
+      "signature",
+      "sha256",
+      "acl",
+      "owner",
+      "securityDefiner",
+      "language",
+      "volatility",
+      "parallel",
+      "leakproof",
+      "config"
+    ],
+    "serialization": "Use identical signature construction, oidvectortypes spaces, PG17 SHA256 UTF8 pg_get_functiondef, proacl::text and config representation; do not normalize away differences."
+  },
+  "validation": [
+    "Pass miniature state to unchanged function_check and acl_check using existing finite preflight templates. Missing/duplicate exact target fails.",
+    "Every owner/definer/search_path/language/volatility/parallel/leakproof/definition/explicit ACL/effective-permission mismatch stops before observe.",
+    "Run unchanged TARGET_DEFINITION_SQL in the same session before observe; verify string, SHA256 UTF8 equals FUNCTION_SHA, plan definitionSha256 and pre-gate target sha256; discard raw definition.",
+    "Only after ALL target gate checks succeed, call unchanged observe(session) once.",
+    "Retain existing exact ledger/full-state consistency check.",
+    "Compare canonical type-sensitive objects containing target(state), targetAcl and effective against pre-gate projection. Compare every field and identical deterministic ACL order. Missing/different data -> PRECHECK_FAILED/CAPTURE_TARGET_SNAPSHOT_MISMATCH; no first-read-wins or replacement.",
+    "Only after both consistency checks succeed produce the existing safe receipt fields from full state."
+  ],
+  "sameSnapshot": "Existing CaptureTransport owns one REPEATABLE READ READ ONLY session; no helper may open a connection/transaction; same session object passed through every query.",
+  "fullCatalogPreservation": {
+    "CATALOG_SQL": "UNCHANGED_BYTES",
+    "observe": "UNCHANGED",
+    "fingerprint": "UNCHANGED",
+    "coverage": "all existing functions/ACL/relations/columns/constraints/indexes/policies/triggers/namespaces/defaults/roles/memberships/views/rules/extensions/types/ledger/target fields retained"
+  },
+  "receiptCompatibility": {
+    "contract": "readonly-baseline-capture/1 UNCHANGED",
+    "topLevelFields": "UNCHANGED",
+    "queryFamilySha256": "Keep existing named entries and add targetGate as one entry in the existing extensible hash map; targetDefinition still denotes same fixed SQL moved earlier. No raw SQL or raw body output.",
+    "protectedCatalogFingerprint": "Compute from unmodified full observe state only. Do not merge pre-gate-only data into fingerprint input.",
+    "receiptWriterChangeRequired": false,
+    "privateRawStatementsOrDefinitions": "FORBIDDEN"
+  },
+  "callerChangesRequired": {
+    "runner.py": false,
+    "plan_contract.py": false,
+    "maintenance_transport.py": false,
+    "transaction.py": false,
+    "backup_adapter.py": false,
+    "receipts.py": false,
+    "registry": false,
+    "draft": false,
+    "fixtures": false,
+    "README": false
+  },
+  "authorizationFollowup": "After future implementation passes, emit new source-lock and read-only review evidence. Old package digest cannot authorize new checks.py bytes. Obtain explicit fresh user/operator approval binding new package hashes. Existing fixed v2 approval reference remains historical capability lineage; it does not by itself approve changed source bytes. Do not edit old v2 proposal or issue authorization/seal automatically. This design does not change authorization schema or reference path."
+}

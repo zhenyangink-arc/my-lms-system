@@ -1,0 +1,54 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "PASS",
+  "passed": 238,
+  "skipped": 2,
+  "failed": 0,
+  "groups": [
+    {
+      "name": "Student tools/skills + Student domain + R7D Tool/facts",
+      "pass": 170,
+      "skip": 2,
+      "fail": 0,
+      "log": "c2-combined-regression.log",
+      "note": "Combined log additionally includes prior47 C2 tests; not double-counted."
+    },
+    {
+      "name": "Core registry/executor/policy/state/deadline safe subset",
+      "pass": 11,
+      "skip": 0,
+      "fail": 0,
+      "log": "c2-core-regression.log"
+    },
+    {
+      "name": "R7D evidence including owned isolated PostgreSQL",
+      "pass": 8,
+      "skip": 0,
+      "fail": 0,
+      "log": "c2-evidence-regression.log"
+    },
+    {
+      "name": "R7B completion/execution/projection",
+      "pass": 49,
+      "skip": 0,
+      "fail": 0,
+      "log": "c2-runtime-regression.log"
+    }
+  ],
+  "skips": "Existing optional Student domain and Student tools PostgreSQL tests guarded by RUN_TEACHING_AGENT_ISOLATED_DB_TESTS; flag not enabled.",
+  "excluded": "Full coordinator/provider fixture-loop suites excluded to honor no Run coordinator/Provider calls; actual Explain completion guard exercised directly in new unit tests.",
+  "isolatedDB": "Existing R7D test creates uniquely named owned Docker PostgreSQL container with --network none, no host DB endpoint, fixture attempts/progress only; normal owned container teardown. No current DB reads/writes.",
+  "oldTestEdits": 0
+}

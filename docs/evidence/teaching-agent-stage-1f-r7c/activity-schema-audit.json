@@ -1,0 +1,817 @@
+{
+  "columns": [
+    {
+      "table": "digital_textbook_activities",
+      "column": "id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "node_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "activity_key",
+      "type": "text",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "activity_type",
+      "type": "text",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "sort_order",
+      "type": "integer",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "prompt",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "instruction",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "options",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "public_config",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "max_attempts",
+      "type": "integer",
+      "nullable": "NO",
+      "default": "3"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "column": "counts_toward_completion",
+      "type": "boolean",
+      "nullable": "NO",
+      "default": "true"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "tenant_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "student_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "activity_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "version_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "page_index",
+      "type": "integer",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "item_indices",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "response",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "results",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "answers",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "activity_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "answer_key",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "explanation",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "transcript_ko",
+      "type": "text",
+      "nullable": "YES",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "audio_object_key",
+      "type": "text",
+      "nullable": "YES",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "column": "audio_status",
+      "type": "text",
+      "nullable": "NO",
+      "default": "'pending'::text"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "tenant_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "private.current_tenant_id()"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "student_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "auth.uid()"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "activity_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "version_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "attempt_number",
+      "type": "integer",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "response",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "is_correct",
+      "type": "boolean",
+      "nullable": "YES",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "score",
+      "type": "numeric",
+      "nullable": "YES",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "column": "meets_completion_requirements",
+      "type": "boolean",
+      "nullable": "NO",
+      "default": "false"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "tenant_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "private.current_tenant_id()"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "student_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "auth.uid()"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "node_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "version_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "status",
+      "type": "text",
+      "nullable": "NO",
+      "default": "'not_started'::text"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "completion_percent",
+      "type": "integer",
+      "nullable": "NO",
+      "default": "0"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "mastery_score",
+      "type": "integer",
+      "nullable": "NO",
+      "default": "0"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "attempt_count",
+      "type": "integer",
+      "nullable": "NO",
+      "default": "0"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "last_activity_at",
+      "type": "timestamp with time zone",
+      "nullable": "YES",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": "gen_random_uuid()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "module_id",
+      "type": "uuid",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "node_code",
+      "type": "text",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "node_type",
+      "type": "text",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "sort_order",
+      "type": "integer",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "estimated_minutes",
+      "type": "integer",
+      "nullable": "NO",
+      "default": "5"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "title",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": null
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "content",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'{}'::jsonb"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "created_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "updated_at",
+      "type": "timestamp with time zone",
+      "nullable": "NO",
+      "default": "now()"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "column": "authoring_grammar_identities",
+      "type": "jsonb",
+      "nullable": "NO",
+      "default": "'[]'::jsonb"
+    }
+  ],
+  "constraints": [
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_activity_type_check",
+      "definition": "CHECK ((activity_type = ANY (ARRAY['single_choice'::text, 'multiple_choice'::text, 'fill_blank'::text, 'ordering'::text, 'listening'::text, 'speaking'::text, 'writing'::text, 'self_check'::text])))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_instruction_check",
+      "definition": "CHECK ((jsonb_typeof(instruction) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_max_attempts_check",
+      "definition": "CHECK (((max_attempts >= 1) AND (max_attempts <= 20)))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_node_id_activity_key_key",
+      "definition": "UNIQUE (node_id, activity_key)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_node_id_fkey",
+      "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_node_id_sort_order_key",
+      "definition": "UNIQUE (node_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_options_check",
+      "definition": "CHECK ((jsonb_typeof(options) = 'array'::text))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_prompt_check",
+      "definition": "CHECK ((jsonb_typeof(prompt) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_public_config_check",
+      "definition": "CHECK ((jsonb_typeof(public_config) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "name": "digital_textbook_activities_sort_order_check",
+      "definition": "CHECK ((sort_order > 0))"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_activity_id_fkey",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_page_index_check",
+      "definition": "CHECK ((page_index >= 0))"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_pkey",
+      "definition": "PRIMARY KEY (tenant_id, student_id, activity_id, version_id, page_index)"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_student_id_fkey",
+      "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_tenant_id_fkey",
+      "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "name": "digital_textbook_activity_page_progress_version_id_fkey",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "name": "digital_textbook_activity_secrets_activity_id_fkey",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "name": "digital_textbook_activity_secrets_answer_key_check",
+      "definition": "CHECK ((jsonb_typeof(answer_key) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "name": "digital_textbook_activity_secrets_audio_status_check",
+      "definition": "CHECK ((audio_status = ANY (ARRAY['pending'::text, 'ready'::text, 'rejected'::text])))"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "name": "digital_textbook_activity_secrets_explanation_check",
+      "definition": "CHECK ((jsonb_typeof(explanation) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "name": "digital_textbook_activity_secrets_pkey",
+      "definition": "PRIMARY KEY (activity_id)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_activity_id_fkey",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_attempt_number_check",
+      "definition": "CHECK ((attempt_number > 0))"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_score_check",
+      "definition": "CHECK (((score IS NULL) OR ((score >= (0)::numeric) AND (score <= (100)::numeric))))"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_student_id_fkey",
+      "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_tenant_id_fkey",
+      "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_tenant_id_student_id_activity_id__key",
+      "definition": "UNIQUE (tenant_id, student_id, activity_id, attempt_number)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "name": "digital_textbook_attempts_version_id_fkey",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_attempt_count_check",
+      "definition": "CHECK ((attempt_count >= 0))"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_completion_percent_check",
+      "definition": "CHECK (((completion_percent >= 0) AND (completion_percent <= 100)))"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_mastery_score_check",
+      "definition": "CHECK (((mastery_score >= 0) AND (mastery_score <= 100)))"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_node_id_fkey",
+      "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_pkey",
+      "definition": "PRIMARY KEY (tenant_id, student_id, node_id, version_id)"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_status_check",
+      "definition": "CHECK ((status = ANY (ARRAY['not_started'::text, 'in_progress'::text, 'completed'::text])))"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_student_id_fkey",
+      "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_tenant_id_fkey",
+      "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "name": "digital_textbook_node_progress_version_id_fkey",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_authoring_grammar_identities_check",
+      "definition": "CHECK ((jsonb_typeof(authoring_grammar_identities) = 'array'::text))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_content_check",
+      "definition": "CHECK ((jsonb_typeof(content) = 'object'::text))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_estimated_minutes_check",
+      "definition": "CHECK (((estimated_minutes >= 1) AND (estimated_minutes <= 90)))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_fkey",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_node_code_key",
+      "definition": "UNIQUE (module_id, node_code)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_module_id_sort_order_key",
+      "definition": "UNIQUE (module_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_no_decorative_labels_check",
+      "definition": "CHECK ((NOT (content ?| ARRAY['eyebrow'::text, 'typeLabel'::text, 'type_label'::text, 'interactionLabel'::text, 'interaction_label'::text])))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_node_type_check",
+      "definition": "CHECK ((node_type = ANY (ARRAY['learn'::text, 'practice'::text, 'mission'::text, 'review'::text])))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_sort_order_check",
+      "definition": "CHECK ((sort_order > 0))"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "name": "digital_textbook_nodes_title_check",
+      "definition": "CHECK ((jsonb_typeof(title) = 'object'::text))"
+    }
+  ],
+  "indexes": [
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_activities_pkey ON public.digital_textbook_activities USING btree (id)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_activities_node_id_activity_key_key ON public.digital_textbook_activities USING btree (node_id, activity_key)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_activities_node_id_sort_order_key ON public.digital_textbook_activities USING btree (node_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_activities",
+      "definition": "CREATE INDEX digital_textbook_activities_node_idx ON public.digital_textbook_activities USING btree (node_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_activity_page_progress",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_activity_page_progress_pkey ON public.digital_textbook_activity_page_progress USING btree (tenant_id, student_id, activity_id, version_id, page_index)"
+    },
+    {
+      "table": "digital_textbook_activity_secrets",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_activity_secrets_pkey ON public.digital_textbook_activity_secrets USING btree (activity_id)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_attempts_pkey ON public.digital_textbook_attempts USING btree (id)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_attempts_tenant_id_student_id_activity_id__key ON public.digital_textbook_attempts USING btree (tenant_id, student_id, activity_id, attempt_number)"
+    },
+    {
+      "table": "digital_textbook_attempts",
+      "definition": "CREATE INDEX digital_textbook_attempts_student_idx ON public.digital_textbook_attempts USING btree (tenant_id, student_id, created_at DESC)"
+    },
+    {
+      "table": "digital_textbook_node_progress",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_node_progress_pkey ON public.digital_textbook_node_progress USING btree (tenant_id, student_id, node_id, version_id)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_nodes_pkey ON public.digital_textbook_nodes USING btree (id)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_nodes_module_id_node_code_key ON public.digital_textbook_nodes USING btree (module_id, node_code)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE UNIQUE INDEX digital_textbook_nodes_module_id_sort_order_key ON public.digital_textbook_nodes USING btree (module_id, sort_order)"
+    },
+    {
+      "table": "digital_textbook_nodes",
+      "definition": "CREATE INDEX digital_textbook_nodes_module_idx ON public.digital_textbook_nodes USING btree (module_id, sort_order)"
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "qual": "(current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM ((((digital_textbook_nodes node\n     JOIN digital_textbook_modules module ON ((module.id = node.module_id)))\n     JOIN digital_textbook_chapters chapter ON ((chapter.id = module.chapter_id)))\n     JOIN digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((node.id = digital_textbook_activities.node_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "digital_textbook_activities",
+      "permissive": "PERMISSIVE",
+      "policyname": "authenticated read textbook activities",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "digital_textbook_attempts",
+      "permissive": "PERMISSIVE",
+      "policyname": "students create own textbook attempts",
+      "schemaname": "public",
+      "with_check": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_activity(tenant_id, student_id, activity_id, version_id))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_activity(tenant_id, student_id, activity_id, version_id))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "digital_textbook_attempts",
+      "permissive": "PERMISSIVE",
+      "policyname": "students read own textbook attempts",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_node(tenant_id, student_id, node_id, version_id))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "digital_textbook_node_progress",
+      "permissive": "PERMISSIVE",
+      "policyname": "students manage own textbook progress",
+      "schemaname": "public",
+      "with_check": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_node(tenant_id, student_id, node_id, version_id))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(current_user_can_manage_standard_question_bank() OR (EXISTS ( SELECT 1\n   FROM (((digital_textbook_modules module\n     JOIN digital_textbook_chapters chapter ON ((chapter.id = module.chapter_id)))\n     JOIN digital_textbook_versions version ON ((version.id = chapter.version_id)))\n     JOIN digital_textbooks textbook ON ((textbook.id = version.textbook_id)))\n  WHERE ((module.id = digital_textbook_nodes.module_id) AND (chapter.status = 'published'::text) AND (version.status = 'published'::text) AND (textbook.status = 'published'::text) AND private.current_user_can_read_student_app(textbook.student_app_id)))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "digital_textbook_nodes",
+      "permissive": "PERMISSIVE",
+      "policyname": "authenticated read textbook nodes",
+      "schemaname": "public",
+      "with_check": null
+    }
+  ]
+}

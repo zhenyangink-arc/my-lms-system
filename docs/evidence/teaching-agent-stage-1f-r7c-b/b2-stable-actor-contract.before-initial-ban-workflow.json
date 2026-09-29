@@ -1,0 +1,42 @@
+{
+  "contract": "development-domain-execution/1",
+  "status": "PROPOSED — NOT PROVISIONED",
+  "model": "STABLE REUSABLE",
+  "actorCount": 1,
+  "tenantCount": 1,
+  "subject": "Existing auth.users FK with authenticated audience, normal member/student profile; not service_role or Owner",
+  "human": false,
+  "personal": false,
+  "productionAllowed": false,
+  "purpose": "development-domain-execution",
+  "candidateEmail": "Unique dedicated synthetic.invalid address, private operator record; never a real mailbox",
+  "loginId": null,
+  "password": "Server-generated random secret, never returned to UI or retained; tested active ban denies grant regardless of password",
+  "initialBan": "Set in the single Admin create transaction, never login then ban",
+  "profileStatus": "inactive",
+  "membership": {
+    "role": "student",
+    "status": "suspended",
+    "is_default": false
+  },
+  "metadataIsEnforcement": false,
+  "lifecycle": [
+    "PROVISION",
+    "VERIFY NON-LOGIN",
+    "ACTIVATE EXECUTION SCOPE",
+    "RUN SCENARIO",
+    "READBACK",
+    "DISABLE SCOPE",
+    "REUSE",
+    "RETIRE"
+  ],
+  "identityReuse": "Never create per-scenario Auth subjects. One active scenario per actor/activity; same identity retained across restart.",
+  "noFallback": [
+    "StudentPolicy bypass",
+    "Owner as learner",
+    "service-role identity",
+    "old Learning Agent",
+    "production default actor"
+  ],
+  "currentDbWrites": 0
+}

@@ -1,0 +1,25 @@
+{
+  "status": "BLOCKED",
+  "blocker": "OWNER_AUTHENTICATED_DEV_AUTHORING_UI_UNAVAILABLE",
+  "observedAtUtc": "2026-09-17T05:41:55.365050+00:00",
+  "browser": "Existing Chrome on CDP9222 only",
+  "observations": [
+    "CDP Browser.getVersion responded; Playwright attach timed out",
+    "HTTPS443 / local3001 is another application login page; not used for authoring",
+    "HTTPS4000 target page did not become readable; GET/load timeout",
+    "HTTPS8443 is existing production ScriptStudio, unchanged deployed build"
+  ],
+  "actions": [
+    "GET navigation/new tab",
+    "readonly DOM/title/path inspection"
+  ],
+  "ownerSessionTransferred": false,
+  "authDataRead": false,
+  "loginAttempted": false,
+  "createClicked": false,
+  "processReplaced": false,
+  "tailscaleChanged": false,
+  "migrationInstalled": false,
+  "independentOfIdentityBlocker": true,
+  "nextRequirement": "Reach approved authoring page in existing Owner browser through a working isolated UPLY dev entry; infrastructure/deploy changes require separate scope if needed"
+}

@@ -1,0 +1,184 @@
+{
+  "status": "BLOCKED",
+  "tests": [
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_01_fresh",
+      "status": "PASS",
+      "elapsedSeconds": 0.0589909553527832
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_02_rotate",
+      "status": "PASS",
+      "elapsedSeconds": 0.0798184871673584
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_03_exact_bytes",
+      "status": "PASS",
+      "elapsedSeconds": 0.0508580207824707
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_04_archive_collision",
+      "status": "PASS",
+      "elapsedSeconds": 0.03845500946044922
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_05_old_hash",
+      "status": "PASS",
+      "elapsedSeconds": 0.027675151824951172
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_06_modes",
+      "status": "PASS",
+      "elapsedSeconds": 0.03262448310852051
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_07_owner",
+      "status": "PASS",
+      "elapsedSeconds": 0.009077072143554688
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_08_canonical_symlink",
+      "status": "PASS",
+      "elapsedSeconds": 0.02823615074157715
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_09_archive_symlink",
+      "status": "PASS",
+      "elapsedSeconds": 0.019067049026489258
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_10_concurrent",
+      "status": "PASS",
+      "elapsedSeconds": 0.07855677604675293
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_11_crash_prepared",
+      "status": "PASS",
+      "elapsedSeconds": 0.050185441970825195
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_12_crash_archived",
+      "status": "PASS",
+      "elapsedSeconds": 0.05081295967102051
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_13_crash_staged",
+      "status": "PASS",
+      "elapsedSeconds": 0.052080392837524414
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_14_crash_published",
+      "status": "PASS",
+      "elapsedSeconds": 0.07116889953613281
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_15_partial_ready",
+      "status": "PASS",
+      "elapsedSeconds": 0.06847047805786133
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_16_schema",
+      "status": "PASS",
+      "elapsedSeconds": 0.03104853630065918
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_17_expiry",
+      "status": "PASS",
+      "elapsedSeconds": 0.02630019187927246
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_18_nonce",
+      "status": "PASS",
+      "elapsedSeconds": 0.10862922668457031
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_19_auth_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.09874844551086426
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_20_missing_user",
+      "status": "PASS",
+      "elapsedSeconds": 0.026509761810302734
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_21_source_authority",
+      "status": "PASS",
+      "elapsedSeconds": 0.02826976776123047
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_22_closed",
+      "status": "PASS",
+      "elapsedSeconds": 0.013197183609008789
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_23_risk",
+      "status": "PASS",
+      "elapsedSeconds": 0.013470649719238281
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_24_loss",
+      "status": "PASS",
+      "elapsedSeconds": 0.013211250305175781
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_25_io_failure",
+      "status": "PASS",
+      "elapsedSeconds": 0.039697885513305664
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_26_no_credentials",
+      "status": "PASS",
+      "elapsedSeconds": 0.052312374114990234
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_27_approval_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.10218501091003418
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_28_mint_capture_lock",
+      "status": "PASS",
+      "elapsedSeconds": 0.09200739860534668
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_29_consume_before_constructor",
+      "status": "PASS",
+      "elapsedSeconds": 0.0841670036315918
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_32_kill_consumed",
+      "status": "PASS",
+      "elapsedSeconds": 0.10378265380859375
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_34_unexpired",
+      "status": "PASS",
+      "elapsedSeconds": 0.02847003936767578
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_35_output_immutable",
+      "status": "ERROR"
+    }
+  ],
+  "counts": {
+    "PASS": 31,
+    "FAIL": 0,
+    "ERROR": 1,
+    "SKIP": 0,
+    "XFAIL": 0,
+    "XPASS": 0
+  },
+  "regressionDirectories": [],
+  "ownedConnections": {
+    "persistentSessionAttempts": 0,
+    "persistentSessionConstructorSuccesses": 0,
+    "production": 0
+  },
+  "logs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/7680d40e7a364f529055e8f5c4685bb1/contract.log",
+      "sha256": "efc0cecf1f6f5c8deab667db130b33f0b8be84d0fd853868eaf071ab6df5b95a"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "productServiceRoleCaller": "NOT_FOUND",
+  "authenticatedCaller": "FOUND",
+  "localAndLiveSource": [
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "workspaceSha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "liveSha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+      "liveMatchesLocal": false
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "workspaceSha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+      "liveSha256": "df7780c231540f39e6126c28b94bb9bf0ed5bd108cbd2f3965c3d8350bc9e48c",
+      "liveMatchesLocal": false
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "workspaceSha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+      "liveSha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+      "liveMatchesLocal": true
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "workspaceSha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+      "liveSha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+      "liveMatchesLocal": true
+    }
+  ],
+  "chain": [
+    "chapter-practice-binding.tsx -> reviewChapterPracticeAction",
+    "chapter-practice-actions.ts -> requireActiveUser",
+    "src/lib/auth.ts -> getAuthContext -> createClient -> auth.getUser + active profile/membership handling",
+    "src/lib/supabase/server.ts -> createServerClient(public URL + publishable key + request cookies)",
+    "returned user-session client -> RPC review_chapter_practice_binding"
+  ],
+  "liveVariant": "Live action additionally rejects non-platform-owner / tenant context before RPC. Workspace action differs; both use same authenticated client. No product edits made.",
+  "serviceKeyOrAdminClientUsed": false,
+  "databaseInternalTargetCall": "NONE_FOUND",
+  "testOnlyCallers": [
+    {
+      "path": "tests/chapter-practice-binding-db.test.mjs",
+      "kind": "isolated SQL db.query, simulated test claims; not production service client"
+    },
+    {
+      "path": "scripts/verify-chapter-practice-anonymous-access.mjs",
+      "kind": "public-key anonymous negative HTTP diagnostic; not executed"
+    }
+  ],
+  "serviceRoleNeed": "NOT_ESTABLISHED",
+  "authenticatedAlternative": "Already the implemented production path; no replacement authored."
+}

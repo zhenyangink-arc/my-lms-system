@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-09-13T03:48:53.054Z",
+  "tablesCompared": 230,
+  "allRowDigestsMatchRestoredBackup": true,
+  "normalization": [
+    "isolated migration ledger entries excluded",
+    "new empty authoring identity default excluded"
+  ],
+  "sealedBackupHashesPassed": true,
+  "remoteWrites": false
+}

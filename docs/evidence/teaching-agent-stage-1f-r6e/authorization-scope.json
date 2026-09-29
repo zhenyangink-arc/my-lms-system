@@ -1,0 +1,49 @@
+{
+  "status": "APPROVED",
+  "userExplicitReply": "批准",
+  "recordedAtUtc": "2026-09-16T10:28:01.068873+00:00",
+  "target": "韩文字母入门 / 第0章 / 课前导航",
+  "scriptVersion": "1 DRAFT",
+  "modifiedNodes": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    8
+  ],
+  "mustFix": [
+    "M1",
+    "M2",
+    "M3"
+  ],
+  "shouldFix": [
+    "S1",
+    "S2",
+    "S3",
+    "S4"
+  ],
+  "optionalApplied": 0,
+  "protectedNodes": [
+    3,
+    7
+  ],
+  "method": "EXISTING AUTHENTICATED CHROME / OFFICIAL SCRIPT STUDIO UI",
+  "publish": false,
+  "runtime": false,
+  "providerRequests": 0,
+  "agentRuns": 0,
+  "noR6FOrStage1G": true,
+  "executionStatus": "COMPLETED",
+  "modifiedNodesExecuted": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    8
+  ],
+  "nodeUpdates": 6,
+  "officialAuditInserts": 6,
+  "unauthorizedWrites": 0
+}

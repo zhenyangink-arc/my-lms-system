@@ -1,0 +1,30 @@
+{
+  "R6F": "VERIFIED",
+  "nodeCount": 8,
+  "version": "1 DRAFT",
+  "objectives": 4,
+  "canonicalParents": "UNCHANGED",
+  "binding": {
+    "executionNodeCount": 0,
+    "activityCount": 0,
+    "privateAnswerCount": 0
+  },
+  "currentBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "businessFingerprints": "UNCHANGED",
+  "installedRpc": "UNCHANGED",
+  "ledger": 458,
+  "migrationWrites": 0,
+  "schemaWrites": 0,
+  "authWrites": 0,
+  "attemptWrites": 0,
+  "progressWrites": 0,
+  "frozenWrites": 0,
+  "publish": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "deploy": 0,
+  "pm2Mutations": 0,
+  "launcherRuntimeTailscale": "UNCHANGED"
+}

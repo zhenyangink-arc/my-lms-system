@@ -1,0 +1,87 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I1",
+  "recordedAt": "2026-09-19T07:14:40.111500+00:00",
+  "status": "BLOCKED_BEFORE_SOURCE_EDIT",
+  "blockingCode": "BLOCKED_CAPTURE_V3_APPROVAL_REFERENCE_SCOPE_MISMATCH",
+  "implementationAuthorizationRecognized": true,
+  "operationalModified": 0,
+  "testsModified": 0,
+  "addedImplementationFiles": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "testsExecuted": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateArtifactHashes": "ALL_MATCH",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "Stage1G": "NOT_READY",
+  "implementation": "NOT_STARTED",
+  "freshPreEditHashes": "3/3 MATCH",
+  "boundaryHashes": "ALL_MATCH",
+  "reason": {
+    "source": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+    "sourceSha256": "bbccf9220f219104d1c94f142dc4f4333d3cc92b28543cc8d6cb0d785e04d31b",
+    "referenceConstantLine": 183,
+    "referenceValidationLines": [
+      236,
+      237
+    ],
+    "artifactHashValidationLines": [
+      238,
+      239
+    ],
+    "currentAcceptedReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+    "requiredNewReference": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+    "actualGuard": "Exact reference mismatch raises APPROVAL_MISSING / CAPTURE_APPROVAL_REFERENCE before credential access; a new hash supplied with the old reference raises CAPTURE_APPROVAL_HASH.",
+    "currentInstructionConflict": "Section 52 disallows v2 as authority for changed source and requires v3; sections 2/24/53 prohibit changing plan_contract.py or a fourth implementation path.",
+    "previousDesignDistinction": "P1C design explicitly retained the fixed v2 reference as historical lineage plus fresh source/operator approval. That assumption cannot be used to bypass the current instruction requiring v3 authority.",
+    "queryOrderFixAloneFitsApprovedThreePaths": true,
+    "fullRequestedReadinessRequiresAdditionalPath": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+    "bypassesRejected": [
+      "edit old v2 evidence",
+      "place v3 content under old v2 filename",
+      "monkey patch authorization from checks.py",
+      "pretend generating a v3 document makes it accepted",
+      "treat v2 as the new production execution authority"
+    ]
+  },
+  "stopRule": "Section 53: required plan_contract.py/fourth-path change => STOP",
+  "authorizedScope": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "31751d583b604210f72e95703bbc1f6e814b0b85520bb4b093f7950cdfb0d5fc",
+      "mode": "0o664",
+      "operation": "MODIFY",
+      "responsibility": "Add one implementation-owned exact-target metadata/ACL/effective query and a capture-only pre-gate; move existing raw definition query/hash verification before observe; after full observe compare both target projections exactly; retain complete CATALOG_SQL, shared observe/validators/fingerprint, ledger gate and receipt schema."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "sha256": "32b701fa6e036afde6a79f257da3e02350f4c20fa94b3c04700464d5432c3704",
+      "mode": "0o664",
+      "operation": "MODIFY",
+      "responsibility": "Add fixed-family query traces and fault-injected order/consistency cases; strengthen ledger rejection assertions to prove both target queries and catalog query counts zero; preserve historical assertions and all capture authorization/CLI checks."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "sha256": "a5b8e71a3caacf28f1241c6944c82a1b1b86eba8432a6b2fd7bb638d6a5cb9f1",
+      "mode": "0o664",
+      "operation": "MODIFY",
+      "responsibility": "Use unchanged owned PG17 fixture for actual ledger/function/ACL/effective mismatch early-stop tests and success trace; assert same session, rollback, unchanged before/after state and pre-gate/full-catalog equality; direct new run logs to new evidence directory without overwriting historical logs."
+    }
+  ]
+}

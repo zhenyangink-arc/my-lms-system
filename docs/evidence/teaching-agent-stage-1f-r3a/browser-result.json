@@ -1,0 +1,294 @@
+{
+  "fixtureRolloutWatcher": true,
+  "productionNextStart": true,
+  "browser": "Chromium",
+  "route": "/r2-a/apps/korean/courses/korean/korean-basic/korean-beginner/basic-pronunciation",
+  "realAuth": true,
+  "realRuntime": true,
+  "providerFixtureOnly": true,
+  "runs": [
+    {
+      "sample": 1,
+      "ms": 1125,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 169
+        },
+        {
+          "type": "run.status",
+          "atMs": 189
+        },
+        {
+          "type": "run.status",
+          "atMs": 391
+        },
+        {
+          "type": "tool.status",
+          "atMs": 519
+        },
+        {
+          "type": "tool.status",
+          "atMs": 711
+        },
+        {
+          "type": "run.status",
+          "atMs": 810
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1124
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1125
+        }
+      ]
+    },
+    {
+      "sample": 2,
+      "ms": 1088,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 156
+        },
+        {
+          "type": "run.status",
+          "atMs": 171
+        },
+        {
+          "type": "run.status",
+          "atMs": 366
+        },
+        {
+          "type": "tool.status",
+          "atMs": 492
+        },
+        {
+          "type": "tool.status",
+          "atMs": 681
+        },
+        {
+          "type": "run.status",
+          "atMs": 787
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1088
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1088
+        }
+      ]
+    },
+    {
+      "sample": 3,
+      "ms": 1105,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 177
+        },
+        {
+          "type": "run.status",
+          "atMs": 191
+        },
+        {
+          "type": "run.status",
+          "atMs": 397
+        },
+        {
+          "type": "tool.status",
+          "atMs": 524
+        },
+        {
+          "type": "tool.status",
+          "atMs": 712
+        },
+        {
+          "type": "run.status",
+          "atMs": 805
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1105
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1105
+        }
+      ]
+    }
+  ],
+  "negative": [
+    {
+      "case": "A2",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "B1",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "TA",
+      "post": 403
+    },
+    {
+      "case": "AA",
+      "post": 403
+    },
+    {
+      "case": "PO",
+      "post": 403
+    },
+    {
+      "case": "EX",
+      "post": 403
+    },
+    {
+      "case": "IN",
+      "post": 403
+    },
+    {
+      "case": "A2 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "B1 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "index",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "revision",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "draft",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherLesson",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherNode",
+      "status": 403,
+      "providerCalls": 0
+    }
+  ],
+  "errors": [],
+  "off": {
+    "buttons": 0,
+    "postStatus": 404,
+    "providerCalls": 0
+  },
+  "noAuthStatus": 401,
+  "ui": {
+    "completed": true,
+    "sourceBadge": 1,
+    "ms": 1339,
+    "privateLeak": false
+  },
+  "replay": {
+    "sameRun": true,
+    "sameConversation": true,
+    "replayed": true,
+    "extraProviderCalls": 0,
+    "extraRows": {
+      "agent_runs": 0,
+      "agent_conversations": 0,
+      "agent_messages": 0
+    }
+  },
+  "conflicts": [
+    {
+      "case": "message",
+      "status": 409,
+      "code": "IDEMPOTENCY_CONFLICT",
+      "extraProviderCalls": 0
+    },
+    {
+      "case": "segment",
+      "status": 409,
+      "code": "IDEMPOTENCY_CONFLICT",
+      "extraProviderCalls": 0
+    }
+  ],
+  "activeReplay": {
+    "sameRun": true,
+    "sameConversation": true,
+    "replayed": true,
+    "extraProviderCalls": 0
+  },
+  "ownerStatus": "completed",
+  "cancel": {
+    "status": 200,
+    "terminal": "run.cancelled",
+    "ms": 70,
+    "persisted": "cancelled",
+    "offNew": 404,
+    "offOwnerGet": 200
+  },
+  "deadline": {
+    "ms": 45071,
+    "providerCalls": 1,
+    "terminal": "run.failed",
+    "code": "DEADLINE_EXCEEDED",
+    "terminalAt": 1789393548810,
+    "receivedAt": "2026-09-14T13:45:03.746Z",
+    "fromReceivedAtMs": 45064,
+    "lateProviderCalls": 0,
+    "lateDomainReads": 0,
+    "lateDomainWrites": 0,
+    "lateToolCalls": 0,
+    "observationMs": 2226,
+    "lastProviderAt": 1789393504106,
+    "lastToolAt": null,
+    "lastTeachingReadAt": 1789393504070,
+    "persistence": {
+      "status": "failed",
+      "ended_at": "2026-09-14T13:45:48.805619+00:00",
+      "deadline_at": "2026-09-14T13:45:48.746+00:00"
+    },
+    "infrastructureTables": [
+      "agent_definition_versions",
+      "agent_conversations",
+      "agent_messages",
+      "agent_runs",
+      "agent_run_events",
+      "ai_token_usage"
+    ],
+    "infrastructureRpcs": [
+      "admit_agent_run_v1",
+      "transition_agent_run_v1",
+      "append_agent_run_event_v1",
+      "append_agent_run_event_v2",
+      "record_agent_usage_v1",
+      "reserve_student_agent_event_sequence_v1",
+      "get_student_agent_run_status_v1",
+      "request_agent_run_cancel_v1",
+      "check_agent_run_cancel_v1"
+    ]
+  },
+  "offRecoveryHidden": true,
+  "liveProviderRuns": 0,
+  "liveProviderRequests": 0,
+  "liveProviderTokens": 0,
+  "fixtureProviderCalls": 16
+}

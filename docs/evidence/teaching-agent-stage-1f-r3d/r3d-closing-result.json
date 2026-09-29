@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "authorReviewPublisherVerified": true,
+  "lateInsertFailureExact": true,
+  "atomicRollback": true,
+  "oneVersionOneChapter": true,
+  "publishedStateProtected": true,
+  "anonDenied": true,
+  "serviceRoleDenied": true,
+  "productionWrites": 0
+}

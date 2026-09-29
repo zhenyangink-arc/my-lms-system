@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checkedFiles": 52,
+  "privateValueMatches": 0,
+  "jwtMatches": 0,
+  "rawLogsArchived": false,
+  "publicApplicationReconcileRoute": "NONE",
+  "clientChunks": 325,
+  "clientOperatorCapability": false
+}

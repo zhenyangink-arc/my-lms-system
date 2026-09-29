@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 5,
+  "title": "把辅音和元音放在一起",
+  "formalType": "example",
+  "purpose": "用四个例子展示辅音+元音组合。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "FULL",
+  "issue": "가/나/다/마全部组合正确，承接元音→辅音很自然；모아서 한 글자를 만들어요自然、适合入门。目标4已覆盖，NEEDS_REVISION仅来自目标2的朗读支撑建议S3，不是四个例子有错。",
+  "classification": "SHOULD_FIX",
+  "issueIds": [
+    "S3"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "S3",
+      "classification": "SHOULD_FIX",
+      "proposedText": "이렇게 자음과 모음을 모아서\n한 글자를 만들어요.\n\n한 번 따라 읽어 보세요.\n가, 나, 다, 마.\n라, 바, 사, 아.\n“아”의 ㅇ은 소리가 나지 않아요.\n지금은 한 번씩 읽어 봐요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=5",
+  "renderedReference": "ui-render-validation.json / order=5",
+  "nodeWrites": 0
+}

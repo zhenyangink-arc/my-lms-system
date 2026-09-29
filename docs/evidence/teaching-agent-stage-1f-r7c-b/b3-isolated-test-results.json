@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "results": {
+    "existingRegression": {
+      "tests": 64,
+      "pass": 64,
+      "fail": 0,
+      "logSha256": "1be69f83d0e47f12415041b0f5a504fcba6a5f45bc877dd50e25ead330013b8c"
+    },
+    "browserRegression": {
+      "tests": 17,
+      "pass": 17,
+      "fail": 0,
+      "logSha256": "d89ddf5a8ddb2b423a1eed9cc5831a7af976896f8ba3307ffeed9c1727d713ba"
+    },
+    "scopeReference": {
+      "tests": 30,
+      "pass": 30,
+      "fail": 0,
+      "logSha256": "86ff1b9a5426e65ab578b36284935a0de90d8db36992fb6cc52028c8402ccbf1"
+    },
+    "liveRpcBudget": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "logSha256": "583fd938339fffc999ddb26b4069dfc5056f8a63c9eb5d7332fb384ba78ad9d7"
+    }
+  },
+  "total": 117,
+  "currentDbAttemptWrites": 0,
+  "currentDbProgressWrites": 0,
+  "firstBudgetTestRun": "Test harness initially asserted AWAITING_ACTIVITY before asynchronous checkpoint finished; corrected to subscription/state wait, no fixed sleep; rerun PASS. Product code unchanged.",
+  "productCodeWrites": 0,
+  "testFiles": [
+    "tests/teaching-agent-r7cb-b3-budget.test.mjs",
+    "tests/teaching-agent-r7cb-b3-scope.test.mjs",
+    "tests/fixtures/teaching-agent-r7cb/b3/scope-contract.mjs"
+  ],
+  "build": "NOT RUN / no product changes",
+  "typecheck": "NOT REQUIRED for .mjs test-only additions",
+  "gitDiffCheck": "PASS"
+}

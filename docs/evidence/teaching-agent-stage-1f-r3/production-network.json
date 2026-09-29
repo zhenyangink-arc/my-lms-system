@@ -1,0 +1,82 @@
+{
+  "topology": {
+    "UPLY": {
+      "Handlers": {
+        "/": {
+          "Proxy": "http://127.0.0.1:3000"
+        }
+      }
+    },
+    "testBindingPresent": false
+  },
+  "requests": [
+    {
+      "path": "/login",
+      "origin": "https://kmgwak-system-product-name.taila18cd5.ts.net:8443",
+      "host": "kmgwak-system-product-name.taila18cd5.ts.net:8443",
+      "scheme": "https",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "s-maxage=31536000",
+        "transfer-encoding": "chunked",
+        "location": null
+      },
+      "httpVersion": "1.1",
+      "tlsAuthorized": true,
+      "bytes": 7112,
+      "chunks": [
+        {
+          "ms": 29,
+          "bytes": 10
+        },
+        {
+          "ms": 29,
+          "bytes": 3552
+        },
+        {
+          "ms": 29,
+          "bytes": 538
+        },
+        {
+          "ms": 29,
+          "bytes": 3012
+        }
+      ]
+    },
+    {
+      "path": "/login",
+      "origin": "https://untrusted.example.invalid",
+      "host": "kmgwak-system-product-name.taila18cd5.ts.net:8443",
+      "scheme": "https",
+      "status": 200,
+      "headers": {
+        "content-type": "text/html; charset=utf-8",
+        "content-encoding": "gzip",
+        "cache-control": "s-maxage=31536000",
+        "transfer-encoding": "chunked",
+        "location": null
+      },
+      "httpVersion": "1.1",
+      "tlsAuthorized": true,
+      "bytes": 7112,
+      "chunks": [
+        {
+          "ms": 4,
+          "bytes": 10
+        },
+        {
+          "ms": 4,
+          "bytes": 4090
+        },
+        {
+          "ms": 4,
+          "bytes": 3012
+        }
+      ]
+    }
+  ],
+  "productionWrites": 0,
+  "validationBoundary": "Public login reachability only; no NDJSON/proxy header/CSRF/disconnect proof"
+}

@@ -77,6 +77,8 @@ type HangulInteractiveBookProps = {
   unlockedChapterCount: number;
   initialEbookProgress: KoreanEbookProgressMap;
   initialChapterSlug?: string;
+  /** Server-verified lesson excerpts; absent when admission is disabled or denied. */
+  teachingAgentSlot?: ReactNode;
   /** 伴学课堂模式：翻页实时同步 + 画笔/批注覆盖层。 */
   liveMode?: {
     role: "teacher" | "student";
@@ -181,6 +183,7 @@ export function HangulInteractiveBook({
   unlockedChapterCount,
   initialEbookProgress,
   initialChapterSlug,
+  teachingAgentSlot,
   liveMode,
 }: HangulInteractiveBookProps) {
   const router = useRouter();
@@ -1001,7 +1004,12 @@ export function HangulInteractiveBook({
           />
         )}
 
-        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_20%_0%,var(--card),transparent_36%),radial-gradient(circle_at_100%_100%,var(--border),transparent_42%),linear-gradient(145deg,var(--status-warning-surface),var(--status-warning-surface))] px-2 py-3 sm:px-4 lg:px-6 lg:py-5">
+        <main className={`relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_20%_0%,var(--card),transparent_36%),radial-gradient(circle_at_100%_100%,var(--border),transparent_42%),linear-gradient(145deg,var(--status-warning-surface),var(--status-warning-surface))] px-2 py-3 sm:px-4 lg:px-6 lg:py-5${teachingAgentSlot ? " flex flex-col gap-3" : ""}`}>
+          {teachingAgentSlot && (
+            <div className="relative z-10 max-h-[35%] shrink-0 overflow-y-auto">
+              {teachingAgentSlot}
+            </div>
+          )}
           <div aria-hidden="true" className="pointer-events-none absolute -left-20 bottom-8 h-56 w-56 rounded-full border-[28px] border-white/30" />
           <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]/55" />
           <section

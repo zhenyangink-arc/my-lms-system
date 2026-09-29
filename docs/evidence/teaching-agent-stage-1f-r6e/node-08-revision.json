@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "nodeNumber": 8,
+  "idHash": "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369",
+  "formalType": "summary",
+  "sortOrder": 8,
+  "beforeHash": "cc9ab470ee11179cf2becc619fa35d0e94ad364538d2465eb2008af17121c495",
+  "afterHash": "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b",
+  "beforeUpdatedAt": "2026-09-16T08:07:01.111394+00:00",
+  "afterUpdatedAt": "2026-09-16T10:31:33.931448+00:00",
+  "beforeMainSha256": "f64d88f5b0abd9f4e4062bc3a5cf0cb089b6decf42004eec67b75df51d878c9d",
+  "afterMainSha256": "cefc0b7d7f688c8ad330e27830675670cf9689e24dda23f6e2f359b000ef9afc",
+  "afterKoKrSha256": "cefc0b7d7f688c8ad330e27830675670cf9689e24dda23f6e2f359b000ef9afc",
+  "contentExact": true,
+  "bilingualMatch": true,
+  "otherNodesUnchangedDuringStep": true,
+  "protectedFieldsUnchanged": true,
+  "officialUpdateNodeAuditDelta": 1,
+  "verifiedVia": "NEW READ ONLY CONNECTION",
+  "verifiedAtUtc": "2026-09-16T10:31:48.101733+00:00"
+}

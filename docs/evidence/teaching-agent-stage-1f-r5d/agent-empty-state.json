@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "rows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "agentAdmissionTest": "NOT EXECUTED BY DESIGN"
+}

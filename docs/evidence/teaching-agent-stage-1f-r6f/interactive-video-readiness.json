@@ -1,0 +1,18 @@
+{
+  "status": "READY FOR INTEGRATION PLANNING",
+  "dependsOn": "content-freeze-baseline.json",
+  "teachingScriptRole": "TEACHING DESIGN / ORCHESTRATION LAYER",
+  "futureArtifacts": [
+    "Teaching Blocks",
+    "Activities",
+    "Timeline Cues",
+    "Lesson Manifest"
+  ],
+  "contract": "Build upon these eight frozen Teaching Nodes; do not casually replace teaching dialogue. Content changes require a new explicit revision task.",
+  "planningImplementationExecuted": false,
+  "videoBlocksCreated": 0,
+  "activitiesCreated": 0,
+  "timelineCuesCreated": 0,
+  "lessonManifestsCreated": 0,
+  "r7aEntered": false
+}

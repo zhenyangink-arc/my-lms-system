@@ -1,0 +1,37 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "PASS SOURCE AUDIT",
+  "source": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+  "currentPlanningFields": [
+    "verified_selection marker",
+    "lessonRef",
+    "segmentRef",
+    "revision",
+    "locale",
+    "sourceLocale",
+    "sourceRefs"
+  ],
+  "excluded": [
+    "completion sentence",
+    "correctness",
+    "mastery",
+    "attempt count",
+    "raw durable facts",
+    "full teaching state",
+    "authoritative sentence before Tool"
+  ],
+  "modelChoice": "Existing coordinator uses auto except final none; keep selection normal for the selected Skill. New procedure names mandatory Tool but never injects its result.",
+  "contextRule": "User message and Tool text are data, not authorization. User completion claim cannot satisfy evidence gate.",
+  "personaPermissionIsolation": "PASS source audit; Kim changes presentation only, not policy/Profile allowed refs.",
+  "currentPosition": "Never derive current Teaching Node from source node, execution node, layout, video or optional saved state.",
+  "legacyFallback": "ABSENT in audited canonical Teaching Agent/Core execution path; no old Learning Agent or direct-repository shortcut planned.",
+  "productionRegistryThisTurn": "UNCHANGED"
+}

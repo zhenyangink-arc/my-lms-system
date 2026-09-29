@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "verifiedAt": "2026-09-17T06:14:18.764122+00:00",
+  "checks": {
+    "main.tables": true,
+    "main.functions": true,
+    "main.constraints": true,
+    "main.indexes": true,
+    "main.policies": true,
+    "main.extensions": true,
+    "main.schemaAcl": true,
+    "main.defaultAcl": true,
+    "extra.database": true,
+    "extra.databaseSettings": true,
+    "extra.roles": true,
+    "extra.memberships": true,
+    "extra.extensions": true,
+    "extra.eventTriggers": true,
+    "extra.triggers": true,
+    "extra.sequences": true,
+    "extra.largeObjects": true,
+    "additional.publications": true,
+    "additional.publicationTables": true,
+    "additional.views": true,
+    "additional.foreignTables": true,
+    "additional.subscriptions": true,
+    "columns": true,
+    "ledger": true,
+    "agentTablesPresent": true,
+    "rolesCleanup": true
+  },
+  "hashes": {
+    "main.tables": {
+      "sourceSha256": "a1e4446fc603c8e373012dd43f64c8234908fe4f4e1c7f99a7e82192e42b2195",
+      "restoredSha256": "a1e4446fc603c8e373012dd43f64c8234908fe4f4e1c7f99a7e82192e42b2195"
+    },
+    "main.functions": {
+      "sourceSha256": "b506b292dce06cd809ff2a263f8a2e5831eb7eb3b71f30a9fd7823954eba1575",
+      "restoredSha256": "b506b292dce06cd809ff2a263f8a2e5831eb7eb3b71f30a9fd7823954eba1575"
+    },
+    "main.constraints": {
+      "sourceSha256": "638c3571c7382a838c301bdbae31e74a3c7ec8c796afae635121f431c11bcc19",
+      "restoredSha256": "638c3571c7382a838c301bdbae31e74a3c7ec8c796afae635121f431c11bcc19"
+    },
+    "main.indexes": {
+      "sourceSha256": "05c6e993aa8490e7edfb3ccc6605bc0a29732d9bb15305b40bb2af9d4743a6db",
+      "restoredSha256": "05c6e993aa8490e7edfb3ccc6605bc0a29732d9bb15305b40bb2af9d4743a6db"
+    },
+    "main.policies": {
+      "sourceSha256": "a91b869914b68f1fb5201efb89749b5419aa76d151714e1eb3dfbafb3f1cbae5",
+      "restoredSha256": "a91b869914b68f1fb5201efb89749b5419aa76d151714e1eb3dfbafb3f1cbae5"
+    },
+    "main.extensions": {
+      "sourceSha256": "eaacee205dab32cd94db47c533c5336e84b7594f69b5f94a3f20db226f940680",
+      "restoredSha256": "eaacee205dab32cd94db47c533c5336e84b7594f69b5f94a3f20db226f940680"
+    },
+    "main.schemaAcl": {
+      "sourceSha256": "c892a0e67e65f77137ba04172cafcb1ab95ff74ad060ed3928874e4890e59ea4",
+      "restoredSha256": "c892a0e67e65f77137ba04172cafcb1ab95ff74ad060ed3928874e4890e59ea4"
+    },
+    "main.defaultAcl": {
+      "sourceSha256": "e66df7f3ebcdadd3674daa2711eacdf82783d041416c03d1b0d8eed20921329e",
+      "restoredSha256": "e66df7f3ebcdadd3674daa2711eacdf82783d041416c03d1b0d8eed20921329e"
+    },
+    "extra.database": {
+      "sourceSha256": "d15a281def0cb8d5c95db5ef8cfea28dbc0989894742ea664492b7637ceba461",
+      "restoredSha256": "d15a281def0cb8d5c95db5ef8cfea28dbc0989894742ea664492b7637ceba461"
+    },
+    "extra.databaseSettings": {
+      "sourceSha256": "ebe91a50ae1895ae10d4f0a757f99fb09425c251e469bd6012fbaf7718d0dbaf",
+      "restoredSha256": "ebe91a50ae1895ae10d4f0a757f99fb09425c251e469bd6012fbaf7718d0dbaf"
+    },
+    "extra.roles": {
+      "sourceSha256": "42005458ffe9112f71f005dee8776eeb7cd8e455dac61976e3428ccefb22d771",
+      "restoredSha256": "42005458ffe9112f71f005dee8776eeb7cd8e455dac61976e3428ccefb22d771"
+    },
+    "extra.memberships": {
+      "sourceSha256": "e442bc9b5aa8f57954d8f7ff2606bc887a5f8890cd55114011e006618f76fbee",
+      "restoredSha256": "e442bc9b5aa8f57954d8f7ff2606bc887a5f8890cd55114011e006618f76fbee"
+    },
+    "extra.extensions": {
+      "sourceSha256": "d0e4f7850d28b3b2e1c776444b17eaff0514ea852e8d29e1187a4b0b9299472a",
+      "restoredSha256": "d0e4f7850d28b3b2e1c776444b17eaff0514ea852e8d29e1187a4b0b9299472a"
+    },
+    "extra.eventTriggers": {
+      "sourceSha256": "83441e1b017c153dbd7857e262509b1ab6bd1f95337893853ac2de896d8525ea",
+      "restoredSha256": "83441e1b017c153dbd7857e262509b1ab6bd1f95337893853ac2de896d8525ea"
+    },
+    "extra.triggers": {
+      "sourceSha256": "b1cb70b53b0529160c36e3941037b7bd5b3ba8753a89323cdade1a871d986229",
+      "restoredSha256": "b1cb70b53b0529160c36e3941037b7bd5b3ba8753a89323cdade1a871d986229"
+    },
+    "extra.sequences": {
+      "sourceSha256": "b458336015aba43f88abd1c604c051b62980cb43cdbc372f33b6679c0a0769d4",
+      "restoredSha256": "b458336015aba43f88abd1c604c051b62980cb43cdbc372f33b6679c0a0769d4"
+    },
+    "extra.largeObjects": {
+      "sourceSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "restoredSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    "additional.publications": {
+      "sourceSha256": "c3959d92d5d62920e9546768d560170ccef20aa585483e4b5233296b772a3afc",
+      "restoredSha256": "c3959d92d5d62920e9546768d560170ccef20aa585483e4b5233296b772a3afc"
+    },
+    "additional.publicationTables": {
+      "sourceSha256": "f6642795102449980800f446b76a8c6210d61936af1ed00aaef6ed57191b0768",
+      "restoredSha256": "f6642795102449980800f446b76a8c6210d61936af1ed00aaef6ed57191b0768"
+    },
+    "additional.views": {
+      "sourceSha256": "8a55cfbfcda854f705cb74222bc80d8264b2c76693581dfae53a514fc864e67d",
+      "restoredSha256": "8a55cfbfcda854f705cb74222bc80d8264b2c76693581dfae53a514fc864e67d"
+    },
+    "additional.foreignTables": {
+      "sourceSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "restoredSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    "additional.subscriptions": {
+      "sourceSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "restoredSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    "columns": {
+      "sourceSha256": "334c0e7ee3286ea872b50cea67729dbbf5066fac4572a00aa0d62c03456d93cf",
+      "restoredSha256": "334c0e7ee3286ea872b50cea67729dbbf5066fac4572a00aa0d62c03456d93cf"
+    }
+  },
+  "ledgerCount": 457,
+  "ledgerLatest": {
+    "version": "202609140007",
+    "name": "teaching_content_skeleton"
+  },
+  "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+  "tableCount": 245,
+  "dataIntegrity": "Per-table counts plus complete archive COPY restore; no full-row hashes",
+  "normalization": "Collection order and ACL-entry order; isolated database name only. Extra publications OIDs replaced by additional owner-normalized catalog.",
+  "databaseLogicalRestoreVerified": true,
+  "entireSupabasePlatformRestoreVerified": false
+}

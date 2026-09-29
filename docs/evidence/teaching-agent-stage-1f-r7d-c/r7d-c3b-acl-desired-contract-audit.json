@@ -1,0 +1,90 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "overall": "READY_FOR_FORWARD_ACL_FIX_APPROVAL",
+  "primaryDecision": "REMOVE_SERVICE_ROLE_FORWARD_ONLY",
+  "originRequirement": "Historical origin UNKNOWN no longer blocks a deliberate future contract; D1 record retained.",
+  "targetDefinition": "MATCH",
+  "historicalServiceRoleAcl": "CONFIRMED",
+  "isolated34bBaseline": "INCOMPLETE",
+  "desiredAclRoles": [
+    "postgres",
+    "authenticated"
+  ],
+  "evidenceFiles": [
+    "r7d-c3b-acl-function-authorization-model.json",
+    "r7d-c3b-acl-peer-rpc-matrix.json",
+    "r7d-c3b-acl-runtime-caller-matrix.json",
+    "r7d-c3b-acl-least-privilege-decision.json",
+    "r7d-c3b-acl-test-baseline-design.json",
+    "r7d-c3b-acl-forward-fix-design.json"
+  ],
+  "releaseLocks": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "match": true
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "match": true
+    }
+  ],
+  "priorEvidencePreserved": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-reconciliation-decision.json",
+      "sha256": "37b478da38463a756f0489bc9f646b6d76ebfa90ccb0636f644f4dd5a2dba5d5"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+    }
+  ],
+  "nextApproval": "approval-r7d-c3b-acl-forward-fix.json",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED"
+}

@@ -1,0 +1,33 @@
+{
+  "status": "BASELINE UNCHANGED",
+  "baselineErrors": 3,
+  "observedErrors": 3,
+  "baselineWarnings": 2,
+  "observedWarnings": 2,
+  "newProductErrors": 0,
+  "rules": [
+    {
+      "path": "src/features/smart-textbook-runtime/components/choice-block.tsx",
+      "errors": 1,
+      "rules": [
+        "react-hooks/set-state-in-effect"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/region-renderer.tsx",
+      "errors": 1,
+      "rules": [
+        "react-hooks/preserve-manual-memoization"
+      ]
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-context.tsx",
+      "errors": 1,
+      "rules": [
+        "react-hooks/exhaustive-deps",
+        "react-hooks/set-state-in-effect",
+        "react-hooks/exhaustive-deps"
+      ]
+    }
+  ]
+}

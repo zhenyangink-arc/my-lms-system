@@ -1,0 +1,11 @@
+{
+  "status": "RESOLVED",
+  "initialFailure": "OSError errno 30 at private acceptance directory creation (read-only filesystem)",
+  "productionChecksAffected": false,
+  "databaseOrApplicationFailure": false,
+  "resolution": "Filesystem escalation granted; private acceptance receipt sealed with 0700 directory / 0600 file",
+  "receiptEvidence": "private-receipt.json",
+  "originalFailurePreserved": "acceptance-failure.json",
+  "readOnlyRepeat": "A second read-only observation was used to locate the filesystem error; both completed core checks without production mutation",
+  "productionMutations": 0
+}

@@ -1,0 +1,243 @@
+{
+  "status": "UNCHANGED",
+  "before": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "after": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "versionBefore": {
+    "count": 1,
+    "rowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158"
+  },
+  "versionAfter": {
+    "count": 1,
+    "rowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158"
+  },
+  "nodeRowHashesBefore": [
+    "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+    "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+    "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+    "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+    "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+    "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+    "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+    "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b"
+  ],
+  "nodeRowHashesAfter": [
+    "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+    "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+    "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+    "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+    "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+    "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+    "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+    "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b"
+  ],
+  "allUpdatedAtUnchanged": true,
+  "objectivesBefore": {
+    "zh-CN": [
+      "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "能辨认并朗读基础元音和常用基础辅音。",
+      "理解初声、中声、终声组成韩语音节的基本方式。",
+      "能将基础辅音与元音组合成简单韩语音节。"
+    ]
+  },
+  "objectivesAfter": {
+    "zh-CN": [
+      "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "能辨认并朗读基础元音和常用基础辅音。",
+      "理解初声、中声、终声组成韩语音节的基本方式。",
+      "能将基础辅音与元音组合成简单韩语音节。"
+    ]
+  },
+  "auditLogsUnchanged": true,
+  "unrelatedBefore": {
+    "lessons": {
+      "count": 69,
+      "safeMetadataSha256": "2197189d8a038d4cf9bd3bb5c032bff150d087094b85cb65779607b41cbe5d9d"
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "safeMetadataSha256": "e3e8077b5543d33ed7539c7867b2bd9bbb6af47925a7910763de018ce31b373d"
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "safeMetadataSha256": "fb14c71325d886fbcaa07406de89c1e0dfe22a41d45ebae6d1804adf6022ceda"
+    },
+    "digital_textbook_chapters": {
+      "count": 17,
+      "safeMetadataSha256": "b9cb3d339952f8086e67d91656f164b9759e0d296681d07375cd955953b0f997"
+    },
+    "digital_textbook_modules": {
+      "count": 132,
+      "safeMetadataSha256": "a3dc3fead69084906bed381a04679042b12866c6a906bff56251f3e818a3e3b0"
+    },
+    "digital_textbook_nodes": {
+      "count": 132,
+      "safeMetadataSha256": "06f9452fe325e16516d65be30dcdc8593b3e61f4b04ae484774b6fcca4684d38"
+    },
+    "digital_textbook_activities": {
+      "count": 203,
+      "safeMetadataSha256": "bf12cbb4b5dac331cbe983323cf236740cce675d8aa81013c3d373d7104963a8"
+    },
+    "learning_agent_lessons": {
+      "count": 132,
+      "safeMetadataSha256": "adfdd30db22adc5c3dc908fd8352d998937813b13a6b9eea8188e10446b5b558"
+    },
+    "learning_agent_steps": {
+      "count": 528,
+      "safeMetadataSha256": "ec53a4f2ece9b6504725df7390ac56db98a12638969de71947dc06cd87b22486"
+    },
+    "learning_agent_script_versions": {
+      "count": 10,
+      "safeMetadataSha256": "bfb362734ba3ed39f2fe680de3267aca418b82ebd2df444e2cf1adb48b1bb7e0"
+    },
+    "learning_agent_script_nodes": {
+      "count": 75,
+      "safeMetadataSha256": "806ddcb33e9977004e6f0867193ac695e9e4524cbf77c387955d66d3aecf270e"
+    }
+  },
+  "unrelatedAfter": {
+    "lessons": {
+      "count": 69,
+      "safeMetadataSha256": "2197189d8a038d4cf9bd3bb5c032bff150d087094b85cb65779607b41cbe5d9d"
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "safeMetadataSha256": "e3e8077b5543d33ed7539c7867b2bd9bbb6af47925a7910763de018ce31b373d"
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "safeMetadataSha256": "fb14c71325d886fbcaa07406de89c1e0dfe22a41d45ebae6d1804adf6022ceda"
+    },
+    "digital_textbook_chapters": {
+      "count": 17,
+      "safeMetadataSha256": "b9cb3d339952f8086e67d91656f164b9759e0d296681d07375cd955953b0f997"
+    },
+    "digital_textbook_modules": {
+      "count": 132,
+      "safeMetadataSha256": "a3dc3fead69084906bed381a04679042b12866c6a906bff56251f3e818a3e3b0"
+    },
+    "digital_textbook_nodes": {
+      "count": 132,
+      "safeMetadataSha256": "06f9452fe325e16516d65be30dcdc8593b3e61f4b04ae484774b6fcca4684d38"
+    },
+    "digital_textbook_activities": {
+      "count": 203,
+      "safeMetadataSha256": "bf12cbb4b5dac331cbe983323cf236740cce675d8aa81013c3d373d7104963a8"
+    },
+    "learning_agent_lessons": {
+      "count": 132,
+      "safeMetadataSha256": "adfdd30db22adc5c3dc908fd8352d998937813b13a6b9eea8188e10446b5b558"
+    },
+    "learning_agent_steps": {
+      "count": 528,
+      "safeMetadataSha256": "ec53a4f2ece9b6504725df7390ac56db98a12638969de71947dc06cd87b22486"
+    },
+    "learning_agent_script_versions": {
+      "count": 10,
+      "safeMetadataSha256": "bfb362734ba3ed39f2fe680de3267aca418b82ebd2df444e2cf1adb48b1bb7e0"
+    },
+    "learning_agent_script_nodes": {
+      "count": 75,
+      "safeMetadataSha256": "806ddcb33e9977004e6f0867193ac695e9e4524cbf77c387955d66d3aecf270e"
+    }
+  },
+  "schemaBefore": {
+    "columns": "473188077db2737cb79b75aca5563b556067d60a3b64a677ce98022d47c8564d",
+    "functions": "92f5d0909f50b1d05e24959dead933918d54f461804f3934fc2aa5c838df5f02",
+    "constraints": "032c92f8f2076aeca4db4579740a6bb2a2b7f4fe983acda52993f7cd64ea1b46",
+    "policies": "802c2abc0c25164352a851560cc0c09ebda98ce790e7596424f0471c68d89798",
+    "relations": "5833d70267adbf78aa2befd27bcb3eb3113797145d39bab9b9735307160cc4e6"
+  },
+  "schemaAfter": {
+    "columns": "473188077db2737cb79b75aca5563b556067d60a3b64a677ce98022d47c8564d",
+    "functions": "92f5d0909f50b1d05e24959dead933918d54f461804f3934fc2aa5c838df5f02",
+    "constraints": "032c92f8f2076aeca4db4579740a6bb2a2b7f4fe983acda52993f7cd64ea1b46",
+    "policies": "802c2abc0c25164352a851560cc0c09ebda98ce790e7596424f0471c68d89798",
+    "relations": "5833d70267adbf78aa2befd27bcb3eb3113797145d39bab9b9735307160cc4e6"
+  }
+}

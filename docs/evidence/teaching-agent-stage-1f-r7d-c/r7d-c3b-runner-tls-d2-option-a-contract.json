@@ -1,0 +1,116 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "POOLED_VERIFY_FULL_PROVIDER_TRUST/1",
+  "status": "MISSING_PROVIDER_TRUST_EVIDENCE",
+  "topology": [
+    "Runner",
+    "pinned Docker psql/libpq",
+    "verify-full TCP TLS",
+    "Supavisor session pooler",
+    "separate provider-managed upstream",
+    "PostgreSQL backend"
+  ],
+  "hopA": {
+    "tls": "PROVEN_HISTORICALLY_NOT_REOBSERVED",
+    "endpointIdentity": "PROVEN_HISTORICALLY_AND_LOCAL_LOCK_MATCH",
+    "futureProof": {
+      "psqlAuthority": "Same persistent pinned psql/libpq process used for the operation; fixed conninfo metadata plus locked effective verify-full parameters, CA identity, service identity and runtime image. A separate diagnostic connection is not authority for the operation session.",
+      "safeFields": [
+        "protocol",
+        "cipher",
+        "peerHostnameOrApprovedIdentityHash",
+        "sslmode",
+        "CAIdentitySha256",
+        "toolImageId",
+        "contractId",
+        "sessionAttemptId"
+      ],
+      "certificateSubjectSANFingerprint": "Optional only if the reviewed actual client metadata mechanism supplies it; never fabricate it from backend SQL.",
+      "poolerIdentity": "Bind official session endpoint host hash, port 5432, project suffix identity, database postgres, authenticated database role, pinned CA and versioned contract. A shared endpoint certificate alone does not uniquely identify the tenant.",
+      "noRawOutputPersistence": true,
+      "parser": "Pinned tool version, fixed locale, strict finite parser; unexpected output fails TLS_METADATA_UNAVAILABLE. No password/DSN/raw connection output in public receipts.",
+      "timing": "Validate on every new production session before ledger/catalog or mutation; capture retains RR READ ONLY, one snapshot, ROLLBACK. No downgrade/retry/fallback.",
+      "dumpLimitation": "Current pg_dump/pg_dumpall do not expose the same psql metadata path. A per-tool enforcement attestation can bind exact pinned libpq tool, effective verify-full service/CA hashes and success, but this must be explicitly reviewed as enforced-connection proof, not represented as observed protocol/cipher. If observed per-connection metadata is required, a separately scoped mechanism remains unresolved."
+    }
+  },
+  "hopB": {
+    "managedBy": "PROVIDER",
+    "transportType": "UNKNOWN",
+    "encryption": "UNKNOWN",
+    "authentication": "UNKNOWN",
+    "certificateValidation": "UNKNOWN",
+    "networkIsolationForExactHop": "UNKNOWN",
+    "trustApproval": "UNAPPROVED",
+    "status": "PROVIDER_INTERNAL_HOP_TRUST_UNRESOLVED"
+  },
+  "trustBoundaries": [
+    {
+      "boundary": 1,
+      "between": "Operator host/container and provider pooler endpoint",
+      "operator": "Protect existing credential store, lock service and CA, validate actual client TLS and tenant/endpoint identities, deny environment/CLI overrides.",
+      "provider": "Serve the authenticated TLS endpoint and enforce tenant routing/access."
+    },
+    {
+      "boundary": 2,
+      "between": "Pooler and project PostgreSQL backend",
+      "provider": "Document applicable upstream authentication, confidentiality/integrity and isolation responsibilities, including any distinct internal transport protection.",
+      "operator": "Approve reviewable assurance tied to this managed service/project class; record evidence identity and review conditions. Do not infer trust from brand or successful login."
+    }
+  ],
+  "pgStatSslRole": "POOLER_UPSTREAM_OBSERVATION",
+  "acceptFalseOnlyWhen": [
+    "Same-session client TLS and endpoint validation pass.",
+    "Provider assurance explicitly covers the actual managed pooler-to-project trust boundary and explains the non-TLS PostgreSQL observation without an unsupported inference.",
+    "The operator explicitly approves the versioned pooled trust contract and evidence identity.",
+    "Observed backend metadata matches the approved topology; unknown or conflicting topology fails closed."
+  ],
+  "evidenceNeeded": [
+    "Applicable provider architecture/security statement or attributable support response mapping this session-pooler upstream, including authentication, network boundary and encryption/alternative internal protection.",
+    "Reviewed reconciliation of the broad DPA assurances with the historical backend ssl=false observation.",
+    "Approved per-tool backup proof policy, plus connection capacity/timeouts for the exported-snapshot workflow."
+  ],
+  "supavisorBinaryIdentity": "Not remotely attested. Bind provider-managed service identity and evidence, not an invented server binary hash.",
+  "historicalChoiceReason": "UNKNOWN; IPv4 suitability is documented, but original project selection intent was not found.",
+  "credentialChangeRequired": "NO_FOR_SAME_ENDPOINT_EXISTING_CREDENTIAL_CONTRACT",
+  "profileChangeRequired": true,
+  "runnerCodeChangeRequired": true,
+  "failureModel": {
+    "CLIENT_TLS_REQUIRED": "The actual libpq connection has no TLS; stop before catalog or mutation.",
+    "CLIENT_CERT_IDENTITY_MISMATCH": "A verified certificate/hostname validation failure; never infer this detailed cause from an arbitrary stderr string.",
+    "ENDPOINT_IDENTITY_MISMATCH": "Fixed hostname/project/database/role/profile or tool identity differs.",
+    "POOLER_UPSTREAM_TRUST_UNRESOLVED": "Missing, expired, inapplicable or unapproved provider-hop assurance.",
+    "DIRECT_DB_TLS_REQUIRED": "Direct backend reports no TLS on the exact session.",
+    "TLS_METADATA_UNAVAILABLE": "Missing, malformed or unsupported client metadata; fail closed, no fallback.",
+    "TRANSPORT_CONTRACT_MISMATCH": "Profile/contract/source/approval identities disagree or wrong topology is selected."
+  },
+  "selected": false
+}

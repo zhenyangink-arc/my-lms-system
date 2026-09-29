@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "existingScriptBefore": "NONE",
+  "beforeVersionCount": 0,
+  "currentLogicalScriptCount": 1,
+  "currentVersionCount": 1,
+  "currentNodeCount": 0,
+  "duplicateVersions": 0,
+  "independentScriptRootTable": false
+}

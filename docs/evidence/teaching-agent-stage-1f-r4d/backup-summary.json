@@ -1,0 +1,36 @@
+{
+  "path": "/home/yangzhen/backups/uply/20260915T063124Z",
+  "seal": "VALID",
+  "sealedAt": "2026-09-15T06:33:18.867986+00:00",
+  "snapshotStart": "2026-09-15T06:31:24.914920+00:00",
+  "files": [
+    {
+      "path": "database.dump",
+      "sha256": "41dfcc96b933b0893df3457d9c9c0c16ba82fdd58cb7d848b4ca7f7719a2aaa4",
+      "bytes": 5759599,
+      "mode": "0600",
+      "owner": "yangzhen",
+      "mtime": "2026-09-15T06:31:36.903105+00:00"
+    },
+    {
+      "path": "roles.sql",
+      "sha256": "196db813499e8402eb660ebf274186a151fe6985df4248241876e1e3fd8d3a87",
+      "bytes": 5643,
+      "mode": "0600",
+      "owner": "yangzhen",
+      "mtime": "2026-09-15T06:31:48.336708+00:00"
+    },
+    {
+      "path": "schema.dump",
+      "sha256": "e681713b49443919b817127974a3c84ef1132cc9060197e472be9c2011eb54d3",
+      "bytes": 2801375,
+      "mode": "0600",
+      "owner": "yangzhen",
+      "mtime": "2026-09-15T06:31:43.558307+00:00"
+    }
+  ],
+  "manifestSha256": "b947bf1ac84634ce45ad5c6dd668bbc6b6651c714914ce433e5cec01bf2f2150",
+  "sealedFileCount": 79,
+  "freshR4dRecoveryPoint": "CREATED",
+  "goLiveRpoValidity": "TIME-BOUND — RECHECK REQUIRED"
+}

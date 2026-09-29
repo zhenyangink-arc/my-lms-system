@@ -1,0 +1,81 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "result": "PASS_IN_ISOLATED_DATABASES",
+  "expected": {
+    "function": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definitionSha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "shaAlgorithm": "SHA256 UTF8 pg_get_functiondef(target_oid), same catalog serialization as diagnostic",
+    "owner": "postgres",
+    "securityDefiner": true,
+    "searchPathConfig": [
+      "search_path=\"\""
+    ],
+    "language": "plpgsql",
+    "volatility": "v",
+    "parallel": "u",
+    "leakproof": false,
+    "aclEntries": [
+      {
+        "grantee": "postgres",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      },
+      {
+        "grantee": "authenticated",
+        "grantor": "postgres",
+        "privilege": "EXECUTE",
+        "grantable": false
+      }
+    ],
+    "publicExecute": false,
+    "anonExecute": false,
+    "serviceRoleEffectiveExecute": false,
+    "noOtherOverloadAffected": true,
+    "authenticatedEffectiveExecute": true,
+    "postgresEffectiveExecute": true,
+    "definitionUnchanged": true,
+    "ownerUnchanged": true,
+    "defaultPrivilegesUnchanged": true,
+    "otherFunctionAclsUnchanged": true,
+    "otherOverloadsUnchanged": true
+  },
+  "fingerprints": {
+    "definitionHash": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "beforeAcl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+    "afterAcl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "beforeFingerprint": "a858258b7c09b3e99403fc3a1ad3fa6a95f30fd43afaa791735aefe9c15784ed",
+    "afterFingerprint": "f301d872cd94779eb94e5c89e4043be740039b01ef2a7746126376e12498d3a0",
+    "defaultsSha": "01ba4b4afa205e76b5a14b3e87a575e5a6aa68aa4f144daf92a41878ce38db00",
+    "otherFunctionsSha": "36bcb2bc5a3a02798591e0f2d1c064caa4c5449b12b95e951ecad417ed5f68cc",
+    "schemaSha": "70b3fab1f891db344781622d5031889d4b02999872f04080a0073e8489ab22a2",
+    "allProtectedEqual": true
+  },
+  "postconditions": "All exact metadata/body unchanged; explicit/effective service_role denied; defaults/other ACL/schema/constraints/memberships identical",
+  "transactionality": "Precondition failures preserve original catalog; inherited EXECUTE postcondition failure rolls back REVOKE and test-runner ledger insert",
+  "tableData": "Public/Auth synthetic table contents unchanged by000; actual authenticated Owner enable/disable and rejection scenarios tested in separate isolated fixture"
+}

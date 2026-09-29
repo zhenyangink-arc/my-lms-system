@@ -1,0 +1,43 @@
+{
+  "receiptVersion": "r6a-authoring-completed-v1",
+  "operator": "杨震",
+  "createdAtUtc": "2026-09-16T06:42:38.037548+00:00",
+  "targetSlot": "韩语初级 / 预备课：韩文字母入门",
+  "logicalAlias": "hangul-introduction",
+  "creationMethod": "OFFICIAL_AUTHORING_WORKFLOW",
+  "creationResult": "PASS",
+  "session": "Existing user-owned normal Platform Owner Chrome via CDP",
+  "priorFailedUserAttempts": 1,
+  "logicalCreateAttemptsAfterRetirement": 1,
+  "totalKnownLogicalAttempts": 2,
+  "blindRetries": 0,
+  "draftStatus": "DRAFT",
+  "createdObjectTypes": [
+    "digital_textbooks",
+    "digital_textbook_versions",
+    "digital_textbook_chapters",
+    "digital_textbook_modules",
+    "learning_agent_lessons"
+  ],
+  "safeResourceHashes": {
+    "textbookHash": "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525",
+    "versionHash": "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b",
+    "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+    "moduleHash": "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1",
+    "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+    "profileHash": "880a3c837b835647cac8de9167f70625b9c0e88f848d072d94a418cbc1492148"
+  },
+  "profileRowsCreated": 0,
+  "objectiveCount": 4,
+  "objectivesExactOrdered": true,
+  "canonicalChainCount": 1,
+  "scriptStudioHandoff": "PASS",
+  "scriptVersionsCreated": 0,
+  "scriptNodesCreated": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": 0,
+  "providerRequests": 0,
+  "pinsGenerated": 0,
+  "definitionPublication": 0
+}

@@ -1,0 +1,22 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "agentRunsDuringR6E": 0,
+  "providerRequestsDuringR6E": 0,
+  "pinsCreated": 0,
+  "definitionPublication": 0,
+  "authWrites": 0,
+  "publishWrites": 0,
+  "runtimeExecutions": 0,
+  "previewRuntime": 0,
+  "stage1G": "NOT READY",
+  "nextStageEntered": false,
+  "providerClaimScope": "THIS TASK ONLY"
+}

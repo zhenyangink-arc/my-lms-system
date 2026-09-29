@@ -1,0 +1,13 @@
+{
+  "nodeNumber": 4,
+  "idHash": "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+  "status": "STARTED_RESULT_NOT_CONFIRMED",
+  "startedAtUtc": "2026-09-16T10:30:20.895Z",
+  "beforeUpdatedAt": "2026-09-16T08:06:02.583445+00:00",
+  "plannedMainSha256": "ed63082c205e690ad67c78efc908569c0655a65fba602aee7ab5962de3e95085",
+  "authorizedFields": [
+    "script_zh",
+    "script_ko"
+  ],
+  "logicalAttempt": 1
+}

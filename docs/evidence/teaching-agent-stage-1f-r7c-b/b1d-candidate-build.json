@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "candidateDirectory": "/tmp/uply-r7cb-b1d-candidate-20260917T064420Z",
+  "candidateBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "currentBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "sourceSha256": "15b032f346a93327c6692546ad3f9c47c3ba8d5cb9e32e722d9d6a56d6d08d77",
+  "sourceFileCount": 1313,
+  "changedProductFiles": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "logSha256": "5f20a6ec1ca2ebd7e8dbbb22d896f85defe4c1d3ca5b1ab2812b675d7357e8a3",
+  "typeScript": "PASS (Next build)",
+  "deploy": 0,
+  "migration": 0,
+  "publicBuildConfigMatchesCurrent": true,
+  "archive": "/tmp/uply-r7cb-b1d-candidate-20260917T064420Z/candidate-build.tar.gz",
+  "archiveSha256": "2e5f143ad34b0c664e866a89a4adaf545fdb4d7fe54b737990a2c6798c540c47",
+  "artifactMemberCount": 1382
+}

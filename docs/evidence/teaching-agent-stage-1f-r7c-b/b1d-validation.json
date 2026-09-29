@@ -1,0 +1,19 @@
+{
+  "preflightFix": "PASS",
+  "tests": "31/31 PASS",
+  "build": "f3AMbrTZfbg0_VWwnSE6i",
+  "typeScript": "PASS — final Next build",
+  "scopedLint": {
+    "files": [
+      "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+    ],
+    "errors": 0,
+    "warnings": 0
+  },
+  "diffCheck": "PASS",
+  "sensitiveScan": "PASS",
+  "discardedCandidate": "6EOgU8Gbv4DjZSZZDYqK9 predates reserved variable rename; not approved deployment candidate",
+  "oldCreateFunctionBytes": "UNCHANGED",
+  "installedMigrationBytes": "UNCHANGED",
+  "deployedCode": "UNCHANGED"
+}

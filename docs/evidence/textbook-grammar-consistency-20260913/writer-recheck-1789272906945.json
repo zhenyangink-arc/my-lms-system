@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-09-13T04:15:06.78196+00:00",
+  "readOnly": "on",
+  "activity": [
+    {
+      "pid": 2409315,
+      "usename": "pgbouncer",
+      "application_name": "Supavisor (auth_query)",
+      "backend_type": "client backend",
+      "state": "active",
+      "wait_event_type": null,
+      "wait_event": null,
+      "backend_start": "2026-09-13T04:15:06.608316+00:00",
+      "xact_start": "2026-09-13T04:15:06.647581+00:00",
+      "query_start": "2026-09-13T04:15:06.647581+00:00",
+      "state_change": "2026-09-13T04:15:06.647582+00:00",
+      "backend_xid": null,
+      "blockers": [],
+      "operations": [],
+      "querySha256": "9be46e80ccec8f3f84d07eec975edf0f9d996f08b09c4634ff1bfa75c501e49a",
+      "queryLength": 622,
+      "queryTruncated": false,
+      "topLevel": "SELECT",
+      "queryContentsExported": false
+    }
+  ],
+  "locks": [],
+  "runtimeRequests": 0,
+  "recordingRequests": 0,
+  "remoteWrites": false,
+  "targetVerified": true,
+  "tlsVerified": true
+}

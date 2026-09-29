@@ -1,0 +1,138 @@
+{
+  "items": [
+    {
+      "id": "R1",
+      "risk": "Agent arbitrary authoring DB access",
+      "severity": "HIGH",
+      "mitigation": "Tool contracts provide narrow published evidence; reject raw queries/new universal tool",
+      "evidence": "lesson-tool"
+    },
+    {
+      "id": "R2",
+      "risk": "Node confused with Block/Activity parent",
+      "severity": "HIGH",
+      "mitigation": "Explicit projection mapping; frozen pedagogy unchanged; satisfy existing activity FK with authorized authoring",
+      "evidence": "database-model-inventory"
+    },
+    {
+      "id": "R3",
+      "risk": "Dual Runtime",
+      "severity": "HIGH",
+      "mitigation": "Reuse LessonRuntime and deterministic Script Runtime domain under one orchestration; no parallel player-owned progress",
+      "evidence": "current-runtime-inventory"
+    },
+    {
+      "id": "R4",
+      "risk": "Second Activity system",
+      "severity": "HIGH",
+      "mitigation": "Reuse existing single_choice and server grader; no video questions table",
+      "evidence": "activity-inventory"
+    },
+    {
+      "id": "R5",
+      "risk": "Second Progress system",
+      "severity": "HIGH",
+      "mitigation": "Existing authoritative attempts/node progress; video time only observation",
+      "evidence": "progress-inventory"
+    },
+    {
+      "id": "R6",
+      "risk": "Old Agent fallback",
+      "severity": "HIGH",
+      "mitigation": "New composition must not invoke productionTeacherAgentAdapter -> old responder -> Edge Provider",
+      "evidence": "agent-foundation-inventory"
+    },
+    {
+      "id": "R7",
+      "risk": "Cue duplicates and stale callbacks",
+      "severity": "HIGH",
+      "mitigation": "Scoped identity, pending-before-async, generation lease, once-only completion handling",
+      "evidence": "cue-dedupe-strategy"
+    },
+    {
+      "id": "R8",
+      "risk": "Seek skipping required Activity",
+      "severity": "HIGH",
+      "mitigation": "Crossing scan and earliest unsatisfied mandatory cue",
+      "evidence": "cue-dedupe-strategy"
+    },
+    {
+      "id": "R9",
+      "risk": "Refresh loses waiting Activity",
+      "severity": "HIGH",
+      "mitigation": "Same snapshot session restore and server progress reconstruction; no silent re-admission",
+      "evidence": "cue-dedupe-strategy"
+    },
+    {
+      "id": "R10",
+      "risk": "Activity result does not prove completion",
+      "severity": "HIGH",
+      "mitigation": "Server completion receipt/readback; wrong/incomplete/unknown stays paused",
+      "evidence": "runtime-state-machine"
+    },
+    {
+      "id": "R11",
+      "risk": "Video/React competing state owners",
+      "severity": "MEDIUM",
+      "mitigation": "One media owner; React reflects actual events, runtime issues serialized commands",
+      "evidence": "video-capability-inventory"
+    },
+    {
+      "id": "R12",
+      "risk": "Director state explosion",
+      "severity": "MEDIUM",
+      "mitigation": "Three layout modes only; scenario deferred; separate playback state from layout",
+      "evidence": "director-runtime-inventory"
+    },
+    {
+      "id": "R13",
+      "risk": "AI logic or answers in Cue",
+      "severity": "HIGH",
+      "mitigation": "Strict WHEN/SOURCE/ACTION/TARGET/POLICY; no prompt/correct answer or adaptive policy",
+      "evidence": "timeline-cue-contract"
+    },
+    {
+      "id": "R14",
+      "risk": "Manifest becomes second authoring authority",
+      "severity": "HIGH",
+      "mitigation": "Reuse immutable projection + existing publish binding, no editor/independent publish state",
+      "evidence": "lesson-manifest-assessment"
+    },
+    {
+      "id": "R15",
+      "risk": "Legacy data forces permanent compatibility",
+      "severity": "MEDIUM",
+      "mitigation": "Native new scope canonical; conditional retire/delete after complete dependency audit",
+      "evidence": "legacy-cleanup-candidates"
+    },
+    {
+      "id": "R16",
+      "risk": "Frozen Node7 answer leakage",
+      "severity": "HIGH",
+      "mitigation": "Public Activity prompt projection separate from private answer; Agent tool does not receive authoring answer text",
+      "evidence": "node7-activity-migration"
+    },
+    {
+      "id": "R17",
+      "risk": "Draft executed as published student content",
+      "severity": "HIGH",
+      "mitigation": "Isolated nontracking fixture R7B; production published-only StudentPolicy unchanged",
+      "evidence": "lesson-tool-inventory"
+    },
+    {
+      "id": "R18",
+      "risk": "RPC-missing fallback and uncertain submit duplicates",
+      "severity": "HIGH",
+      "mitigation": "Require atomic RPC; define request idempotency/readback before retry; no automatic retry",
+      "evidence": "activity-inventory"
+    },
+    {
+      "id": "R19",
+      "risk": "Renderer declared but not implemented",
+      "severity": "HIGH",
+      "mitigation": "Keep capability validation fail-closed; add native video only after tests in future stage",
+      "evidence": "current-runtime-inventory"
+    }
+  ],
+  "noMitigationImplemented": true
+}

@@ -1,0 +1,14 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {budget,admit,claim} from './fixtures/teaching-agent-r7cb/b3/scope-contract.mjs';
+const now=1000000;
+const expected={environment:'canonical-development',database:'pinned-db-hash',actor:'existing-actor-hash',tenant:'existing-tenant-hash',lesson:'hangul-introduction',activity:'hangul-introduction-vowel-recognition',version:'frozen-v1',freeze:'frozen-hash',scenarioId:'b3-wrong-correct-recovery-1',snapshot:'snapshot-hash'};
+const scope={...expected,state:'ACTIVE',issuedAt:now-1,expiresAt:now+600000,budget};
+const facts={...expected,ownerAuthorized:true,explicitDevelopmentConfig:true,productionComposition:false,observedAt:now,banned:true,banUntil:now+100000000,sessions:0,refresh:0,profile:'inactive',membership:'suspended',role:'student',isDefault:false,generation:1,attempts:0,completed:false};
+const req={generation:1,slot:'first',requestId:'opaque-request-one'};
+test('scope design accepts only exact existing actor and target',()=>assert.deepEqual(admit(scope,facts,expected,now,req,new Set()),{slot:req.slot,requestId:req.requestId}));
+for(const key of Object.keys(expected))test(`scope rejects wrong ${key}`,()=>assert.throws(()=>admit(scope,{...facts,[key]:'wrong'},expected,now,req,new Set())));
+for(const [key,value] of Object.entries({ownerAuthorized:false,explicitDevelopmentConfig:false,productionComposition:true,banned:false,banUntil:now,sessions:1,refresh:1,profile:'active',membership:'active',role:'admin',isDefault:true,observedAt:now-5001,completed:true,attempts:2,generation:2}))test(`scope fails closed for ${key}`,()=>assert.throws(()=>admit(scope,{...facts,[key]:value},expected,now,req,new Set())));
+test('expired/disabled/oversized TTL/budget reject',()=>{for(const delta of [{state:'DISABLED'},{expiresAt:now},{expiresAt:now+16*60_000},{budget:{...budget,attemptInsert:3}}])assert.throws(()=>admit({...scope,...delta},facts,expected,now,req,new Set()));});
+test('UNKNOWN keeps claim; duplicate transport cannot redispatch',()=>{const journal=new Set();claim(scope,facts,expected,now,req,journal);assert.throws(()=>claim(scope,facts,expected,now,req,journal));assert.throws(()=>claim(scope,facts,expected,now,{...req,requestId:'new'},journal));});
+test('second slot requires independent durable first attempt then blocks third',()=>{const journal=new Set();claim(scope,facts,expected,now,req,journal);const second={...req,slot:'second',requestId:'opaque-request-two'};assert.throws(()=>claim(scope,facts,expected,now,second,journal));claim(scope,{...facts,attempts:1},expected,now,second,journal);assert.throws(()=>claim(scope,{...facts,attempts:2,completed:true},expected,now,second,journal));});
+test('scope and journal contain only admission metadata; no grading truth',()=>{assert.doesNotMatch(JSON.stringify(scope),/correctAnswer|answer_key|optionIndex|definitionDigest|password|JWT|progress|completion/i);});

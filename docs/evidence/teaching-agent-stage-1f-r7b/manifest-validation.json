@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "family": "LessonManifestV1",
+  "schemaVersion": "1.0.0",
+  "runtimeContract": "uply-runtime/1",
+  "optionalExtension": "execution",
+  "validatorBypassed": false,
+  "missingRendererCapability": "FAIL CLOSED",
+  "invalidCueAction": "FAIL CLOSED",
+  "unsupportedActivity": "FAIL CLOSED",
+  "secondManifest": false
+}

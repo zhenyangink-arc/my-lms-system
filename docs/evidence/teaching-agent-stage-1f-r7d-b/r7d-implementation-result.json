@@ -1,0 +1,31 @@
+{
+  "status": "READY FOR R7D TOOL DEPLOY APPROVAL",
+  "tool": "get_current_lesson_execution_facts@1.0.0",
+  "productFiles": 8,
+  "modified": 3,
+  "new": 5,
+  "strictEmptyInput": "PASS",
+  "sameSnapshot": "PASS",
+  "privateBoundary": "PASS",
+  "newTests": {
+    "pass": 49,
+    "fail": 0
+  },
+  "regression": {
+    "pass": 201,
+    "skip": 1,
+    "fail": 0,
+    "includesExistingStudentTools": "55 PASS / 1 SKIP / 0 FAIL"
+  },
+  "typescript": "PASS (sealed candidate, next typegen first)",
+  "lint": "PASS scoped eight files",
+  "nextBuild": "PASS",
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDbToolAcceptance": "NOT EXECUTED",
+  "currentDbBusinessWrites": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "deploy": 0,
+  "scope": "DISABLED",
+  "remaining": "Approve exact candidate deployment, then normal Owner read-only acceptance with before/after fingerprints; no Agent binding"
+}

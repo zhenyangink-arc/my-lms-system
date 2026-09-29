@@ -1,0 +1,42 @@
+{
+  "status": "LOCKED",
+  "method": "CURRENT PERSISTED + EXPECTED R6E + CURRENT AUTHORING UI",
+  "files": [
+    {
+      "path": "docs/teaching-agent-stage-1f-r6e-teaching-script-revision.md",
+      "sha256": "8bb0ebf6b73f0430c4b1ac44a7e07c04448561dd75526dc8ca7e2658cd5110ed"
+    },
+    {
+      "path": "docs/teaching-agent-stage-1f-r6d-teaching-script-review.md",
+      "sha256": "7307c69e12947d29fc16c9f45d578146ea48c66df502dbe1ad41f168012e5f61"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6d/revision-proposal.json",
+      "sha256": "181db1069fabe7fb4f86269a430aeac3a9e64132dd0ea4f5c30da1f9e3abc63e"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6e/revision-scope.json",
+      "sha256": "9da3cb8961af2acc1724dc83761ca7c7e01b4783b74e27c97051fa8a10e45026"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6e/revision-application.json",
+      "sha256": "9833f3cdd4f4d0291587a858f02ecf50425850d1f0e6885a0bdafcdd304df79d"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6e/persisted-nodes-after.json",
+      "sha256": "763a6846d84497ce76229600aa3cad05e7ee0c84651dbd10129b9be8f7a63b87"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6e/production-end-state.json",
+      "sha256": "302682c9d237494d58b648c5a38c73a78cb20a18e5bc65e2c02b6d2964b3aabe"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+      "sha256": "b18a3e20ac75be2a55bb0c46029f24aa06575dddc588d5f4db9c9bcd4d1e231e"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+      "sha256": "e85b0f00fd033079986226f65db2aa17fa4f2965334b44de0cea236649eb5496"
+    }
+  ]
+}

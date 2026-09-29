@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "scope": "DRAFT TEXT INSTRUCTION COVERAGE ONLY",
+  "objectives": [
+    {
+      "objective": 1,
+      "text": "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "before": "PARTIAL",
+      "after": "FULL",
+      "nodes": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "evidence": "Node2 explicitly places ㄱ and ㅏ inside one 가 shape; left/right applies only to 가, not all vowels."
+    },
+    {
+      "objective": 2,
+      "text": "能辨认并朗读基础元音和常用基础辅音。",
+      "before": "PARTIAL",
+      "after": "FULL",
+      "nodes": [
+        3,
+        4,
+        5
+      ],
+      "evidence": "Unchanged Node3 guides six-vowel reading; Node5 adds 가 나 다 마 / 라 바 사 아 reading and silent onset ㅇ in 아. FULL denotes textual teaching coverage, not observed learner pronunciation or mastery."
+    },
+    {
+      "objective": 3,
+      "text": "理解初声、中声、终声组成韩语音节的基本方式。",
+      "before": "PARTIAL",
+      "after": "FULL",
+      "nodes": [
+        6,
+        8
+      ],
+      "evidence": "Node6 identifies medial vowel by role and contrasts 가 right-side ㅏ with 고 lower ㅗ; preserves 한 mapping. Node8 explicitly makes final consonant optional."
+    },
+    {
+      "objective": 4,
+      "text": "能将基础辅音与元音组合成简单韩语音节。",
+      "before": "FULL",
+      "after": "FULL",
+      "nodes": [
+        2,
+        5,
+        7
+      ],
+      "evidence": "Original four combinations and unchanged two practice questions remain; no automatic correctness/runtime claim."
+    }
+  ],
+  "objectivesThemselvesModified": false,
+  "audioVerified": false,
+  "ttsGenerated": false,
+  "learnerPerformanceVerified": false,
+  "runtimeExecuted": false,
+  "answerCorrectnessRuntime": "DEFERRED"
+}

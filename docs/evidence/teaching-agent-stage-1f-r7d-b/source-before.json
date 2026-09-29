@@ -1,0 +1,5 @@
+{
+  "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "4a4cd76c69d9e7639767a49fd40eb0e707a9075a25e74528e579d535b88d9c50",
+  "src/features/teaching-agent/server/domain-ports/index.ts": "ec2655cfb428d24b056cc791b9a970e2c0f6ce7942f14f5d8ff4a5b5e3648703",
+  "src/features/teaching-agent/server/tools/contracts.ts": "7da75210911760fe54f67120c62d2e8d5ea76b804dddb3763e5986af9d1f996c"
+}

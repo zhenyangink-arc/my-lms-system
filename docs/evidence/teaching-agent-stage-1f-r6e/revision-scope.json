@@ -1,0 +1,123 @@
+{
+  "target": "韩文字母入门 / 第0章 / 课前导航",
+  "version": "1 DRAFT",
+  "modifiedNodes": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    8
+  ],
+  "protectedNodes": [
+    3,
+    7
+  ],
+  "mustFix": [
+    "M1",
+    "M2",
+    "M3"
+  ],
+  "shouldFix": [
+    "S1",
+    "S2",
+    "S3",
+    "S4"
+  ],
+  "optionalNotApplied": [
+    "O1",
+    "O2"
+  ],
+  "plans": [
+    {
+      "nodeNumber": 1,
+      "idHash": "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+      "title": "今天认识韩文字母",
+      "formalType": "opening",
+      "beforeText": "안녕하세요.\n오늘은 한글의 기본 모양을 같이 배워요.\n한글은 자음과 모음으로 만들어요.\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\n천천히 하나씩 볼까요?",
+      "proposedText": "안녕하세요.\n오늘은 한글의 기본 모양을 같이 배워요.\n한글에는 자음과 모음이 있어요.\n그리고 자음과 모음을 모아서 한 글자를 만들어요.\n천천히 하나씩 볼까요?",
+      "beforeTextSha256": "10f88e0fc6e43781c8e6aec95e7e5cb2a00f5d61e8fc2ae51935241b18b9c92c",
+      "proposedTextSha256": "2d67c30458d24f0e83041cd4716bccce511f01a08f24db5d9a2b799fd417e0cd",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    },
+    {
+      "nodeNumber": 2,
+      "idHash": "19e75a5c68c0704a1424cedb93823c4cc0cc691aafb598b94153d4428e23d5b8",
+      "title": "韩文字母怎么组成？",
+      "formalType": "explanation",
+      "beforeText": "한글에는 자음과 모음이 있어요.\n\n자음은 소리의 시작을 만들어요.\n모음은 그 소리를 이어 줘요.\n\n자음과 모음을 같이 쓰면\n한 글자가 돼요.\n\n예를 들어,\nㄱ과 ㅏ를 같이 쓰면\n“가”가 돼요.",
+      "proposedText": "한글에는 자음과 모음이 있어요.\n\n자음과 모음을 함께 써요.\n한 글자를 만들어요.\n\n예를 들어,\nㄱ과 ㅏ를 한 글자 안에 모아 써요.\n\n“가”를 보세요.\n\nㄱ은 왼쪽에 있어요.\nㅏ는 오른쪽에 있어요.\n\n이렇게 한 글자 모양으로 써요.",
+      "beforeTextSha256": "74ca4ac4fcb4a2f7720e7cc87e2fb7213505650b8e13a87bc20d64cc970a94da",
+      "proposedTextSha256": "bde0eb38e177ee86cc03c3e6544fe80e52f9d540e4dcb3e81e9a3a648b116d55",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    },
+    {
+      "nodeNumber": 4,
+      "idHash": "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+      "title": "再认识基础辅音",
+      "formalType": "explanation",
+      "beforeText": "이번에는 자음을 볼게요.\n\nㄱ, ㄴ, ㄷ, ㄹ,\nㅁ, ㅂ, ㅅ, ㅇ\n\n모양을 먼저 천천히 보세요.\n\n지금은 완벽하게 외우는 것보다\n자음과 모음이 다르다는 것을 아는 게 중요해요.",
+      "proposedText": "이번에는 자음을 볼게요.\n\nㄱ, ㄴ, ㄷ, ㄹ,\nㅁ, ㅂ, ㅅ, ㅇ\n\n모양을 먼저 천천히 보세요.\n\n지금 다 외우지 않아도 괜찮아요.\n자음과 모음은 달라요.\n모양을 천천히 보세요.",
+      "beforeTextSha256": "7b5db3a93141f883175932b0045a421523217f3dbe526ceff90a3abdfeaa91f6",
+      "proposedTextSha256": "ed63082c205e690ad67c78efc908569c0655a65fba602aee7ab5962de3e95085",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    },
+    {
+      "nodeNumber": 5,
+      "idHash": "13aac7fe2ce19bc229f6c71484d2443451d8fca313d4f1d1934d29742379ff62",
+      "title": "把辅音和元音放在一起",
+      "formalType": "example",
+      "beforeText": "이제 자음과 모음을 같이 써 볼까요?\n\nㄱ + ㅏ = 가\n\nㄴ + ㅏ = 나\n\nㄷ + ㅏ = 다\n\nㅁ + ㅏ = 마\n\n이렇게 자음과 모음을 모아서\n한 글자를 만들어요.",
+      "proposedText": "이제 자음과 모음을 같이 써 볼까요?\n\nㄱ + ㅏ = 가\n\nㄴ + ㅏ = 나\n\nㄷ + ㅏ = 다\n\nㅁ + ㅏ = 마\n\n이렇게 자음과 모음을 모아서\n한 글자를 만들어요.\n\n한 번 따라 읽어 보세요.\n\n가, 나, 다, 마.\n\n라, 바, 사, 아.\n\n“아”의 ㅇ은 소리가 나지 않아요.\n\n지금은 한 번씩 읽어 봐요.",
+      "beforeTextSha256": "b7b716eacc967fbec8586000b54faff1f1f60c96fc481c75f1c1f811970a7745",
+      "proposedTextSha256": "5a624f3802c99862c2252cf0c8f0d32d57d3327ed1a55c09d86fbc55c73ccf21",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    },
+    {
+      "nodeNumber": 6,
+      "idHash": "d5a053756489e51339ea72e33f6484f8291089bd9043622769626de59ba0f096",
+      "title": "一个音节里面有什么？",
+      "formalType": "explanation",
+      "beforeText": "한글 한 글자에는\n자음과 모음이 들어가요.\n\n앞에 오는 자음을\n초성이라고 해요.\n\n가운데 모음을\n중성이라고 해요.\n\n아래에 자음이 하나 더 올 수도 있어요.\n이것을 종성이라고 해요.\n\n예를 들어\n“한”을 볼까요?\n\nㅎ은 초성,\nㅏ는 중성,\nㄴ은 종성이에요.",
+      "proposedText": "한글 한 글자에는\n자음과 모음이 들어가요.\n\n앞에 오는 자음을\n초성이라고 해요.\n\n한 글자에서 모음을\n중성이라고 해요.\n\n모음의 자리는\n모양에 따라 달라요.\n\n“가”에서 ㅏ는\nㄱ의 오른쪽에 있어요.\n\n“고”에서 ㅗ는\nㄱ의 아래에 있어요.\n\n아래에 자음이 하나 더 올 수도 있어요.\n이것을 종성이라고 해요.\n\n예를 들어\n“한”을 볼까요?\n\nㅎ은 초성,\nㅏ는 중성,\nㄴ은 종성이에요.",
+      "beforeTextSha256": "7f588db7453c8a26c1a8f423ba76f97dfcecc3b792286a217b7924321fd12257",
+      "proposedTextSha256": "4c460a448c41b4502aaab4ee655c50635d4dc2de0ab22b590752617cedab4aa9",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    },
+    {
+      "nodeNumber": 8,
+      "idHash": "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369",
+      "title": "今天学了什么？",
+      "formalType": "summary",
+      "beforeText": "오늘은 한글의 기본 구조를 배웠어요.\n\n한글에는\n자음과 모음이 있어요.\n\n자음과 모음을 모으면\n한 글자를 만들 수 있어요.\n\n그리고 한 글자에는\n초성, 중성,\n그리고 종성이 올 수 있어요.\n\n아주 잘했어요.\n\n다음에는 글자를 하나씩 더 자세히 배워 볼게요.",
+      "proposedText": "오늘은 한글의 기본 구조를 배웠어요.\n\n한글에는\n자음과 모음이 있어요.\n\n자음과 모음을 모으면\n한 글자를 만들 수 있어요.\n\n한 글자에는 초성과 중성이 있어요.\n종성은 있을 수도, 없을 수도 있어요.\n\n아주 잘했어요.\n\n다음에는 글자를 하나씩 더 자세히 배워 볼게요.",
+      "beforeTextSha256": "ebb0d73a3cadc6b822773cc3af43b5ceeb93453ccc4741390d526009a074939b",
+      "proposedTextSha256": "044c73ba9638dd4a2c933229ff3f81a629b270d993d8107454d68a20135cd257",
+      "fields": [
+        "script_zh",
+        "script_ko"
+      ],
+      "applied": false
+    }
+  ]
+}

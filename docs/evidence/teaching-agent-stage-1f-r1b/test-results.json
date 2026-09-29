@@ -1,0 +1,61 @@
+{
+  "nodeSuites": {
+    "regression": {
+      "pass": 285,
+      "fail": 1,
+      "skipped": 1
+    },
+    "migration-test": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "classroom": {
+      "pass": 53,
+      "fail": 0,
+      "skipped": 0
+    },
+    "presentation": {
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    "next": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "browser": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "transport-db": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "reissue-tests": {
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "initialFailure": "migration inventory test local variable manifest redeclared; corrected and targeted rerun PASS",
+  "finalNodeResults": {
+    "pass": 347,
+    "skipped": 1,
+    "unresolvedFailures": 0
+  },
+  "pythonBaselineTests": {
+    "pass": 10,
+    "skip": 0,
+    "fail": 0
+  },
+  "totalFinal": {
+    "pass": 357,
+    "skipped": 1,
+    "unresolvedFailures": 0
+  },
+  "fullHistoryVerifier": "exit 1; exact expected blocker verified by passing Python harness; never classified as replay success"
+}

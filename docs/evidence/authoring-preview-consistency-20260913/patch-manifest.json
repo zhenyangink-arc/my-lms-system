@@ -1,0 +1,97 @@
+{
+  "date": "2026-09-13",
+  "baselineRelease": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "baselineCopy": "/tmp/uply-authoring-closure.J324oo",
+  "candidate": "/tmp/uply-authoring-preview.vdCvP1",
+  "mainHead": "b1672390ae96357a2143358235cc10edeff8d488",
+  "patchSha": "d42d2ec92273a04f77cebe4f7ca2673af45d584ed24511611c4696bbe1cff15f",
+  "files": [
+    {
+      "path": "src/lib/smart-textbook-publishing/diagnostics.ts",
+      "baselineSha": null,
+      "releaseSha": null,
+      "candidateSha": "ac71ff33c9a469b33d11c2c746b68baf547fd7a22ddc6bc033bc4ff31ffee736",
+      "mainSha": null
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/diagnostics.server.ts",
+      "baselineSha": null,
+      "releaseSha": null,
+      "candidateSha": "56e0fb2188c6f01a576e3f28de251ad7f44e2815075a0868097b8c404f951daa",
+      "mainSha": null
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "baselineSha": "05434fe2097f6b7568bc0e455aa5d589fb829b5bef1eecc99534196476e58fdf",
+      "releaseSha": "05434fe2097f6b7568bc0e455aa5d589fb829b5bef1eecc99534196476e58fdf",
+      "candidateSha": "8e016f80f1a6bbd37b5ade6aef6817356bb655f714d36969e232ff95b7a5874a",
+      "mainSha": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-source.server.ts",
+      "baselineSha": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534",
+      "releaseSha": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534",
+      "candidateSha": "30510545b3ee3b052416cbcd3c22723e2ccba49b381bccda759d543df8ee737e",
+      "mainSha": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "baselineSha": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "releaseSha": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "candidateSha": "4a088e717b1c32f655d1f593a2a8ef4f365717069fae89d8b8148300354f0c3d",
+      "mainSha": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/contracts.ts",
+      "baselineSha": "a3754f597708352b79a5d9f233551ab9bdcda28693dd26572f71c1d999666b2a",
+      "releaseSha": "a3754f597708352b79a5d9f233551ab9bdcda28693dd26572f71c1d999666b2a",
+      "candidateSha": "6a25ffe07d429e5276bcb9685aab2d30dd20f7aca570aa9c4edf2009aa050701",
+      "mainSha": null
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/service.server.ts",
+      "baselineSha": "3c78fbb62f8e0eb3fcd7a506f44a6ae14764d62168b1d4a473085604ca2ef3f2",
+      "releaseSha": "3c78fbb62f8e0eb3fcd7a506f44a6ae14764d62168b1d4a473085604ca2ef3f2",
+      "candidateSha": "52501fa92717d45f76acb02cda6abe0fcbbe0c1d449fdc9cca04f52b68bf4a46",
+      "mainSha": null
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/chapter-workbench.tsx",
+      "baselineSha": "3654b9e4bed6b1e3451e705741420da7c65bb27864da348a04d411e192e1c04d",
+      "releaseSha": "3654b9e4bed6b1e3451e705741420da7c65bb27864da348a04d411e192e1c04d",
+      "candidateSha": "243f344594e93e2d0ba713cc146f69f5432370a2021ec20a9a1d86c3d50e21af",
+      "mainSha": null
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/publication-issues.tsx",
+      "baselineSha": null,
+      "releaseSha": null,
+      "candidateSha": "cdae09e8da597dac1c05530634046793f1c9ad64124255d2e2fcd32fe6f8c4af",
+      "mainSha": null
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx",
+      "baselineSha": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe",
+      "releaseSha": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe",
+      "candidateSha": "b8783b18db19699993f0a66a550a6ced93b42c738a1b5b222f0a31a003d6016e",
+      "mainSha": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe"
+    },
+    {
+      "path": "tests/chapter-authoring-preview.test.mjs",
+      "baselineSha": null,
+      "releaseSha": null,
+      "candidateSha": "50adddac555adee30f7365943d1931a59df9d4e9d3282c5ea05477dc7d448179",
+      "mainSha": null
+    },
+    {
+      "path": "tests/fixtures/authoring-preview.server.ts",
+      "baselineSha": null,
+      "releaseSha": null,
+      "candidateSha": "38295c3108973452bd024074db0131e07b23be5a7cade464c05f7ca1cd7af960",
+      "mainSha": null
+    }
+  ],
+  "scope": "Incremental patch against deployed authoring-navigation source; do not reapply earlier cumulative patches",
+  "deployed": false,
+  "productionDataWrites": false
+}

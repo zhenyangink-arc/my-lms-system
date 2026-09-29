@@ -1,0 +1,100 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "PASS",
+  "nonSecretConfig": {
+    "configPath": "/home/yangzhen/.config/uply-first-enable-20260910/db/pg_service.conf",
+    "configSha256": "9540a50b93e528433a856aba8f2f98029c488cb8f3dd68f6a30941629a8fdb8c",
+    "mode": "0o600",
+    "uid": 1001,
+    "symlink": false,
+    "services": {
+      "uply": {
+        "host": "aws-1-ap-northeast-2.pooler.supabase.com",
+        "port": "5432",
+        "dbname": "postgres",
+        "user": "postgres.jubdbsjsalpecfvseskz",
+        "sslmode": "verify-full",
+        "sslrootcert": "/connection/root.crt",
+        "passfile": "/connection/pgpass",
+        "connect_timeout": "20",
+        "application_name": "uply_first_enable_operator"
+      }
+    },
+    "unreportedFieldNames": {
+      "uply": []
+    },
+    "hostType": "TCP_HOSTNAME",
+    "hostProfileMatches": true,
+    "projectProfileMatches": true,
+    "tlsFiles": [
+      {
+        "field": "sslrootcert",
+        "configured": true,
+        "safePath": "/home/yangzhen/.config/uply-first-enable-20260910/db/root.crt",
+        "symlink": false,
+        "exists": true,
+        "mode": "0o600",
+        "uid": 1001,
+        "gid": 1001,
+        "regular": true
+      },
+      {
+        "field": "sslcert",
+        "configured": false
+      },
+      {
+        "field": "sslkey",
+        "configured": false
+      }
+    ],
+    "credentialContentsRead": false,
+    "hostsFileOverridePresent": false,
+    "parentDirectory": {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/db",
+      "uid": 1001,
+      "mode": "0o700",
+      "symlink": false
+    }
+  },
+  "actualEndpointType": "TCP_HOSTNAME",
+  "service": "uply",
+  "portMode": "5432 Supavisor session pooler; not direct Postgres merely because port is 5432",
+  "missingFields": [
+    "hostaddr",
+    "sslcert",
+    "sslkey",
+    "target_session_attrs"
+  ],
+  "serviceOverrideFound": false,
+  "hostProfileDigestMatches": true,
+  "projectProfileDigestMatches": true,
+  "safeReadBoundary": "Read pg_service.conf allowlisted non-secret fields only; pgpass not opened, root.crt content not opened, no private key opened; CA metadata stat only.",
+  "hostnameVerification": "Configured pooler hostname is the libpq verify-full certificate name; not a socket path or loopback alias.",
+  "historicalServiceNames": "audit/foundation were explicit older service names; current uply is explicitly selected and cannot silently fall back to them."
+}

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "nodeInsert": 0,
+  "nodeUpdate": 6,
+  "nodeDelete": 0,
+  "officialAuditInsert": 6,
+  "basis": "Six one-time UI autosaves, six update_node logs, six matching final row changes; source RPC performs one UPDATE per save. No retry.",
+  "perNode": [
+    {
+      "nodeNumber": 1,
+      "updateNodeAuditDelta": 1
+    },
+    {
+      "nodeNumber": 2,
+      "updateNodeAuditDelta": 1
+    },
+    {
+      "nodeNumber": 4,
+      "updateNodeAuditDelta": 1
+    },
+    {
+      "nodeNumber": 5,
+      "updateNodeAuditDelta": 1
+    },
+    {
+      "nodeNumber": 6,
+      "updateNodeAuditDelta": 1
+    },
+    {
+      "nodeNumber": 8,
+      "updateNodeAuditDelta": 1
+    }
+  ],
+  "protectedNode3Updates": 0,
+  "protectedNode7Updates": 0,
+  "unauthorizedWrites": 0,
+  "finalReadOnlyVerificationAfterUI": true
+}

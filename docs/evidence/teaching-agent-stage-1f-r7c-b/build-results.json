@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "command": "next build --webpack",
+  "cwd": "/tmp/uply-r7cb-isolated-build",
+  "exitCode": 0,
+  "logSha256": "a3d651bf0d7cab25c198657c0cfe226b1bb1409fe2da1aa843421211ca0140d6",
+  "typeScript": {
+    "command": "tsc --noEmit --incremental false",
+    "exitCode": 0
+  },
+  "deploy": 0,
+  "productionBuildUnchanged": true,
+  "excludedRun": "Earlier build in old R7C temporary copy is not B1 evidence"
+}

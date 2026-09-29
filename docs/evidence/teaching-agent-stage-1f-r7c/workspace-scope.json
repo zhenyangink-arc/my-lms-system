@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "preExistingChangesPreserved": true,
+  "unexpectedChanges": [],
+  "modifiedProductFiles": [
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts"
+  ],
+  "newProductFiles": [
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts"
+  ],
+  "changedTests": [
+    "tests/fixtures/teaching-agent-r7b/server.mjs",
+    "tests/fixtures/teaching-agent-r7c/README.md",
+    "tests/fixtures/teaching-agent-r7c/bootstrap.sql",
+    "tests/fixtures/teaching-agent-r7c/browser.tsx",
+    "tests/fixtures/teaching-agent-r7c/fixture.server.mjs",
+    "tests/fixtures/teaching-agent-r7c/postgres.mjs",
+    "tests/fixtures/teaching-agent-r7c/service-process.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7c-binding.test.mjs",
+    "tests/teaching-agent-r7c-browser.test.mjs",
+    "tests/teaching-agent-r7c-durable.test.mjs"
+  ],
+  "productFileHashes": {
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts": "171f94aef9728d5dd43faa4e71ff53ad9aba1b979b0b88ab55ea1105f9e8bd54",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts": "e0be7eb2d48d40cfb177b9b02f400016b845c5a6c254e620f9fd8905531f1bb9",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts": "35eaf42079249fa8b9dcfa28b61429ca3f974a1d1c01e224b7e8dda1c61a7a2e",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "47f71d669f6185b6d1c64db7469f79e3e04e0615d7b9be1278942b82d43e7e17",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts": "67b0ef3b76493ab4112c41baebe3646aa031916de378bdefd3798b9531a67c93"
+  },
+  "migrationsChanged": 0,
+  "priorStageEvidenceChanged": 0,
+  "gitCommit": false,
+  "observedAtUtc": "2026-09-17T03:34:57.708639+00:00"
+}

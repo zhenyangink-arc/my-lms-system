@@ -1,0 +1,13 @@
+{
+  "status": "NOT CREATED",
+  "reason": "OWNER_DRAFT_LESSON_PREFLIGHT_RLS_MISMATCH",
+  "logicalCreateAttempts": 0,
+  "rpcBusinessCalls": 0,
+  "independentReadback": {
+    "executionNodeCount": 0,
+    "activityCount": 0,
+    "privateAnswerCount": 0
+  },
+  "businessWrites": 0,
+  "unknownCommit": false
+}

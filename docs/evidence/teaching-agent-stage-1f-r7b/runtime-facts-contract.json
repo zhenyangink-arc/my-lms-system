@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "contract": "lesson-runtime-facts/1",
+  "port": "read only",
+  "fields": [
+    "source",
+    "snapshot",
+    "content binding",
+    "generation",
+    "stepId",
+    "currentTeachingNode",
+    "currentExecutionBlock",
+    "currentActivity",
+    "completion",
+    "runtimePhase",
+    "allowedPresentationActions",
+    "stateEvidence",
+    "clientObservation"
+  ],
+  "gradeOrAdvanceMethods": 0,
+  "agentToolRegistered": false,
+  "videoPositionAuthority": "CLIENT OBSERVATION ONLY"
+}

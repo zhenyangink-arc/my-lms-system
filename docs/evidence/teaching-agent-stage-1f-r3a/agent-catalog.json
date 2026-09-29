@@ -1,0 +1,124 @@
+{
+  "tables": [
+    {
+      "name": "agent_conversations",
+      "rls": true,
+      "force": false
+    },
+    {
+      "name": "agent_definition_versions",
+      "rls": true,
+      "force": false
+    },
+    {
+      "name": "agent_messages",
+      "rls": true,
+      "force": false
+    },
+    {
+      "name": "agent_run_events",
+      "rls": true,
+      "force": false
+    },
+    {
+      "name": "agent_runs",
+      "rls": true,
+      "force": false
+    }
+  ],
+  "postgresSuper": false,
+  "functions": [
+    {
+      "name": "find_reconcilable_agent_runs_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "reconcile_agent_run_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "reconcile_agent_run_batch_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\"",
+        "lock_timeout=2s"
+      ]
+    },
+    {
+      "name": "admit_agent_run_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "definition_guard",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "append_agent_run_event_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "transition_agent_run_base_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "append_agent_run_event_v2",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "transition_agent_run_evidence_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "get_student_agent_run_status_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "request_agent_run_cancel_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "check_agent_run_cancel_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    },
+    {
+      "name": "transition_agent_run_v1",
+      "securityDefiner": true,
+      "config": [
+        "search_path=\"\""
+      ]
+    }
+  ]
+}

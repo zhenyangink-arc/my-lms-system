@@ -1,0 +1,54 @@
+{
+  "stop": {
+    "startedAtUtc": "2026-09-16T03:04:51.146732+00:00",
+    "endedAtUtc": "2026-09-16T03:05:06.827340+00:00",
+    "exit": 0,
+    "before": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789294455603,
+      "name": "uply-first-enable",
+      "pid": 1176676
+    },
+    "after": {
+      "status": "stopped",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789294455603,
+      "name": "uply-first-enable",
+      "pid": 0
+    },
+    "port3000Listening": false,
+    "otherAppsUnchanged": true,
+    "status": "PASS"
+  },
+  "start": {
+    "status": "PASS",
+    "startedAtUtc": "2026-09-16T03:32:34.971149+00:00",
+    "durationSeconds": 0.752409187000012,
+    "exit": 0,
+    "after": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789529555153,
+      "name": "uply-first-enable",
+      "pid": 934715
+    },
+    "otherAppsUnchanged": true,
+    "startupSafety": "OFF / EMPTY"
+  }
+}

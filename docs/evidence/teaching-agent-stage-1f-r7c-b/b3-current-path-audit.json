@@ -1,0 +1,433 @@
+{
+  "at": "2026-09-17T11:10:43.676395+00:00",
+  "canonicalValid": true,
+  "actor": 1,
+  "tenant": 1,
+  "actorSessions": 0,
+  "actorRefreshTokens": 0,
+  "actorBanUntil": "2126-08-24T10:33:53.565563+00:00",
+  "profileInactive": true,
+  "membershipSuspendedNondefault": true,
+  "target": {
+    "activityCount": 1,
+    "maxAttempts": 3,
+    "countsTowardCompletion": true,
+    "type": "single_choice",
+    "chapterTestIsNull": true,
+    "chapterNodeCount": 1,
+    "attemptCount": 0,
+    "nodeProgressCount": 0,
+    "activityPageProgressCount": 0
+  },
+  "functions": [
+    {
+      "signature": "record_smart_textbook_attempt(uuid,uuid,uuid,uuid,jsonb,boolean,numeric)",
+      "definition": "CREATE OR REPLACE FUNCTION public.record_smart_textbook_attempt(p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric)\n RETURNS TABLE(attempt_number integer, node_completed boolean, completion_percent integer, mastery_score integer, node_attempt_count integer)\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare\n  v_node_id uuid;\n  v_max_attempts integer;\n  v_attempt_number integer;\n  v_total_required integer;\n  v_completed_required integer;\n  v_completion_percent integer;\n  v_mastery_score integer;\n  v_node_attempt_count integer;\nbegin\n  if auth.role() is distinct from 'service_role' then\n    raise exception 'SMART_TEXTBOOK_SERVICE_ROLE_REQUIRED' using errcode = '42501';\n  end if;\n\n  if p_score is not null and (p_score < 0 or p_score > 100) then\n    raise exception 'SMART_TEXTBOOK_SCORE_OUT_OF_RANGE' using errcode = '22023';\n  end if;\n\n  select activity.node_id, activity.max_attempts\n  into v_node_id, v_max_attempts\n  from public.digital_textbook_activities activity\n  join public.digital_textbook_nodes node on node.id = activity.node_id\n  join public.digital_textbook_modules module on module.id = node.module_id\n  join public.digital_textbook_chapters chapter on chapter.id = module.chapter_id\n  where activity.id = p_activity_id\n    and chapter.version_id = p_version_id;\n\n  if v_node_id is null then\n    raise exception 'SMART_TEXTBOOK_ACTIVITY_VERSION_MISMATCH' using errcode = '22023';\n  end if;\n\n  perform pg_advisory_xact_lock(\n    hashtextextended(p_tenant_id::text || ':' || p_student_id::text || ':' || p_activity_id::text, 0)\n  );\n\n  select coalesce(max(attempt.attempt_number), 0), count(*)::integer\n  into v_attempt_number, v_node_attempt_count\n  from public.digital_textbook_attempts attempt\n  where attempt.tenant_id = p_tenant_id\n    and attempt.student_id = p_student_id\n    and attempt.activity_id = p_activity_id;\n\n  if v_node_attempt_count >= v_max_attempts then\n    raise exception 'MAX_ATTEMPTS_REACHED: %', v_max_attempts using errcode = 'P0001';\n  end if;\n\n  v_attempt_number := v_attempt_number + 1;\n\n  insert into public.digital_textbook_attempts (\n    tenant_id, student_id, activity_id, version_id, attempt_number,\n    response, is_correct, score\n  ) values (\n    p_tenant_id, p_student_id, p_activity_id, p_version_id, v_attempt_number,\n    coalesce(p_response, 'null'::jsonb), p_is_correct, p_score\n  );\n\n  perform pg_advisory_xact_lock(\n    hashtextextended(p_tenant_id::text || ':' || p_student_id::text || ':' || v_node_id::text, 1)\n  );\n\n  select count(*)::integer\n  into v_total_required\n  from public.digital_textbook_activities activity\n  where activity.node_id = v_node_id\n    and activity.counts_toward_completion;\n\n  select count(distinct activity.id)::integer\n  into v_completed_required\n  from public.digital_textbook_activities activity\n  join public.digital_textbook_attempts attempt\n    on attempt.activity_id = activity.id\n   and attempt.tenant_id = p_tenant_id\n   and attempt.student_id = p_student_id\n   and attempt.version_id = p_version_id\n   and attempt.is_correct is true\n  where activity.node_id = v_node_id\n    and activity.counts_toward_completion;\n\n  v_completion_percent := case\n    when v_total_required = 0 then 0\n    else round(100.0 * v_completed_required / v_total_required)::integer\n  end;\n\n  select coalesce(round(avg(best.best_score)), 0)::integer\n  into v_mastery_score\n  from (\n    select max(attempt.score) as best_score\n    from public.digital_textbook_activities activity\n    left join public.digital_textbook_attempts attempt\n      on attempt.activity_id = activity.id\n     and attempt.tenant_id = p_tenant_id\n     and attempt.student_id = p_student_id\n     and attempt.version_id = p_version_id\n    where activity.node_id = v_node_id\n      and activity.counts_toward_completion\n    group by activity.id\n  ) best;\n\n  select count(*)::integer\n  into v_node_attempt_count\n  from public.digital_textbook_attempts attempt\n  join public.digital_textbook_activities activity on activity.id = attempt.activity_id\n  where activity.node_id = v_node_id\n    and attempt.tenant_id = p_tenant_id\n    and attempt.student_id = p_student_id\n    and attempt.version_id = p_version_id;\n\n  insert into public.digital_textbook_node_progress (\n    tenant_id, student_id, node_id, version_id, status,\n    completion_percent, mastery_score, attempt_count,\n    last_activity_at, updated_at\n  ) values (\n    p_tenant_id, p_student_id, v_node_id, p_version_id,\n    case when v_total_required > 0 and v_completed_required = v_total_required\n      then 'completed' else 'in_progress' end,\n    v_completion_percent, v_mastery_score, v_node_attempt_count,\n    now(), now()\n  )\n  on conflict (tenant_id, student_id, node_id, version_id) do update set\n    status = excluded.status,\n    completion_percent = excluded.completion_percent,\n    mastery_score = excluded.mastery_score,\n    attempt_count = excluded.attempt_count,\n    last_activity_at = excluded.last_activity_at,\n    updated_at = excluded.updated_at;\n\n  return query select\n    v_attempt_number,\n    v_total_required > 0 and v_completed_required = v_total_required,\n    v_completion_percent,\n    v_mastery_score,\n    v_node_attempt_count;\nend;\n$function$\n",
+      "sha256": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    },
+    {
+      "signature": "record_smart_textbook_attempt(uuid,uuid,uuid,uuid,jsonb,boolean,numeric,boolean)",
+      "definition": "CREATE OR REPLACE FUNCTION public.record_smart_textbook_attempt(p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric, p_meets_completion_requirements boolean)\n RETURNS TABLE(attempt_number integer, node_completed boolean, completion_percent integer, mastery_score integer, node_attempt_count integer)\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\ndeclare\n  v_node_id uuid;\n  v_activity_type text;\n  v_max_attempts integer;\n  v_attempt_number integer;\n  v_total_required integer;\n  v_completed_required integer;\n  v_completion_percent integer;\n  v_mastery_score integer;\n  v_node_attempt_count integer;\nbegin\n  if auth.role() is distinct from 'service_role' then\n    raise exception 'SMART_TEXTBOOK_SERVICE_ROLE_REQUIRED'\n      using errcode = '42501';\n  end if;\n\n  if p_score is not null and (p_score < 0 or p_score > 100) then\n    raise exception 'SMART_TEXTBOOK_SCORE_OUT_OF_RANGE'\n      using errcode = '22023';\n  end if;\n\n  select activity.node_id, activity.activity_type, activity.max_attempts\n  into v_node_id, v_activity_type, v_max_attempts\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_nodes as node on node.id = activity.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  join public.digital_textbook_chapters as chapter on chapter.id = module.chapter_id\n  where activity.id = p_activity_id\n    and chapter.version_id = p_version_id;\n\n  if v_node_id is null then\n    raise exception 'SMART_TEXTBOOK_ACTIVITY_VERSION_MISMATCH'\n      using errcode = '22023';\n  end if;\n\n  if v_activity_type in ('speaking', 'writing', 'self_check') then\n    if p_is_correct is not null or p_score is not null then\n      raise exception 'SMART_TEXTBOOK_OPEN_ACTIVITY_CANNOT_BE_SCORED'\n        using errcode = '22023';\n    end if;\n    if p_meets_completion_requirements is null then\n      raise exception 'SMART_TEXTBOOK_OPEN_ACTIVITY_QUALIFICATION_REQUIRED'\n        using errcode = '22023';\n    end if;\n  elsif p_meets_completion_requirements is not null then\n    raise exception 'SMART_TEXTBOOK_OBJECTIVE_ACTIVITY_QUALIFICATION_FORBIDDEN'\n      using errcode = '22023';\n  end if;\n\n  -- Serialize attempt numbering and max-attempt enforcement per learner/activity.\n  perform pg_advisory_xact_lock(\n    hashtextextended(\n      p_tenant_id::text || ':' || p_student_id::text || ':' || p_activity_id::text,\n      0\n    )\n  );\n\n  select coalesce(max(attempt.attempt_number), 0), count(*)::integer\n  into v_attempt_number, v_node_attempt_count\n  from public.digital_textbook_attempts as attempt\n  where attempt.tenant_id = p_tenant_id\n    and attempt.student_id = p_student_id\n    and attempt.activity_id = p_activity_id;\n\n  if v_node_attempt_count >= v_max_attempts then\n    raise exception 'MAX_ATTEMPTS_REACHED: %', v_max_attempts\n      using errcode = 'P0001';\n  end if;\n\n  v_attempt_number := v_attempt_number + 1;\n\n  insert into public.digital_textbook_attempts (\n    tenant_id, student_id, activity_id, version_id, attempt_number,\n    response, is_correct, score, meets_completion_requirements\n  ) values (\n    p_tenant_id, p_student_id, p_activity_id, p_version_id, v_attempt_number,\n    coalesce(p_response, 'null'::jsonb), p_is_correct, p_score,\n    coalesce(p_meets_completion_requirements, false)\n  );\n\n  -- Keep the attempt and its derived progress update atomic for a learner/node.\n  perform pg_advisory_xact_lock(\n    hashtextextended(\n      p_tenant_id::text || ':' || p_student_id::text || ':' || v_node_id::text,\n      1\n    )\n  );\n\n  select count(*)::integer\n  into v_total_required\n  from public.digital_textbook_activities as activity\n  where activity.node_id = v_node_id\n    and activity.counts_toward_completion;\n\n  select count(distinct activity.id)::integer\n  into v_completed_required\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_attempts as attempt\n    on attempt.activity_id = activity.id\n   and attempt.tenant_id = p_tenant_id\n   and attempt.student_id = p_student_id\n   and attempt.version_id = p_version_id\n   and (\n     attempt.is_correct is true\n     or (\n       activity.activity_type in ('speaking', 'writing', 'self_check')\n       and attempt.meets_completion_requirements\n     )\n   )\n  where activity.node_id = v_node_id\n    and activity.counts_toward_completion;\n\n  v_completion_percent := case\n    when v_total_required = 0 then 0\n    else round(100.0 * v_completed_required / v_total_required)::integer\n  end;\n\n  -- Open activities are excluded by type, even if legacy or forged rows ever\n  -- contain a numeric score. Only objective activity scores affect mastery.\n  select coalesce(round(avg(best.best_score)), 0)::integer\n  into v_mastery_score\n  from (\n    select max(attempt.score) as best_score\n    from public.digital_textbook_activities as activity\n    left join public.digital_textbook_attempts as attempt\n      on attempt.activity_id = activity.id\n     and attempt.tenant_id = p_tenant_id\n     and attempt.student_id = p_student_id\n     and attempt.version_id = p_version_id\n    where activity.node_id = v_node_id\n      and activity.counts_toward_completion\n      and activity.activity_type in (\n        'single_choice', 'multiple_choice', 'fill_blank', 'ordering', 'listening'\n      )\n    group by activity.id\n  ) as best;\n\n  select count(*)::integer\n  into v_node_attempt_count\n  from public.digital_textbook_attempts as attempt\n  join public.digital_textbook_activities as activity\n    on activity.id = attempt.activity_id\n  where activity.node_id = v_node_id\n    and attempt.tenant_id = p_tenant_id\n    and attempt.student_id = p_student_id\n    and attempt.version_id = p_version_id;\n\n  insert into public.digital_textbook_node_progress (\n    tenant_id, student_id, node_id, version_id, status,\n    completion_percent, mastery_score, attempt_count,\n    last_activity_at, updated_at\n  ) values (\n    p_tenant_id, p_student_id, v_node_id, p_version_id,\n    case\n      when v_total_required > 0 and v_completed_required = v_total_required\n        then 'completed'\n      else 'in_progress'\n    end,\n    v_completion_percent, v_mastery_score, v_node_attempt_count,\n    now(), now()\n  )\n  on conflict (tenant_id, student_id, node_id, version_id) do update set\n    status = excluded.status,\n    completion_percent = excluded.completion_percent,\n    mastery_score = excluded.mastery_score,\n    attempt_count = excluded.attempt_count,\n    last_activity_at = excluded.last_activity_at,\n    updated_at = excluded.updated_at;\n\n  return query select\n    v_attempt_number,\n    v_total_required > 0 and v_completed_required = v_total_required,\n    v_completion_percent,\n    v_mastery_score,\n    v_node_attempt_count;\nend;\n$function$\n",
+      "sha256": "04d9d8182512c15c6624e15c93bd533df4bb7bbb314207b5575a9568dd748aee",
+      "acl": "{postgres=X/postgres,service_role=X/postgres}"
+    }
+  ],
+  "schema": {
+    "columns": [
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "tenant_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "student_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "activity_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "version_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "page_index",
+        "type": "integer",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "item_indices",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": "'[]'::jsonb"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "response",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": "'[]'::jsonb"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "results",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": "'[]'::jsonb"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "answers",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": "'[]'::jsonb"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "column": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO",
+        "default": "now()"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "gen_random_uuid()"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "tenant_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "private.current_tenant_id()"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "student_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "auth.uid()"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "activity_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "version_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "attempt_number",
+        "type": "integer",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "response",
+        "type": "jsonb",
+        "nullable": "NO",
+        "default": "'{}'::jsonb"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "is_correct",
+        "type": "boolean",
+        "nullable": "YES",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "score",
+        "type": "numeric",
+        "nullable": "YES",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO",
+        "default": "now()"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "column": "meets_completion_requirements",
+        "type": "boolean",
+        "nullable": "NO",
+        "default": "false"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "tenant_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "private.current_tenant_id()"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "student_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": "auth.uid()"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "node_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "version_id",
+        "type": "uuid",
+        "nullable": "NO",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "status",
+        "type": "text",
+        "nullable": "NO",
+        "default": "'not_started'::text"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "completion_percent",
+        "type": "integer",
+        "nullable": "NO",
+        "default": "0"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "mastery_score",
+        "type": "integer",
+        "nullable": "NO",
+        "default": "0"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "attempt_count",
+        "type": "integer",
+        "nullable": "NO",
+        "default": "0"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "last_activity_at",
+        "type": "timestamp with time zone",
+        "nullable": "YES",
+        "default": null
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "column": "updated_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO",
+        "default": "now()"
+      }
+    ],
+    "constraints": [
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_activity_id_fkey",
+        "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_page_index_check",
+        "definition": "CHECK ((page_index >= 0))"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_pkey",
+        "definition": "PRIMARY KEY (tenant_id, student_id, activity_id, version_id, page_index)"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_student_id_fkey",
+        "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "name": "digital_textbook_activity_page_progress_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_activity_id_fkey",
+        "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_attempt_number_check",
+        "definition": "CHECK ((attempt_number > 0))"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_score_check",
+        "definition": "CHECK (((score IS NULL) OR ((score >= (0)::numeric) AND (score <= (100)::numeric))))"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_student_id_fkey",
+        "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_tenant_id_student_id_activity_id__key",
+        "definition": "UNIQUE (tenant_id, student_id, activity_id, attempt_number)"
+      },
+      {
+        "table": "digital_textbook_attempts",
+        "name": "digital_textbook_attempts_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_attempt_count_check",
+        "definition": "CHECK ((attempt_count >= 0))"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_completion_percent_check",
+        "definition": "CHECK (((completion_percent >= 0) AND (completion_percent <= 100)))"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_mastery_score_check",
+        "definition": "CHECK (((mastery_score >= 0) AND (mastery_score <= 100)))"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_node_id_fkey",
+        "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_pkey",
+        "definition": "PRIMARY KEY (tenant_id, student_id, node_id, version_id)"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['not_started'::text, 'in_progress'::text, 'completed'::text])))"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_student_id_fkey",
+        "definition": "FOREIGN KEY (student_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "name": "digital_textbook_node_progress_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+      }
+    ],
+    "triggers": [
+      {
+        "table": "digital_textbook_activity_page_progress",
+        "definition": "CREATE TRIGGER digital_textbook_activity_page_progress_set_updated_at BEFORE UPDATE ON public.digital_textbook_activity_page_progress FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+        "function": "CREATE OR REPLACE FUNCTION private.set_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  new.updated_at := now();\n  return new;\nend;\n$function$\n",
+        "enabled": "O"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "definition": "CREATE TRIGGER digital_textbook_node_progress_set_updated_at BEFORE UPDATE ON public.digital_textbook_node_progress FOR EACH ROW EXECUTE FUNCTION private.set_updated_at()",
+        "function": "CREATE OR REPLACE FUNCTION private.set_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nbegin\n  new.updated_at := now();\n  return new;\nend;\n$function$\n",
+        "enabled": "O"
+      },
+      {
+        "table": "digital_textbook_node_progress",
+        "definition": "CREATE TRIGGER sync_smart_textbook_chapter_completion AFTER INSERT OR UPDATE OF status, completion_percent ON public.digital_textbook_node_progress FOR EACH ROW EXECUTE FUNCTION private.sync_smart_textbook_chapter_completion()",
+        "function": "CREATE OR REPLACE FUNCTION private.sync_smart_textbook_chapter_completion()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_chapter_id uuid;\n  v_test_slug text;\n  v_student_app_id uuid;\n  v_total_nodes integer;\n  v_completed_nodes integer;\n  v_total_activities integer;\n  v_completed_activities integer;\nbegin\n  if new.status <> 'completed' or new.completion_percent < 100 then\n    return new;\n  end if;\n\n  select chapter.id, test.slug, test.student_app_id\n  into v_chapter_id, v_test_slug, v_student_app_id\n  from public.digital_textbook_nodes as node\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  join public.digital_textbook_chapters as chapter on chapter.id = module.chapter_id\n  join public.chapter_tests as test on test.id = chapter.chapter_test_id\n  where node.id = new.node_id\n    and chapter.version_id = new.version_id\n    and test.status = 'published';\n\n  if v_chapter_id is null then return new; end if;\n\n  select count(*) into v_total_nodes\n  from public.digital_textbook_nodes as node\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id;\n\n  select count(*) into v_completed_nodes\n  from public.digital_textbook_node_progress as progress\n  join public.digital_textbook_nodes as node on node.id = progress.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id\n    and progress.tenant_id = new.tenant_id\n    and progress.student_id = new.student_id\n    and progress.version_id = new.version_id\n    and progress.status = 'completed'\n    and progress.completion_percent = 100;\n\n  if v_total_nodes <> 8 or v_completed_nodes <> v_total_nodes then\n    return new;\n  end if;\n\n  select count(*) into v_total_activities\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_nodes as node on node.id = activity.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  where module.chapter_id = v_chapter_id\n    and activity.counts_toward_completion;\n\n  select count(distinct activity.id) into v_completed_activities\n  from public.digital_textbook_activities as activity\n  join public.digital_textbook_nodes as node on node.id = activity.node_id\n  join public.digital_textbook_modules as module on module.id = node.module_id\n  join public.digital_textbook_attempts as attempt\n    on attempt.activity_id = activity.id\n   and attempt.tenant_id = new.tenant_id\n   and attempt.student_id = new.student_id\n   and attempt.version_id = new.version_id\n   and (\n     attempt.is_correct is true\n     or (\n       activity.activity_type in ('speaking', 'writing', 'self_check')\n       and attempt.is_correct is null\n     )\n   )\n  where module.chapter_id = v_chapter_id\n    and activity.counts_toward_completion;\n\n  if v_total_activities = 0 or v_completed_activities <> v_total_activities then\n    return new;\n  end if;\n\n  insert into public.course_ebook_progress (\n    tenant_id, student_id, student_app_id, test_slug,\n    current_page, total_pages, progress_percent, read_pages,\n    reading_seconds, completion_source, last_read_at, updated_at\n  ) values (\n    new.tenant_id, new.student_id, v_student_app_id, v_test_slug,\n    0, 32, 0, '{}'::integer[], 0, 'smart_textbook', now(), now()\n  )\n  on conflict (tenant_id, student_id, test_slug) do nothing;\n\n  update public.course_ebook_progress as progress\n  set\n    progress_percent = 100,\n    completion_source = case\n      when progress.completion_source = 'both' then 'both'\n      when progress.completion_source = 'ebook'\n        and progress.progress_percent >= 100\n        and progress.reading_seconds >= 600 then 'both'\n      else 'smart_textbook'\n    end,\n    updated_at = now()\n  where progress.tenant_id = new.tenant_id\n    and progress.student_id = new.student_id\n    and progress.test_slug = v_test_slug;\n\n  return new;\nend;\n$function$\n",
+        "enabled": "O"
+      }
+    ],
+    "policies": [
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "digital_textbook_attempts",
+        "permissive": "PERMISSIVE",
+        "policyname": "students create own textbook attempts",
+        "schemaname": "public",
+        "with_check": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_activity(tenant_id, student_id, activity_id, version_id))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_activity(tenant_id, student_id, activity_id, version_id))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "digital_textbook_attempts",
+        "permissive": "PERMISSIVE",
+        "policyname": "students read own textbook attempts",
+        "schemaname": "public",
+        "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "qual": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_node(tenant_id, student_id, node_id, version_id))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "digital_textbook_node_progress",
+        "permissive": "PERMISSIVE",
+        "policyname": "students manage own textbook progress",
+        "schemaname": "public",
+        "with_check": "((student_id = ( SELECT auth.uid() AS uid)) AND private.current_student_can_use_textbook_node(tenant_id, student_id, node_id, version_id))"
+      }
+    ]
+  },
+  "currentDbWrites": 0
+}

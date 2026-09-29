@@ -1,0 +1,15 @@
+{
+  "technicalFoundation": "PASS",
+  "compiledRoutes": {
+    "/[space]/dashboard/admin/apps/[appSlug]/textbooks/page": true,
+    "/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/page": true,
+    "/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page": true
+  },
+  "schemaAndSkeletonRpcAcl": "PASS",
+  "approvedCandidateRunning": true,
+  "authenticatedUi": "AUTH SESSION REQUIRED",
+  "authenticatedUiGate": "PARTIAL",
+  "noAuthorizedOwnedSessionSupplied": true,
+  "interactiveActions": 0,
+  "skeletonRpcCalls": 0
+}

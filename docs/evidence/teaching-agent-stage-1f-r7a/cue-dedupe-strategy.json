@@ -1,0 +1,56 @@
+{
+  "status": "PROPOSAL ONLY",
+  "identity": [
+    "runtimeSession",
+    "snapshot digest",
+    "step binding",
+    "source media revision",
+    "cue id"
+  ],
+  "state": [
+    "unseen",
+    "pending",
+    "waiting",
+    "completed"
+  ],
+  "cases": [
+    {
+      "case": "normal playback",
+      "rule": "Crossing prev<t<=now; mark pending before pause/mount. Sort time then sortOrder then stable ID; only earliest mandatory pending cue."
+    },
+    {
+      "case": "seek backward",
+      "rule": "Already domain-completed mandatory cue does not force repeat within same session. Optional user review cannot revoke completion."
+    },
+    {
+      "case": "seek forward",
+      "rule": "Detect crossed mandatory incomplete cues; stop at earliest pending trigger. Do not skip grading or silently complete crossed cues."
+    },
+    {
+      "case": "activity completed",
+      "rule": "Correlate same snapshot/activity/session/generation and authoritative revision; duplicate callbacks do not resume twice."
+    },
+    {
+      "case": "replay",
+      "rule": "Within same session completed cues remain satisfied; presentation replay is not a new attempt. New formal attempt/session only via existing domain authorization."
+    },
+    {
+      "case": "preview",
+      "rule": "Separate isolated trackingDisabled session; no official progress or cross-mode completion reuse."
+    },
+    {
+      "case": "page refresh",
+      "rule": "Resolve same valid opaque session/snapshot; rebuild completion from existing server progress, then restore waiting cue. localStorage/sessionStorage video offset is only a hint."
+    },
+    {
+      "case": "expired session or changed snapshot",
+      "rule": "Fail closed / request formal re-admission; never silently switch snapshot or reuse another user state."
+    },
+    {
+      "case": "lost response",
+      "rule": "Read authoritative result; no blind Activity resubmit or duplicate Cue transition."
+    }
+  ],
+  "singleMediaOwner": "HTMLMediaElement owns observed currentTime/play state; runtime commands with lease/generation, React projects it. Avoid competing effects that both play/pause. Preserve user pause; autoplay rejection shows explicit resume.",
+  "persistence": "Prefer reconstructing cue satisfaction from existing activity state. If pending non-activity presentation state requires durability, extend existing runtime session state after design/authorization; never new video progress/attempt store."
+}

@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "deployedAt": "2026-09-17T07:13:59.223519+00:00",
+  "oldBuild": "YEYLRN3hvVg2OY0NJ9NO9",
+  "currentBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "archiveSha256": "2e5f143ad34b0c664e866a89a4adaf545fdb4d7fe54b737990a2c6798c540c47",
+  "sourceSha256": "15b032f346a93327c6692546ad3f9c47c3ba8d5cb9e32e722d9d6a56d6d08d77",
+  "changedProductFiles": [
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts"
+  ],
+  "pm2Target": "uply-first-enable",
+  "stopStartCycles": 1,
+  "otherPm2": "UNCHANGED",
+  "runtimeLauncherTailscale": "UNCHANGED",
+  "publicPackageDependencies": "UNCHANGED",
+  "rollbackArtifact": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1d/20260917T071351Z/rollback/previous-next",
+  "rollbackSource": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1d/20260917T071351Z/rollback/native-activity-authoring.server.ts",
+  "migration": 0,
+  "schemaWrites": 0,
+  "businessWrites": 0,
+  "health": [
+    {
+      "path": "/",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    },
+    {
+      "path": "/platform/dashboard",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/textbooks/native-activity",
+      "status": 200,
+      "scope": "availability; Owner check follows"
+    }
+  ]
+}

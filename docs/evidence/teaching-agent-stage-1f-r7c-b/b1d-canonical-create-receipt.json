@@ -1,0 +1,36 @@
+{
+  "status": "CONFIRMED",
+  "contract": "canonical-activity-binding/1",
+  "method": "Existing authenticated Owner Chrome -> UI click -> Server Action -> existing authenticated RPC",
+  "targetAlias": "hangul-introduction",
+  "activityAlias": "hangul-introduction-vowel-recognition",
+  "type": "single_choice",
+  "logicalCreateAttempts": 1,
+  "uiConfirmedAt": "2026-09-17T07:15:05.616Z",
+  "independentReadbackAt": "2026-09-17T07:16:46.108270+00:00",
+  "nodeHash": "ece2b26f5024e61e511b28ed30ce9740639c4b8ebe185a9449746ef1491c9e26",
+  "activityHash": "c2d417cc612a825cfdbb077891ceaac411032a777a89e732da169f66384ed2e6",
+  "sameTransaction": true,
+  "createdAt": "2026-09-17T07:15:05.080489+00:00",
+  "expectedRows": {
+    "digital_textbook_nodes": 1,
+    "digital_textbook_activities": 1,
+    "digital_textbook_activity_secrets": 1
+  },
+  "actualRows": {
+    "digital_textbook_nodes": 1,
+    "digital_textbook_activities": 1,
+    "digital_textbook_activity_secrets": 1
+  },
+  "inserted": 3,
+  "updated": 0,
+  "deleted": 0,
+  "duplicates": 0,
+  "publicPayload": "PASS",
+  "privateAnswer": "SERVER ONLY",
+  "operator": "Existing authenticated Platform Owner; personal identity omitted",
+  "secretDigest": "NOT EXPORTED",
+  "question2": "DEFERRED",
+  "noRetry": true,
+  "authorizationDeviation": false
+}

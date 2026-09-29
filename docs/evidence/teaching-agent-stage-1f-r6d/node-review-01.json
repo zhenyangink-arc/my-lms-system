@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 1,
+  "title": "今天认识韩文字母",
+  "formalType": "opening",
+  "purpose": "温和导入辅音、元音及组合预期。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "NEEDS_REVISION",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "没有明显语法错误；한글은…만들어요可理解为话题前置和主语省略，但构成介绍不如있어요自然。이루어져 있어요准确却更书面/复杂，不优先采用。其余问候、같이 배워요和볼까요自然，篇幅合适。",
+  "classification": "SHOULD_FIX",
+  "issueIds": [
+    "S1"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "S1",
+      "classification": "SHOULD_FIX",
+      "proposedText": "한글에는 자음과 모음이 있어요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=1",
+  "renderedReference": "ui-render-validation.json / order=1",
+  "nodeWrites": 0
+}

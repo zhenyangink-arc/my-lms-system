@@ -1,0 +1,87 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "contract": "exact-single-backup-gate/1",
+  "strategy": "New versioned adapter over existing R4D/R5C/R7B PostgreSQL backup-and-restore mechanism, same backup root/artifact names/permissions/seal model. No parallel backup store, no automatic current restore.",
+  "reasonNewAdapterRequired": "R4D class methods embed449, old Build, old stage outputs and absent-Agent expectations. Preserve those bytes; do not subclass/monkey-patch away guards. New adapter implements reviewed orchestration with plan baseline values using standard pg_dump/pg_dumpall/pg_restore tools.",
+  "existingProcedure": "scripts/teaching-agent-r4d/execute.py:149-212 exported READ ONLY snapshot, full/schema custom dumps, role capture, archive lists;218-238 seal;265-357 owned isolated restore/ACL supplement/verification",
+  "catalogSourceRefs": [
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/inventory-query.sql",
+      "sha256": "c1188b8ab6a72ed7529affd0004761dc71017c9a6f005946c31436fe903c17eb",
+      "runtimeDependency": false
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/extra-inventory-query.sql",
+      "sha256": "29c1683bfe7acee962b7d93bacd629ad2b2fb7506e975c215a2153b0fc42daae",
+      "runtimeDependency": false
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/additional-catalog-query.sql",
+      "sha256": "542e5e081274cb1002a931dd0eb38985e09b8f3f9a1372d4bb523f60585965f7",
+      "runtimeDependency": false
+    }
+  ],
+  "runtimeCatalogs": "Reviewed fixed queries in new checks.py; no dependency on historical private backup directories, no plan-supplied SQL/file. Include all application schemas, agent_core_private, runtime_publish_private, global and per-schema default ACLs, all target overloads, role flags/membership, actual ledger columns/PK/triggers.",
+  "backupArtifacts": [
+    "database.dump full logical backup with owner/ACL retained",
+    "schema.dump",
+    "roles.sql --roles-only --no-role-passwords",
+    "metadata/migration-ledger.json with version/name and separately protected full-source-prefix digest",
+    "private catalog/function-definition/ACL/effective-role/default/constraint fingerprints",
+    "metadata/manifest.json and SHA256SUMS",
+    "isolated restore-verification receipt"
+  ],
+  "workflow": [
+    "explicit backup-mode operator authorization required before current export",
+    "verify target/config/image/ledger and local disk/permissions; unique0700 batch under existing /home/yangzhen/backups/uply",
+    "export one REPEATABLE READ READ ONLY snapshot; keep exporter alive for full/schema dump and ledger/catalog capture",
+    "roles/memberships captured separately, clearly non-atomic with DB MVCC snapshot; before/after role fingerprints must match",
+    "validate dump exit codes, custom archive TOC/headers and every protected file hash",
+    "restore actual new dump in owned network-none PG17 with no current credentials, no host port; use existing schema/extension/data/ACL supplement procedure; verify catalog/ledger/role equality and table counts",
+    "seal VALID only after restore PASS and protected source contract stable; target current DB never restored",
+    "validate recentness and all identities again before apply; retain batch, remove only owned restore container/volume"
+  ],
+  "manifestCompatibility": "Preserve existing status/sealedAt/sourceIdentitySha256/snapshotStart/snapshotEnd/ledgerCount/ledgerLatest/ledgerSha256/files fields; new reportVersion exact-single-backup/1 binds planId/fullSourcePrefixDigest/targetProfile/engine hashes/restore receipt. Historical reportVersion unchanged; old449 backups cannot satisfy458.",
+  "freshnessSeconds": 900,
+  "futureDatedRejected": true,
+  "overrides": "No CLI RPO override. Any changed freshness policy requires new sealed plan and explicit reviewed approval.",
+  "pathGuard": "Only registered target backup root; realpath beneath root, no symlink components, expected UID, dirs0700/files0600, exists/hash/size/type checks; no arbitrary --backup path",
+  "000MinimumRecovery": [
+    "full ledger exact rows",
+    "exact function definition+SHA",
+    "explicit ACL and effective roles/membership",
+    "pg_default_acl",
+    "all other function/overload ACLs",
+    "related schema fingerprints"
+  ],
+  "selected000Policy": "Keep established full dump+schema+roles+owned restore policy; no silent ACL-only backup relaxation.",
+  "001002": "Same machinery, plan additionally pins completion/publication object state and full protected scope. Each invocation needs newly matching ledger backup; cannot reuse458 backup for459/460.",
+  "privacy": "No transport credential files copied into backup/evidence. roles omit passwords. Full database backup is private sensitive archival data under existing policy; public receipts contain only non-secret hashes/counts/classifications. No plan/receipt token values.",
+  "retention": "Existing minimum7 days AND through stable Stage1G Pilot; no automatic deletion; off-host status disclosed, not invented.",
+  "currentExecution": 0
+}

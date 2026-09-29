@@ -1,0 +1,54 @@
+{
+  "steps": [
+    "from-zero formal create action",
+    "skeleton draft verified",
+    "existing createTeachingScriptDraftAction",
+    "existing node author/save 0",
+    "existing node author/save 1",
+    "existing source review confirmation",
+    "existing validation and script publication",
+    "existing chapter/root/version publish action",
+    "existing published-to-draft continuation"
+  ],
+  "realAuth": true,
+  "formalProductUI": true,
+  "authoringWrites": "EXPECTED",
+  "liveProviderRequests": 0,
+  "initialCounts": {
+    "targetCatalogOnly": true,
+    "textbooks": 0,
+    "versions": 0,
+    "chapters": 0,
+    "modules": 0,
+    "teachingLessons": 0,
+    "scripts": 0,
+    "nodes": 0,
+    "syntheticOnly": true
+  },
+  "status": "PASS",
+  "auditActions": [
+    "create_draft",
+    "add_node",
+    "update_node",
+    "add_node",
+    "update_node",
+    "publish",
+    "create_draft",
+    "update_node",
+    "update_node",
+    "update_node",
+    "update_node",
+    "update_node",
+    "update_node",
+    "publish"
+  ],
+  "auditActorVerified": true,
+  "published": {
+    "root": true,
+    "version": true,
+    "chapter": true,
+    "teachingLesson": true,
+    "script": true,
+    "nodes": 2
+  }
+}

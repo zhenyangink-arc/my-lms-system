@@ -1,0 +1,17 @@
+{
+  "windowUserUpdates": 1,
+  "windowSessionUpdates": 1,
+  "windowRefreshCreates": 1,
+  "windowPreexistingRefreshUpdates": 1,
+  "subjects": [
+    {
+      "isDevelopmentActor": false,
+      "profileRole": "platform_super_admin",
+      "globalRole": "platform_owner"
+    }
+  ],
+  "before": "2026-09-18T02:08:39.573220+00:00",
+  "after": "2026-09-18T02:10:37.466404+00:00",
+  "comparison": "Auth table fingerprints changed; timestamp-based classification, not full SQL statement audit",
+  "noFurtherToolInvocation": true
+}

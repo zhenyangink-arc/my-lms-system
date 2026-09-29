@@ -1,0 +1,115 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-V4-CAPTURE-2",
+  "recordedAt": "2026-09-20T07:05:42.889292+00:00",
+  "explicitSecondCaptureApproval": "RECORDED",
+  "captureAttemptsThisRound": 0,
+  "captureCommandExecuted": false,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "operatorCaptureAuthorizationCreated": false,
+  "sourceChanges": 0,
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "nextMigrationAllowed": false,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "BLOCKED_FRESH_CAPTURE_AUTHORIZATION",
+  "fixedAuthorizationPathOccupied": true,
+  "existingAuthorization": {
+    "path": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/acl-000-v1.capture.json",
+    "sha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "contract": "readonly-baseline-capture-authorization/2",
+    "expired": true,
+    "expiresAt": 1789885001.4978054,
+    "mode": "0600",
+    "uid": 1001,
+    "sameFirstCaptureAuthorization": true,
+    "mutated": false,
+    "reused": false,
+    "freshAuthorizationCreated": false
+  },
+  "runnerCreatesAuthorization": false,
+  "repoProductionMintOrRotationEntryPointFound": false,
+  "searchScope": [
+    "scripts/teaching-agent-r7d-c3b (all files)",
+    "scripts (capture authorization references)",
+    "existing runner contract/postgres/backup test files",
+    "v4 proposal operator preparation contract",
+    "prior /tmp/uply-p1e-v4-once.py source only; not executed"
+  ],
+  "sourceAuthority": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "lines": [
+        91,
+        100
+      ],
+      "claim": "Trusted operator supplies strict /2 artifact; runner does not create it."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "lines": [
+        17,
+        25,
+        28
+      ],
+      "claim": "Fixed existing artifact read and authorization validation; no mint/renew/rotate command."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "lines": [
+        81,
+        85
+      ],
+      "claim": "Exclusive writer uses O_EXCL; cannot replace occupied fixed authorization path."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "lines": [
+        250,
+        263,
+        305
+      ],
+      "claim": "Strict field set and v4 reference only; no extra ad-hoc authorization fields."
+    }
+  ],
+  "priorTemporaryWrapper": {
+    "path": "/tmp/uply-p1e-v4-once.py",
+    "sha256": "07797a142939c2ba9f08a7172c2d6f40383f96d51587be9f44ff36e6c5b11954",
+    "executed": false,
+    "findings": [
+      "Bound to first stage directory and earlier /1 authorization hash",
+      "Copies prior authorization bytes to archive then os.replace pending file onto fixed path",
+      "Not a repo formal renewal mechanism and conflicts with this round prohibition on manual copy/change of first authorization"
+    ]
+  },
+  "reason": "The first capture /2 authorization still occupies the fixed path. The inspected repo mechanism validates/safely exclusively writes files but provides no reviewed production renewal/rotation operation for that occupied path. This round forbids manual removal, mutation, copying or reuse; no replacement is attempted.",
+  "stopAuthority": "Current user sections 15 and 43",
+  "freshNonceMinted": false,
+  "freshAuthorizationCreated": false,
+  "oldAuthorizationRemoved": false,
+  "oldAuthorizationModified": false,
+  "oldAuthorizationCopied": false,
+  "oldAuthorizationReused": false,
+  "credentialsRead": false,
+  "nextAction": "Separate review/approval of an exact authorization lifecycle procedure; no automatic cleanup, source edit or capture."
+}

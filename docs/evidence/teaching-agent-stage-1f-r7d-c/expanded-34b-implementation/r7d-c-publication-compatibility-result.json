@@ -1,0 +1,62 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "matrix": [
+    {
+      "producer": "v1 legacy",
+      "reader": "v1 legacy",
+      "result": "PASS"
+    },
+    {
+      "producer": "v2 native",
+      "reader": "v2 native",
+      "result": "PASS"
+    },
+    {
+      "producer": "v1 legacy",
+      "reader": "v2 native",
+      "result": "REJECTED"
+    },
+    {
+      "producer": "v2 native",
+      "reader": "v1 legacy consumer",
+      "result": "REJECTED"
+    }
+  ],
+  "genericRepository": "Certified discriminated union for current/session/Owner snapshot",
+  "legacyConsumers": [
+    "loadPublishedRuntimeSnapshot",
+    "createRuntimeLearningSessionResolver.resolve"
+  ],
+  "legacyPayloadDigestCompilerAndBytes": "PRESERVED",
+  "historicalSnapshotRewrite": 0,
+  "dependencyFence": "PASS; existing guard source unchanged; PT409 maintained",
+  "CAS": "PASS; stale pointer/collision/concurrent one-winner",
+  "retirementAndSession": "Retired/revoked/expired not revived",
+  "publicationTests": {
+    "pass": 90,
+    "fail": 0,
+    "composition": "40 native + 44 SQL + 6 new historical-chain compatibility"
+  }
+}

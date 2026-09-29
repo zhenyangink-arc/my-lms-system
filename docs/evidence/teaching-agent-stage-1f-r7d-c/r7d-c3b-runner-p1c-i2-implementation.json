@@ -1,0 +1,111 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I2",
+  "recordedAt": "2026-09-20T01:30:36.775608+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "implementationAddedFiles": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "currentBuildLastKnown": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3": "DISABLED_RETAINED",
+  "status": "PASS",
+  "scope": {
+    "operationalModify": 2,
+    "testModify": 2,
+    "add": 0
+  },
+  "modified": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "beforeSha256": "31751d583b604210f72e95703bbc1f6e814b0b85520bb4b093f7950cdfb0d5fc",
+      "sha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "beforeSha256": "bbccf9220f219104d1c94f142dc4f4333d3cc92b28543cc8d6cb0d785e04d31b",
+      "sha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "beforeSha256": "32b701fa6e036afde6a79f257da3e02350f4c20fa94b3c04700464d5432c3704",
+      "sha256": "b87f80dfe8af51e1f77d4857399162304017fd0834ed39b1d87e2c596242707b",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "beforeSha256": "a5b8e71a3caacf28f1241c6944c82a1b1b86eba8432a6b2fd7bb638d6a5cb9f1",
+      "sha256": "4f9484c238ae27551f3c9d288e08561b5536838ebb553b7642ad0c7f6873eca1",
+      "mode": "0o664"
+    }
+  ],
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+    "sha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68"
+  },
+  "changes": [
+    "Fixed exact-target catalog projection before full observe; reuse unchanged function_check and acl_check.",
+    "Validate raw definition SHA before full catalog; discard raw definition in memory.",
+    "Compare exact canonical target metadata/ACL/effective projection against full catalog, preserving ledger snapshot guard.",
+    "CAPTURE_APPROVAL literal changes v2 to v3 only; no fallback or dual authority.",
+    "Add 20 query-order cases in existing PG test file; extend existing capture authorization case with v3/v2 rejection assertions.",
+    "Redirect historical regression logs to new evidence directory; historical expectations unchanged."
+  ],
+  "sharedSymbolHashesUnchanged": {
+    "CATALOG_SQL": "719f4737d0b5c2a2b58669cc4c14755a1c734127c0aa3606f5d8b49f0bc10d8a",
+    "observe": "1f536434e8df5746718d780bf9e1cb325fac5e3601f23ae1dc5699d9bc11a801",
+    "descriptor": "d2034a6df8f752cd77d8641c97ae4706af3fc577b497c7fdb990b90b47cd3729",
+    "fingerprint": "1b5365195fd0a9c4344dc2b91d5ca99978bc47f61aee78a6ac07c29e023cbbfc",
+    "target": "97d1c2ec887e25de44c1dec868b317ff76ef246a641df7f3299a709d69dcd493",
+    "function_check": "c010877f720013f4488a2d81f6496a0eb03291047369b53a22a363e805390053",
+    "acl_check": "23f168e5ad225739a7f0344115df1e147910c70df6d727c7ee91ca927a6caaa7",
+    "LEDGER_CAPTURE_SQL": "b7172f079dbafb0ce6a5cec4ab84d4dd39739826c2bb591716d25b89bc6012a9",
+    "TARGET_DEFINITION_SQL": "a904ed01534049041d1dd05a596595fa28d9a73a7df853fa67a7cdcf9f6ca749",
+    "capture_ledger_check": "948143be2000a1a19134cea9e205adac3ffe6bedd354f81c87f367d958d81bcd"
+  },
+  "staticChecks": {
+    "sharedSymbolHashes": {
+      "CATALOG_SQL": "719f4737d0b5c2a2b58669cc4c14755a1c734127c0aa3606f5d8b49f0bc10d8a",
+      "observe": "1f536434e8df5746718d780bf9e1cb325fac5e3601f23ae1dc5699d9bc11a801",
+      "descriptor": "d2034a6df8f752cd77d8641c97ae4706af3fc577b497c7fdb990b90b47cd3729",
+      "fingerprint": "1b5365195fd0a9c4344dc2b91d5ca99978bc47f61aee78a6ac07c29e023cbbfc",
+      "target": "97d1c2ec887e25de44c1dec868b317ff76ef246a641df7f3299a709d69dcd493",
+      "function_check": "c010877f720013f4488a2d81f6496a0eb03291047369b53a22a363e805390053",
+      "acl_check": "23f168e5ad225739a7f0344115df1e147910c70df6d727c7ee91ca927a6caaa7",
+      "LEDGER_CAPTURE_SQL": "b7172f079dbafb0ce6a5cec4ab84d4dd39739826c2bb591716d25b89bc6012a9",
+      "TARGET_DEFINITION_SQL": "a904ed01534049041d1dd05a596595fa28d9a73a7df853fa67a7cdcf9f6ca749",
+      "capture_ledger_check": "948143be2000a1a19134cea9e205adac3ffe6bedd354f81c87f367d958d81bcd"
+    },
+    "planContractLiteralOnly": true,
+    "syntax": "PASS",
+    "jsonStrictParse": "PASS",
+    "fixedTargetLiteralQuery": "PASS",
+    "newCLIOrSQLInput": false,
+    "newDependencies": false,
+    "gitDiffCheck": "PASS",
+    "readOnlyReview": "new query is a fixed SELECT only; capture reuses existing validators; no new process execution, file path or credential operation"
+  },
+  "productionAuthorityGeneratedOnlyAfterValidation": true,
+  "oldExpectedChanges": 0
+}

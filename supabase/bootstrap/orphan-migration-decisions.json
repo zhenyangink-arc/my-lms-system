@@ -1,0 +1,22 @@
+[
+  {
+    "originalFilename": "202609080004_teaching_operations.sql",
+    "originalSha256": "0d43d2bb14bc3b43457dcf5671b615e2a046b7aaa5845a6421d481e1cdff368d",
+    "decision": "REISSUE_POST_BASELINE",
+    "status": "REISSUED_POST_BASELINE",
+    "newFilename": "202609140003_teaching_operations_reissue.sql",
+    "newSha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+    "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080004_teaching_operations.sql",
+    "reason": "Current curriculum plan service/actions require get_curriculum_execution and dispatch_curriculum_plan_exam; objects absent from cutover snapshot; no superseding migration."
+  },
+  {
+    "originalFilename": "202609080005_completion_policy_management.sql",
+    "originalSha256": "44079b7845187ef97e189262c4f603d458e16901da5dc77f6c31bb0bdca6edf5",
+    "decision": "REISSUE_POST_BASELINE",
+    "status": "REISSUED_POST_BASELINE",
+    "newFilename": "202609140004_completion_policy_management_reissue.sql",
+    "newSha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+    "archive": "docs/evidence/teaching-agent-stage-1f-r1b/migration-archive/202609080005_completion_policy_management.sql",
+    "reason": "Current policy-actions require draft/publish/refresh RPCs; all four absent from cutover snapshot; no superseding migration."
+  }
+]

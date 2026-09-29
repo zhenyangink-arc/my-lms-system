@@ -1,0 +1,18 @@
+{
+  "status": "TEST DB VERIFIED",
+  "currentDatabase": "NOT EXECUTED",
+  "currentCanonicalExecutionNodeCount": 0,
+  "currentCanonicalActivityCount": 0,
+  "currentCanonicalPrivateAnswerCount": 0,
+  "isolatedPerFixture": {
+    "executionNodeCount": 1,
+    "activityCount": 1,
+    "privateAnswerCount": 1,
+    "domainType": "single_choice",
+    "renderer": "multiple_choice",
+    "parent": "Existing digital_textbook_nodes practice node → orientation module → chapter0 → draft version"
+  },
+  "authoringMethod": "Explicitly approved test-only bootstrap; no suitable existing current-DB general creation action/RPC found",
+  "officialCurrentDatabaseAuthoringWorkflow": "NOT VERIFIED",
+  "alias": "hangul-introduction-vowel-recognition"
+}

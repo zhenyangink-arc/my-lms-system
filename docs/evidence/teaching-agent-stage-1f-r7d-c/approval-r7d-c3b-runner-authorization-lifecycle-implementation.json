@@ -1,0 +1,770 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A1",
+  "recordedAt": "2026-09-20T07:18:01.862882+00:00",
+  "scope": "DESIGN_AND_APPROVAL_PROPOSAL_ONLY",
+  "currentBlocker": "BLOCKED_FRESH_CAPTURE_AUTHORIZATION",
+  "secondCaptureAttempts": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "captureAttempts": 0,
+  "captureRetry": 0,
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "authorizationCreated": false,
+  "oldAuthorizationModified": false,
+  "oldAuthorizationMoved": false,
+  "oldAuthorizationCopied": false,
+  "chmod": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "testsRun": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "C3BRelease": "BLOCKED_PENDING_AUTHORIZATION_LIFECYCLE",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "contract": "capture-authorization-lifecycle-implementation-approval/1",
+  "status": "READY_AWAITING_EXPLICIT_IMPLEMENTATION_APPROVAL",
+  "approved": false,
+  "executionAuthorized": false,
+  "approvalType": "LOCAL_AUTHORIZATION_LIFECYCLE_IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "selectedOption": "FORMAL_ROTATE_AND_MINT",
+  "designAuthority": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a1-authorization-lifecycle-design.json",
+    "rawSha256": "e7dc5fe109ad11841402288360afa12bb6f6a70fc8a471dab4c6f88c171b9f70"
+  },
+  "reason": "Meets archival, canonical-path, concurrency, crash and one-time requirements with no authorization/plan/query/transport schema changes. One local utility alone is insufficient: narrow runner authorization gates and package/source authority update are necessary. Versioned paths additionally touch transport reread identity without removing these requirements.",
+  "exactScope": {
+    "exactModifyPaths": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+        "existingSha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "kind": "operational",
+        "responsibility": "Capture-only integration: acquire shared lifecycle lock before reading canonical authorization; verify READY receipt and fresh explicit approval; persist one-time consume claim before CaptureTransport construction/credential access; retain lock through rollback, durable capture receipt and consumed archival/outcome. No new runner CLI flag, query, target, transaction or backup change."
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+        "existingSha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "kind": "operational",
+        "responsibility": "Add capture_authorization.py to package_hashes; advance sole CAPTURE_APPROVAL reference from historical v4 to future v5. Keep /2 field set, validators, risk binding, DRAFT/READY gates and 900-second rules unchanged. No v4 fallback."
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "existingSha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+        "kind": "test",
+        "responsibility": "Lifecycle unit, multiprocess concurrency, owned filesystem crash injection, privacy and runner-before-credential tests; adapt capture runner harness to required lifecycle records and forward authority assertions, retaining existing IDs/business assertions."
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "existingSha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+        "kind": "test",
+        "responsibility": "Owned runner integration proves consume-before-connect, one session/read-only/rollback, durable baseline/outcome and no replay after success/failure. Move regression outputs off finalized directories to new exclusive per-run directory before running any regression subprocess; preserve historical expectations and fixtures."
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/README.md",
+        "existingSha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+        "kind": "documentation",
+        "responsibility": "Document official local mint interface, fresh approval trust boundary, rotation/consumption/crash states, recovery STOP rules, immutable archives, v5 prerequisite and forward test outputs."
+      }
+    ],
+    "exactAddPaths": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/capture_authorization.py",
+        "kind": "operational",
+        "responsibility": "One formal local-only lifecycle utility plus runner context API: fixed plan paths, strict external single-capture approval validation, per-plan flock, durable approval/nonce claims, archival non-replacing rename, staged /2 mint, final READY receipt, consume claim, terminal archival/outcome. No DB/network/credential reads, transport imports or runner dispatch."
+      }
+    ],
+    "existingFilesModified": 5,
+    "operationalExistingModifyCount": 2,
+    "testModifyCount": 2,
+    "readmeModifyCount": 1,
+    "newImplementationFiles": 1,
+    "newTestFiles": 0,
+    "newFixtureFiles": 0,
+    "totalImplementationPaths": 6,
+    "unchangedBoundaryLocks": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+        "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+        "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+        "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+        "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+        "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+        "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+        "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+        "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+      },
+      {
+        "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+        "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+      },
+      {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad"
+      },
+      {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027"
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+        "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb"
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+        "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73"
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+        "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22"
+      }
+    ],
+    "allProductSourceUnchanged": true,
+    "allHistoricalToolingUnchanged": true,
+    "captureQuerySemanticsChanges": 0,
+    "databaseSchemaChanges": 0,
+    "migrationChanges": 0,
+    "productChanges": 0,
+    "dependencyPackageChanges": 0,
+    "imageToolchainChanges": 0,
+    "futureRuntimeArtifactsAreNotSourceAdditions": true,
+    "scopeExpansionStop": "Any implementation path beyond these six, any fixture/product/migration/query/DB schema change, or new package/image dependency requires STOP and separate scope approval."
+  },
+  "authorizationContract": "readonly-baseline-capture-authorization/2",
+  "authorizationSchemaImpact": "UNCHANGED",
+  "runnerBehaviorImpact": "CHANGE_REQUIRED_AUTHORIZATION_GATE_ONLY_BEFORE_CREDENTIALS_AND_FINALIZATION; DB/TLS/query/transaction unchanged",
+  "concurrencyMechanism": {
+    "selected": "persistent per-plan fcntl.flock(LOCK_EX|LOCK_NB) + O_EXCL durable claims",
+    "lockLifetime": "Mint holds lock for all validation/archive/stage/publication; runner holds same lock from canonical read until rollback, receipt write, consumed archival and outcome finalization.",
+    "lockFile": "0600 owner-only regular nlink1 O_NOFOLLOW O_CLOEXEC; created exclusively when absent, otherwise validated; never unlink/recreate lock inode. Validate fd identity against directory entry before action.",
+    "failure": "LOCK_BUSY stops immediately; no waiting loop, PID timeout takeover or automatic retry.",
+    "flockLimitation": "Advisory cooperating-process serialization, not defense against root or an operator editing files outside protocol. Trusted OS-operator boundary retained.",
+    "durableClaims": "ApprovalId, explicit USER approvalReferenceSha256 and new nonceSha256 each get separate permanent O_EXCL claims before publication; source proposal raw SHA is NOT used as the per-attempt approval reference. Every partial/malformed existing claim burns that identity and blocks reuse. The auth raw SHA consume claim is durable before credentials.",
+    "O_EXCLOnlyAlternative": "Can serialize but stale crash lock requires a new recovery protocol; use flock for live lock and durable phase state for crash stop.",
+    "privateDirectoryOnlyAlternative": "0700 protects ownership but does not serialize two same-UID operators.",
+    "FDInheritance": "Lock fd close-on-exec; inherited DB children must not prolong lock. Parent crash still leaves consume/incomplete phase records denying replay/new mint."
+  },
+  "oneTimeConsumptionMechanism": {
+    "selected": "C_CONSUMED_CLAIM_BEFORE_CREDENTIALS_THEN_ARCHIVE_AFTER_SESSION_CLOSE",
+    "compare": {
+      "A_LEAVE_UNTIL_EXPIRY": "Unsafe by itself: current capture nonce is syntax-only and authorization could be reused within900s.",
+      "B_ARCHIVE_ONLY_AFTER_CAPTURE": "Unsafe by itself: concurrent/crashed capture can reuse before archive.",
+      "C_DURABLE_CONSUME_THEN_ARCHIVE": "Chosen: durable pre-dispatch claim rejects replay regardless of finalizer/crash."
+    },
+    "runnerGuardOrder": [
+      "Acquire shared per-plan flock",
+      "Read canonical safely; authorize_capture validates current /2",
+      "Require exact-hash READY and phase continuity, both fresh user-approval claims plus nonce reservation bound to that READY, no unresolved prior operation, stage open and all bound authorities",
+      "Check canonical hash not consumed; exclusive fsync consumed claim before constructing CaptureTransport",
+      "Call existing CaptureTransport.capture with same canonical bytes; keep canonical stable for runtime guard rereads",
+      "Existing READ ONLY/REPEATABLE READ/query order/ROLLBACK unchanged",
+      "Persist existing readonly-baseline-capture/2 receipt exclusively",
+      "After transport close, exact-hash rename canonical into archive; write exclusive outcome binding baseline receipt raw SHA or safe failure code",
+      "Release flock; print SUCCESS only when baseline receipt and lifecycle outcome both durable; failures never restore authorization"
+    ],
+    "claimContract": "capture-authorization-consumption/1",
+    "claimFields": [
+      "planId",
+      "authorizationRawSha256",
+      "authorizationCanonicalSha256",
+      "rotationReadyReceiptSha256",
+      "explicitApprovalId",
+      "explicitApprovalRawSha256",
+      "nonceSha256",
+      "packageSha256",
+      "operatorUid",
+      "claimedAt",
+      "phase=BEFORE_CREDENTIAL_ACCESS",
+      "maximumAttempts=1"
+    ],
+    "nonClaims": "Consume record proves authority reserved, not that DB connected. Capture receipt proves persisted baseline; outcome links them without changing readonly-baseline-capture/2 public schema.",
+    "finalizerFailure": "Consumed claim remains authoritative; no retry or reactivation, root result BLOCKED_LIFECYCLE_FINALIZATION even if capture receipt exists.",
+    "reuseExistingHelpers": "Reuse safe_file, strict_json, canonical, sanitized, Failure and exclusive patterns. Do not instantiate Engine or reuse migration Journal vocabulary as a capture apply attempt. receipts.py remains unchanged.",
+    "internalAPIBoundary": "Supported production authority path is formal runner CLI; lifecycle is not an OS sandbox against root or a trusted operator invoking internal Python APIs outside the approved process."
+  },
+  "archivePolicy": {
+    "mode": "IMMUTABLE_EXACT_BYTES_NO_TTL_DELETE",
+    "directoryMode": "0700",
+    "fileMode": "0600",
+    "namespace": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-archive/acl-000-v1/<rawSha256>.json",
+    "singleHardLinkRequired": true,
+    "collision": "FAIL even identical bytes; no overwrite/dedup",
+    "noRunnerArchiveLookup": true,
+    "reason": "Forward lifecycle preservation, not legacy cleanup",
+    "scope": "acl-000-v1/C3B current contract only",
+    "initialObjectSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "canonicalAfterCompletion": "Absent after consumed archival; if crash/IO failure leaves it present, durable consumed record makes it inactive. Expired files may physically remain until approved rotation, but are never active.",
+    "firstArchiveProvenance": "SHA/inode exact rename of existing legacy raw file; known use comes from first-capture attempt and proof hashes. No fictional historical consume receipt is invented: a NEW bootstrap historical-used reservation records this provenance."
+  },
+  "crashSafety": [
+    {
+      "window": "A_BEFORE_ARCHIVE",
+      "durableState": "Old bytes still canonical; may have PREPARED/claims only.",
+      "failClosed": "Old authorization expired or lacks lifecycle READY; runner rejects. Any incomplete operation blocks next mint. No automatic approval/nonce reuse."
+    },
+    {
+      "window": "B_OLD_ARCHIVED_BEFORE_FRESH",
+      "durableState": "Old preserved in archive; canonical absent.",
+      "failClosed": "Runner rejects missing canonical. No old fallback, move-back or automatic mint. Incomplete phase requires separate forward recovery decision."
+    },
+    {
+      "window": "C_PENDING_BEFORE_CANONICAL",
+      "durableState": "Pending0600 file and STAGED record may exist; canonical absent.",
+      "failClosed": "Runner never scans pending/archive; no dispatch. Retain orphan pending bytes as evidence; do not publish on restart."
+    },
+    {
+      "window": "D_CANONICAL_BEFORE_READY",
+      "durableState": "New auth may occupy canonical but final rotation READY absent/partial.",
+      "failClosed": "Runner requires valid exact-hash READY under same lock before credentials; reject. Even an unexpired schema-valid canonical file is insufficient."
+    },
+    {
+      "window": "READY_DURABLE_BEFORE_UTILITY_OUTPUT",
+      "durableState": "Exactly one complete published auth and final valid READY exist.",
+      "failClosed": "Mint is committed; no duplicate mint or replay. Only a later separately invoked runner may consume that one fresh approval. Utility never dispatches."
+    },
+    {
+      "window": "CONSUME_PARTIAL_OR_BEFORE_CONNECTION",
+      "durableState": "Consumed claim exists, even if malformed; DB may never have been opened.",
+      "failClosed": "Authorization burned, second runner denied. No claim deletion/retry; state described as local dispatch claimed, not DB activity proven."
+    },
+    {
+      "window": "DURING_CAPTURE_OR_BEFORE_OUTCOME",
+      "durableState": "Consumed claim durable, canonical may remain; baseline may or may not be durable.",
+      "failClosed": "Same authorization cannot replay; unresolved outcome prevents new lifecycle mint. Preserve UNKNOWN/NOT_PERSISTED as appropriate; no recovery of memory or control-flow-only success."
+    }
+  ],
+  "futureOperatorApprovalContract": {
+    "contract": "capture-execution-approval/1",
+    "kind": "Future trusted operator attestation of a NEW explicit user approval; utility validates but NEVER creates/invents the approval.",
+    "freshPerCapture": true,
+    "fixedInputPath": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-approvals/<approvalId>.json",
+    "strictRequiredFields": [
+      "contract",
+      "approvalId",
+      "scope",
+      "planId",
+      "targetProfile",
+      "sourceApprovalPath",
+      "sourceApprovalRawSha256",
+      "sourcePackageHashes",
+      "draftRawSha256",
+      "migrationRawSha256",
+      "migrationBodySha256",
+      "targetIdentity",
+      "credentialIdentitySha256",
+      "credentialIdentityEvidencePath",
+      "credentialIdentityEvidenceRawSha256",
+      "transportRiskArtifactRawSha256",
+      "lossAcceptanceRecordRawSha256",
+      "f2EvidenceRawSha256",
+      "expectedCanonicalState",
+      "explicitUserApproval",
+      "approvalReference",
+      "approvalReferenceSha256",
+      "operatorUid",
+      "observedAt",
+      "expiresAt",
+      "maximumCaptureAttempts"
+    ],
+    "requiredValues": {
+      "scope": "ONE_CONTROLLED_PRODUCTION_READ_ONLY_CAPTURE",
+      "planId": "acl-000-v1",
+      "targetProfile": "uply-canonical-maintenance/1",
+      "explicitUserApproval": true,
+      "operatorUid": 1001,
+      "maximumCaptureAttempts": 1
+    },
+    "extraFields": "REJECT",
+    "approvalId": "fresh32hex; O_EXCL claim, never reused even after aborted mint",
+    "referenceRule": "New safe immutable approval-attestation reference/path + exact SHA; cannot reuse the first or blocked second capture user approval. Local user-attestation bytes are not cryptographic proof of conversation authenticity.",
+    "freshness": "Finite numeric times, no bool, not future, unexpired, maximum window900s; authorization expiry cannot exceed this explicit approval expiry.",
+    "credentialIdentitySource": "Read only previously approved non-secret identity evidence or exact legacy authorization to extract its identity digest with provenance. Reconstruct target from fixed profile, never copy old authorization as new template. Actual credential bytes only checked by future formal runner. If no independently bound digest exists, STOP; do not read credentials to manufacture it.",
+    "noOldApprovalReuse": "Old per-attempt approval reference/ID is historical only. /2 userApprovalRef remains the fixed SOURCE proposal reference; unique fresh USER approval is separately bound by READY+consume receipts. These two concepts must not be conflated.",
+    "bootstrapExpectedOld": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "absentFileCase": "Only explicit expectedCanonicalState=ABSENT and no unfinished lifecycle records permits initial mint.",
+    "referenceUniqueness": "Reserve both approvalId and approvalReferenceSha256 in separate immutable claim namespaces; changing ID cannot reuse the same user approval evidence. Cryptographic binding is to the attestation bytes, not a claim of automatic chat authenticity verification.",
+    "credentialProvenancePathPolicy": "The evidence path is only a checked reference to a source-proposal-authorized safe evidence artifact or the exact current/archived old authorization; never an arbitrary readable path and never connectionDirectory. Reject any provenance outside that finite allowlist."
+  },
+  "futureSourceAuthority": {
+    "authorizationContract": "readonly-baseline-capture-authorization/2",
+    "authorizationSchemaImpact": "UNCHANGED",
+    "planSchemaImpact": "UNCHANGED",
+    "captureReceiptContract": "readonly-baseline-capture/2 UNCHANGED; new lifecycle outcome binds its exact raw SHA externally",
+    "runnerCaptureSemantics": "CHANGE_REQUIRED_AUTHORIZATION_GATE_ONLY",
+    "runnerDatabaseSemantics": "UNCHANGED",
+    "whyRunnerMustChange": "Mint-only utility cannot stop direct formal runner replay before expiry or dispatch from canonical after crash-before-READY; current capture never creates Journal/claim. Gate must run before CaptureTransport constructor because constructor reads credentials.",
+    "currentV4RawSha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+    "currentV4": "UNCHANGED_HISTORICAL_SOURCE_AUTHORITY; no future mint under changed source",
+    "futureRequiredApproval": "approval-r7d-c3b-runner-controlled-preflight-v5.json",
+    "v5Generation": "Only after implementation+owned validation+fresh package hashes; proposal approved=false executionAuthorized=false; no v5 generated in A1. Future production mint/capture needs new explicit user approval, not current implementation proposal or blocked second approval.",
+    "v4ReferenceReconciliation": "Literal v4 execution binding cannot survive source/package changes. Preserve exact v4 SHA as historical authority chain; /2 userApprovalRef forwards only to v5. Unique per-capture user approval is separately enforced via lifecycle receipts without inventing /2 fields.",
+    "dualAuthority": false,
+    "fallback": false,
+    "currentPackageDigest": "6584a2f7d1be58cb065fb904fd06afa365b8c485b535afec03fcc9bbfaf417ad",
+    "futureDigest": "TO_BE_COMPUTED_AFTER_APPROVED_IMPLEMENTATION"
+  },
+  "testPlan": {
+    "newDesignCases": [
+      {
+        "id": "AUTH-LIFECYCLE-01",
+        "case": "fresh mint with canonical absent",
+        "acceptance": "Explicit ABSENT approval, no unresolved state -> one READY /2; runner not auto-called",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-02",
+        "case": "expired old rotation",
+        "acceptance": "Exact expired SHA moves once to immutable archive; fresh /2 publishes",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-03",
+        "case": "old bytes preservation",
+        "acceptance": "Archived raw SHA and byte comparison equal old; no old JSON reserialization",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-04",
+        "case": "archive collision",
+        "acceptance": "Any existing destination including identical hash or symlink -> deny; original untouched",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-05",
+        "case": "wrong old SHA",
+        "acceptance": "Deny before moving or minting",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-06",
+        "case": "wrong modes",
+        "acceptance": "Canonical/archive/receipt/approval parent or file mode mismatch -> deny; no chmod",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-07",
+        "case": "wrong owner",
+        "acceptance": "UID mismatch including lock file -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-08",
+        "case": "canonical symlink",
+        "acceptance": "Deny including dangling link",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-09",
+        "case": "archive symlink or unsafe parent",
+        "acceptance": "Deny before move; no path escape",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-10",
+        "case": "concurrent mint",
+        "acceptance": "Real separate processes contend one flock; at most one operation; loser performs no mint",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-11",
+        "case": "crash before archive",
+        "acceptance": "PREPARED/claims retained; no auto-resume; old unmodified",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-12",
+        "case": "crash after archive before mint",
+        "acceptance": "Old archive exact, canonical absent; runner credential sentinel untouched",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-13",
+        "case": "crash before canonical publication",
+        "acceptance": "Pending never considered active; no DB; no fallback",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-14",
+        "case": "crash after canonical before READY",
+        "acceptance": "Schema-valid current auth still rejected before credentials",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-15",
+        "case": "partial READY or fsync failure",
+        "acceptance": "Invalid/missing commit denies capture; no silent success",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-16",
+        "case": "wrong strict schema",
+        "acceptance": "Missing/extra field or wrong type -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-17",
+        "case": "expiry over900 or future/expired time",
+        "acceptance": "Deny; no expiry renewal",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-18",
+        "case": "reused nonce",
+        "acceptance": "Permanent reservation denies a new approval with old nonce, including historical nonce",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-19",
+        "case": "authorization replay",
+        "acceptance": "Second runner call with same auth denied before transport/credential sentinel",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-20",
+        "case": "missing fresh explicit approval",
+        "acceptance": "Source proposal alone or old chat approval insufficient",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-21",
+        "case": "wrong source proposal hash",
+        "acceptance": "Wrong v4 historical anchor, future v5 hash or v4 fallback -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-22",
+        "case": "stage closed",
+        "acceptance": "Valid/malformed/symlink closure presence -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-23",
+        "case": "risk expired/revoked",
+        "acceptance": "Scope inactive or expired attestation -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-24",
+        "case": "historical loss mismatch",
+        "acceptance": "Loss record hash/acceptedLoss/false restored contract mismatch -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-25",
+        "case": "permission or disk IO failure",
+        "acceptance": "Archive/pending/fsync/claim/receipt failures preserve evidence, block",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-26",
+        "case": "no credentials during mint",
+        "acceptance": "Spy safe_file/open/path and subprocess/socket APIs; connectionDirectory never read and no network/tool process",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-27",
+        "case": "per-approval replay",
+        "acceptance": "Same ID or same approval-reference hash used again after failed mint -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-28",
+        "case": "mint versus capture concurrency",
+        "acceptance": "Same lock prevents canonical change while runtime rechecks it",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-29",
+        "case": "pre-credential consume ordering",
+        "acceptance": "Runner durable claim observed before CaptureTransport constructor; constructor failure still burns authority",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-30",
+        "case": "success consumption finalization",
+        "acceptance": "Owned capture baseline durable, ROLLBACK, archived auth and linked outcome, replay denied",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-31",
+        "case": "capture gate failure",
+        "acceptance": "Owned mismatch ROLLBACK, failure outcome/archival, no replay",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-32",
+        "case": "kill after consume",
+        "acceptance": "Canonical surviving kill cannot be reused; no inferred successful baseline",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-33",
+        "case": "capture receipt failure",
+        "acceptance": "DB rollback may complete but no success; consumed preserved and follow-up required",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-34",
+        "case": "unexpired active authorization",
+        "acceptance": "Mint refuses replacement; no supersede command",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-35",
+        "case": "historical output immutability",
+        "acceptance": "Regression outputs only new exclusive directory; finalize collision fails BEFORE test subprocesses",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-36",
+        "case": "actual rename/fsync safety",
+        "acceptance": "Owned same-FS no-replace succeeds; collision and unsupported/cross-device simulation deny without fallback",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-37",
+        "case": "fixed CLI bounds",
+        "acceptance": "Reject plan/path/profile/SQL/host/DSN/risk/force override attempts",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-38",
+        "case": "privacy and receipt linking",
+        "acceptance": "Safe hashes only; no raw auth copies in public docs; raw/canonical SHA domains explicit; tampered READY/outcome deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-39",
+        "case": "single owned session/query order",
+        "acceptance": "Lifecycle integration retains one REPEATABLE READ READ ONLY snapshot, LEDGER<PRE_GATE<DEFINITION<CATALOG, ROLLBACK and writes0",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-40",
+        "case": "new package/source authority",
+        "acceptance": "Utility participates in hash map; new source rejects old v4 package and v4-only auth; prior guard/134-case behavior and install DRAFT rejection preserved",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      }
+    ],
+    "newCaseCount": 40,
+    "existingRunnerCases": 134,
+    "minimumFutureRequiredRunnerCases": 174,
+    "historicalRegression": {
+      "passedExpected": 172,
+      "failedRequired": 0,
+      "skippedRequired": 0
+    },
+    "actualCountsMustBeReported": true,
+    "existingTestsDeleted": 0,
+    "oldBusinessExpectationsChanged": 0,
+    "allowedTestAdaptations": [
+      "new source authority assertion v4->v5",
+      "capture runner lifecycle fixture/approval/READY preparation",
+      "new package map count",
+      "safe exclusive forward output destination"
+    ],
+    "safetyCriticalSkipsRequired": 0,
+    "noTestsRunInA1": true,
+    "outputPolicy": "Test_RUNNER_D1_51 currently writes runner-tls-i1-validation using write_text; proposed change must reserve docs/evidence/.../runner-p1e-a2-validation/<fresh-run-id>/ exclusively BEFORE child tests, use exclusive files and reject any finalized path. Other suite stdout is externally captured exclusively under same new run. No fixture or backup-test source edit needed.",
+    "concurrencyAndCrashTests": "Use owned temporary directories, multiprocess barriers and kill/fault points confined to test code; no production fault flags.",
+    "realTLSRegression": "Existing owned TLS psql/pg_dump/pg_dumpall tests rerun unchanged in their current files; no production credential use."
+  },
+  "requiredPreEditHashes": {
+    "scripts/teaching-agent-r7d-c3b/runner.py": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+    "scripts/teaching-agent-r7d-c3b/plan_contract.py": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+    "tests/teaching_agent_single_migration_runner_contract_test.py": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+    "tests/teaching_agent_single_migration_runner_postgres_test.py": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+    "scripts/teaching-agent-r7d-c3b/README.md": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2"
+  },
+  "unchangedHistoricalAuthorities": {
+    "v4": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+    "f2": "413db75399233402e29dd3d60ff742b4bc8decca32d6088fe673361165da7f07",
+    "oldAuthorization": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "secondCaptureResult": "0336746dc3083796990af1474a85390f511da1bc7f8b00e24fb4edfc2dbefec6"
+  },
+  "implementationStopRules": [
+    "Pre-edit hash drift",
+    "Any seventh source/test/README path or extra added implementation/test/fixture",
+    "Any transaction.py/receipts.py/checks.py/maintenance_transport.py/backup_adapter.py/profile/registry/plan edit",
+    "Any product/migration/DB schema/query semantic change",
+    "New package/image dependency or unsupported atomic primitive",
+    "Any need to read production credentials/connect DB during mint/implementation",
+    "Any finalized evidence overwrite",
+    "Safety-critical test skip or failure",
+    "Any fallback to old auth/nonce/user approval or source v4 after source changes"
+  ],
+  "notAuthorizedByThisProposal": [
+    "Implement now without user approval",
+    "Modify/move/copy current production authorization",
+    "Mint any production authorization",
+    "Execute production capture",
+    "Read production credentials",
+    "Migration/backup/seal/deploy/PM2/Agent/Provider/Publish"
+  ],
+  "futureProductionSequence": [
+    "Explicit implementation approval",
+    "Implement exact scope and owned validation in new evidence directory",
+    "Generate unapproved v5 proposal bound to new package and lifecycle design",
+    "Fresh explicit user approval of one production mint/capture operation with exact expected old SHA and new approval reference",
+    "Formal local lifecycle mint only; formal capture separately invoked once under fresh claim",
+    "Baseline review only; no automatic migration progression"
+  ]
+}

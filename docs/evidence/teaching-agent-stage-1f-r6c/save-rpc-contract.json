@@ -1,0 +1,11 @@
+{
+  "sourceMatch": true,
+  "comparison": "strip leading/trailing whitespace",
+  "sha256": "5b454b162597b3ae28667013ca60137bff6778e661330e0aa817f37399c828f8",
+  "platformOwnerGuard": true,
+  "draftGuard": true,
+  "updatedAtCAS": true,
+  "nodeAndSecretAtomic": true,
+  "maxStructuredQuestionsPerNode": 1,
+  "auditLogSeparateRequest": true
+}

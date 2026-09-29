@@ -1,0 +1,9 @@
+{
+  "container": "uply-r4d-recovery-20260916t030822z",
+  "volume": "uply-r4d-recovery-20260916t030822z-data",
+  "containerRemoved": true,
+  "volumeRemoved": true,
+  "hostPortsEverPublished": false,
+  "backupRetained": true,
+  "pass": true
+}

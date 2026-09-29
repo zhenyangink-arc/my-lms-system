@@ -1,0 +1,9 @@
+{
+  "path": "/home/yangzhen/backups/uply/20260915T063124Z",
+  "owner": "yangzhen",
+  "group": "yangzhen",
+  "mode": "0700",
+  "createdAt": "2026-09-15T06:31:24.704168+00:00",
+  "retention": "At least 7 days AND through stable Stage1G Pilot; no automatic deletion",
+  "offHost": "NOT CONFIRMED; not required for R4D, required before broader production rollout"
+}

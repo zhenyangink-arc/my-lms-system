@@ -1,0 +1,17 @@
+{
+  "status": "UNSIGNED / NOT AUTHORIZED",
+  "developmentStrategy": "FORWARD-ONLY",
+  "oldAppCompatibility": "NOT REQUIRED BY USER",
+  "singleOperatorDevelopmentException": "ACCEPTED BY 杨震",
+  "technicalPackage": "READY",
+  "runner": "READY",
+  "migrationRehearsal": "PASS",
+  "persistentArtifact": "READY",
+  "maintenanceCredential": "SUFFICIENT",
+  "credentialExpiry": "VALID",
+  "productionMigrationAuthorization": "NOT GRANTED",
+  "productionDeployAuthorization": "NOT GRANTED",
+  "window": "TBD",
+  "signature": "PENDING",
+  "stage1g": "NOT READY"
+}

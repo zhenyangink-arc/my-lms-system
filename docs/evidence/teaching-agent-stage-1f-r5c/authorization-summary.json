@@ -1,0 +1,25 @@
+{
+  "windowStartUtc": "2026-09-16T02:58:09.328821+00:00",
+  "windowStartAsiaSeoul": "2026-09-16T11:58:09.328821+09:00",
+  "windowDeadlineUtc": "2026-09-16T03:58:09.328821+00:00",
+  "startMonotonic": 237542.553292569,
+  "scope": "DEVELOPMENT FOUNDATION INSTALL ONLY",
+  "authorizationStatus": "AUTHORIZED FOR THIS WINDOW ONLY",
+  "developmentStrategy": "FORWARD-ONLY",
+  "singleOperatorException": "ACCEPTED",
+  "scopeAE": [
+    "000–007 exact production migrations",
+    "locked persistent R3D artifact deploy",
+    "stop/start/restart uply-first-enable only",
+    "fresh recovery point and isolated restore verification",
+    "Foundation verification"
+  ],
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "providerRequests": 0,
+  "agentRuns": 0,
+  "contentWrites": 0,
+  "stage1g": "NOT AUTHORIZED",
+  "reference": "User Stage 1F-R5C explicit authorization in current task; no full chat copied",
+  "privateReceiptSha256": "0135534ffe184596599a0d89a886cfaa117095b6b4509d57549f809609a6e390"
+}

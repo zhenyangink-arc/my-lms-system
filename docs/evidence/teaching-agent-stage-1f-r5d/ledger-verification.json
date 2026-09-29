@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "count": 457,
+  "latest": "202609140007",
+  "old449VersionNameSha256": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+  "old449FullSqlSha256": "cfdade473cb06c8169399c2b99686dec7e3d466965ad9d0d3fd8ea26b5899b03",
+  "old449Prefix": "UNCHANGED",
+  "eightMigrationSql": "MATCH",
+  "fullVersionNameSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+  "migrations": [
+    {
+      "version": "202609140000",
+      "name": "agent_core_foundation",
+      "filename": "202609140000_agent_core_foundation.sql",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b"
+    },
+    {
+      "version": "202609140001",
+      "name": "agent_runtime_completion_evidence",
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b"
+    },
+    {
+      "version": "202609140002",
+      "name": "agent_run_cancel_request",
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62"
+    },
+    {
+      "version": "202609140003",
+      "name": "teaching_operations_reissue",
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794"
+    },
+    {
+      "version": "202609140004",
+      "name": "completion_policy_management_reissue",
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e"
+    },
+    {
+      "version": "202609140005",
+      "name": "student_teaching_content_isolation",
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674"
+    },
+    {
+      "version": "202609140006",
+      "name": "agent_run_reconciliation",
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a"
+    },
+    {
+      "version": "202609140007",
+      "name": "teaching_content_skeleton",
+      "filename": "202609140007_teaching_content_skeleton.sql",
+      "sha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "status": "DECIDED — NOT IMPLEMENTED",
+  "recommended": "B",
+  "options": [
+    {
+      "option": "A",
+      "path": "Reuse existing server transaction infrastructure without new RPC",
+      "security": "Existing typed RPC repositories are safe; no general-purpose cross-table transaction API located",
+      "atomicity": "R7C SQL transaction seam can express it but its only concrete transport is disposable test DB; chaining Supabase inserts is not one transaction",
+      "credentials": "Existing authenticated Supabase client only if a suitable existing RPC exists; none found for this create operation",
+      "deployment": "No DDL ideal but unavailable for this transaction",
+      "architecture": "Reuse current RPC conventions, not arbitrary SQL RPC",
+      "testing": "Existing seams reusable in tests",
+      "maintenance": "Cannot claim a ready implementation; adding transport would become C",
+      "result": "NOT SUFFICIENT AS-IS"
+    },
+    {
+      "option": "B",
+      "path": "Small canonical authoring RPC installed by approved migration",
+      "security": "DB repeats Owner+active/provisioned-account checks, fixed search_path, fully qualified objects, revoke public/anon/service_role; grant authenticated only",
+      "atomicity": "One RPC invocation is one database transaction; exception rolls back all three rows",
+      "credentials": "Existing normal Owner session passed by existing Supabase client; no new DB password in Next application",
+      "deployment": "One additive function/grants migration + ledger entry, separately visible in Approval A; application tested in isolated dev process; no production deploy",
+      "architecture": "Matches existing create_teaching_content_skeleton action/RPC and publication repositories",
+      "testing": "Real isolated PostgreSQL ACL/FK/lock/rollback tests + normal-session UI validation after approval",
+      "maintenance": "Small typed DB contract; existing schema/fences/authoring lock retained",
+      "result": "RECOMMENDED"
+    },
+    {
+      "option": "C",
+      "path": "Introduce direct PostgreSQL driver in Next",
+      "security": "Adds a separate privileged DB transport/credential and connection pool boundary",
+      "atomicity": "Possible on a pinned connection",
+      "credentials": "New runtime DB credential/TLS/pooling management; R7C test transport does not establish this production pattern",
+      "deployment": "Dependency/runtime/network configuration work beyond three-row authoring",
+      "architecture": "Not found as an established application mode; would duplicate Supabase application access",
+      "testing": "Additional credential/transport/pool/error tests",
+      "maintenance": "More application-side DB infrastructure to maintain",
+      "result": "NOT RECOMMENDED"
+    }
+  ],
+  "existingModel": [
+    "src/features/digital-textbook/api/create-teaching-content.ts",
+    "supabase/migrations/202609140007_teaching_content_skeleton.sql",
+    "src/lib/smart-textbook-publishing/repository.server.ts"
+  ],
+  "supersedes": "Earlier direct-PG application access proposal; historical copy retained",
+  "migrationRequired": true,
+  "directPgDriver": "NOT RECOMMENDED",
+  "packageJsonChanges": 0
+}

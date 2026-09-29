@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {fixture} from './fixtures/teaching-agent-r7d/readonly-fixture.mjs';
+for(const key of ['actorId','tenantId','lessonId','activityId','versionId','executionNodeId','databaseIdentity','dbUrl','serviceKey','evidenceSource','subjectId'])test('R7D Core rejects model input '+key,async()=>{const f=await fixture();await assert.rejects(f.core({[key]:'untrusted'}),/TOOL_INVALID_INPUT/);assert.equal(f.metrics.reads,0);});
+test('R7D copied authorization handle rejected',async()=>{const f=await fixture();assert.equal((await f.port.read({...f.handle},f.context)).status,'not_found_or_not_visible');assert.equal(f.metrics.reads,0);});
+test('R7D copied authority rejected',async()=>{const f=await fixture();assert.equal((await f.port.read(f.handle,{...f.context,authority:{...f.context.authority}})).status,'not_found_or_not_visible');});
+test('R7D cross invocation context denied',async()=>{const f=await fixture();assert.equal((await f.port.read(f.handle,{...f.context,runId:'other'})).status,'not_found_or_not_visible');});
+test('R7D expired authority denied',async()=>{const f=await fixture();f.context.authority.expiresAt='2000-01-01T00:00:00.000Z';assert.equal((await f.read()).status,'not_found_or_not_visible');});
+test('R7D expired deadline fails closed',async()=>{const f=await fixture();const r=await f.port.read(f.handle,{...f.context,deadlineAt:'2000-01-01T00:00:00.000Z'});assert.equal('data'in r,false);});
+test('R7D exact ToolRegistration uses existing Core',async()=>{const f=await fixture(),d=f.tool.definition;assert.equal(d.name,'get_current_lesson_execution_facts');assert.equal(d.version,'1.0.0');assert.equal(d.riskLevel,0);assert.equal(d.timeoutMs,12000);assert.equal(d.maxResultBytes,16384);assert.deepEqual(d.requiredPermissions,['teaching.execution.self.read']);assert.equal((await f.core()).status,'partial');assert.deepEqual(Object.keys(f.port),['read']);});
+test('R7D no secrets or raw subject identifiers in result',async()=>{const f=await fixture(),r=await f.core(),s=JSON.stringify(r);assert.doesNotMatch(s,/answer_key|optionIndex|definitionDigest|password|JWT|refresh_token|"response"/);for(const id of Object.values(f.grant.domain))assert.ok(!s.includes(id));assert.ok(!s.includes(f.grant.definitionDigest));assert.ok(Buffer.byteLength(s)<16384);});

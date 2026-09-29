@@ -1,0 +1,89 @@
+{
+  "initialBanCreateTransaction": "PASS",
+  "createLifecycleTransactions": 1,
+  "initialUserInsert": 1,
+  "sameTransactionUserUpdates": 5,
+  "sameTransactionIdentityInserts": 1,
+  "sameTransactionProfileInserts": 1,
+  "sameTransactionProfileUpdates": 2,
+  "loginBeforeBan": false,
+  "finalActor": {
+    "actors": 1,
+    "banned": true,
+    "sessions": 0,
+    "refreshTokens": 0,
+    "profileInactive": true,
+    "membershipSafe": true,
+    "attempts": 0,
+    "progress": 0
+  },
+  "currentTriggerParity": [
+    {
+      "table": "auth.users",
+      "trigger": "on_auth_user_created",
+      "match": true
+    },
+    {
+      "table": "auth.users",
+      "trigger": "z_sync_auth_registration_metadata",
+      "match": true
+    },
+    {
+      "table": "public.account_management_audit_logs",
+      "trigger": "account_management_audit_logs_tenant_scope",
+      "match": true
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "enforce_profile_self_service_fields_trigger",
+      "match": true
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_audit_management_change",
+      "match": true
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_set_management_timestamps",
+      "match": true
+    },
+    {
+      "table": "public.profiles",
+      "trigger": "profiles_sync_bootstrap_membership",
+      "match": true
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_audit_change",
+      "match": true
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_enforce_integrity",
+      "match": true
+    },
+    {
+      "table": "public.tenant_memberships",
+      "trigger": "tenant_memberships_set_updated_at",
+      "match": true
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_seed_learning_grading_comments",
+      "match": true
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_seed_student_apps",
+      "match": true
+    },
+    {
+      "table": "public.tenants",
+      "trigger": "tenants_set_updated_at",
+      "match": true
+    }
+  ],
+  "isolatedControlOwnerExcluded": 1,
+  "currentDbIdentityWrites": 0
+}

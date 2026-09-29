@@ -1,0 +1,251 @@
+{
+  "scope": "R5A preflight facts/plans; future runtime verification not performed",
+  "gates": [
+    {
+      "id": "G-R5A-1",
+      "name": "Production Identity Confirmed",
+      "status": "PASS",
+      "evidenceOrLimit": "开始/结束 catalog 与 R4G 比较；project/host hash 一致"
+    },
+    {
+      "id": "G-R5A-2",
+      "name": "Production Ledger Confirmed",
+      "status": "PASS",
+      "evidenceOrLimit": "449/latest130003/完整有序 ledger hash"
+    },
+    {
+      "id": "G-R5A-3",
+      "name": "Agent Migrations Not Applied",
+      "status": "PASS",
+      "evidenceOrLimit": "Agent 表0、ledger匹配；000–007未应用"
+    },
+    {
+      "id": "G-R5A-4",
+      "name": "Migration Range Exact",
+      "status": "PASS",
+      "evidenceOrLimit": "manifest与目录恰好8份、原顺序"
+    },
+    {
+      "id": "G-R5A-5",
+      "name": "Migration Hashes Locked",
+      "status": "PASS",
+      "evidenceOrLimit": "8/8 MATCH"
+    },
+    {
+      "id": "G-R5A-6",
+      "name": "Baseline Identity Locked",
+      "status": "PASS",
+      "evidenceOrLimit": "cutover、SQL、449 ledger file、manifest digest MATCH"
+    },
+    {
+      "id": "G-R5A-7",
+      "name": "Migration Semantic Plan",
+      "status": "PASS",
+      "evidenceOrLimit": "§5逐份语义、锁/扫描/旧业务影响"
+    },
+    {
+      "id": "G-R5A-8",
+      "name": "Expected Post-State Defined",
+      "status": "PASS",
+      "evidenceOrLimit": "§6与expected-objects.json；未声称已安装"
+    },
+    {
+      "id": "G-R5A-9",
+      "name": "Frozen Artifact Exists",
+      "status": "PASS",
+      "evidenceOrLimit": "regular/not symlink，归档可读"
+    },
+    {
+      "id": "G-R5A-10",
+      "name": "Artifact SHA Locked",
+      "status": "PASS",
+      "evidenceOrLimit": "archive与.next文件map digest MATCH"
+    },
+    {
+      "id": "G-R5A-11",
+      "name": "Candidate Build ID Locked",
+      "status": "PASS",
+      "evidenceOrLimit": "6IhDHN8Dm1nCewiCEZnV5"
+    },
+    {
+      "id": "G-R5A-12",
+      "name": "Candidate Durability Status",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "/tmp；持久封存或明确风险接受待决定"
+    },
+    {
+      "id": "G-R5A-13",
+      "name": "Known-good Release Identified",
+      "status": "PASS",
+      "evidenceOrLimit": "当前目录/Build/依赖/launcher可读"
+    },
+    {
+      "id": "G-R5A-14",
+      "name": "Application Rollback Plan",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "文件回滚步骤明确；保留005后的旧app兼容性未单独演练"
+    },
+    {
+      "id": "G-R5A-15",
+      "name": "PM2 Deployment Path Understood",
+      "status": "PASS",
+      "evidenceOrLimit": "固定路径/fork1；atomic switch NOT VERIFIED"
+    },
+    {
+      "id": "G-R5A-16",
+      "name": "Feature OFF Contract",
+      "status": "PASS",
+      "evidenceOrLimit": "全过程OFF，启动后先核验"
+    },
+    {
+      "id": "G-R5A-17",
+      "name": "Allowlists EMPTY Contract",
+      "status": "PASS",
+      "evidenceOrLimit": "三名单全过程EMPTY"
+    },
+    {
+      "id": "G-R5A-18",
+      "name": "Provider Zero Contract",
+      "status": "PASS",
+      "evidenceOrLimit": "不做Live smoke，不授权Provider"
+    },
+    {
+      "id": "G-R5A-19",
+      "name": "Post-Install Verification Plan",
+      "status": "PASS",
+      "evidenceOrLimit": "§17目录/ACL/非Agent验证，未执行"
+    },
+    {
+      "id": "G-R5A-20",
+      "name": "Authoring Availability Plan",
+      "status": "PASS",
+      "evidenceOrLimit": "仅Platform Owner UI/route/schema，不创建内容"
+    },
+    {
+      "id": "G-R5A-21",
+      "name": "Fresh Backup Rule",
+      "status": "PASS",
+      "evidenceOrLimit": "R4D stale；窗口fresh<=15m或显式exception"
+    },
+    {
+      "id": "G-R5A-22",
+      "name": "Maintenance Window Status",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "TBD；未编造时间"
+    },
+    {
+      "id": "G-R5A-23",
+      "name": "Standby Decision Status",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "TBD；Foundation单人例外NOT DECIDED"
+    },
+    {
+      "id": "G-R5A-24",
+      "name": "Maintenance Client Plan",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "PG17 client/TLS可用；维护权限/expiry/holder待验证"
+    },
+    {
+      "id": "G-R5A-25",
+      "name": "Migration Execution Mechanism",
+      "status": "PARTIAL",
+      "evidenceOrLimit": "唯一Docker psql方案；000–007适配/隔离核验未完成"
+    },
+    {
+      "id": "G-R5A-26",
+      "name": "Migration Failure Runbook",
+      "status": "PASS",
+      "evidenceOrLimit": "STOP/NO BLIND RETRY/新只读连接复核"
+    },
+    {
+      "id": "G-R5A-27",
+      "name": "Deploy Failure Runbook",
+      "status": "PASS",
+      "evidenceOrLimit": "仅app回退，DB保留，兼容失败HOLD"
+    },
+    {
+      "id": "G-R5A-28",
+      "name": "Existing Classroom Regression Plan",
+      "status": "PASS",
+      "evidenceOrLimit": "§18依据现有测试选取无Provider检查"
+    },
+    {
+      "id": "G-R5A-29",
+      "name": "Release Definition",
+      "status": "PASS",
+      "evidenceOrLimit": "§19/foundation-plan.json锁定提案，不创建release"
+    },
+    {
+      "id": "G-R5A-30",
+      "name": "R4F Operator Bundle Locked",
+      "status": "PASS",
+      "evidenceOrLimit": "CLI/SQL/006三SHA匹配R4G"
+    },
+    {
+      "id": "G-R5A-31",
+      "name": "Tailscale Unchanged",
+      "status": "PASS",
+      "evidenceOrLimit": "443/4000/8443相同；9443absent"
+    },
+    {
+      "id": "G-R5A-32",
+      "name": "Provider Policy Preserved",
+      "status": "PASS",
+      "evidenceOrLimit": "BLOCKED/APPROVAL REQUIRED；Data approver TBD"
+    },
+    {
+      "id": "G-R5A-33",
+      "name": "Production Content Untouched",
+      "status": "PASS",
+      "evidenceOrLimit": "本阶段零内容写，不枚举学生"
+    },
+    {
+      "id": "G-R5A-34",
+      "name": "Authorization Package Generated",
+      "status": "PASS",
+      "evidenceOrLimit": "UNSIGNED/NOT AUTHORIZED"
+    },
+    {
+      "id": "G-R5A-35",
+      "name": "Production Authorization Not Falsified",
+      "status": "PASS",
+      "evidenceOrLimit": "migration/deploy NOT GRANTED；签署PENDING"
+    },
+    {
+      "id": "G-R5A-36",
+      "name": "Production DB Writes Zero",
+      "status": "PASS",
+      "evidenceOrLimit": "固定READ ONLY/ROLLBACK；本任务0写"
+    },
+    {
+      "id": "G-R5A-37",
+      "name": "Production Migration Not Applied",
+      "status": "PASS",
+      "evidenceOrLimit": "结束仍449/130003/Agent表0"
+    },
+    {
+      "id": "G-R5A-38",
+      "name": "Production Deploy Zero",
+      "status": "PASS",
+      "evidenceOrLimit": "本任务0；未替换文件"
+    },
+    {
+      "id": "G-R5A-39",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "evidenceOrLimit": "开始/结束配置OFF，未调用Agent"
+    },
+    {
+      "id": "G-R5A-40",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "evidenceOrLimit": "开始/结束三名单EMPTY"
+    },
+    {
+      "id": "G-R5A-41",
+      "name": "Provider Requests Zero",
+      "status": "PASS",
+      "evidenceOrLimit": "本任务无Provider调用；不声称审计全站其他流量"
+    }
+  ]
+}

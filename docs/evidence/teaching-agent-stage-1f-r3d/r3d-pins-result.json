@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "pinCount": 4,
+  "distinctNodes": 2,
+  "realStudentAuth": true,
+  "actualPolicyAndProjector": true,
+  "source": "formal product authoring publication",
+  "liveProviderRequests": 0
+}

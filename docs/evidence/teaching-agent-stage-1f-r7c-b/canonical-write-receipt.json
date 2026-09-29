@@ -1,0 +1,14 @@
+{
+  "status": "NOT EXECUTED",
+  "reason": "OWNER_AUTHENTICATED_DEV_AUTHORING_UI_UNAVAILABLE",
+  "currentDbInsertedRows": 0,
+  "expectedAfterAuthorizedFutureCall": 3,
+  "observedCounts": {
+    "executionNodeCount": 0,
+    "activityCount": 0,
+    "privateAnswerCount": 0,
+    "rpcInstalled": false
+  },
+  "unknownCommit": false,
+  "retry": 0
+}

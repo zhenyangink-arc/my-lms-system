@@ -1,0 +1,7 @@
+{
+  "clientBundlePrivateMarkers": [],
+  "privateAnswerBodyInDTO": false,
+  "sourceCredentialsAdded": false,
+  "status": "PASS",
+  "note": "Allowed public options include vowel; scan tests grading markers and server-only configuration, not presence of correct option as public choice"
+}

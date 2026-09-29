@@ -1,0 +1,102 @@
+{
+  "planVersion": "r7c-write-plan/1",
+  "status": "IMPLEMENTED WITH ISOLATED DURABLE VERIFICATION",
+  "target": "hangul-introduction",
+  "mainline": "TEACHING_AGENT",
+  "plannedModifiedProductFiles": [
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts"
+  ],
+  "plannedNewProductFiles": [
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts"
+  ],
+  "plannedModifiedTestFiles": [
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/fixtures/teaching-agent-r7b/server.mjs"
+  ],
+  "plannedNewTests": [
+    "tests/teaching-agent-r7c-binding.test.mjs",
+    "tests/teaching-agent-r7c-durable.test.mjs",
+    "tests/teaching-agent-r7c-browser.test.mjs"
+  ],
+  "plannedNewFixtures": [
+    "tests/fixtures/teaching-agent-r7c/postgres.mjs",
+    "tests/fixtures/teaching-agent-r7c/bootstrap.sql",
+    "tests/fixtures/teaching-agent-r7c/fixture.server.mjs",
+    "tests/fixtures/teaching-agent-r7c/service-process.mjs",
+    "tests/fixtures/teaching-agent-r7c/browser.tsx",
+    "tests/fixtures/teaching-agent-r7c/README.md"
+  ],
+  "documentation": [
+    "docs/teaching-agent-stage-1f-r7c-native-activity-durable-completion.md",
+    "docs/evidence/teaching-agent-stage-1f-r7c/"
+  ],
+  "currentDatabaseWrites": 0,
+  "frozenTeachingContentWrites": 0,
+  "migration": false,
+  "publish": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "productionDeploy": 0,
+  "productionPm2Mutation": 0,
+  "authMutation": 0,
+  "isolatedDatabase": {
+    "mechanism": "Existing disposable PostgreSQL test pattern; owned network-isolated container, no current DB URL/env/mount; fresh connections; service process restart preserves owned DB until verification ends.",
+    "schema": "Reproduce current existing Activity/Attempt/Progress DDL and exact catalog-matching RPC from migrations in test bootstrap. No new business model/table family and no applied project migration. Synthetic catalog/tenant/auth FK dependencies belong only to isolated test fixture; no Auth service/session/login.",
+    "perFreshFixtureCreation": {
+      "digital_textbook_nodes": 1,
+      "digital_textbook_activities": 1,
+      "digital_textbook_activity_secrets": 1
+    },
+    "parentFixtures": "One synthetic legal chain of catalogue lesson/textbook/version/chapter/orientation module plus tenant/test-actor FK fixtures per fresh isolated database; never copies or writes real users.",
+    "authoringException": "No suitable existing general create action/RPC found. Request approval for exact test-only bootstrap INSERT of one practice parent, one single_choice activity and one private answer row. This does NOT claim an official current-DB authoring workflow exists.",
+    "activityCountChange": 1,
+    "executionNodeCountChange": 1,
+    "privateAnswerRowChange": 1,
+    "attemptProgressWrites": {
+      "digital_textbook_attempts": "INSERT by exact existing 7-argument record_smart_textbook_attempt only; wrong/correct cases, maximum 20 per fresh actor/activity scenario; no UPDATE/DELETE in domain submission.",
+      "digital_textbook_node_progress": "Existing atomic RPC UPSERT, at most one row per fixture actor/node/version; subsequent attempts update that row.",
+      "digital_textbook_activity_page_progress": 0,
+      "cueRows": 0
+    },
+    "cleanup": "Only disposable owned test database/container; no current-DB or legacy content deletion."
+  },
+  "implementation": [
+    "Use existing single_choice/index private grader; load the activity parent, version and private answer under trusted server binding. Public projection includes only prompt/options/safe aliases and content binding hashes.",
+    "Versioned response envelope in existing response JSONB carries submitted option coordinate, request correlation, execution binding digest and client generation. Existing grader receives the numeric response, not the envelope. No private correct key in response/facts/public manifest.",
+    "Trusted server transaction port takes the SAME tenant/student/activity advisory lock as the existing RPC, checks persisted request correlation, rejects changed-payload reuse, then invokes exact existing atomic RPC within that transaction. This is a server transaction, not a new RPC or table. No PGRST202 fallback. Production transport is not wired.",
+    "Independent fresh READ ONLY transaction reconstructs activity completion from correct attempts and verifies corresponding node progress in one consistent read. Any missing/inconsistent binding or unavailable evidence is UNKNOWN. Node progress and step/lesson completion remain distinct.",
+    "Durable receipt evidence uses attempt sequence, safe evidence digest and database timestamps; these are evidence/freshness facts, not content revision or a fabricated CAS revision. Version receipt if semantics require it.",
+    "NativeMediaController always performs independent readback after submit; submit response alone cannot resume. Keep current generation/duplicate/media/seek owner logic.",
+    "Runtime facts expose bound public Activity alias, completion, attempt count/sequence and safe evidence, never actual answers or private grader config.",
+    "Waiting restart uses a scoped browser observation hint for presentation only plus independent DB readback. Hint cannot mark completion or skip mandatory cue; invalid binding fails closed. Completed restore is solely from DB. Video position is not progress.",
+    "Reusable R7B loopback harness permits injected async fixture/entrypoint; R7C child service process is destroyed and recreated against the same owned isolated DB. Existing LessonRuntime/MultipleChoiceBlock/media fixture remain reused."
+  ],
+  "limitations": [
+    "Expected maximum classification CONDITIONAL / TEST-ENV VERIFIED; current development DB canonical Activity binding remains NOT VERIFIED.",
+    "Published student admission NOT TESTED; no draft policy bypass.",
+    "No safe production native test admission/official general activity create path established; do not invent or impersonate an existing user.",
+    "Direct bare historical RPC remains non-idempotent; guarantees apply to the new trusted transaction seam, not arbitrary callers bypassing it.",
+    "No migration proposed because response JSONB plus existing transaction lock can express correlation within approved isolated path; if actual implementation cannot uphold this, stop and report."
+  ],
+  "acceptance": [
+    "Real existing grader + actual atomic SQL writes; read-only independent query proves correct/wrong attempts and progress.",
+    "Completed and waiting states rebuild after child service process termination/restart.",
+    "Lost response committed/no-commit/unknown; no automatic resubmit; same request concurrent/restart dedupe; changed request payload rejected.",
+    "Correct readback resumes; wrong/unknown hold; stale generation never resumes a new video.",
+    "Public manifest, pre-submit DOM, browser bundle graph, HTTP DTOs, facts and logs contain no answer-key/config/authoring-answer leakage.",
+    "R7B 108 tests retain coverage plus new R7C cases; typecheck/build pass; no new lint errors.",
+    "R6F node/version/objective/canonical hashes and current DB/infrastructure end-state unchanged."
+  ],
+  "unusedApprovedFiles": [
+    "tests/teaching-agent-r7b-completion.test.mjs"
+  ]
+}

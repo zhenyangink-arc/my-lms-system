@@ -1,0 +1,689 @@
+{
+  "stage": "R7D-C Native Compiler Identifier Contract Correction",
+  "recordedAt": "2026-09-18T04:18:38.995523+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_SCHEMA_DIAGNOSTIC",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "approval": "R7D-C Production Prerequisites — Expanded 34b Naming-Corrected Scope",
+  "status": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "approved": false,
+  "supersedesScopeOnlyIfApproved": true,
+  "priorApproval": "Original27 retained as historical/prior approval, NOT_EXECUTABLE_TO_COMPLETION; prior revision remains DRAFT unchanged.",
+  "originalApprovedProductCount": 27,
+  "expandedProductCount": 34,
+  "additionalProductFiles": 7,
+  "existingFilesToModify": [
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "sha256": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Scoped published read interface",
+      "reason": "Version the trusted facts repository/authority seam without adding writes or changing StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "sha256": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Domain Port versions",
+      "reason": "Expose bounded 1.1 read interfaces while retaining 1.0 interfaces."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "sha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Versioned private facts grants",
+      "reason": "Separate issued production handles/v3 provenance from existing development handles; preserve 1.0 issuance behavior."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "sha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Read Port version routing",
+      "reason": "Project only verified matching version snapshots, with freshness/fail-closed mapping."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "sha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Tool DTO versions",
+      "reason": "Add strict-empty 1.1 input and bounded published-source output; preserve 1.0 schema."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "sha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Tool registration factory",
+      "reason": "Add explicit 1.1 registration pinned to production port; retain 1.0 behavior."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "sha256": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Request-local Tool registry",
+      "reason": "Make exact 1.1 available only to the selected permitted production Skill/Profile."
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "sha256": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Skill registry",
+      "reason": "Pin production summary1.1 separately from Explain1.0 and unregistered C2 summary1.0."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "sha256": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Self-read permission mapping",
+      "reason": "Authorize verified self/tenant/lesson/version/Activity only; no write/admin permission."
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "sha256": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Versioned Profile",
+      "reason": "Introduce explicit new Profile version; preserve old definition and Persona limits."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "sha256": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Pinned runtime definition",
+      "reason": "Pin selected Skill/Profile/tool schemas and versioned artifact requirement set."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "sha256": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Planning assembly",
+      "reason": "Keep auto planning, no authoritative facts in planning context, final toolChoice none."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "sha256": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Completion guard",
+      "reason": "Validate all typed mandatory receipts and server-project authoritative summary."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "sha256": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Existing coordinator dispatch",
+      "reason": "Select Explain or summary within the existing coordinator; no second runtime/fallback."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "sha256": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Runtime composition",
+      "reason": "Connect verified Student selection to production issuer and capability factory, preserving Explain admission."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "sha256": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Skill definition versions",
+      "reason": "Add summary1.1 with exact Tool1.1 evidence while preserving summary1.0."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "sha256": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Skill evidence versions",
+      "reason": "Reject development/v1.0/fixture/cross-run/stale evidence at production gate."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "sha256": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Summary output versions",
+      "reason": "Server-bounded1.1 summary from verified Tool facts; unknown current cursor retained."
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "sha256": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Core server artifact versions",
+      "reason": "Typed multi-evidence artifact schema; keep schemaVersion1 semantics."
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "sha256": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Safe strict trace",
+      "reason": "Versioned receipt/subject/content/run/tool-call association without sensitive DTO fields."
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "sha256": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Persistence artifact/trace validation",
+      "reason": "Serialize/validate new typed contract; preserve CAS/fencing/cancellation repository behavior."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "sha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Runtime receipt versions",
+      "reason": "Add activity-completion/3 independently of development v2 receipt."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "sha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Validated completion read projection",
+      "reason": "Reuse same-snapshot projection with explicit published policy; preserve development submission/readback."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "sha256": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Trusted durable repository",
+      "reason": "Read publication/definition/attempt/progress under one verified READ ONLY snapshot; retain existing submit authority unchanged."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "sha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Version-dispatched official artifact certification",
+      "reason": "Preserve legacy exports/digest semantics and narrow LegacyPublicationBundle; add NativePublicationBundle to PublicationBundle union, strict revision/kind dispatch and native packaging/certification. Unknown or contradictory discriminants fail before any legacy validator. Keep the public Manifest contract unchanged."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "sha256": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Canonical native capture projection",
+      "reason": "Reuse the existing capture_runtime_publication_v1 RPC and 18-table dependency schema. Add a scope-verified native projection of the same captured rows; no readChapterOneLegacySource/service-reader call in the native strategy. Preserve legacy projectPublicationCapture/captureChapterOnePublication behavior."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "sha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Same publisher; explicit producer strategy",
+      "reason": "Add an explicitly selected canonical-native compile/publish operation in this module, using the existing Owner guard, capture, artifact factory and publicationRepository.publish CAS. Keep legacy operations explicit and unchanged; no native-to-legacy fallback and no new route/action/publisher service."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "sha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Versioned repository result and snapshot transaction seam",
+      "reason": "Official current/session/owner-snapshot reads certify the union and verify pointer/scope associations. Publish/rollback use the same existing RPCs/store. Narrow the trusted client requirement to its actual rpc surface so a fixed server READ ONLY transaction adapter can read official publication data on the durable repository connection. No arbitrary SQL API/model-supplied client."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "sha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Existing legacy consumer narrowing",
+      "reason": "Existing loadPublishedRuntimeSnapshot stays a legacy course resolver: after generic repository current, explicitly require publish-foundation/1 before private payload access. Preserve the existing Chapter One default and returned legacy data type. It is not the native Student issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "sha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Legacy learning session boundary narrowing",
+      "reason": "Generic repository session may certify either artifact; this existing capsule-based resolver explicitly rejects non-legacy before data.result/services/source access. Preserve its legacy return type so all existing downstream consumers remain unchanged. Native facts uses official current read, not a new session or this legacy resolver."
+    }
+  ],
+  "newFilesToAdd": [
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "plannedMode": "0o644",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Published durable read adapter",
+      "reason": "Fixed server transport/DB identity; Student-verified scope; official repository certification plus fence and same-snapshot durable rows. Never import Owner/dev issuer or fixed Chapter One resolver."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "plannedMode": "0o644",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Production facts authority issuer",
+      "reason": "Opaque run-authorized subject/tenant/lesson/version/Activity handle, deadline, provenance and revalidation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "plannedMode": "0o644",
+      "origin": "ORIGINAL_27",
+      "contractResponsibility": "Production Skill capabilities",
+      "reason": "Existing registries/Core executor/private ledger; exact1.1 binding and mandatory evidence; no activation implied."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/native-publication.server.ts",
+      "presence": "ABSENT",
+      "sha256": null,
+      "plannedMode": "0o644",
+      "origin": "ADDITIONAL_PUBLICATION",
+      "contractResponsibility": "Native contract codec/compiler within existing publication framework",
+      "reason": "Own the strict native captured-source/private binding schema, deterministic safe Manifest projection and semantic certification. No DB client, auth, publication write, storage table, RPC or second publisher. Called only by official artifact/capture/publisher strategies."
+    }
+  ],
+  "filesToDelete": [],
+  "removedFromOriginalScope": [],
+  "whyOriginal27Retained": "All four original production prerequisites remain required; native publication supplies missing upstream authority without removing receipt/Skill/artifact/SQL/coordinator work.",
+  "unchangedBoundaryLocks": [
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "sha256": "e3c4734c292fe389a1fcc6435a764a65db1d41fd2308b1c89546fe89d49e76ec",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "PublicationBundle union retains common snapshotId and privatePayload.dependencies. Existing fence RPC remains kind-neutral and exact; no change required."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "sha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical 75-media audit / Chapter One exceptions remain legacy-only; native cannot invoke this exemption policy."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "sha256": "48c710f2bbe109a0898f813ddb7f8131d2a3cf1c27b779532df6810525c76d8d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen historical validator remains intact; dispatch moves outside it, so no loosening or generalized optional fields."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "sha256": "c346e65e1dfbee89933a669b599e881fd4dbc695ca929a819a838e770cee929f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical capsule/readiness bindings remain only for v1."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "sha256": "2a676789a1c1dc48666e62272e71aacf7388f174110ca0a90c56122e79bd39ab",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse only canonical()/digest()/persistent-key identity utilities; no frozen identity map/legacy walks in native strategy."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing native text/multiple_choice Manifest1.0.0 and native compatibility profile suffice for the bounded first native publication contract; no new runtime DTO."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse published generic structural/association validation; native certificate adds source semantics instead of weakening generic validator."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Fixed Node5/Node7 native-execution/1 cue fixture is not generalized or installed into production snapshot."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen development preview compiler is not production authority and is not reused."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Draft/alias-specific B1/B3 validator stays unchanged; production published policy is a separate versioned read policy in approved completion/native authority code."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "sha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Its ReturnType-derived legacy Authority remains narrow after resolver guard; no native submission path added."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "sha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Capsule/recording/legacy ports see only legacy resolver output; never route native Tool facts here."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "sha256": "a294f34ad49c0e4e99dcd037e98b7459f21a50a539ad9b0e6f6ab2efa8644568",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Legacy source/services type remains stable; this is not a native Teaching Agent issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "sha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview consumes unchanged legacy Authority subset; no new production adapter dependency."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "sha256": "a2ff5de5104f350c2523df7f0840cd3a75f6eeabf48e0d3fa2df3a34cf353b42",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview remains separate; no native production capability."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "sha256": "b873ae944de5aecc22abccab08a37badddd5715496d967f88655a1848357e2d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "sha256": "3045d571a8c1e9ea194985aa4b02d234bcf252aaa97fa61e1b3b64739367d720",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Public summarize_execution intake deferred to separate activation approval; existing explain-only contract maintained."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing feature/rollout/authentication wiring untouched; source-only future native factory does not enable a public intent."
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing active-self/published Student admission is retained. Publication authority uses new approved adapter after verified binding, not a replacement StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "No relaxation of active membership, tenant, published content or per-call authorization."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Opaque selection authority remains issuer-owned; native mapping uses verified scope/source node, not model UUIDs or inferred cursor."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Current verified selection can scope the initial summary; no new public input shape in this implementation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "sha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing policy/verifier composition reused by the approved runtime factory without alteration."
+    }
+  ],
+  "migrationScopeReference": "r7d-c-publication-migration-decision.json",
+  "transport": "DEFERRED; not part of34",
+  "testScopeReference": "r7d-c-native-publication-test-plan.json",
+  "countsExclude": "docs/evidence/tests and separately approved migrations",
+  "unresolvedCriticalSourceDependencies": [],
+  "stopRule": "If implementation requires any unlisted product path, extra native capability, altered StudentPolicy, new store/transport/UI or different migration responsibility, STOP and revise approval before editing.",
+  "scopeStatus": "34_EXACT_DESIGN_SCOPE_READY_AWAITING_APPROVAL",
+  "versioningDesign": {
+    "status": "DESIGNED_PROPOSED_NOT_IMPLEMENTED",
+    "dispatcherOwner": "artifact.server.ts",
+    "legacy": {
+      "revision": "publish-foundation/1",
+      "publicationKindField": "ABSENT; do not retrofit",
+      "semanticKind": "legacy-chapter-one",
+      "validator": "Existing exact legacy certification",
+      "hashSemantics": "Unchanged normalization, profile, frozen identity/history, media annotations, private digest, seal and manifest hash interpretation"
+    },
+    "native": {
+      "revision": "publish-foundation/2",
+      "publicationKind": "canonical-native",
+      "privateContract": "canonical-native-publication/1",
+      "compilerVersion": "native-publication-1",
+      "manifestSchemaVersion": "1.0.0",
+      "runtimeContract": "uply-runtime/1",
+      "compatibility": {
+        "profile": "native",
+        "adapterRevision": null
+      },
+      "separateFrom": "activity-completion/3 is a different receipt namespace; publication v2 does not admit development completion v2."
+    },
+    "dispatch": "Strict revision/kind tuple -> one validator; never try native then legacy. Missing/unknown/contradictory discriminants fail closed.",
+    "typeStrategy": {
+      "PublicationBundle": "LegacyPublicationBundle | NativePublicationBundle",
+      "SnapshotPrivate/SnapshotResult": "Retain named legacy aliases; introduce separate native private types, not optional fake legacy fields",
+      "commonFields": [
+        "revision",
+        "snapshotId",
+        "scope",
+        "schemaVersion",
+        "runtimeContract",
+        "manifestDigest",
+        "sourceRevision",
+        "compilerVersion",
+        "manifest",
+        "privatePayload.dependencies",
+        "privateDigest",
+        "pins",
+        "seal"
+      ],
+      "nativePrivate": "contract + source projection + dependencies + result.manifest + result.report.sourceRevision + typed native bindings; no legacy services/tts/speech/capsules/history structures",
+      "legacyConsumerGuards": [
+        "loadPublishedRuntimeSnapshot explicitly narrows v1",
+        "createRuntimeLearningSessionResolver.resolve explicitly narrows v1"
+      ],
+      "downstreamReturnTypes": "Legacy shapes unchanged; generic repository and new native reader handle the union."
+    },
+    "initialNativeCapabilityScope": {
+      "purpose": "Canonical publication certification for read-only durable execution facts; not generalized media/player publication enablement",
+      "supported": "Native teaching text and single_choice Activity blocks using existing Manifest types, without fixed chapter number, script version1, activity alias, option count3 or attempts2 requirements. Exactly one completion-counted Activity per execution node for the initial validated node-progress projection; unsupported node aggregation fails closed. Multiple such nodes/Activities per chapter are permitted.",
+      "media": "Initial producer admits no required media/cue execution dependencies. Empty media sets are valid only for genuinely text/choice source. Authored required video/audio/speech/listening/cue or unsupported activity/config semantics must cause a compile rejection, never be silently dropped or filled with legacy fixtures. Future native media/cue certification is separately scoped.",
+      "manifestExecution": "Omit optional development native-execution/1; do not synthesize fixed Node5/Node7 or a fake video. Teaching source bindings remain private certified associations. current cursor remains unknown.",
+      "rationale": "The requested native facts/Skill prerequisite needs genuine source/binding certification, not an unapproved general video/media runtime redesign. This bounded capability choice is explicit in the new approval proposal."
+    },
+    "sourceAndAssociationRules": [
+      "One existing capture_runtime_publication_v1 result supplies all content, secrets and dependencies; producer does not refetch a different content graph.",
+      "Validate actual textbook -> version -> chapter -> modules -> execution nodes -> Activities graph and exact requested PublicationScope. Modules have no invented published flag: parent publication and membership are checked.",
+      "Require existing published textbook/version/chapter, teaching lesson/profile/script version states as applicable to unchanged StudentPolicy; one unambiguous published script per selected teaching lesson. Unknown states/ambiguous bindings fail.",
+      "Use learning_agent_script_nodes.reference_activity_id as the explicit source-teaching-node to Activity association, validate same captured lesson/module/chapter/version. Select the requested Activity from the verified source-node binding, never first Activity/title/question-text/alias inference. Duplicate or absent association is not authorization.",
+      "B1 authoring inserted node.content={} and activity.public_config={} and did not write source-node reference_activity_id. It is NOT permission to auto-publish B1 or infer Node7. Only new isolated published fixtures with genuine explicit captured associations are used; any future source authoring requires separate approval.",
+      "Distinguish catalog lessons.id (textbook.lesson_id), learning_agent_lessons.id and script version lesson_id. Catalog/enrollment/tenant authorization remains live StudentPolicy, not immutable publication evidence or a new capture table.",
+      "Validate public prompt/options projection, Activity type, max_attempts, completion participation, one actual grader secret per answer-graded Activity and matching node/source references. No answer, private definition digest or raw secret appears in public Manifest/Tool DTO.",
+      "Source revision/native pins derive deterministically from validated captured content and the native compiler contract, not Chapter One profile or history. Preserve exact captured dependency JSON for the DB fence; do not normalize it a second incompatible way.",
+      "Use existing generic Manifest structural validator with published=true plus native source-binding certification. Native blocks require compatibility.native, no compat capsules, no legacy media-admission exceptions, no unsupported external references.",
+      "Public contentDigest hashes safe semantic Manifest excluding snapshot metadata. Native snapshot ID is opaque server-generated publication identity, not an exposed answer-derived hash. Private capture/secret digest and outer seal stay server-private; native same-ID/different-payload publication is rejected by existing collision checks.",
+      "Always assert the exact stored dependency fence and current authoring/retirement eligibility before live facts admission. Historical parse/readability does not revive retired/expired/revoked sessions."
+    ],
+    "futureReadChain": [
+      "Verified Student Run + existing StudentPolicy/selection revalidation",
+      "server-resolved exact publication scope and source teaching node",
+      "one fixed verified DB transport READ ONLY snapshot",
+      "official publicationRepository.current on that snapshot",
+      "artifact revision/kind certification and dependency fence on same snapshot",
+      "canonical native Activity mapping",
+      "trusted durable repository read/projection on same snapshot",
+      "versioned Lesson Tool DTO/evidence",
+      "server-side Skill gate"
+    ],
+    "snapshotTransactionSeam": "Extend the official repository rpc-only client seam and approved durable repository read seam to share a single verified pg connection/snapshot. No second publication store/read authority. No publication session issue/request lease writes for a Tool read. The read is READ ONLY, retirement/fence checked, fresh observation-bound and revalidated; mutation-capable runtime request leases remain for existing write runtimes.",
+    "productionVsOperator": "Owner remains publication operator only. Student authority remains formal active self subject/tenant; service infrastructure credentials are not subject identity. No B2/dev/Owner issuer.",
+    "producerPolicy": "Same publisher module, explicit server-side producer choice. Preserve legacy write operations for now: repo/tests/history/rollback depend on them and live/external dependency deletion safety was not audited. Never select legacy as recovery from native failure."
+  },
+  "publicationMigrationDecision": "YES; independent forward migration, filename/number not assigned",
+  "approvalDimensions": {
+    "productImplementation34": "REQUESTED_NOT_GRANTED",
+    "publicationMigrationAuthoringAndIsolatedValidation": "SEPARATE_EXPLICIT_APPROVAL_REQUIRED; exact objects in migration decision",
+    "completionMigrationAuthoringAndIsolatedValidation": "Prior proposal retained, separate from publication DDL",
+    "currentDBMigrationInstall": "NOT_GRANTED",
+    "applicationDeployment": "NOT_GRANTED",
+    "productionBindingReadOnlyAcceptance": "NOT_GRANTED",
+    "firstControlledAgentRun": "NOT_GRANTED",
+    "providerE2E": "NOT_GRANTED"
+  },
+  "includedAfterApproval": [
+    "exact34 product implementation",
+    "versioned native producer/certification within existing framework",
+    "isolated fixtures/negative/regression verification",
+    "explicitly approved forward migration authoring and isolated validation only",
+    "type/lint/diff/server-client scan/validation build/source locks"
+  ],
+  "excluded": [
+    "current DB reads or writes",
+    "current DB migration/schema/ledger changes",
+    "canonical deployment/PM2",
+    "public Student summarize_execution transport or UI",
+    "production activation or real student activation",
+    "Agent Run/Provider/current Tool call",
+    "Publish current frozen Draft/B1 content",
+    "B3 scope or attempt/progress writes",
+    "Auth/RLS/StudentPolicy relaxation",
+    "cleanup/deletion/retirement of old producer",
+    "new publication/attempt/progress/evidence/Agent stores",
+    "generalized native media/cue/player or published submit adapter",
+    "Stage1G"
+  ],
+  "rollbackForwardOnly": [
+    "No historical migration edits or data rewrites.",
+    "Preserve all historical v1 records/hashes/read semantics.",
+    "Deploy/install require separate exact approval/artifact/backup plan after isolated verification.",
+    "Once native v2 records exist, old reader cannot be rolled back into native traffic: fail closed and forward-fix with a version-aware application. Never relabel/delete native records to accommodate old code.",
+    "Do not down-migrate constraints in a way that invalidates retained native rows; schema recovery is a separately approved forward operation.",
+    "Legacy rollback stays subject to existing history, retirement, edit-window and CAS checks. No revived sessions."
+  ],
+  "migrationChanges": 0,
+  "testsImplemented": 0,
+  "fullImplementationTestsExecuted": 0,
+  "browserProductionRequests": 0,
+  "supersedesImplementationScopeOnlyIfApproved": "approval-r7d-c-production-prerequisites-expanded.json",
+  "previous34PackageSha256": "3ab79ff304f17438144269bded8c2aea1c484a942672a311bcd7e0e33ed6eeb9",
+  "historical35Proposal": "DRAFT / HISTORICAL DIAGNOSTIC / NOT APPROVED / RETAINED_UNCHANGED",
+  "namingCorrectionReference": "r7d-c-native-compiler-version-contract-correction.json",
+  "compilerVersion": "native-publication-1",
+  "contractsTs": "UNCHANGED_BOUNDARY",
+  "sourceReverifiedAt": "2026-09-18T04:18:38.995523+00:00",
+  "migrationFilenameLockReference": "r7d-c-publication-migration-filename-lock.json",
+  "migrationFiles": [
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "status": "LOCKED_NOT_CREATED",
+      "responsibility": "Agent durable Skill completion policy only"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "status": "LOCKED_NOT_CREATED",
+      "responsibility": "Native publication contract SQL admission only"
+    }
+  ],
+  "noImplementationAuthorizationThisTurn": true,
+  "normalizationOrAlias": "FORBIDDEN",
+  "nativeCompilerEquality": {
+    "envelope": "native-publication-1",
+    "manifestSnapshot": "native-publication-1",
+    "mismatch": "REJECT"
+  },
+  "additionalProductFilesRelativeToPrior34": 0,
+  "removedFromPrior34": [],
+  "legacyContract": "UNCHANGED; prior compiler syntax, artifact bytes/digests, validation and namespace are not revised",
+  "scopeReconfirmation": "30 existing modifications + 4 additions exactly retained. No new runtime DTO/schema file, transport, store, service or product path. Preserve all original STOP rules.",
+  "requiredFutureNamingChecks": [
+    "Native producer uses native-publication-1 in both envelope and Manifest",
+    "Envelope/Manifest compiler mismatch rejected",
+    "Old slash design identifier not accepted or normalized",
+    "Unknown compiler identity rejected by native certification",
+    "Legacy digest/bytes and publication behavior unchanged"
+  ]
+}

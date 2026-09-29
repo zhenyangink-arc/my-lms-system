@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-17T13:44:41.055670+00:00",
+  "build": "KaSWaVYOIk7ZjWGpvVWIf",
+  "sourceHashes": "35 MATCH",
+  "approvalIssuedAt": "2026-09-17T13:26:48.576967+00:00",
+  "approvalExpiresAt": "2026-09-17T13:41:48.576967+00:00",
+  "approvalExpired": true,
+  "ttlSeconds": 900.0,
+  "scope": "DISABLED",
+  "mutationAdmission": "OFF",
+  "generation": 0,
+  "dispatchClaims": 2,
+  "journalRetained": true,
+  "renewals": 0,
+  "cleanup": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "currentDatabaseFacts": "b3-execution-stop-readback.json"
+}

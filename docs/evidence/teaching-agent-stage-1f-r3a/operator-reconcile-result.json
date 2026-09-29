@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "receipts": [
+    {
+      "contractVersion": "deadline-terminal-v1",
+      "tenantScope": "ddb7571a-0ef2-4ea2-bf87-f3cd386c3be8",
+      "batchLimit": 50,
+      "status": "committed",
+      "reconcileError": 0,
+      "examined": 0,
+      "reconciledCancelled": 0,
+      "reconciledDeadlineFailed": 0,
+      "fenceConflicts": 0
+    },
+    {
+      "contractVersion": "deadline-terminal-v1",
+      "tenantScope": "ddb7571a-0ef2-4ea2-bf87-f3cd386c3be8",
+      "batchLimit": 50,
+      "reconcileError": 1,
+      "status": "failed",
+      "code": "RECONCILE_FAILED"
+    }
+  ],
+  "reconcileErrorCount": 1,
+  "monitor": {
+    "active": 0,
+    "expiredActive": 0,
+    "eligible": 0,
+    "reconciledCancelled": 3,
+    "reconciledDeadlineFailed": 9,
+    "reconcileError": "Count failed one-shot invocation receipts; an aborted SQL transaction cannot persist its own error"
+  },
+  "r3Queries": "PASS",
+  "publicEndpoint": "NONE",
+  "productionWrites": 0
+}

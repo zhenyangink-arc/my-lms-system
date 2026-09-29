@@ -1,0 +1,112 @@
+{
+  "approval": "B",
+  "scope": "R7C-B2 identity provisioning only; separate from A",
+  "status": "BLOCKED — NOT READY TO REQUEST PROVISIONING",
+  "approved": false,
+  "model": "STABLE REUSABLE",
+  "dedicatedTenant": "REQUIRED",
+  "principalCountTarget": 1,
+  "tenantCountTarget": 1,
+  "contract": "development-domain-execution/1",
+  "identityProperties": {
+    "human": false,
+    "login": "disabled",
+    "production_allowed": false,
+    "purpose": "development-domain-execution",
+    "StudentPolicyFallback": false,
+    "magicLink": "prohibited",
+    "passwordLogin": "prohibited",
+    "interactiveLogin": "prohibited"
+  },
+  "propertiesAreNotAuthEnforcement": true,
+  "representation": "Dedicated non-personal Auth FK principal + dedicated development tenant, provisioned only via separately approved official lifecycle; no arbitrary UUID/real student/Owner impersonation",
+  "loginDisabledContract": {
+    "status": "BLOCKED pending actual Auth-build parity and isolated negative verification",
+    "candidateControls": [
+      "ban set within initial official Admin create transaction, not a later open login window",
+      "no usable password or phone/SSO association; inactive application profile; zero preexisting sessions/refresh grants",
+      "permanent policy intent enforced by reject-before-expiry guard; a long ban duration is finite, not an immutable forever flag",
+      "server scope issuer checks ban horizon covers scope TTL, metadata/tenant/registry ownership, non-login status and environment binding on every admission",
+      "production composition does not load test issuer; issuer never creates JWT/student session; production StudentPolicy unchanged"
+    ],
+    "proofRequired": [
+      "actual server build/version parity confirmed (local test image v2.195.0 is a reference, not proof of current hosted version)",
+      "isolated Auth service: password grant rejected with non-login principal, not merely unknown password",
+      "isolated Auth service: magic-link verify and email/SMS OTP verify rejected before session issue; no live messages/links generated on current DB",
+      "isolated refresh/PKCE/OAuth/token-issuance paths cannot mint a session for banned principal; reject unexpected identity attachment",
+      "read-only count confirms no sessions/refresh tokens for subject and application requireActiveUser/StudentPolicy rejects interactive admission",
+      "unban/expiry/profile drift denies scope until reverified"
+    ],
+    "ifUnsupported": "STOP identity provisioning. Do not edit Auth triggers or relax StudentPolicy; keep B1 canonical content, continue owned isolated durable tests and submit a separate minimal identity/storage-contract alternative. No second progress store is authorized."
+  },
+  "authSideEffects": {
+    "status": "NOT YET MAPPED TO EXACT COUNTS",
+    "staticallyLocated": [
+      "auth.users create/update",
+      "auth.identities on email/phone identity provisioning",
+      "auth.audit_log_entries depending on actual Auth config",
+      "public.profiles INSERT via handle_new_user",
+      "profiles updates through metadata sync",
+      "public.account_management_audit_logs",
+      "tenant insert and tenant-related triggers/audits",
+      "membership/provisioned-account changes if required; profile changes can sync membership"
+    ],
+    "exactCounts": {
+      "AuthApiCalls": null,
+      "AuthRowWrites": null,
+      "ProfileRowWrites": null,
+      "AuditRowWrites": null,
+      "TenantRowWrites": null,
+      "MembershipRowWrites": null,
+      "OtherTriggerWrites": null
+    },
+    "reason": "No isolated Auth provisioning was run in this read-only step. Static function inspection cannot safely determine API-dependent UPDATE/audit multiplicity.",
+    "nextRequired": "Separate bounded isolated Auth/API trigger audit approval before current-DB provisioning Approval B can be locked"
+  },
+  "lifecycle": [
+    "PROVISION once",
+    "ACTIVATE SCOPE with bounded server-issued test grant",
+    "RUN SCENARIO serially per actor/activity",
+    "READBACK via existing durable authority",
+    "DISABLE SCOPE",
+    "REUSE same actor/tenant",
+    "RETIRE after dependency review; retain disabled if audit references require"
+  ],
+  "scenarioRegistry": {
+    "fields": [
+      "scenarioId",
+      "privateActorRef",
+      "privateTenantRef",
+      "targetLessonActivity",
+      "start",
+      "end",
+      "expiration",
+      "writeBudget",
+      "state"
+    ],
+    "notStored": [
+      "correctness",
+      "completion truth",
+      "answers",
+      "video progress"
+    ],
+    "serverOnly": true,
+    "persistence": "Durable private scope registry/receipt survives process restart; it is access/lifecycle metadata, not completion authority"
+  },
+  "stableActorDecision": {
+    "preferStable": true,
+    "why": "Avoid repeated Auth/profile/audit creation; preserve same identity across restart/readback/progress tests",
+    "constraint": "Existing attempts key and max_attempts/completion aggregate by tenant+actor+activity; scenarioId alone cannot reset or isolate historical COMPLETED",
+    "policy": "One active scope per actor/activity. Within a scenario preserve rows across restart. Between independent from-empty scenarios, require separately approved exact test-owned attempt/progress cleanup and read-only baseline check, OR retain completed history and run readback-only cases. Never manufacture INCOMPLETE via registry and never filter authoritative completion by arbitrary new run IDs.",
+    "cleanup": "Only recorded test subject+tenant+activity/version rows, after dependency check; no CASCADE and no canonical node/activity/secret deletion",
+    "retention": "Safe external evidence retained; identity reused disabled outside scopes; cleanup is not implicitly approved"
+  },
+  "productionFallback": false,
+  "newProgressSchema": false,
+  "actualProvisioningWrites": 0,
+  "migrationAuthorized": false,
+  "agentRuns": 0,
+  "provider": 0,
+  "feature": "OFF",
+  "stage1G": "NOT READY"
+}

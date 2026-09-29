@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "productionClientChunks": 325,
+  "privateCredentialMatches": 0,
+  "serverMarkers": [
+    "DeepSeekProviderAdapter",
+    "StudentTeachingPolicy",
+    "SupabaseAgentRepositories",
+    "TEACHING_AGENT_ALLOWED_TENANTS",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "studentPlanningContext"
+  ],
+  "publicAnonKeyIsNotSecret": true,
+  "buildId": "E17_661sEdKfiul8NvQS9"
+}

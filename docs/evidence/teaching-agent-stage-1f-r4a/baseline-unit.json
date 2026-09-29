@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_supabase_baseline.py",
+    "-v"
+  ],
+  "exit": 0,
+  "durationSeconds": 0.682,
+  "stdout": "",
+  "stderr": "test_actual_before_after_schema_equivalence (test_supabase_baseline.BaselineTests.test_actual_before_after_schema_equivalence) ... skipped 'Owned DB comparison evidence required'\ntest_baseline_data_secret_and_digest (test_supabase_baseline.BaselineTests.test_baseline_data_secret_and_digest) ... ok\ntest_data_scanner_rejects_top_level_writes_and_obfuscation (test_supabase_baseline.BaselineTests.test_data_scanner_rejects_top_level_writes_and_obfuscation) ... ok\ntest_deterministic_regeneration_and_source_race_guard (test_supabase_baseline.BaselineTests.test_deterministic_regeneration_and_source_race_guard) ... skipped 'Private schema-only snapshot required'\ntest_ledger_and_active_runner_exact (test_supabase_baseline.BaselineTests.test_ledger_and_active_runner_exact) ... ok\ntest_legacy_exact_expected_failure (test_supabase_baseline.BaselineTests.test_legacy_exact_expected_failure) ... skipped 'Private schema-only snapshot required'\ntest_no_target_url_option (test_supabase_baseline.BaselineTests.test_no_target_url_option) ... ok\ntest_platform_definitions_excluded_attachments_retained (test_supabase_baseline.BaselineTests.test_platform_definitions_excluded_attachments_retained) ... ok\ntest_reissue_preserves_reviewed_body_and_archive (test_supabase_baseline.BaselineTests.test_reissue_preserves_reviewed_body_and_archive) ... ok\ntest_secret_scanner_rejects_endpoint_and_credentials (test_supabase_baseline.BaselineTests.test_secret_scanner_rejects_endpoint_and_credentials) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.618s\n\nOK (skipped=3)\n"
+}

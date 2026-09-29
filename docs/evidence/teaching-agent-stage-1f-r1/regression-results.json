@@ -1,0 +1,40 @@
+{
+  "suites": {
+    "regression": {
+      "pass": 284,
+      "fail": 0,
+      "skipped": 1
+    },
+    "classroom": {
+      "pass": 56,
+      "fail": 0,
+      "skipped": 0
+    },
+    "next": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "browser": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "transport-db": {
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    "added-tests": {
+      "pass": 2,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "total": {
+    "pass": 345,
+    "fail": 0,
+    "skipped": 1
+  },
+  "separateFreshMigrationGate": "FAIL; see fresh-migration-result.json"
+}

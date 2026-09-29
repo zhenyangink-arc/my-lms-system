@@ -1,0 +1,160 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D4",
+  "recordedAt": "2026-09-20T04:35:22.532744+00:00",
+  "mode": "LOCAL_SCOPE_AUDIT_AND_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "c3b-client-transport-proof/1",
+  "selectedTransportContract": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+  "riskAcceptance": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+    "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957"
+  },
+  "psql": {
+    "kind": "SAME_SESSION_CLIENT_METADATA_AND_VERIFY_FULL_ENFORCEMENT",
+    "authority": "A fixed conninfo meta-command on the exact persistent psql process used for the operation, correlated to transport invocation UUID and process lifetime.",
+    "requirements": [
+      "Pinned image/tool and sanitized environment; internal exact hostname, port, database, username and CA path.",
+      "Explicit sslmode=verify-full; gssencmode=disable prevents a non-TLS encrypted substitute; no Unix socket/multiple hosts/hostaddr override.",
+      "Strict fixed-locale output parser obtains actual TLS protocol/cipher and current endpoint/db/user/port. Missing or non-TLS metadata fails before catalog or migration dispatch.",
+      "Successful connection under fixed verify-full establishes CA/hostname verification through libpq; conninfo alone does not independently prove certificate verification.",
+      "Reuse no metadata after process exit/reconnect or across invocations. No caller-supplied meta-command or SQL API."
+    ],
+    "queryOrder": "Risk/authorization -> client TLS proof -> DB identity/session guards -> backend observation -> ledger -> target function -> full catalog. Existing ledger/function early-stop contract retained.",
+    "durableProof": "Exclusive transport receipt persisted before yielding the session; UUID links plan/authorization/risk/package, client process and safe proof digest. Rechecks can reuse only a still-live same-process proof with unchanged configuration."
+  },
+  "backupTools": {
+    "kind": "SAME_INVOCATION_LIBPQ_VERIFY_FULL_ENFORCEMENT",
+    "authority": "Actual successful pinned pg_dump/pg_dumpall database operation plus exact effective connection arguments, unchanged CA/credential-source identities and validated output. This is execution-bound enforcement evidence, not config-only evidence and not protocol/cipher telemetry.",
+    "whySufficientDesign": "For a TCP-only connection with explicit verify-full, trusted CA, fixed hostname and GSS encryption disabled, a successful real libpq database operation entails successful TLS/certificate/hostname verification. A config read, spawn event, return code from help/version, or another psql handshake is insufficient.",
+    "finiteInvocations": [
+      "pg_dump FULL_CUSTOM with the exporter snapshot",
+      "pg_dump SCHEMA_CUSTOM with the same exporter snapshot",
+      "pg_dumpall ROLES_ONLY_NO_PASSWORDS with explicit initial database postgres"
+    ],
+    "implementationBoundary": "Replace unchecked tool argument acceptance with exact internal profiles/validated fixed argument templates. Do not accept any caller-supplied conninfo/URI, endpoint, role, alternate database, jobs, help/version, output path or shell command. Snapshot ID remains the existing validated server-generated identifier.",
+    "effectiveParameters": [
+      "host fixed TCP pooler hostname validated against pinned hash",
+      "port 5432",
+      "dbname/initial database postgres",
+      "username exact postgres.<locked project>",
+      "sslmode verify-full",
+      "sslrootcert /connection/root.crt with current authorization identity lock",
+      "gssencmode disable",
+      "passfile existing mounted /connection/pgpass",
+      "connect_timeout fixed existing policy",
+      "no password prompt"
+    ],
+    "processBinding": [
+      "Fresh invocation UUID and tool/profile ID before spawn, pinned runtime, safe normalized parameter hash and CA identity.",
+      "Exact subprocess termination success; timeout/nonzero/missing process/output cannot produce valid proof.",
+      "Full/schema custom archive format and existing TOC/restore tests; roles-only complete output and existing no-password/restore checks.",
+      "Per-output SHA and invocation receipt SHA linked into backup manifest; a proof for another dump/process/run cannot substitute.",
+      "No additional diagnostic connection is opened to manufacture proof."
+    ],
+    "telemetry": {
+      "protocol": null,
+      "cipher": null,
+      "peerCertificateFingerprint": null,
+      "reason": "Not exposed by reviewed pg_dump/pg_dumpall interface; do not copy these fields from psql."
+    },
+    "backendObservation": "unavailable for each dump client unless observed on that exact connection; retain exporter backend observation separately. Never label the exporter observation as the dump connection observation.",
+    "trustBoundary": "Relies on pinned libpq/tool enforcement and trusted local operator/kernel/image. These are existing operational trust boundaries, not proof of HOP B. Owned real-tool wrong-CA/hostname/non-TLS tests must pass before approval v4."
+  },
+  "configurationIntegrity": "Keep existing runtime credential/store identity checks. Pin endpoint/TLS parameters in an implementation-owned libpq parameter string supplied internally, without a password or logged full DSN. Recheck source identities before/after each tool. No writable non-operator service directory, uncontrolled env or library injection. No credential copy into evidence/temporary durable stores.",
+  "recordFields": [
+    "transportContract",
+    "riskAcceptanceId",
+    "riskAcceptanceArtifactSha256",
+    "clientTlsRequired",
+    "proofKind",
+    "invocationId",
+    "tool",
+    "operationProfile",
+    "planSha256",
+    "authorizationSha256",
+    "packageSha256",
+    "endpointProfileIdentity",
+    "safeConnectionParametersSha256",
+    "CAIdentitySha256",
+    "startedAt",
+    "completedAt",
+    "proofSha256",
+    "backendObservation",
+    "outputSha256 where applicable"
+  ],
+  "publicPrivacy": "Never emit raw conninfo, stderr, argv containing a full connection string, passwords, DSNs, raw environment, certificate private material, raw dump or raw ledger/function bodies.",
+  "sources": [
+    {
+      "url": "https://www.postgresql.org/docs/17/libpq-ssl.html",
+      "title": "PostgreSQL 17 SSL Support",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "verify-full requires certificate-chain and hostname verification.",
+      "limit": "Does not expose protocol/cipher observations for pg_dump."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/libpq-connect.html",
+      "title": "PostgreSQL 17 Connection Control",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "Explicit connection parameters take precedence over defaults; Unix sockets ignore sslmode; GSS encryption can supersede SSL unless disabled.",
+      "designConsequence": "Pin a single TCP hostname and port, explicit verify-full and gssencmode=disable; reject socket/multi-host/override paths."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/app-psql.html",
+      "title": "PostgreSQL 17 psql",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "conninfo reports the current connection.",
+      "designConsequence": "Parse a fixed command on the same persistent client process."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/app-pgdump.html",
+      "title": "PostgreSQL 17 pg_dump",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "Connection parameters may be supplied via dbname connection string; custom-format dump requires a real database connection.",
+      "designConsequence": "Only internal fixed connection parameters and exact dump profiles; no arbitrary dbname/options or help/version exits."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/17/app-pg-dumpall.html",
+      "title": "PostgreSQL 17 pg_dumpall",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "Roles-only dumps global roles; explicit initial database avoids automatic postgres/template1 selection; no-password disables prompting.",
+      "designConsequence": "Restrict to roles-only, no-role-passwords, initial postgres, no-password, fixed connection parameters."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/postgres/postgres/REL_17_6/src/bin/pg_dump/pg_backup_db.c",
+      "title": "PostgreSQL REL_17_6 pg_dump connection implementation",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "ConnectDatabase uses PQconnectdbParams and rejects unsuccessful connection status.",
+      "limit": "Public upstream source explains the mechanism; the actual approved image still requires owned tests and runtime image/hash checks."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/postgres/postgres/REL_17_6/src/bin/pg_dump/pg_dumpall.c",
+      "title": "PostgreSQL REL_17_6 pg_dumpall connection implementation",
+      "retrievedAt": "2026-09-20T04:35:22.532744+00:00",
+      "claim": "Connection parameters reach PQconnectdbParams; connection errors do not establish a successful dump.",
+      "limit": "No per-tool protocol/cipher metadata is claimed from exit status alone."
+    }
+  ]
+}

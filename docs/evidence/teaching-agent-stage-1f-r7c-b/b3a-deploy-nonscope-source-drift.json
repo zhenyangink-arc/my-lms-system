@@ -1,0 +1,633 @@
+{
+  "status": "RESOLVED / HISTORICAL SOURCE-BUILD SKEW",
+  "deploymentMutation": 0,
+  "changedOutside35": [
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx",
+      "candidateSourceHash": "51d51e3f3200ff242a2b1dd97a1d4ab328037d8f5a8086a57846c1946d9aaefe",
+      "liveSourceHash": "b8783b18db19699993f0a66a550a6ced93b42c738a1b5b222f0a31a003d6016e"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/page.tsx",
+      "candidateSourceHash": "bbd92f55c3097d8172a6c50521e9eba8510462ca8cdf5b2fbe2604730cea2bc4",
+      "liveSourceHash": "f0e1368d11bf21fb30baca9808a9fec6b1bbe9c1815d80fc154350e69374cfcb"
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/cancel/route.ts",
+      "candidateSourceHash": "a1ef08f420d97bde605f6a74d2cc62e872ab9131c76619b39d18c000ef51f754",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/[runId]/route.ts",
+      "candidateSourceHash": "75e32a7bbf4953fe895540c71b954de726108505bedc59abfeba71dfb788b05f",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/app/api/teaching-agent/runs/route.ts",
+      "candidateSourceHash": "89e2698e79f7db8e7d35dfa2ccb21c6d84bbee7c3d43609ff9befcf06210a50b",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx",
+      "candidateSourceHash": "6260afa9170b6b172586991861eb5a579ddb10a039838371443c8321373d2bd3",
+      "liveSourceHash": "f22379a775888e37e49b66c4bbe5de48d84fb8ae2e1550342645875a811a4420"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "candidateSourceHash": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+      "liveSourceHash": "144e824442bc1ae525ceec3b831ef4bf05ae7970a589b4f69f87489f64b56614"
+    },
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/page-content.tsx",
+      "candidateSourceHash": "06e0d9997fa07140819d213112f9e954c423c10652999877f1310d2ebe9bea77",
+      "liveSourceHash": "57600a1ff59611770ebac103f31ff9e86ffaa6450c56fb3fc66910ce2c29ec1a"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/HangulInteractiveBook.tsx",
+      "candidateSourceHash": "3fe8097f190b2995a530d33614b58641052a9bf83f3d5c12e2ab235dccf9fdfe",
+      "liveSourceHash": "4c49603f7ba57f8ee0d6cbe35fe04c68b7abcc09b711430eba3e08f4eeba6a03"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx",
+      "candidateSourceHash": "4a606e97c9b754752cfd034dae1fc2ff4e9ff0ac1ccf917505a2849caddb7bdd",
+      "liveSourceHash": "39378c99697219bed872f0b922d07cde96d70f9376d1eec9e34717744131037e"
+    },
+    {
+      "path": "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx",
+      "candidateSourceHash": "1fdedddece6bf5faa5de4d2ed96ae9f8e6f985169cfa9abf98a361c089b57b67",
+      "liveSourceHash": "650b7b0c1a84372cc9088df586de267efb09bb7c4978f1b9f9294f21d44d8823"
+    },
+    {
+      "path": "src/features/agent-core/contracts/provider.ts",
+      "candidateSourceHash": "4b088d22f5e961325a3de4847a033357272281e09ecde0cec7d6688018bb397c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/public.ts",
+      "candidateSourceHash": "3b0d89c5abb367ba5dc98d1fc589a9d8fb55a333696a6dc9ca43b022f19f6862",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "candidateSourceHash": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/skill.ts",
+      "candidateSourceHash": "ced5b0e807abd88b978c9c134044a6b6630981c2233569601eb1cf3800ca437d",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/tool.ts",
+      "candidateSourceHash": "5cf1f6324098bbd26308ec2be9dec6166c80f4e67e6f721686d77fa64c440244",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/contracts/transport.ts",
+      "candidateSourceHash": "e69e91b32cd66ced53ea2335164870257040ee931e52029297e332175864785b",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/conversation/scope.ts",
+      "candidateSourceHash": "0f0b4b791ea664ad48e6183600875fcffeed996d72d040305315765a79266e8c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/index.ts",
+      "candidateSourceHash": "8a83552c339ccbde1b44201be535422644ccf8f6ce2bbdee3ad7442f0ca9e104",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/observability/events.ts",
+      "candidateSourceHash": "a9aa3b860b9015fb58d8627984cc9111db06867f451d4094569dc75976ff5cb0",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "candidateSourceHash": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/permissions/permission-policy.ts",
+      "candidateSourceHash": "34d4c4e25dfeddebd6619c3c1a46c5ccf6f12fd2f4f6c1aeef8477ff666fb606",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/permissions/tool-policy.ts",
+      "candidateSourceHash": "e4701265f1a320c54d9e74a1db56e385fb5633391dce8962e35a33308efed55c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/persistence/ports.ts",
+      "candidateSourceHash": "8cfafc2e36eab96c58e4bbdb0913abf4ed58c0ed014f2521b6c0afde06183d2a",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "candidateSourceHash": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/adapter.ts",
+      "candidateSourceHash": "a73c8ac6e0363c48a5fc33f0d9ec36d1481ed46c8779eb01d7d181762d0ddf2c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/capabilities.ts",
+      "candidateSourceHash": "a5964bfd6ab03a2fa9a598f16d1ba11f846ea1b07af3950fb67fb25b0e6e0d40",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/providers/deepseek/stream-parser.ts",
+      "candidateSourceHash": "31557526de04c4ad893ccc1df89d1635473d528b1018922ccc14481839cb9c45",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/deadline.ts",
+      "candidateSourceHash": "84c6619198c569a5538e970bc0f6bfafe1776c524d3e52e3728ed317dea342b3",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/errors.ts",
+      "candidateSourceHash": "8d33431de66bd89500f8ca43c509a92fa12735ab79698e2646eee2f52444764a",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-budget.ts",
+      "candidateSourceHash": "652f61791b93e5e54e2974ec62a866615e4fbb562a70743dd3e2019030cb121f",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-coordinator.ts",
+      "candidateSourceHash": "5cde67d98897cc6b6b7a3fa53c0d77e7c3b9087a1c75fa21b255082a80081fae",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/runtime/run-state.ts",
+      "candidateSourceHash": "dbca66baddce3aac3948630c127d15e9fb4c512f5aff582d1dc2e70cc6c2b072",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/skills/registry.ts",
+      "candidateSourceHash": "73e0ef6210555dd9425c293f5eeb363ee8be65294f8e89c6d4a2c45f96f9563a",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/tools/executor.ts",
+      "candidateSourceHash": "cb7866cc3fafc5aeafeb7655caaba0b2e7ab90048cc12910831cbe7b76ea12e3",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/agent-core/tools/registry.ts",
+      "candidateSourceHash": "818ac9408f9be5f78729e760ee2096bc7558661b3a73a6285dc4865d4bfd8e0d",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-listing.tsx",
+      "candidateSourceHash": "2d3de6ac5597ff97ce3e76a3422d9f38481d8e3ec456089e8d00f1a81e696775",
+      "liveSourceHash": "8de94fdcb82dfd382f323a1ab181fbf70de4bfb091588ec581ba42a2b19220b9"
+    },
+    {
+      "path": "src/features/courses/components/course-catalog-node-view.tsx",
+      "candidateSourceHash": "1b15b1fe340dee40882dce1b8d4e55b5d88e5a79db081a3339cad02d5c21ef3d",
+      "liveSourceHash": "6c07aa5e03a4f6cef4f45ab8cae3db0648e83f0b1dc36a0b248ecdad069c1d78"
+    },
+    {
+      "path": "src/features/courses/components/course-lesson-view.tsx",
+      "candidateSourceHash": "f286b0730d3c349f60696a5ff3f8894cae23e1dc9010849cc51f8acef4923814",
+      "liveSourceHash": "6566183b027b170de2aa354f6de43583b21aeed77f1c8a531e4542602a3d6b7e"
+    },
+    {
+      "path": "src/features/digital-textbook/api/service.ts",
+      "candidateSourceHash": "6e34c54cde0b3067420ad13ee727a536920aafa8757203b4d8ce1410fa4b3544",
+      "liveSourceHash": "f088a81b30d5d93a3ef182e5cdd8c5b0e49118e4382b21cd55bc264d2d1843db"
+    },
+    {
+      "path": "src/features/digital-textbook/api/types.ts",
+      "candidateSourceHash": "f26351c2d5ed37ef256972185c72cca41fd166d860a3e2108cc719aa04d13ac8",
+      "liveSourceHash": "b62de7a344dda8d38f802a6f4ac89f6f1a4e42977c31fc7318c20ac8e8c150f4"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+      "candidateSourceHash": "ff1d034ec096893f07e9941a49a4d18a5dd9bfcd0d1857a6683ecb5d0632ac81",
+      "liveSourceHash": "34993ecfa5239cc037030175e5064504d9195978574c985877a343548c348148"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+      "candidateSourceHash": "f66ce725cc5cae7c9a5753d479f823aa903affc642a46308feea7cfc9ed48178",
+      "liveSourceHash": "6b49bd44d478db2efbe6a729380b5353423854ef3217203f1af756e9ba609a9d"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx",
+      "candidateSourceHash": "0f0b883099bf4265a7da6a9a7fccd1a739402c2cc9bf884b6970e46f63393650",
+      "liveSourceHash": "bd568969715e0734d7d418db7f1c2346aa43bf1fdc391df2cd375298f8e41263"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/columns.tsx",
+      "candidateSourceHash": "529a1d83b603bc92042e713fb60afd297491f66b32d82ec69e38ae3fc97d9a4b",
+      "liveSourceHash": "2246feb95746cc5745b39a38d58e35a8007573c3de015abe0b8ca0d7fa1af117"
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-table/index.tsx",
+      "candidateSourceHash": "a8d89adea4e01cb6cf0741b21e7b9475107c27bb7b66d55ad18d861922a7494e",
+      "liveSourceHash": "2f5e22b1a49a0cfc1daf880918e8186fcef33b2c17dd9246b4eaee2d14fc40f0"
+    },
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "candidateSourceHash": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "liveSourceHash": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "candidateSourceHash": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+      "liveSourceHash": "df7780c231540f39e6126c28b94bb9bf0ed5bd108cbd2f3965c3d8350bc9e48c"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "candidateSourceHash": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "liveSourceHash": "4d5ed49024f0fdd7481b21c222abfa86eff0e8155f9786b2c5057dc9d7af6b93"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-workspace.tsx",
+      "candidateSourceHash": "74d94dc6c241d32db4a85ab75da8b6408cc0de33bb3f2c44f1c70f691ae7dd10",
+      "liveSourceHash": "0040a950ff3924d647a41586054e86d96880fb2d9d122a8e83cea58f6230790b"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/referenced-grammar-materials.tsx",
+      "candidateSourceHash": "a95efa01ef4c39562e9bb6f9bbf91d249423e0f8450ffab84217653e7258a93c",
+      "liveSourceHash": "ddbdb48459dc2fb772bc6ddd1a41dc70059665d9c950de60fbd835a8299bdc91"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/ChapterReleaseCheckPanel.tsx",
+      "candidateSourceHash": "31a31cbd46e394d6b1f44840b24c9c27a65c83b2e72658bc8d554e865f25837e",
+      "liveSourceHash": "68b92d889acbf30b0d4a2dd2982def9756d1995e2483c408b8065f00d3a43d6b"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+      "candidateSourceHash": "b18a3e20ac75be2a55bb0c46029f24aa06575dddc588d5f4db9c9bcd4d1e231e",
+      "liveSourceHash": "23b3fb9380bf7d8bf48cd1b87bfad2b3ed1386831ddaf524fcdd9515d222ab48"
+    },
+    {
+      "path": "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+      "candidateSourceHash": "e85b0f00fd033079986226f65db2aa17fa4f2965334b44de0cea236649eb5496",
+      "liveSourceHash": "f2c72f69d0f8f0fd3b5cebed6faf5e6c165f3af6dc988c82bef31e7260e3d3be"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/components/runtime-toolbar.tsx",
+      "candidateSourceHash": "3e2fceaab92d9fa41c32b323faab615ae35cba16619f75404e730d926869025c",
+      "liveSourceHash": "e9a7e49fbe3fc6e816415e7b9fbbae03a10bf02f45c7a203a2ea10a9075423f7"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/learning-session-transport.ts",
+      "candidateSourceHash": "d24a9fde7d31d7399773afe49751adb4cb4475c790648c637bf9c1f13669cead",
+      "liveSourceHash": "67151fb0d2daef833c97b93b267612e27281719f3ab1a2051d80b56510e74402"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "candidateSourceHash": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "liveSourceHash": "4a088e717b1c32f655d1f593a2a8ef4f365717069fae89d8b8148300354f0c3d"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-source.server.ts",
+      "candidateSourceHash": "3588e1d8dda0e6d4d2215b78f8dae604bc5c7b53d208e9aa4305fd8c4655f534",
+      "liveSourceHash": "30510545b3ee3b052416cbcd3c22723e2ccba49b381bccda759d543df8ee737e"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "candidateSourceHash": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "liveSourceHash": "f80a150dd7893dcc4d6e016025c44393a99f9c1350388271c1a8e7aa6f79685f"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-history.server.ts",
+      "candidateSourceHash": "f2eea3c020eba9a59a3886050ff97fc4f4e2e5ecb2c040734a674786e8c34096",
+      "liveSourceHash": "c01f912ce56417e2e53c4b3d39a009fbb8e423b1bceceb7329607f6e9b5b61d4"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "candidateSourceHash": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "liveSourceHash": "ba735ee9c69e2bd65e1412ce93946c8884dcaedbbfca50f62f832e3d82096b09"
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "candidateSourceHash": "c03efafaba9a100c48ba8190e6a65b4b8868a7f749b5423bd18311fc6d5a175d",
+      "liveSourceHash": "16873eb09daab78afe03533de64ca23f613b8f7588315b46ddc61955f56cc31e"
+    },
+    {
+      "path": "src/features/teaching-agent/client/ndjson-parser.ts",
+      "candidateSourceHash": "d70d7d1ee2729b9c89b5027153f728a15f54a44936fb83ebdb11d2990cf2d51d",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/selection-state.ts",
+      "candidateSourceHash": "90a6a6f467da3e1db17b30ff6ee4faf3185d453cedce18a4865ff8186e764363",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/student-ai-teacher-client.ts",
+      "candidateSourceHash": "41eb4f2bf63e7139e8952375c2f3fd44c121b4fd4ae47ce5d762f87a3f1a50fc",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/client/use-student-ai-teacher-run.ts",
+      "candidateSourceHash": "bebd814076575fa5783d8ac667344d9b7064f5b61ef01c424d286e12c231ef6f",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/components/StudentAiTeacherIntegration.tsx",
+      "candidateSourceHash": "ba3e87354c9e7e35177bc62f1ecc928110a85cb3e519ca999f67987a338cc977",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/kim-persona.ts",
+      "candidateSourceHash": "57e7998a9fe2f74b23e1f96d3a96e87492d115456570a7b6fa94c019041070f7",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "candidateSourceHash": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-authenticated-student-domain.ts",
+      "candidateSourceHash": "2162ab095e6e87fbfa1c785445cb1c42dd88d9bdd5fbeb217d964c0d37cdf801",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+      "candidateSourceHash": "d2dad4ce92e51d628602160d7dd840cee7135bb25782ab2ecbbbc39a71b7a889",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "candidateSourceHash": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/student-teaching-context-resolver.ts",
+      "candidateSourceHash": "5b3485211fa4b7bdd9ee93c18bb7885c49b2abd2a086fd48d7c23a5c7d52ade7",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/context/trace.ts",
+      "candidateSourceHash": "1f2c35d7c7ccd202e8e4d15c49c69103627ba7620e69f1206d91315fadc5bd58",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/current-lesson-read-port.ts",
+      "candidateSourceHash": "0cfefa45b837a4779be7376c67715f2a164b31d758b26de54078331b7b325659",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "candidateSourceHash": "ec2655cfb428d24b056cc791b9a970e2c0f6ce7942f14f5d8ff4a5b5e3648703",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/teaching-state-read-port.ts",
+      "candidateSourceHash": "0cd46c700e978753e69f6cbeb3a670e73f6cd5eab4e931c535686bb1605a59f6",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/lesson-slots.tsx",
+      "candidateSourceHash": "b8d9e00d277725455316aedc6d7bce74f71504a6d091eaed59e5b9bd43512bb1",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/page-projection/selection-projection.ts",
+      "candidateSourceHash": "5e6f9129be70d6bf45528b5fe994bedd2f0d87c50c7f4ebce11b71b931220db7",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/access-rules.ts",
+      "candidateSourceHash": "d935ba12d72d9ef77d8533d543313a1a931e7c127b239242a7c22c14812e9adc",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "candidateSourceHash": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "candidateSourceHash": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "candidateSourceHash": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "candidateSourceHash": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-authenticated-student-ai-teacher-runtime.ts",
+      "candidateSourceHash": "b50465cb8fec9f9ec4f1ae0f82487b1305d17d875aec966e00843cb741ebad1f",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "candidateSourceHash": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "candidateSourceHash": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "candidateSourceHash": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "candidateSourceHash": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "candidateSourceHash": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/references.ts",
+      "candidateSourceHash": "377b9f9163cdce6a4eb2abbe3406189b4baffcdb5532a06ad5eda76e19c8b967",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "candidateSourceHash": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "candidateSourceHash": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "candidateSourceHash": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/trace.ts",
+      "candidateSourceHash": "e479834d936c5e70e9086ac0c0e475478a627f03cd57e81cb8ffba7a17d2c5bc",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "candidateSourceHash": "7da75210911760fe54f67120c62d2e8d5ea76b804dddb3763e5986af9d1f996c",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-context.ts",
+      "candidateSourceHash": "3a390765cb26ef73bf6f26121a8738085589d61f6f1ab9e1978c34cadf4f768e",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-teaching-state.ts",
+      "candidateSourceHash": "e84470d9371932c852ccb9d3a1098597fc45195f54592fdd6a199a32bc6e274a",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "candidateSourceHash": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/active-run-abort-registry.ts",
+      "candidateSourceHash": "76fe840b4f22c2ca201eac04846efddbeff8b69f7a2e6d2fa08cb1ed985a9e35",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "candidateSourceHash": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/rollout-policy.ts",
+      "candidateSourceHash": "afc063f8ae03094a95885b29980733023b9903e46e9613069c389202ecbfd5af",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/run-store.ts",
+      "candidateSourceHash": "08cf6a52b950cd89772c15aeb794496360fd5c3d3c4f2859aded73baa400e388",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "candidateSourceHash": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/transport-config.ts",
+      "candidateSourceHash": "5c8a2f8c8dd00d0f3d2e62dbb26722497034cfad83e03020c49ad46670bda47e",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+      "candidateSourceHash": "0740aff8da0bf2942036571ff4d68010f89f15f742926ba7627bbd5c8b53a9d8",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/evidence.ts",
+      "candidateSourceHash": "04a381b085ddc2d81f764b77973e8cc0bb1bf6fd7963a14fd33dd759fad86660",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/output.ts",
+      "candidateSourceHash": "32057dd08c8f4a9a4fb9b726652c217a2fb662307106c732dfc18a0e3763bf02",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/procedure.ts",
+      "candidateSourceHash": "39639dda46e1d8d3dc98df927834737c41bc41e8c649a892b0e5016d840fb4a4",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/lib/chapter-practice-binding.ts",
+      "candidateSourceHash": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+      "liveSourceHash": "e14fbbfda9269acd3358bf0e9c6874734c6fb425d19648cdccd1444c018fcc47"
+    },
+    {
+      "path": "src/lib/course-content-workflow.ts",
+      "candidateSourceHash": "f87fe225de5bd67a068013fbd18fb6b6ce0b77cafcdcf163886d33c8894de597",
+      "liveSourceHash": "beb3859b87d10e9fa810b1eaa5bd8c79b8c217368798d54e63de50976829f172"
+    },
+    {
+      "path": "src/lib/recording-domain-gateway.server.ts",
+      "candidateSourceHash": "3232e1a26a23c4ed2391a5a0c0cb199df48c1f4293c86664866f019e45731436",
+      "liveSourceHash": "2cbfbdc75d925a4cb8a19ad871a29e4c00f6268b73024aa72f3219abb8c74107"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/chapter-one-shapes.server.ts",
+      "candidateSourceHash": "3950af6c8b127f1ff40b7ced9baa895082ab8317e9c685d206d2b17599f075b4",
+      "liveSourceHash": "693061f2b9467b46dcae1bddaeeda5b8583c7689f866f6732f3b174853aaab78"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/profile.server.ts",
+      "candidateSourceHash": "55677b1942c27870f30e40835f48a8dcee0e17de49b7b4779feedc040f3ad9ea",
+      "liveSourceHash": "2fbba0467a4b73e71397fc3e90793026a3cc43bdf245629f082dd23f45d531dd"
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts",
+      "candidateSourceHash": "817d866a91dfd032733370616146cc11908978f75b44ab3fddbaca16ff6c6fcd",
+      "liveSourceHash": "e0747db2c7ae65b83825c5d863812c9bb84631c85a99f543e50808e20f3f5fa3"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "candidateSourceHash": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "liveSourceHash": "297b78d598b430bcec99258e0630cabd4a5da68bc80be9e7eca25f5a293eb45e"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "candidateSourceHash": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662",
+      "liveSourceHash": "9c6b102ee18549e6f92bceddfaac92158ee7201bf795afb988a258676009c9f7"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "candidateSourceHash": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "liveSourceHash": "09bfd8b6a0b4d67390258af1fa8d6cc149ddb25cee4009c6c254cb383cc9628a"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "candidateSourceHash": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "liveSourceHash": "8e016f80f1a6bbd37b5ade6aef6817356bb655f714d36969e232ff95b7a5874a"
+    },
+    {
+      "path": "tsconfig.json",
+      "candidateSourceHash": "d40bf56fe9fbf99ddbd04ede6358871e5f84b3a4351db2159315ae1ed4cf4537",
+      "liveSourceHash": "da88b88bc74f29110c9f1bc48250ee521a2cc9a2b5f8db99937e7ba7fcff1641"
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-teaching-content.ts",
+      "candidateSourceHash": "21243818972d06397a98784f68734e012814f9ef78ebb9f7d4069a04df3582a2",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-entry.tsx",
+      "candidateSourceHash": "97160eb90c107e53f9d57e25f3daa76e115dcf778596ffd3e2b0cdd9199e9e49",
+      "liveSourceHash": null
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-teaching-content-form.tsx",
+      "candidateSourceHash": "e29f77cd343171f76613d368d234bca408a60735a2fa5f93a293f24534eac738",
+      "liveSourceHash": null
+    }
+  ],
+  "initialDiagnostic": "Extra live source-vs-build provenance comparison stopped before any live mutation",
+  "resolution": {
+    "previousBuildSource": "B1C sealed 1313 source manifest + B1D override + B2A source hashes, as used by authoritative B2A builder",
+    "previousBuildSourceFiles": 1324,
+    "candidateVsPreviousBuildChanges": 35,
+    "outsideApproved35": 0,
+    "historicalNonmaterializedSourcePaths": 123,
+    "srcPathsMatchingPreviousDeploymentBoundary": 122,
+    "otherHistoricalPath": "tsconfig.json (same previous build input)",
+    "unapprovedSourceCopied": 0,
+    "candidateRebuilt": false
+  }
+}

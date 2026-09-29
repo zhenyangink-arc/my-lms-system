@@ -1,0 +1,420 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "LOCKED",
+  "records": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4c/database-end.json",
+      "sha256": "8b0c1a7739628192443d030a0e5c5e4443b59880e8fcf0e2b4c3cb1a119714b3",
+      "safeTransportFields": {
+        ".serverVersion": "17.6",
+        ".clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".sslmode": "verify-full",
+        ".clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4c/production-safety.json",
+      "sha256": "ba9ac43aa09bba8ec67d813ae4e8a13e31acc608fbd269f45829a76ebeb7a68a",
+      "safeTransportFields": {
+        ".catalogChecksUnchanged.projectIdentitySha256": true,
+        ".catalogChecksUnchanged.hostIdentitySha256": true,
+        ".clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4c/database-start.json",
+      "sha256": "cc2da403aa758a614a26ee20279f67798d1f34f4980af1d6823a91faee52312b",
+      "safeTransportFields": {
+        ".serverVersion": "17.6",
+        ".tls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        },
+        ".projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".sslmode": "verify-full",
+        ".clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/production-end-state.json",
+      "sha256": "3e3b0631abab6273545d75fe1b355e9ca4f5143ad5200ac0ca1d9a0f216c0cd3",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/preflight.json",
+      "sha256": "7b3f5b53a27056841262f56f945f7ba573ce885c18396b2bd5ce538118133cc7",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".checks.serverVersion": true,
+        ".checks.projectIdentitySha256": true,
+        ".checks.hostIdentitySha256": true,
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/source-end-state.json",
+      "sha256": "e595f99d5743b569aa7881d7088d43abd4eac9a3cd585c9202860c71189ca3c4",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5b/maintenance-capability.json",
+      "sha256": "55f8cb5d8aa5e7ab00ce9893bdfde440e49f8f090fae148c33a3342d2c13b07b",
+      "safeTransportFields": {
+        ".projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5b/production-end-state.json",
+      "sha256": "b2cf2ed1dbff8eb298a6ac26e1e8a70822f863f0166edf91922198b0aa7f44ee",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".checksAgainstStart.serverVersion": true,
+        ".checksAgainstStart.projectIdentitySha256": true,
+        ".checksAgainstStart.hostIdentitySha256": true,
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5b/production-preflight.json",
+      "sha256": "ac9d0a8a33415465e49cf8899f4972e3b6d5b1fd05501792ac09539dc455c0a0",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".checksAgainstR5a.serverVersion": true,
+        ".checksAgainstR5a.projectIdentitySha256": true,
+        ".checksAgainstR5a.hostIdentitySha256": true,
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/maintenance-capability.json",
+      "sha256": "60d2b4184fc68d99b22ec2cedfff2def6f5be1ce377eeb61ae09a13cea7660d0",
+      "safeTransportFields": {
+        ".tls": "verify-full"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/production-end-state.json",
+      "sha256": "186a1c16fa24e8ac122b73d4e7772d29f96676545c3d782d556d964ed11c8efa",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".checks.serverVersion": true,
+        ".checks.projectIdentitySha256": true,
+        ".checks.hostIdentitySha256": true,
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/preflight.json",
+      "sha256": "b5b2b58cdbbbe0b2b564856635e3d2040346dd79b2c1335ae67075c9b9d8e34b",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".checks.serverVersion": true,
+        ".checks.projectIdentitySha256": true,
+        ".checks.hostIdentitySha256": true,
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/source-end-state.json",
+      "sha256": "900a3790f4e7b619e4a3a7e3efd2a367624e0f9022ac740a6b81a6a4902a909c",
+      "safeTransportFields": {
+        ".database.serverVersion": "17.6",
+        ".database.clientTls": {
+          "diagnosticObserved": true,
+          "protocol": "TLSv1.3",
+          "cipher": "TLS_AES_256_GCM_SHA384",
+          "verifyFullConnectionSucceeded": true
+        },
+        ".database.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".database.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+        ".database.sslmode": "verify-full",
+        ".database.clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+        ".database.serverBackendTls": {
+          "ssl": false,
+          "version": null,
+          "bits": null
+        }
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c/production-end-state.json",
+      "sha256": "6a9cbd183ff3cddb6a851bf62f6d4c7972d9cc09532d563a090a737b0d414928",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c/preflight.json",
+      "sha256": "da8fa14dc33a633c913333b801d897dd0053b7a8571d426ca887c609ebbbb5d6",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/production-end-state-before-b1c-execution.json",
+      "sha256": "273ee19e907f420c3740e3d4b9b1a22fae3fd6c7da730b26864007c6e0a6160b",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-implementation-readback.json",
+      "sha256": "877c7268078d65e636311edf4e50d4da80d2a9c7c5ae6dee7d7c6263d37b068e",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/preflight.json",
+      "sha256": "a1a68b770fbcd04907243519f6105e395621e476d64d11ec7aa2cc6cb4a90984",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-environment-preflight.json",
+      "sha256": "4e7c0f26a54c7085a6298190bd75fc39047b7c159deafcecd89842834de2d8be",
+      "safeTransportFields": {
+        ".projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b2-approved-fresh-preflight.json",
+      "sha256": "30c1675251075ca23a83500f0f0bad62cd88b1eeba174a34da436605f7c613b9",
+      "safeTransportFields": {
+        ".projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".tls": "verify-full"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/production-end-state-before-approved-b1.json",
+      "sha256": "e5edaab0f43015c458dd9ed18e35c5f06f41073642a9ec426656c0bccfc7474c",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1-b2-preflight.json",
+      "sha256": "8e3b153c0bf3b580648f94576bf530b42b3ee5c3dad7185fef8f3ce3c72de72a",
+      "safeTransportFields": {
+        ".foundation.projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+        ".foundation.hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5"
+      }
+    }
+  ],
+  "earliestEvidenceInAuditedStages": {
+    "explicitBackendFalse": {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4c/database-start.json",
+      "sha256": "cc2da403aa758a614a26ee20279f67798d1f34f4980af1d6823a91faee52312b"
+    },
+    "clientAndBackendSeparation": {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4c/database-end.json",
+      "sha256": "8b0c1a7739628192443d030a0e5c5e4443b59880e8fcf0e2b4c3cb1a119714b3"
+    }
+  },
+  "historicalClientTls": {
+    "protocol": "TLSv1.3",
+    "cipher": "TLS_AES_256_GCM_SHA384",
+    "verifyFullConnectionSucceeded": true
+  },
+  "historicalBackendTls": {
+    "ssl": false,
+    "version": null,
+    "bits": null
+  },
+  "historicalSamePath": "YES at pinned host/project identity and pooled libpq TLS contract; exact provider internal route/worker is not recorded.",
+  "evidenceAcquisitionSource": {
+    "path": "scripts/teaching-agent-r4c/inventory.py",
+    "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+    "method": "Historical SQL included psql conninfo; parser stored clientTls separately from serverBackendTls. Source read only, not executed."
+  },
+  "contractTimeline": [
+    {
+      "stage": "RUNNER-D1",
+      "authority": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-transport-contract.json",
+        "sha256": "0d5ce511b8d7f14dac4de3ea12fc6f8b4f979bbac84e37a78bd9850ba0c3eba1"
+      },
+      "intent": "Client-to-pooler verify-full; explicitly do not invent backend SSL=true requirement."
+    },
+    {
+      "stage": "P1A",
+      "authority": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1a-readonly-transport.json",
+        "sha256": "f3cd1fb2ab1fcfb8231e0b6391653e33e7aee030e5648bd4e5975817b10bb3a6"
+      },
+      "change": "Adds live pg_stat_ssl=true to capture TLS requirement."
+    },
+    {
+      "stage": "P1D",
+      "authority": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-result.json",
+        "sha256": "fa8de8a42ee4dd6fcb802b05ba0d9be21954631a1245212f06b1f54c722b5128"
+      },
+      "result": "TLS gate rejects before ledger; no writes or bypass."
+    }
+  ],
+  "historicalFilesModified": false
+}

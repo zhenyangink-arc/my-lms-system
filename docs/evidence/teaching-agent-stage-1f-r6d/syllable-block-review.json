@@ -1,0 +1,15 @@
+{
+  "coverage": "PARTIAL COVERAGE",
+  "objectiveCoverage": "PARTIAL",
+  "classification": "MUST_FIX",
+  "issueId": "M2",
+  "evidence": [
+    "Node2: 같이 쓰면 한 글자",
+    "Node5: C+V=合体结果",
+    "Node6: 한部件标识",
+    "Node2/5/6 display.slides=[]"
+  ],
+  "reason": "不是完全没出现合体字形；不足在于没有明确块内视觉组织教学，不能把结果示例等同布局解释。",
+  "proposal": "在가的现成例子指明同一字内左右位置；Node6再用가/고对照可变位置。避免把네모난理解为所有字形必须严格几何正方形。",
+  "reference": "https://www.korean.go.kr/hangeul/principle/001.html"
+}

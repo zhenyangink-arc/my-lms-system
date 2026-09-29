@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "start": {
+    "ledger": 449,
+    "agentTables": 0
+  },
+  "end": {
+    "ledger": 449,
+    "agentTables": 0
+  },
+  "exactCatalogEqual": true,
+  "runtime": {
+    "config": {
+      "TEACHING_AGENT_STUDENT_TRANSPORT_ENABLED": "OFF",
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    },
+    "process": {
+      "name": "uply-first-enable",
+      "pid": 1176676,
+      "status": "online",
+      "killTimeout": 15000,
+      "execMode": "fork_mode",
+      "cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source"
+    },
+    "configSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "readOnly": true
+  },
+  "productionWrites": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionDeploy": false,
+  "liveProviderRequests": 0
+}

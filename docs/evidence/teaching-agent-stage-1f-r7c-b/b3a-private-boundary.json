@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "answerSource": "existing server-only activity secret + existing grader",
+  "publicDto": "whitelisted manifest/context/empty runtime bootstrap + safe completion/facts only",
+  "publicForbidden": "private key/index, raw definition/attempt response, private definition digest, actor UUID, credentials",
+  "bundleSecretMarkerHits": 0,
+  "bundledChild": "server artifact only, stdout/stderr not forwarded to client",
+  "existingBrowserDomNetworkConsoleRegression": "17/17 PASS",
+  "currentDbDomNetworkExecution": "DEFERRED until separate B3 execution approval",
+  "scenarioCodeAnswerHardcode": false,
+  "scopeJournalStoresAnswers": false,
+  "currentDbWrites": 0
+}

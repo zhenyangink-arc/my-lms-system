@@ -1,0 +1,29 @@
+{
+  "overall": "GO",
+  "PASS": [
+    "explicit deployment approval",
+    "three approved archive hashes",
+    "35 source hashes",
+    "15 exact dependency directories / 145 files",
+    "no existing dependency version change",
+    "previous-build provenance exact35 delta",
+    "fresh ledger/RPC/trigger/freeze/B1/B2/actor baseline",
+    "rollback preserved",
+    "only target PM2 stop/start",
+    "live build KaSWaVYOIk7ZjWGpvVWIf",
+    "Owner existing-session route",
+    "anonymous denied",
+    "execution activation button disabled",
+    "no scope/config/child activation",
+    "independent current DB zero attempt/progress",
+    "private client boundary",
+    "protected runtime/launcher/public/Tailscale unchanged"
+  ],
+  "NOT_APPROVED": [
+    "B3 current DB scenario execution",
+    "B3 execution activation",
+    "R7D",
+    "Stage1G"
+  ],
+  "scope": "DISABLED"
+}

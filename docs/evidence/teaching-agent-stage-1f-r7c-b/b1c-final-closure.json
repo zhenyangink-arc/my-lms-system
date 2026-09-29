@@ -1,0 +1,15 @@
+{
+  "environmentActivation": "PASS",
+  "ownerUIAccess": "PASS",
+  "B1": "BLOCKED — OWNER_DRAFT_LESSON_PREFLIGHT_RLS_MISMATCH",
+  "B2": "BLOCKED / NOT APPROVED",
+  "currentBinding": [
+    0,
+    0,
+    0
+  ],
+  "currentDbDurableE2E": "BLOCKED BY TEST IDENTITY",
+  "R7D": "NOT ENTERED",
+  "Stage1G": "NOT READY",
+  "newProductFixApplied": false
+}

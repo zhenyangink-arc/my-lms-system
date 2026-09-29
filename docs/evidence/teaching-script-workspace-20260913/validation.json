@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "default narration visible; checks and axis collapsed; one selected step",
+    "first keystroke retained; cancelling unsaved navigation preserves input",
+    "real form submission retains narration and collapsed character fields",
+    "character editor remains accessible behind advanced disclosure",
+    "path preview follows ending; node add/reorder controls preserved",
+    "step/node/version switch; archived remains read-only",
+    "review/check/publish still use original Action contracts",
+    "375/768/1440px no page overflow; dark render; no JS exceptions"
+  ],
+  "scope": "Isolated real components, mocked server transports; not owner or production E2E"
+}

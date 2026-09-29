@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-17T12:43:27.531503+00:00",
+  "currentBuild": "vZokoJqpKDRZxnpQcQpah",
+  "canonicalValid": true,
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "frozenContent": "UNCHANGED",
+  "actor": "UNCHANGED",
+  "tenant": "UNCHANGED",
+  "actorSessions": 0,
+  "actorRefresh": 0,
+  "attempts": 0,
+  "nodeProgress": 0,
+  "pageProgress": 0,
+  "ledger": 458,
+  "latestMigration": "202609170001",
+  "rpcSha256": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50",
+  "currentDbAttemptWrites": 0,
+  "currentDbProgressWrites": 0,
+  "scope": "DISABLED",
+  "scopeFilePresent": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "deploy": 0
+}

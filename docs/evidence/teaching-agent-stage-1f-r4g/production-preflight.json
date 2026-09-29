@@ -1,0 +1,217 @@
+{
+  "phase": "start",
+  "database": {
+    "observedAt": "2026-09-15T07:50:53.916309+00:00",
+    "readOnly": "on",
+    "serverVersion": "17.6",
+    "databaseName": "postgres",
+    "databaseBytes": 58125459,
+    "schemaCountNonSystem": 13,
+    "tableCountNonSystem": 230,
+    "schemaTables": [
+      {
+        "schema": "auth",
+        "tables": 23
+      },
+      {
+        "schema": "extensions",
+        "tables": 0
+      },
+      {
+        "schema": "graphql",
+        "tables": 0
+      },
+      {
+        "schema": "graphql_public",
+        "tables": 0
+      },
+      {
+        "schema": "pgbouncer",
+        "tables": 0
+      },
+      {
+        "schema": "private",
+        "tables": 0
+      },
+      {
+        "schema": "public",
+        "tables": 174
+      },
+      {
+        "schema": "realtime",
+        "tables": 9
+      },
+      {
+        "schema": "recording_private",
+        "tables": 4
+      },
+      {
+        "schema": "runtime_publish_private",
+        "tables": 10
+      },
+      {
+        "schema": "storage",
+        "tables": 8
+      },
+      {
+        "schema": "supabase_migrations",
+        "tables": 1
+      },
+      {
+        "schema": "vault",
+        "tables": 1
+      }
+    ],
+    "extensions": [
+      {
+        "name": "btree_gist",
+        "version": "1.7"
+      },
+      {
+        "name": "pg_stat_statements",
+        "version": "1.11"
+      },
+      {
+        "name": "pgcrypto",
+        "version": "1.3"
+      },
+      {
+        "name": "plpgsql",
+        "version": "1.0"
+      },
+      {
+        "name": "supabase_vault",
+        "version": "0.3.1"
+      },
+      {
+        "name": "uuid-ossp",
+        "version": "1.1"
+      }
+    ],
+    "roleCount": 31,
+    "agentTables": 0,
+    "agentPrefixedTables": 0,
+    "clientTls": {
+      "diagnosticObserved": true,
+      "protocol": "TLSv1.3",
+      "cipher": "TLS_AES_256_GCM_SHA384",
+      "verifyFullConnectionSucceeded": true
+    },
+    "serverBackendTls": {
+      "ssl": false,
+      "version": null,
+      "bits": null
+    },
+    "migrationLedgerCount": 449,
+    "latestMigration": {
+      "version": "202609130003",
+      "name": "runtime_authoring_nonretryable_error"
+    },
+    "ledgerSha256": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "projectMatchesRuntime": true,
+    "sslmode": "verify-full",
+    "clientImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+    "expectedStateMatches": true
+  },
+  "operations": {
+    "observedAt": "2026-09-15T07:50:54.219974+00:00",
+    "pm2": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789294455603,
+      "name": "uply-first-enable",
+      "pid": 1176676
+    },
+    "runtime": {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+      "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+      "mode": "0o600",
+      "featureFlag": "OFF",
+      "allowlists": {
+        "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+        "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+        "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+      },
+      "necessaryVariables": {
+        "NEXT_PUBLIC_SUPABASE_URL": "SET",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "SET",
+        "SUPABASE_SERVICE_ROLE_KEY": "SET",
+        "DEEPSEEK_API_KEY": "SET"
+      }
+    },
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "tailscale": {
+      "canonicalSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+      "tcpPorts": [
+        "4000",
+        "443",
+        "8443"
+      ],
+      "bindings": [
+        {
+          "port": "4000",
+          "path": "/",
+          "proxy": "http://127.0.0.1:4000"
+        },
+        {
+          "port": "443",
+          "path": "/",
+          "proxy": "http://127.0.0.1:3001"
+        },
+        {
+          "port": "8443",
+          "path": "/",
+          "proxy": "http://127.0.0.1:3000"
+        }
+      ],
+      "funnelEnabled": false
+    }
+  },
+  "checksAgainstR4fAndPreflight": {
+    "serverVersion": true,
+    "migrationLedgerCount": true,
+    "latestMigration": true,
+    "ledgerSha256": true,
+    "agentTables": true,
+    "agentPrefixedTables": true,
+    "projectIdentitySha256": true,
+    "hostIdentitySha256": true,
+    "schemaTables": true,
+    "extensions": true,
+    "roleCount": true,
+    "pm2": true,
+    "runtime": true,
+    "launcherSha256": true,
+    "tailscale": true,
+    "readOnly": true,
+    "featureOff": true,
+    "allowlistsEmpty": true,
+    "port9443Absent": true,
+    "expectedDatabaseState": true
+  },
+  "agentMigrations000Through007": "NOT APPLIED",
+  "migrationAbsenceBasis": "Full ordered ledger hash equals R4F, latest 202609130003",
+  "taskActions": {
+    "productionDbWrites": 0,
+    "productionReconcilerRuns": 0,
+    "productionPersistentCancel": 0,
+    "productionAgentRuns": 0,
+    "liveProviderRequests": 0,
+    "schedulerInstalls": 0,
+    "productionDeploys": 0,
+    "productionRestores": 0,
+    "productionMigrations": 0,
+    "pm2Mutations": 0,
+    "runtimeMutations": 0,
+    "tailscaleMutations": 0,
+    "allowlistWrites": 0
+  },
+  "status": "PASS"
+}

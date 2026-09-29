@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "fence": {
+    "retirementRows": 1,
+    "targetRetirementRows": 1,
+    "otherRetirementRows": 0,
+    "oldSnapshotCount": 1,
+    "otherSnapshotCount": 1,
+    "publicationPointerReferences": 0,
+    "activeSessions": 0,
+    "runtimeRequests": 0,
+    "otherPointerReferences": 1,
+    "targetContentDependencies": 0,
+    "activeInconsistentFences": 0,
+    "otherFenceConsistent": true,
+    "allSnapshotSha256": "0e7693e51c001e6fc0cd7027d4cdb2bb36f241cb48ca72eb547af8ef33140a5d",
+    "allFenceSha256": "f82807d45e1379831cddc8692ec6a0e3b7d6e13040bd44a11d7f5dd449464686",
+    "allPointerSha256": "dc3abca6de60315bd8695af67ade094d790b74cc73fbd4d9079be0c41240b7dd"
+  },
+  "originalSnapshotsAndFences": "UNCHANGED",
+  "publicationPointers": "UNCHANGED",
+  "changedRows": {
+    "retirementInsert": 1,
+    "update": 0,
+    "delete": 0
+  }
+}

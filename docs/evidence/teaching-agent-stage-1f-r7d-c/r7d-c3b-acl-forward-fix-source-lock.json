@@ -1,0 +1,126 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "files": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "mode": "0o664",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "previousSha256": null,
+      "operation": "ADD"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "mode": "0o664",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "previousSha256": "9f066e0b8ab5899df0a9925af663a8c5309b059a6706dcf2cc8dbc00f2ee7fad",
+      "operation": "MODIFY"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "mode": "0o664",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "previousSha256": null,
+      "operation": "ADD"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "mode": "0o664",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "previousSha256": null,
+      "operation": "ADD"
+    }
+  ],
+  "immutableMigrations": [
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027"
+    }
+  ],
+  "immutableSourceCount": 1337,
+  "immutableSourceResult": "1337/1337 MATCH; no additions/deletions",
+  "historicalTrackedFilesChecked": 1914,
+  "existingFileChanges": [
+    "tests/fixtures/teaching-agent-r7d-production/postgres.mjs"
+  ],
+  "historicalEvidenceAndMigrationsChanged": 0,
+  "candidateArchivesAndCallers": {
+    "candidate-build.tar.gz": {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "match": true
+    },
+    "candidate-full-source.tar.gz": {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "match": true
+    },
+    "candidate-deploy-source-closure.tar.gz": {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "match": true
+    },
+    "callers": [
+      {
+        "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+        "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+        "match": true
+      },
+      {
+        "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+        "sha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+        "match": true
+      },
+      {
+        "path": "src/lib/auth.ts",
+        "sha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+        "match": true
+      },
+      {
+        "path": "src/lib/admin.ts",
+        "sha256": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d",
+        "match": true
+      },
+      {
+        "path": "src/lib/supabase/server.ts",
+        "sha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+        "match": true
+      },
+      {
+        "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/src/features/growth-toolbox/api/chapter-practice-actions.ts",
+        "sha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+        "match": true
+      }
+    ]
+  },
+  "newMigrationOnly": "202609180000_chapter_practice_binding_acl.sql",
+  "newPackageDependencies": 0,
+  "scope": "ONE migration +ONE existing helper +ONE new test +ONE new fixture; docs/evidence only otherwise"
+}

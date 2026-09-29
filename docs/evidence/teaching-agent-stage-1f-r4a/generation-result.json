@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "snapshotSha256": "8f31512aa71bd63aa33f8b5e1acd7f657b27c01981103cecc5d9498178260501",
+  "generatedAt": "2026-09-14T04:39:15Z",
+  "generatorChanged": false,
+  "generatedTwice": true,
+  "byteIdentical": true,
+  "baselineSqlUnchanged": true,
+  "baselineLedgerUnchanged": true,
+  "ledgerCount": 449,
+  "changedManifestFields": [
+    "postBaselineMigrationVersions"
+  ],
+  "beforeManifestSha256": "c2fd640518563bfb293f7601fe709f8f3b0a870a99ac93e8783144765e5eeb8c",
+  "afterManifestSha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+  "outputs": {
+    "app-schema-baseline.sql": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "migration-ledger-baseline.json": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+    "baseline-manifest.json": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6"
+  },
+  "command": [
+    "python3",
+    "scripts/build-supabase-app-baseline.py",
+    "--snapshot",
+    "/tmp/uply-r1b-snapshot/schema.dump",
+    "--ledger-before",
+    "/tmp/uply-r4a-regenerate/catalog.json",
+    "--ledger-after",
+    "/tmp/uply-r4a-regenerate/catalog.json",
+    "--generated-at",
+    "2026-09-14T04:39:15Z"
+  ]
+}

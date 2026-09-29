@@ -1,0 +1,1 @@
+{"attempt":1,"automaticRetry":false,"command":["python3","-B","scripts/teaching-agent-r7d-c3b/runner.py","capture","--plan","acl-000-v1"],"maximumAttempts":1,"stage":"R7D-C3B-RUNNER-P1E-V5-EXECUTION","startedAt":1789895346.8142698}

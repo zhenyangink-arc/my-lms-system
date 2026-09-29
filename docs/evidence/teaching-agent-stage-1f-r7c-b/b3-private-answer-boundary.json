@@ -1,0 +1,30 @@
+{
+  "status": "PASS — isolated DTO/DOM/network/facts/client bundle; current DB scenario NOT RUN",
+  "source": "existing digital_textbook_activity_secrets -> existing server grader only",
+  "scenarioValues": "no answer constants or private key; wrong/correct are phase intent, selected answers derived only inside isolated server-private harness; future browser only submits ordinary public selection, never receives grading key or correct designation",
+  "publicOutputs": [
+    "manifest publicNativeActivity",
+    "Activity result safe message",
+    "completion receipt",
+    "runtime facts"
+  ],
+  "privateOnly": [
+    "raw repository definition",
+    "answer_key",
+    "private definitionDigest",
+    "raw attempt response"
+  ],
+  "scans": [
+    "public serialized Manifest",
+    "DOM before submit",
+    "HTTP response DTOs",
+    "client dependency graph",
+    "runtime facts",
+    "attempt response projection",
+    "node progress record",
+    "console logs"
+  ],
+  "progressRecord": "contains state/score/count/time, no answer key",
+  "important": "submitted choice and correctness feedback are ordinary interaction data; never export raw private answer/index or private digest as answer evidence",
+  "currentDBPending": "scan actual current-DB composition DTO/network/DOM once approved, do not promote isolated scan to current-DB PASS"
+}

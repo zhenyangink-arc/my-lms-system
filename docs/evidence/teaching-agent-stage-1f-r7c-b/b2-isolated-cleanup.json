@@ -1,0 +1,8 @@
+{
+  "ownedContainersRemoved": true,
+  "ownedVolumeRemoved": true,
+  "ownedInternalNetworkRemoved": true,
+  "currentDbWrites": 0,
+  "temporarySigningCredentialsRemoved": true,
+  "currentDbObjectsDeleted": 0
+}

@@ -1,0 +1,101 @@
+{
+  "status": "MATCH",
+  "method": "Actual new workflow: Owner caller create_tenant RPC -> server-only Auth Admin createUser -> inactive profile PATCH -> suspended membership POST; same-version isolated GoTrue + PostgREST + current schema/triggers",
+  "budget": {
+    "auth.identities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.users": {
+      "INSERT": 1,
+      "UPDATE": 5,
+      "DELETE": 0
+    },
+    "public.learning_grading_comments": {
+      "INSERT": 4,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.profiles": {
+      "INSERT": 1,
+      "UPDATE": 3,
+      "DELETE": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_memberships": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_student_apps": {
+      "INSERT": 5,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenants": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.audit_log_entries": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.sessions": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "auth.refresh_tokens": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.account_management_audit_logs": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.user_permission_grants": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.tenant_provisioned_accounts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_attempts": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_node_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "public.digital_textbook_activity_page_progress": {
+      "INSERT": 0,
+      "UPDATE": 0,
+      "DELETE": 0
+    }
+  },
+  "initialAuthTransaction": "PASS",
+  "provisioningProfileUpdates": "2 Auth metadata synchronization +1 explicit inactive update before membership",
+  "auditCondition": "Auth DB audit disabled in current hosted config. Account audit trigger has no default tenant at profile update. Membership audit INSERT1 remains enabled. External hosted access logs may occur.",
+  "isolatedSetupExcluded": "One synthetic isolated operator control plus 5 public app catalog reference rows. No copied real users. Challenge verification mutations are separate from provisioning budget.",
+  "limitations": [
+    "Canonical frozen content attestation substituted ONLY in isolated Auth workflow (empty-schema actual read rejected); exact current DB readback SQL separately passed read-only",
+    "Production requirePlatformOwner invocation boundary tested with denied/allowed fixtures; isolated RPC itself verified Owner role",
+    "No current DB provisioning or student admission E2E performed"
+  ],
+  "currentDbWrites": 0
+}

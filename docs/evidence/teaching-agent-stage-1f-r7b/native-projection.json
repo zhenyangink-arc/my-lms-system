@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "contract": "LessonManifestV1 / uply-runtime/1",
+  "compiler": "native-execution-projection.server.ts",
+  "canonicalAlias": "hangul-introduction",
+  "sourceNodes": [
+    5,
+    7
+  ],
+  "node5": "Frozen Korean text and safe source binding",
+  "node7": "First single_choice public prompt/options only; full body excluded",
+  "nativeBlocks": [
+    "video",
+    "text",
+    "multiple_choice"
+  ],
+  "legacyChapterOneSourceUsed": false,
+  "productionPublish": 0
+}

@@ -1,0 +1,30 @@
+{
+  "status": "NOT READY FOR DEPLOY APPROVAL — design scope only; no candidate built",
+  "reason": "B3A this turn audits/contracts/tests only. Product implementation and immutable artifact must be concrete before deployment approval.",
+  "currentBuild": "vZokoJqpKDRZxnpQcQpah",
+  "candidateBuild": null,
+  "plannedModifiedProductFiles": [
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts"
+  ],
+  "plannedNewServerFiles": [
+    "src/features/development-execution/server/execution-scope.server.ts",
+    "src/features/development-execution/server/execution-journal.server.ts",
+    "src/features/development-execution/server/execution-composition.server.ts",
+    "src/features/development-execution/server/execution-transport.server.ts"
+  ],
+  "controlledProcessEntry": "reuse existing R7C harness design; exact new process entry/file and artifact must be locked after composition implementation",
+  "changes": [
+    "Implement/verify fixed dev-only scope issuer and transactional per-mutation safety/budget guard; current reference is design-only",
+    "Explicit current-development-db receipt evidence storage discriminant; do not relabel isolated evidence",
+    "Strengthen one-target completion/progress consistency checks",
+    "Controlled Runtime composition mounts same LessonRuntime/public DTO with canonical Activity, no synthetic-only source",
+    "Lock source hashes/build/process artifact; separately approve B3A-Deploy if installing code or environment composition. No implicit deployment approval from scenario budget."
+  ],
+  "migration": "NONE expected",
+  "dbSchemaWrites": 0,
+  "actualProductWritesThisTurn": 0,
+  "deploymentThisTurn": 0,
+  "approvalB3DoesNotAuthorizeDeployment": true
+}

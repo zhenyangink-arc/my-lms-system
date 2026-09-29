@@ -1,0 +1,162 @@
+(node:10) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ R7B mounted existing LessonRuntime with real HTML5 fixture
+  ✔ public bundle excludes server/private imports; pre-submit DOM contains no answer designation (419.941739ms)
+  ✔ real play crosses 5s cue; pauses, reveals existing Activity, completes and resumes once (5390.511349ms)
+  ✔ wrong answer holds, explicit next answer can complete (445.396161ms)
+  ✔ UNKNOWN submission/readback stays paused without retry (306.687564ms)
+  ✔ response lost after commit uses readback without resubmit (276.629374ms)
+  ✔ refresh waiting and completed (632.97764ms)
+  ✔ user pause during activity is retained (343.544254ms)
+  ✔ autoplay rejected once, user may explicitly continue (206.890304ms)
+  ✔ media error fails closed (127.668625ms)
+✔ R7B mounted existing LessonRuntime with real HTML5 fixture (8557.305981ms)
+(node:11) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/core/execution-contracts.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R7B server private grader and request idempotency; completed does not mean lesson complete (4.44319ms)
+✔ R7B activity evidence distinguishes content revision and state revision (3.775316ms)
+✔ R7B mismatched completion sessionId rejected (1.325319ms)
+✔ R7B mismatched completion snapshotId rejected (0.321639ms)
+✔ R7B mismatched completion snapshotDigest rejected (1.95529ms)
+✔ R7B mismatched completion stepId rejected (0.313386ms)
+✔ R7B mismatched completion sourceBlockId rejected (0.259459ms)
+✔ R7B mismatched completion mediaRevision rejected (0.394535ms)
+✔ R7B mismatched completion cueId rejected (0.478121ms)
+✔ R7B mismatched completion blockId rejected (0.329637ms)
+✔ R7B mismatched completion activityRef rejected (0.209853ms)
+✔ R7B stale request/generation and fabricated completed status rejected (0.586451ms)
+(node:12) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/core/step-controller.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R7B happy path, authoritative evidence, dedupe, backward seek, no Step completion (10.031604ms)
+✔ R7B wrong answer holds and deliberate next submission completes (2.241007ms)
+✔ R7B lost completion response readback; no resubmit (1.691771ms)
+✔ R7B UNKNOWN readback holds without automatic retry (1.542923ms)
+✔ R7B mandatory forward seek and seek landing dedupe (0.974182ms)
+✔ R7B refresh waiting and completed restore use server state, not position (1.920563ms)
+✔ R7B invalid restore fails closed (0.590768ms)
+✔ R7B late generation result cannot resume new media (1.044218ms)
+✔ R7B user pause intent survives activity completion (1.084623ms)
+✔ R7B autoplay reject once remains resume-ready (0.806383ms)
+✔ R7B media error and ended never complete lesson (0.552417ms)
+✔ R7B duplicate submission callback cannot cause a second attempt or resume (1.018951ms)
+✔ R7B facts read port is read-only and video position remains observation (0.621619ms)
+✔ R7B malformed or stale readback cannot authorize resume (0.745053ms)
+✔ R7B actual media duration validation rejects cue outside media (0.309855ms)
+✔ R7B late play promise after cue pause cannot reset state to PLAYING (0.512672ms)
+✔ R7B submission timeout holds until authoritative readback, without retry (10008.329733ms)
+✔ R7B target registry has exactly one scoped media play owner (8.778308ms)
+✔ R7B a later DOM play implementation cannot compete with the native owner (0.612628ms)
+✔ R7B UNKNOWN restore holds even when pending checkpoint is unavailable (0.367446ms)
+✔ R7C regression: valid submit COMPLETED cannot override independent INCOMPLETE readback (0.675141ms)
+(node:13) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/lib/smart-textbook-runtime-v1/validator.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ R7B native frozen projection uses existing V1 validator and declared renderer capabilities (12.657205ms)
+✔ R7B public projection excludes private answers and complete authoring practice (0.831978ms)
+✔ R7B cue validation fail closed: unknownAction (2.800591ms)
+✔ R7B cue validation fail closed: negativeTime (1.722059ms)
+✔ R7B cue validation fail closed: nan (1.194942ms)
+✔ R7B cue validation fail closed: afterDuration (1.218602ms)
+✔ R7B cue validation fail closed: wrongSource (3.253389ms)
+✔ R7B cue validation fail closed: wrongTarget (1.895652ms)
+✔ R7B cue validation fail closed: wrongStep (1.739731ms)
+✔ R7B cue validation fail closed: wrongMedia (1.136398ms)
+✔ R7B cue validation fail closed: badPolicy (0.91755ms)
+✔ R7B cue validation fail closed: domSelector (0.869488ms)
+✔ R7B cue validation fail closed: duplicate (0.986423ms)
+✔ R7B cue validation fail closed: missingCapability (0.86112ms)
+✔ R7B cue validation fail closed: wrongActivity (1.209031ms)
+✔ R7B missing video capability fails activation (0.696192ms)
+(node:14) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ R7C existing schema binding/private answer separation/real RPC catalog
+  ✔ legitimate FK chain, one activity and server-only secret (291.439853ms)
+  ✔ public manifest never serializes raw/private source; mismatched scope rejected (60.676241ms)
+  ✔ durable receipt version2 freshness is attempt sequence, not content/CAS (57.328357ms)
+✔ R7C existing schema binding/private answer separation/real RPC catalog (1791.579581ms)
+(node:15) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/server/native-execution-projection.server.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ R7C mounted native Activity and surviving database across service restarts
+  ✔ public bundle, public HTTP DTO, DOM and facts contain no private answer binding (1366.589381ms)
+  ✔ waiting survives actual service process restart; correct durable readback and completed restart (3224.017705ms)
+  ✔ wrong durable attempt holds; correct answer resumes; backward/forward seek and cue dedupe (2005.443937ms)
+  ✔ lost committed response reads DB and resumes without resubmit (1443.81103ms)
+  ✔ lost no-commit response holds; unknown readback holds without repeated submit (1249.138028ms)
+  ✔ user pause, autoplay reject and media error remain safe with durable binding (1402.73728ms)
+✔ R7C mounted native Activity and surviving database across service restarts (11945.099045ms)
+(node:21) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/core/step-controller.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ R7C actual durable SQL and runtime contract
+  ✔ wrong attempt durable INCOMPLETE; correct attempt durable COMPLETED; node progress distinct (764.379801ms)
+  ✔ concurrent identical request creates exactly one attempt; changed payload rejected (879.237591ms)
+  ✔ request text is SQL data and may not inject a second statement (413.428487ms)
+  ✔ lost response committed/no-commit, independent readback, no retry (739.896207ms)
+  ✔ content change after pin fails closed, no attempt; exact atomic RPC missing never falls back (783.460596ms)
+  ✔ correct resumes only after independent readback; wrong and UNKNOWN hold (1074.80396ms)
+  ✔ valid submit receipt alone cannot resume and old generation readback is ignored (583.516355ms)
+  ✔ persisted evidence from a different private definition cannot restore completion (438.745018ms)
+  ✔ missing progress after a correct attempt is UNKNOWN, never callback completion (428.236601ms)
+  ✔ child service termination completed/waiting rebuilds solely from surviving DB (2791.574639ms)
+✔ R7C actual durable SQL and runtime contract (10055.492982ms)
+(node:37) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/smart-textbook-runtime/core/step-controller.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ B3A exact live RPC and triggers / max_attempts three / isolated durable budget
+  ✔ wrong: one attempt insert plus one node-progress insert; incomplete holds (478.997851ms)
+  ✔ duplicate transport same identity and new generation: zero logical writes (290.724167ms)
+  ✔ correct: second attempt insert plus one progress update; completed resumes (394.123224ms)
+  ✔ actual child process stop/start: COMPLETED readback only, no resubmission (1490.928886ms)
+  ✔ backward replay, refresh, completed guard cause zero further writes (397.801068ms)
+✔ B3A exact live RPC and triggers / max_attempts three / isolated durable budget (4886.92315ms)
+✔ scope design accepts only exact existing actor and target (4.053616ms)
+✔ scope rejects wrong environment (0.288578ms)
+✔ scope rejects wrong database (0.231384ms)
+✔ scope rejects wrong actor (0.10901ms)
+✔ scope rejects wrong tenant (0.093954ms)
+✔ scope rejects wrong lesson (0.093003ms)
+✔ scope rejects wrong activity (0.120889ms)
+✔ scope rejects wrong version (0.8122ms)
+✔ scope rejects wrong freeze (0.14087ms)
+✔ scope rejects wrong scenarioId (0.188555ms)
+✔ scope rejects wrong snapshot (0.428043ms)
+✔ scope fails closed for ownerAuthorized (0.158382ms)
+✔ scope fails closed for explicitDevelopmentConfig (0.07481ms)
+✔ scope fails closed for productionComposition (0.093759ms)
+✔ scope fails closed for banned (0.069534ms)
+✔ scope fails closed for banUntil (0.077795ms)
+✔ scope fails closed for sessions (0.060589ms)
+✔ scope fails closed for refresh (0.081261ms)
+✔ scope fails closed for profile (0.058084ms)
+✔ scope fails closed for membership (0.054467ms)
+✔ scope fails closed for role (0.066715ms)
+✔ scope fails closed for isDefault (0.092074ms)
+✔ scope fails closed for observedAt (0.053023ms)
+✔ scope fails closed for completed (0.067992ms)
+✔ scope fails closed for attempts (0.052602ms)
+✔ scope fails closed for generation (0.055692ms)
+✔ expired/disabled/oversized TTL/budget reject (0.211084ms)
+✔ UNKNOWN keeps claim; duplicate transport cannot redispatch (0.176325ms)
+✔ second slot requires independent durable first attempt then blocks third (0.187754ms)
+✔ scope and journal contain only admission metadata; no grading truth (0.246099ms)
+ℹ tests 117
+ℹ suites 0
+ℹ pass 117
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12615.824601

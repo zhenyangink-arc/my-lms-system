@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "contract": "lesson-runtime-facts/1",
+  "activityAlias": "hangul-introduction-vowel-recognition",
+  "attemptSummary": "sequence + latestAttemptAt; no response",
+  "stateEvidence": "activity-completion/2 durable sequence/digest/timestamp evidence",
+  "statesTested": [
+    "before cue",
+    "AWAITING_ACTIVITY",
+    "COMPLETED"
+  ],
+  "currentActivityAfterCompletion": "Bound public alias retained",
+  "readOnly": true,
+  "agentToolRegistration": false,
+  "privateAnswerOrResponseIncluded": false
+}

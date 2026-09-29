@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "next": "16.2.10",
+  "command": "next build --webpack",
+  "isolatedBuildDirectory": true,
+  "productionEnvCopied": false,
+  "productSourcesMatchFinal": true,
+  "typecheck": "PASS",
+  "productionDeploy": 0,
+  "buildLogSha256": "055a6b1da4745c83ac76e3a9247c12ea18463b51ced55232e6c0951ec239af61",
+  "newLintErrors": 0,
+  "preExistingLintErrors": 3
+}

@@ -1,0 +1,114 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "isolatedBaseline": "INCOMPLETE_FOR_FULL_LIVE_ACL_EQUIVALENCE",
+  "mechanismConfirmed": true,
+  "harness": {
+    "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+    "sha256": "9f066e0b8ab5899df0a9925af663a8c5309b059a6706dcf2cc8dbc00f2ee7fad"
+  },
+  "historicalChain": [
+    "202609100001_runtime_publish_foundation.sql",
+    "202609100002_runtime_publication_dependency_fence.sql",
+    "202609100003_runtime_admission_control.sql",
+    "202609100004_runtime_single_version_authoring.sql",
+    "202609100005_chapter_publish_semantic_compatibility.sql",
+    "202609110001_allow_evidence_graded_roleplay_publication.sql",
+    "202609110002_restore_single_version_publish_wrapper.sql",
+    "202609130001_textbook_grammar_authoring.sql",
+    "202609130002_textbook_grammar_practice_binding.sql",
+    "202609130003_runtime_authoring_nonretryable_error.sql",
+    "202609140000_agent_core_foundation.sql",
+    "202609140001_agent_runtime_completion_evidence.sql",
+    "202609140002_agent_run_cancel_request.sql"
+  ],
+  "omitted": [
+    "postgres/public Supabase function defaults",
+    "target original CREATE 080001",
+    "anon repair 080002",
+    "full schema bootstrap/current 458 migration environment"
+  ],
+  "consequence": "130002 CREATE OR REPLACE on fresh missing target is CREATE; result is postgres/authenticated without inherited service_role ACL. This explains isolated-vs-historical/live shape. It cannot alone resolve original production grant provenance or desired least-privilege contract.",
+  "oldSchemaManifestPreserved": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+    "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+  },
+  "migrationImpact": [
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "targetReferences": 0,
+      "changesTargetOrAcl": false,
+      "requiresTargetAuthenticatedOnly": false,
+      "requiresTargetServiceRole": false
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "targetReferences": 0,
+      "changesTargetOrAcl": false,
+      "requiresTargetAuthenticatedOnly": false,
+      "requiresTargetServiceRole": false
+    }
+  ],
+  "targetRowsBeforeCompletionCombined": [
+    {
+      "phase": "before",
+      "function": {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      }
+    },
+    {
+      "phase": "completion",
+      "function": {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      }
+    },
+    {
+      "phase": "combined",
+      "function": {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      }
+    }
+  ],
+  "futureIfReconciliationAuthorized": {
+    "mustRerunIsolatedTests": true,
+    "scope": [
+      "Reproduce documented creator/default ACL + first-create/anon repair/replacement lifecycle in isolated fixture",
+      "Check PUBLIC/anon denied; plain service context denied by auth guard; legitimate authenticated owner path retained",
+      "001/002 standalone and combined preserve approved target ACL/body",
+      "Reissue new baseline evidence and approval references; retain all old evidence"
+    ],
+    "potentialTestHelperPath": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+    "productOrMigrationEditsNeededForBaselineOnlyCorrection": false,
+    "notAuthorizedThisTurn": true
+  }
+}

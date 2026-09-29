@@ -1,0 +1,25 @@
+{
+  "realNext": true,
+  "browser": "Chromium",
+  "featureOffRequests": 0,
+  "liveProviderRequests": 0,
+  "desktopScreenshot": "/tmp/uply-stage1e-browser-Jtn9Mp/desktop-completed.png",
+  "mobileScreenshot": "/tmp/uply-stage1e-browser-Jtn9Mp/mobile-completed.png",
+  "checks": [
+    "server pins A/B",
+    "keyboard Enter/Escape focus",
+    "answer/source",
+    "cancel endpoint",
+    "failure retry",
+    "stale clears selection",
+    "route cleanup",
+    "375px mobile",
+    "landscape",
+    "reduced motion",
+    "actual dark token class",
+    "Korean UI",
+    "partial badge",
+    "focus trap"
+  ],
+  "pageErrors": []
+}

@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 3,
+  "title": "先认识基础元音",
+  "formalType": "explanation",
+  "purpose": "接触并跟读六个基础元音。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "ㅏ/ㅓ、ㅗ/ㅜ、ㅡ/ㅣ六个先行字母及顺序合理。明确不必全背，따라 읽어 보세요自然、礼貌。未声称只有六个元音；本node对目标2的元音子目标有支持，对目标2整体仍PARTIAL。",
+  "classification": "OPTIONAL",
+  "issueIds": [
+    "O1"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "O1",
+      "classification": "OPTIONAL",
+      "proposedText": "오늘은 모음 여섯 개를 먼저 볼까요?"
+    }
+  ],
+  "reviewStatus": "PASS",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=3",
+  "renderedReference": "ui-render-validation.json / order=3",
+  "nodeWrites": 0
+}

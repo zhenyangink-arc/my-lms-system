@@ -1,0 +1,33 @@
+{
+  "status": "CREATE 1 PROPOSED; NOT AUTHORIZED",
+  "dedicated": true,
+  "candidateAlias": "uply-domain-execution-dev",
+  "exactAliasExists": 0,
+  "existingDedicatedContract": "NOT FOUND",
+  "createMethod": "Existing create_tenant(text,text,text) RPC under normal Platform Owner authority, via future narrow development provisioning workflow",
+  "doNotUse": "createTenantAction also provisions a password-capable tenant_super_admin; that violates one non-privileged test actor scope",
+  "createTenantAutomaticWrites": [
+    {
+      "table_name": "public.learning_grading_comments",
+      "operation": "INSERT",
+      "count": 4
+    },
+    {
+      "table_name": "public.tenant_student_apps",
+      "operation": "INSERT",
+      "count": 5
+    },
+    {
+      "table_name": "public.tenants",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "planKey": "starter",
+  "settings": "Keep existing default; purpose tracked in private bounded registry and exact tenant alias. Metadata alone is not enforcement.",
+  "memberships": 1,
+  "personalOwnerMembership": 0,
+  "tenantManagerAuthUser": 0,
+  "productionStudentAdmission": "Unchanged; subject profile inactive/membership suspended; no published-only bypass",
+  "currentDbWrites": 0
+}

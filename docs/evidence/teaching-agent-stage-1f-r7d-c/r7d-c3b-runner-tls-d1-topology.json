@@ -1,0 +1,75 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "DIAGNOSIS_LOCKED_WITH_EXPLICIT_PROVIDER_INTERNAL_LIMITS",
+  "chain": [
+    {
+      "from": "Runner host Python",
+      "to": "Docker daemon / ephemeral pinned client container",
+      "transport": "local Docker control IPC plus stdin/stdout pipes",
+      "TLS": "NOT_APPLICABLE_TO_DB_HOP",
+      "identity": "fixed image ID, OS operator UID/GID, read-only private directory mount",
+      "trustBoundary": "trusted operator and Docker daemon"
+    },
+    {
+      "from": "container psql/libpq, host network",
+      "to": "aws-1-ap-northeast-2.pooler.supabase.com:5432",
+      "transport": "TCP hostname / shared Supavisor session pooler",
+      "TLS": "historical client TLSv1.3 directly observed; P1D same fixed verify-full path, client handshake details not separately persisted",
+      "identity": "CA chain plus configured hostname validation; pinned endpoint/project digests and postgres.<project> routing identity",
+      "trustBoundary": "local host to managed pooler ingress"
+    },
+    {
+      "from": "managed pooler service",
+      "to": "project PostgreSQL backend",
+      "transport": "separate provider-managed upstream connection; exact TCP/socket/internal route not locally observed",
+      "TLS": "historical serverBackendTls.ssl=false; P1D backend-oriented TLS gate rejected",
+      "identity": "database/session role/server major checked; physical upstream peer identity not captured",
+      "trustBoundary": "provider internal backend hop; isolation/encryption controls NOT independently established"
+    }
+  ],
+  "conciseChain": "Runner host -> pinned Docker psql/libpq (host network) -> verify-full TCP -> Supavisor session pooler -> separate provider-managed connection -> PostgreSQL backend",
+  "tlsTerminationPoint": "Managed pooler ingress/service boundary, inferred from separate client/backend TLS observations; exact provider frontend/worker not observed.",
+  "localUnixSocketSelected": false,
+  "localProxySelected": false,
+  "localPortForwards": "Development Docker DB ports exist but do not match configured remote endpoint.",
+  "backendHopProtection": "UNKNOWN; neither pooler presence nor historical success is security approval.",
+  "fourDistinctClaims": {
+    "A_configuredVerifyFull": "PROVEN from non-secret service/profile/source",
+    "B_clientActuallyTls": "PROVEN in R4C/R4D/R5B/R5C history; not independently instrumented in P1D",
+    "C_backendPgStatSsl": "FALSE in explicit historical rows, rejected in P1D",
+    "D_networkEncryption": "tailscaled exists; no evidence that this DB path traverses Tailscale or that it supplies backend protection"
+  },
+  "references": {
+    "pgSsl": "https://www.postgresql.org/docs/17/libpq-ssl.html",
+    "pgConnection": "https://www.postgresql.org/docs/17/libpq-connect.html",
+    "pgStatSsl": "https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-SSL-VIEW",
+    "supabaseModes": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+    "supavisorUpstream": "https://github.com/supabase/supavisor/blob/main/docs/configuration/tenants.md"
+  }
+}

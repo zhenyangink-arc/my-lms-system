@@ -1,0 +1,33 @@
+{
+  "status": "PARTIAL",
+  "currentShotModes": [
+    "teacher_closeup",
+    "teacher_blackboard",
+    "learning_closeup",
+    "interaction",
+    "feedback"
+  ],
+  "currentScriptLayouts": [
+    "split",
+    "learning",
+    "teaching"
+  ],
+  "currentTemplate": [
+    "split-classroom",
+    "stacked-classroom"
+  ],
+  "proposalMapping": {
+    "teacher_focus": "existing teaching layout / teacher_closeup",
+    "split": "existing split layout / teacher_blackboard",
+    "learning_focus": "existing learning layout / learning_closeup",
+    "scenario_focus": "DEFERRED"
+  },
+  "authority": "One LessonRuntime presentation owner resolves cue or allowed Agent presentation proposal; not independent progress authority.",
+  "noImplementation": true,
+  "sources": [
+    "director",
+    "script-domain",
+    "layout",
+    "presentation-timeline"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "created": [
+    "A1",
+    "A2",
+    "B1",
+    "TA",
+    "AA",
+    "PO",
+    "EX",
+    "IN"
+  ],
+  "realPasswordLogin": true,
+  "getUser": true,
+  "wrongPasswordRejected": true,
+  "noTokenRejected": true,
+  "jwt": {
+    "role": "authenticated",
+    "aud": "authenticated",
+    "subMatches": true,
+    "issuerLocal": true,
+    "unexpired": true
+  },
+  "liveProviderRequests": 0
+}

@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "checks": [
+    "unique cue and media identity",
+    "one native video owner",
+    "same step/source/target/media revision",
+    "finite nonnegative time within known duration",
+    "media loaded duration checked again",
+    "single_choice activity binding",
+    "play/reveal capabilities",
+    "strict allowed action/policies",
+    "no selectors or unknown fields",
+    "native profile only; compat teacher excluded"
+  ],
+  "test": "tests/teaching-agent-r7b-projection.test.mjs"
+}

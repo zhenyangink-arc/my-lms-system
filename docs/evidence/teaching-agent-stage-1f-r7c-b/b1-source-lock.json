@@ -1,0 +1,41 @@
+{
+  "observedAtUtc": "2026-09-17T05:41:55.365050+00:00",
+  "files": [
+    {
+      "path": "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+      "sha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c"
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-native-activity.ts",
+      "sha256": "162d588e4e001f599768f3dc5e18b900fefa411ef5e3ff55ea8dcd159ac23bbc"
+    },
+    {
+      "path": "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "sha256": "2e0dc9b95e13d5ca0bfd3d98f3a003cc4313d7220833ffa17790c45fcbf4c994"
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-native-activity-form.tsx",
+      "sha256": "5ae35582fce54aa82bfd87e7367f315732e89736d997610cd4fa82e7ac6d6600"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx",
+      "sha256": "9f0440f0a0a8908d6d49b90630532807f089adfb9e3cbfe3d3506268b8b5975d"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring.test.mjs",
+      "sha256": "a1e0954b53f5529ef2cf362dfb3199922669919c99f1f7f81ee0e8329fc6a969"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring-db.test.mjs",
+      "sha256": "5faa177515bff29047c8167f19d963fc793795c005e56fd3bcc011c0a3447146"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+      "sha256": "656120132a2f937b9bde6e9bce71ac45b94ba9b0a5658c8bfd833d6ebd3175a4"
+    }
+  ],
+  "migrationPrepared": "202609170001",
+  "migrationInstalled": false,
+  "directPgDriverAdded": false,
+  "existingProductFilesModified": 0
+}

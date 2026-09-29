@@ -1,0 +1,23 @@
+{
+  "status": "NONBLOCKING",
+  "remaining": 2,
+  "applied": 0,
+  "items": [
+    {
+      "id": "O1",
+      "nodeNumber": 3,
+      "classification": "OPTIONAL",
+      "status": "NOT APPLIED",
+      "reason": "没有声称只有六个元音；加今天先看六个不是必要纠错。"
+    },
+    {
+      "id": "O2",
+      "nodeNumber": 7,
+      "classification": "OPTIONAL",
+      "status": "NOT APPLIED",
+      "reason": "现有通用鼓励不含错误答案或错误概念；按题细化反馈不是冻结前置。"
+    }
+  ],
+  "protectedNodesStillUnchanged": true,
+  "correctionStageRequired": false
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "correct resumes only after independent readback; wrong and UNKNOWN hold",
+  "resumeCondition": "Independent durable readback COMPLETED only",
+  "submitReceiptAloneCannotResume": true
+}

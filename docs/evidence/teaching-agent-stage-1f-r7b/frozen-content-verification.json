@@ -1,0 +1,20 @@
+{
+  "start": "VERIFIED",
+  "end": "VERIFIED",
+  "baselinePayloadSha256": "55a2b81ed6912e392ab17d502e5d2ffce3e0ddce330ae45d09ba79ccadcd43b8",
+  "nodeCount": 8,
+  "allNodeRowsExact": true,
+  "nodeHashes": [
+    "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+    "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+    "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+    "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+    "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+    "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+    "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+    "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b"
+  ],
+  "objectiveMapSha256": "85a750709306882092bb04cfcc5471961684b9ac39de964df06064ff950dfce5",
+  "frozenContentWrites": 0,
+  "endObservedAtUtc": "2026-09-17T02:54:51.573487+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": 0,
+  "agentRunsInTask": 0,
+  "providerRequestsInTask": 0,
+  "pinsCreated": 0,
+  "definitionPublication": 0,
+  "noReconcilerOrCancelExecuted": true,
+  "oldRouteRisk": "Feature OFF here denotes Teaching Agent transport only; does not establish a global kill switch for all legacy AI APIs. None invoked.",
+  "sources": [
+    "rollout",
+    "old-agent-route",
+    "preflight.json"
+  ]
+}

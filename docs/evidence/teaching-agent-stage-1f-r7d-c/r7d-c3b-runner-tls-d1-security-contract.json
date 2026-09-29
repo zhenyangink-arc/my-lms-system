@@ -1,0 +1,80 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D1",
+  "recordedAt": "2026-09-20T02:35:54.131017+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_PROCESS_TOPOLOGY_AUDIT_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "tlsGuardChanges": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "READY_FOR_SEPARATE_CONTRACT_REVIEW",
+  "originalContractTopology": "MANAGED_SESSION_POOLER_TCP_VERIFY_FULL",
+  "directTcpToPostgresOriginallyRequired": false,
+  "currentConflict": "The capture backend pg_stat_ssl gate observes a different hop from libpq verify-full; this conflicts with original D1 tlsNuance.",
+  "primaryClassification": "PG_STAT_SSL_GATE_NOT_OBSERVING_INTENDED_TLS_HOP",
+  "hopObservationMatrix": [
+    {
+      "topology": "direct client -> Postgres TLS",
+      "pgStatSslObserves": "same client/backend hop",
+      "canProveHostnameVerification": false
+    },
+    {
+      "topology": "client -> TLS-terminating pooler",
+      "pgStatSslObserves": "pooler upstream -> Postgres, not client -> pooler",
+      "clientTlsMustBeObservedSeparately": true
+    },
+    {
+      "topology": "pooler -> Postgres TLS",
+      "pgStatSslObserves": "this upstream connection only",
+      "saysNothingAboutClientTls": true
+    },
+    {
+      "topology": "Unix socket -> Postgres",
+      "pgStatSslObserves": "no SSL on socket",
+      "sslmodeIgnoredOnSocket": true,
+      "matchesCurrentClientEndpoint": false
+    }
+  ],
+  "futureDesignRequirements": [
+    "Keep fixed profile, exact CA/hostname verify-full and immutable image/source identities.",
+    "Define distinct client TLS evidence and backend-hop facts; retain backend pg_stat_ssl as evidence rather than silently relabeling false.",
+    "A pooled topology requires explicit reviewed provider/backend trust-boundary rationale; historical grants or connection success do not suffice.",
+    "If selecting direct TCP TLS instead, separately lock endpoint/profile/credential mechanism and validate both client and backend TLS; no automatic target switch.",
+    "Lock smallest implementation/test scope only after contract review. No blanket false acceptance, warning conversion, guard deletion or arbitrary query interface.",
+    "Preserve same-session READ ONLY, ledger/function/catalog ordering, authorization modes and no retry. Re-run affected owned safety tests before fresh capture approval."
+  ],
+  "providerInternalUnknowns": [
+    "exact upstream TCP versus socket route",
+    "exact TLS termination worker",
+    "backend isolation and any transport protection beyond backend SSL"
+  ],
+  "probeNeed": "No production probe needed to establish the primary mismatch: existing paired historical observations and explicit D1 contract already distinguish the hops. If future contract acceptance requires fresh peer details, a separate fixed read-only probe approval and reviewed entrypoint are prerequisites.",
+  "tlsGateChangeAuthorized": false,
+  "sourceImplementationAuthorized": false,
+  "references": {
+    "pgSsl": "https://www.postgresql.org/docs/17/libpq-ssl.html",
+    "pgConnection": "https://www.postgresql.org/docs/17/libpq-connect.html",
+    "pgStatSsl": "https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-SSL-VIEW",
+    "supabaseModes": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+    "supavisorUpstream": "https://github.com/supabase/supavisor/blob/main/docs/configuration/tenants.md"
+  }
+}

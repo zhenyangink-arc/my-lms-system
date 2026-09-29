@@ -1,0 +1,20 @@
+{
+  "contract": "development-domain-execution/1",
+  "scope": "IMPLEMENTED / NOT ACTIVATED",
+  "scenarioId": "r7cb-b3-wrong-correct-recovery-1",
+  "maxTtlSeconds": 900,
+  "initialGeneration": 0,
+  "generationAuthority": "existing StepController starts at 0; write requests must equal issued generation",
+  "dispatchSlots": 2,
+  "journal": "private exclusive scenario.json and dispatch-0/1.json; append-only claim/no reset/no retry; disabled marker survives restart",
+  "authority": "existing grader -> trusted repository -> same pg Client transaction/advisory lock/definition guard -> 7-param RPC -> durable rows -> NEW readback",
+  "newEvidenceStorage": "CURRENT_DEVELOPMENT_DB (only pinned canonical server transport; not used by isolated tests)",
+  "receipt": "activity-completion/2; storage is provenance, not an invented student revision",
+  "mutationGuard": "fresh actor-scoped safety read plus in-transaction actor locks, full R6F/B1 readback, exact target/max3/countsTowardCompletion/chapterTestNull, exact baseline/expiry and postcondition; no SQL business INSERT/UPDATE bypass",
+  "correctResponseFault": "confirmed second COMMIT response suppressed; journal disabled; Runtime independent readback only, no replay",
+  "restart": "owned IPC child only; parent Owner action; mutation disabled before stop/restart; no PM2/server/DB restart",
+  "browserRefresh": "explicit recover existing scenario READ ONLY; disables mutation admission, restores authoritative waiting/completed state; no automatic new activation",
+  "positionAndWaitingHint": "sessionStorage cue hint is presentation only; durable completion authority ignores hint if completed",
+  "cleanup": "retain attempts/progress; separately approved exact cleanup required to rerun",
+  "currentDbWrites": 0
+}

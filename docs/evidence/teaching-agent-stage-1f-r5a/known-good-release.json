@@ -1,0 +1,16 @@
+{
+  "path": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "directory": true,
+  "symlink": false,
+  "buildId": "LuAZe2VMY32YjOo1WvtrC",
+  "nextVersion": "16.2.10",
+  "packageSha256": "dd0c0db8f5881e3d12bd017a4ff40378d80275ef37a8948a466e330eba0ca587",
+  "lockfileSha256": "a6d94389cf839487432b5bab35fe9b8481a22ea5abbe4388076359a1085afc48",
+  "candidateDependencyLockMatchesKnownGood": true,
+  "requiredServerFilesExists": true,
+  "sourceAvailable": true,
+  "launcher": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+  "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+  "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "rollbackExecutionTestedThisStage": false
+}

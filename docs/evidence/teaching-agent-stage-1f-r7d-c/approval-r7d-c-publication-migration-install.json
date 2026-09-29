@@ -1,0 +1,82 @@
+{
+  "stage": "R7D-C Future Separate Approval Package",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "approved": false,
+  "executionAuthorized": false,
+  "basis": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-implementation-result.json",
+  "currentBuildBaseline": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBaselineRevalidated": false,
+  "sourceLock": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-expanded-source-lock.json",
+  "historicalApprovalsModified": false,
+  "prohibitions": [
+    "No Agent Run",
+    "No Provider",
+    "No B3 activation",
+    "No current Draft publication",
+    "No public summarize transport activation",
+    "No cleanup",
+    "No bulk pending migration install"
+  ],
+  "status": "READY_AWAITING_SEPARATE_EXPLICIT_APPROVAL",
+  "approvalKind": "PUBLICATION_MIGRATION_INSTALL_ONLY",
+  "migration": {
+    "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+    "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+    "mode": "0o664",
+    "bytes": 13366
+  },
+  "responsibility": {
+    "addedFunctions": [
+      {
+        "signature": "runtime_publish_private.native_admission(jsonb,jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "30b5ad191a0a69e420d014247ebd4e7bfb0c52f856bb3cd903e797e76315d36e"
+      },
+      {
+        "signature": "runtime_publish_private.publication_version_admitted(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9020153d7bacebfb374bd93a18ba2a1802ff8ed38c9d9ad98c85dec9dd993ce4"
+      }
+    ],
+    "changedFunctions": [
+      {
+        "signature": "publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "d9525ae658fa0350b601aa13c41b43a002dd7033b76432b0ecb807e31ba637a5"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "05ace3967965e3e5bb19b5fc0484c1bff8cc468d7935c86c80a8b8ac4fd0bafc"
+      }
+    ],
+    "relationsUnchanged": true,
+    "changedConstraints": [
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshot_version_kind",
+        "definition": "CHECK (COALESCE((((document ->> 'snapshotId'::text) = id) AND ((((document ->> 'revision'::text) = 'publish-foundation/1'::text) AND (NOT (document ? 'publicationKind'::text))) OR (((document ->> 'revision'::text) = 'publish-foundation/2'::text) AND ((document ->> 'publicationKind'::text) = 'canonical-native'::text) AND ((document ->> 'compilerVersion'::text) = 'native-publication-1'::text) AND ((document #>> '{manifest,snapshot,compilerVersion}'::text[]) = 'native-publication-1'::text)))), false))"
+      }
+    ]
+  },
+  "validation": "PASS on owned isolated PostgreSQL; standalone and combined orders",
+  "newTables": 0,
+  "historicalMigrationEdits": 0,
+  "currentInstallPerformed": false,
+  "expectedHistoricalBaselineLedger": 458,
+  "requiresFreshAuthorizedPreflight": [
+    "Exact migration/source hashes",
+    "Actual installed historical function/constraint/ACL hashes match reviewed chain",
+    "Ledger and separately approved install order (do not assume 458 after another approved install)",
+    "No unapproved pending migrations",
+    "Current business/auth/frozen evidence baseline retained"
+  ],
+  "installPlan": [
+    "Install only this exact migration with recorded transaction/ledger procedure after fresh authorized checks",
+    "Stop on any historical definition/ledger drift",
+    "Verify existing v1 read/Explain compatibility without invoking Tool/Agent/Provider"
+  ],
+  "rollbackPolicy": "Forward-only; no historical row/payload rewrite. Preserve prior function definitions for review; no automatic destructive down migration after v2 use.",
+  "otherMigration": "Separate approval required",
+  "appDeployment": "Separate approval required"
+}

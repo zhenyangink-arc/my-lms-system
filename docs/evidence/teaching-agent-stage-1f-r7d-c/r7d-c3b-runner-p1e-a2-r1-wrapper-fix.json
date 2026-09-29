@@ -1,0 +1,38 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A2-R1",
+  "recordedAt": "2026-09-20T08:01:31.334242+00:00",
+  "contract": "validation-reporting-wrapper-correction/1",
+  "oldWrapperPath": "/tmp/uply-p1e-a2-validate.py",
+  "oldWrapperSha256": "394ef58b96d62de18ee2632462ee91d2e36d23d8f4dc8eba58b0290b374993eb",
+  "newWrapperPath": "/tmp/uply-p1e-a2-r1-validate.py",
+  "newWrapperSha256": "c39075525d3e47ed114d3819bef8c18119080857671e3b0387778693c9df1a6a",
+  "bugClassification": "VALIDATION_WRAPPER_PATH_RELATIVIZATION_ERROR",
+  "fixClassification": "VALIDATION_REPORTING_ONLY",
+  "repoSourceChanged": false,
+  "testSourceChanged": false,
+  "semanticTestChanges": false,
+  "oldWrapperModified": false,
+  "priorRunResultsReused": false,
+  "pathClassification": {
+    "repository": "Only paths under the exclusive fresh A2-R1 run are emitted repo-relative. Other repository reporting destinations are rejected.",
+    "ownedTemporary": "A current-process tempfile.mkdtemp audit event registers an owned /tmp root. Reporting requires an existing current-UID root and a path below that root, with no symlink resolution difference. Output uses OWNED_TEMP/<registered-index>/<relative-path>.",
+    "unknownExternal": "RuntimeError VALIDATION_REPORT_UNOWNED_PATH, never caught as PASS."
+  },
+  "outputRouting": {
+    "runDirectory": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b",
+    "exclusiveReserveBeforeTests": true,
+    "regression": "The original reserve_validation_directory helper runs against an evidence-only root nested under this fresh run. pg.ROOT is restored immediately before test subprocess execution.",
+    "case35": "Its test-owned temporary ROOT is preserved; the original helper executes unchanged, including the second mkdir collision and FileExistsError assertion.",
+    "existingDirectoriesReused": false
+  },
+  "unchangedWrapperComponents": {
+    "session": true,
+    "Result": true,
+    "flat": true
+  },
+  "testDiscovery": "Same modules, suite construction, order, required count assertion and test IDs as old wrapper; discovery.json is additional reporting only.",
+  "stopPolicy": "First failure/error/skip/XFAIL/XPASS stops; no retry or third wrapper correction.",
+  "diff": "--- /tmp/uply-p1e-a2-validate.py\n+++ /tmp/uply-p1e-a2-r1-validate.py\n@@ -2,10 +2,35 @@\n from pathlib import Path\n R=Path('/home/yangzhen/projects/my-lms-system');os.chdir(R)\n sys.path[:0]=[str(R/'tests'),str(R/'scripts/teaching-agent-r7d-c3b')]\n-base=R/'docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation'\n+base=R/'docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation'\n base.mkdir(mode=0o700,exist_ok=True)\n run=base/uuid.uuid4().hex;run.mkdir(mode=0o700,exist_ok=False)\n print(json.dumps({'validationDirectory':str(run.relative_to(R))}),flush=True)\n+# Reporting-only ownership registry. Audit events do not alter tempfile behavior.\n+owned_temporary_roots=[]\n+def audit_owned_temp(event,args):\n+ if event=='tempfile.mkdtemp':\n+  candidate=Path(args[0]).absolute()\n+  if candidate.parent.resolve()!=Path('/tmp'):\n+   raise RuntimeError('VALIDATION_TEMP_SCOPE_UNEXPECTED')\n+  owned_temporary_roots.append(candidate)\n+sys.addaudithook(audit_owned_temp)\n+def report_path(path):\n+ path=Path(path).absolute()\n+ if path.resolve()!=path:\n+  raise RuntimeError('VALIDATION_REPORT_SYMLINK')\n+ if path.is_relative_to(R):\n+  if not path.is_relative_to(run):\n+   raise RuntimeError('VALIDATION_REPORT_OUTSIDE_FRESH_RUN')\n+  return str(path.relative_to(R))\n+ for index,root in enumerate(owned_temporary_roots):\n+  if path.is_relative_to(root) and root.is_dir() and root.stat().st_uid==os.getuid():\n+   return 'OWNED_TEMP/'+str(index)+'/'+str(path.relative_to(root))\n+ raise RuntimeError('VALIDATION_REPORT_UNOWNED_PATH')\n+# Only the evidence destination is redirected; the existing exclusive directory\n+# helper, UUID collision behavior, assertions, discovery and subprocesses remain.\n+reporting_root=run/'regression-output-root'\n+(reporting_root/'docs/evidence/teaching-agent-stage-1f-r7d-c').mkdir(parents=True,exist_ok=False)\n import teaching_agent_single_migration_runner_contract_test as ct\n import teaching_agent_single_migration_runner_postgres_test as pg\n import teaching_agent_single_migration_runner_backup_test as bt\n@@ -21,7 +46,15 @@\n mt._Session.__init__=session\n original_reserve=pg.reserve_validation_directory\n def reserve():\n- path=original_reserve();regdirs.append(str(path.relative_to(R)));return path\n+ if pg.ROOT==R:\n+  from unittest.mock import patch\n+  with patch.object(pg,'ROOT',reporting_root):\n+   path=original_reserve()\n+ else:\n+  # AUTH-LIFECYCLE-35 owns its temporary ROOT and still calls the original helper.\n+  report_path(pg.ROOT)\n+  path=original_reserve()\n+ regdirs.append(report_path(path));return path\n pg.reserve_validation_directory=reserve\n class Result(unittest.TextTestResult):\n  def startTest(self,test):super().startTest(test);self.started=time.time()\n@@ -41,6 +74,9 @@\n  suites.append((name,unittest.TestSuite(x for x in cases if 'test_RUNNER_D1_51' not in x.id())))\n suites.append(('regression',unittest.TestSuite([pg.PG('test_RUNNER_D1_51')])))\n assert sum(s.countTestCases() for _,s in suites)==174\n+with (run/'discovery.json').open('x') as out:\n+ json.dump({'discovered':sum(s.countTestCases() for _,s in suites),\n+            'tests':[t.id() for _,suite in suites for t in flat(suite)]},out,indent=2)\n ok=True\n try:\n  for name,suite in suites:\n",
+  "productionAccessAuthorized": false,
+  "productionMutationAuthorized": false
+}

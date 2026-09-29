@@ -1,0 +1,444 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "plan_id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "item_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "assignment_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "created_by",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "now()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "removed": []
+  },
+  "constraints": {
+    "added": [
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (assignment_id) REFERENCES public.learning_assignments(id) ON DELETE RESTRICT",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_assignment_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (assignment_id)",
+        "kind": "u",
+        "name": "curriculum_plan_assessments_assignment_id_key",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (created_by) REFERENCES public.profiles(id)",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_created_by_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (item_id) REFERENCES public.curriculum_plan_template_items(id) ON DELETE RESTRICT",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_item_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (plan_id, item_id)",
+        "kind": "p",
+        "name": "curriculum_plan_assessments_pkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (plan_id) REFERENCES public.institution_curriculum_plans(id) ON DELETE CASCADE",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_plan_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((activity_type = ANY (ARRAY['course'::text, 'listening'::text, 'speaking'::text, 'reading'::text, 'writing'::text, 'vocabulary'::text, 'grammar'::text, 'chapter_test'::text, 'stage_exam'::text, 'final_exam'::text, 'review'::text, 'chapter_practice'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_activity_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((source_type = ANY (ARRAY['lesson'::text, 'chapter'::text, 'chapter_test'::text, 'assessment_paper'::text, 'chapter_practice'::text, 'specialized_practice'::text, 'manual'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_source_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      }
+    ],
+    "removed": [
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((activity_type = ANY (ARRAY['course'::text, 'listening'::text, 'speaking'::text, 'reading'::text, 'writing'::text, 'vocabulary'::text, 'grammar'::text, 'chapter_test'::text, 'stage_exam'::text, 'final_exam'::text, 'review'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_activity_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((source_type = ANY (ARRAY['lesson'::text, 'chapter'::text, 'specialized_practice'::text, 'chapter_test'::text, 'assessment_paper'::text, 'manual'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_source_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      }
+    ]
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION private.guard_curriculum_exam_cancellation()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if new.status = 'cancelled' and old.status <> 'cancelled' and exists (\n    select 1 from public.curriculum_plan_assessments ca join public.learning_assignments a on a.id = ca.assignment_id\n      where ca.plan_id = new.id and a.status = 'published'\n  ) then raise exception '此计划还有已布置的考试，请先在考试管理中结束考试，再取消计划'; end if;\n  return new;\nend $function$\n",
+        "identityArguments": "",
+        "name": "guard_curriculum_exam_cancellation",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION private.guard_curriculum_exam_roster()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  perform 1 from public.institution_curriculum_plans where id = new.plan_id for update;\n  if exists(select 1 from public.curriculum_plan_assessments where plan_id = new.plan_id)\n    and not exists(select 1 from public.institution_curriculum_plan_students where plan_id = new.plan_id and student_id = new.student_id) then\n    raise exception '此计划已布置考试；请为新增学生发布单独计划，避免遗漏考试名单';\n  end if;\n  return new;\nend $function$\n",
+        "identityArguments": "",
+        "name": "guard_curriculum_exam_roster",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION private.guard_curriculum_learning_publication()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n  if old.status = 'draft' and new.status = 'published' and exists (\n    select 1 from public.curriculum_plan_template_items i where i.template_id = new.id and (\n      (i.activity_type <> 'review' and i.source_type = 'manual')\n      or (i.source_type = 'assessment_paper' and not exists(select 1 from public.assessment_papers p where p.id = i.source_id and p.status = 'published'))\n      or (i.source_type = 'chapter_practice' and not exists(select 1 from public.chapter_practice_units u where u.id = i.source_id and u.status = 'published'))\n      or (i.source_type = 'specialized_practice' and not exists(select 1 from public.growth_toolbox_exercises e where e.id = i.source_id and e.status = 'published'))\n    )\n  ) then raise exception '请先将考试和练习绑定到有效的已发布内容，再发布计划'; end if;\n  return new;\nend $function$\n",
+        "identityArguments": "",
+        "name": "guard_curriculum_learning_publication",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "definition": "CREATE OR REPLACE FUNCTION private.guard_curriculum_learning_source()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare t public.curriculum_plan_templates%rowtype;\nbegin\n  select * into strict t from public.curriculum_plan_templates where id = new.template_id;\n  -- Existing manual arrangements may be copied into a draft for repair. They\n  -- cannot be published as executable exam/practice tasks (publication guard).\n  if new.source_type = 'manual' then return new; end if;\n  if new.activity_type in ('stage_exam','final_exam') then\n    if new.source_type <> 'assessment_paper' or not exists (\n      select 1 from public.assessment_papers p\n      join public.chapter_tests test on test.id = p.source_test_id\n      join public.lessons l on l.id = test.lesson_id\n      where p.id = new.source_id and p.student_app_id = t.student_app_id\n        and p.status = 'published' and p.paper_type = 'exam' and l.course_id = t.course_id\n    ) then raise exception '考试安排必须绑定本课程已发布的标准考试卷'; end if;\n  elsif new.source_type = 'assessment_paper' then\n    raise exception '只有考试安排可以绑定标准考试卷';\n  end if;\n  if new.activity_type = 'chapter_practice' then\n    if new.source_type <> 'chapter_practice' or not exists (\n      select 1 from public.chapter_practice_units u\n      join public.course_chapters c on c.id = u.course_chapter_id\n      join public.lessons l on l.id = c.lesson_id\n      where u.id = new.source_id and u.student_app_id = t.student_app_id\n        and u.status = 'published' and c.is_published and l.is_published and l.course_id = t.course_id\n    ) then raise exception '巩固安排必须绑定本课程已发布的章节巩固包'; end if;\n  elsif new.source_type = 'chapter_practice' then\n    raise exception '只有章节巩固安排可以绑定巩固包';\n  end if;\n  if new.activity_type in ('listening','speaking','reading','writing','grammar','vocabulary') then\n    if new.source_type <> 'specialized_practice' or not exists (\n      select 1 from public.growth_toolbox_exercises e\n      join public.course_chapters c on c.id = e.course_chapter_id\n      join public.lessons l on l.id = c.lesson_id\n      where e.id = new.source_id and e.student_app_id = t.student_app_id\n        and e.status = 'published' and e.skill = new.activity_type\n        and e.course_id = t.course_id and l.course_id = t.course_id and c.is_published and l.is_published\n    ) then raise exception '专项练习必须绑定本课程对应能力的已发布练习'; end if;\n  elsif new.source_type = 'specialized_practice' then\n    raise exception '专项练习来源与活动类型不一致';\n  end if;\n  return new;\nend $function$\n",
+        "identityArguments": "",
+        "name": "guard_curriculum_learning_source",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_template_id uuid",
+        "definition": "CREATE OR REPLACE FUNCTION private.staff_has_curriculum_template(p_template_id uuid)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select auth.uid() is not null and exists(select 1 from public.institution_curriculum_plans p\n    where p.template_id = p_template_id and p.tenant_id = private.current_tenant_id()\n      and private.can_manage_curriculum_plan(p.id));\n$function$\n",
+        "identityArguments": "p_template_id uuid",
+        "name": "staff_has_curriculum_template",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_plan_id uuid, p_item_id uuid",
+        "definition": "CREATE OR REPLACE FUNCTION public.dispatch_curriculum_plan_exam(p_plan_id uuid, p_item_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  p public.institution_curriculum_plans%rowtype;\n  i public.curriculum_plan_template_items%rowtype;\n  v_assignment uuid; v_students uuid[]; v_course uuid; v_anchor integer; v_start timestamptz;\nbegin\n  select * into p from public.institution_curriculum_plans where id = p_plan_id for update;\n  if auth.uid() is null or not coalesce(private.can_manage_curriculum_plan(p_plan_id),false)\n    or p.tenant_id is distinct from private.current_tenant_id() then raise exception '无权布置此计划的考试'; end if;\n  if p.status not in ('published','active') then raise exception '只有有效机构计划可以布置考试'; end if;\n  select * into i from public.curriculum_plan_template_items where id = p_item_id and template_id = p.template_id;\n  if i.id is null or i.source_type <> 'assessment_paper' then raise exception '计划项目未绑定标准考试卷'; end if;\n  select array_agg(s.student_id) into v_students from public.institution_curriculum_plan_students s where s.plan_id = p.id;\n  if coalesce(cardinality(v_students),0) = 0 then raise exception '请先向计划分配学生'; end if;\n  if exists (select 1 from unnest(v_students) s(id) where not exists (\n    select 1 from public.student_app_enrollments e where e.student_id = s.id and e.tenant_id = p.tenant_id\n      and e.app_id = p.student_app_id and e.status = 'active' and e.starts_at <= now() and (e.ends_at is null or e.ends_at > now())\n  )) then raise exception '计划中存在未开通或已失效的学生，请先处理学生授权'; end if;\n  if public.current_profile_role() = 'teacher' and exists (\n    select 1 from unnest(v_students) s(id) where not exists (\n      select 1 from public.tenant_student_assignments a where a.tenant_id = p.tenant_id\n        and a.student_app_id = p.student_app_id and a.teacher_id = auth.uid() and a.student_id = s.id\n    )\n  ) then raise exception '老师只能向当前应用中自己负责的学生布置考试'; end if;\n  select assignment_id into v_assignment from public.curriculum_plan_assessments where plan_id = p.id and item_id = i.id;\n  if v_assignment is not null then return v_assignment; end if;\n  select course_id into v_course from public.curriculum_plan_templates where id = p.template_id;\n  select min(day_offset * 1440 + start_minute) into v_anchor from public.curriculum_plan_template_items where template_id = p.template_id;\n  v_start := p.starts_at + make_interval(mins => i.day_offset * 1440 + i.start_minute - v_anchor);\n  if v_start <= now() then raise exception '考试计划时间已经开始，请采用新计划安排未来的考试'; end if;\n  v_assignment := public.create_learning_assignment_from_paper_with_unlock(\n    i.source_id, v_course, 'selected_students', v_students, v_start,\n    v_start + make_interval(mins => i.duration_minutes), coalesce(i.instructions,''),\n    false, null, false, 1, false, false, null, null, '{}'::uuid[], null, null, 'highest', null\n  );\n  insert into public.curriculum_plan_assessments(plan_id,item_id,assignment_id,created_by) values(p.id,i.id,v_assignment,auth.uid());\n  return v_assignment;\nend $function$\n",
+        "identityArguments": "p_plan_id uuid, p_item_id uuid",
+        "name": "dispatch_curriculum_plan_exam",
+        "owner": "postgres",
+        "result": "uuid",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_plan_ids uuid[]",
+        "definition": "CREATE OR REPLACE FUNCTION public.get_curriculum_execution(p_plan_ids uuid[])\n RETURNS jsonb\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nwith permitted as (\n  select p.*, s.student_id, t.course_id\n  from public.institution_curriculum_plans p\n  join public.curriculum_plan_templates t on t.id = p.template_id\n  join public.institution_curriculum_plan_students s on s.plan_id = p.id and s.tenant_id = p.tenant_id\n  join public.student_app_enrollments en on en.tenant_id = p.tenant_id and en.student_id = s.student_id\n    and en.app_id = p.student_app_id and en.status = 'active' and en.starts_at <= now() and (en.ends_at is null or en.ends_at > now())\n  join public.tenant_memberships m on m.tenant_id = p.tenant_id and m.user_id = s.student_id and m.status = 'active' and m.role = 'student'\n  where p.id = any(p_plan_ids) and p.tenant_id = private.current_tenant_id() and auth.uid() is not null\n    and p.status in ('published','active','completed')\n    and (s.student_id = auth.uid() or (\n      private.can_manage_curriculum_plan(p.id)\n      and (public.current_profile_role() <> 'teacher' or exists (\n        select 1 from public.tenant_student_assignments a where a.tenant_id = p.tenant_id\n          and a.student_app_id = p.student_app_id and a.teacher_id = auth.uid() and a.student_id = s.student_id\n      ))\n    ))\n), facts as (\n  select p.id plan_id, i.id item_id, p.student_id, i.source_type,\n    case i.source_type\n      when 'lesson' then coalesce(lp.status = 'completed',false)\n      when 'chapter' then ep.completed_at is not null\n      when 'chapter_test' then coalesce(ta.passed,false)\n      when 'chapter_practice' then pp.completed_at is not null\n      when 'specialized_practice' then coalesce(tp.completed,false)\n      when 'assessment_paper' then coalesce(sub.submission_state = 'grade_released' and sub.grade_released_at is not null,false)\n      else false end completed,\n    case i.source_type\n      when 'lesson' then coalesce(lp.status <> 'not_started',false)\n      when 'chapter' then ep.id is not null\n      when 'chapter_test' then coalesce(ta.started,false)\n      when 'chapter_practice' then pp.started_at is not null\n      when 'specialized_practice' then coalesce(tp.started,false)\n      when 'assessment_paper' then sub.id is not null\n      else false end started,\n    coalesce(sub.submission_state in ('submitted_pending_grading','objective_graded_pending_manual','grading_completed'),false) pending_grading,\n    case i.source_type\n      when 'lesson' then coalesce(l.is_published,false)\n      when 'chapter' then coalesce(ch.is_published,false)\n      when 'chapter_test' then coalesce(test.status = 'published',false)\n      when 'chapter_practice' then coalesce(u.status in ('published','needs_update'),false)\n      when 'specialized_practice' then coalesce(ex.status = 'published',false)\n      when 'assessment_paper' then a.id is not null and a.status in ('published','closed')\n      else false end available,\n    case i.source_type when 'lesson' then lp.progress_percent when 'chapter' then ep.progress_percent\n      when 'chapter_practice' then pp.progress_percent else null end progress_percent,\n    a.id assignment_id, a.starts_at, a.due_at\n  from permitted p join public.curriculum_plan_template_items i on i.template_id = p.template_id\n  left join public.lessons l on i.source_type = 'lesson' and l.id = i.source_id and l.course_id = p.course_id\n  left join public.lesson_progress lp on lp.lesson_id = l.id and lp.user_id = p.student_id and lp.tenant_id = p.tenant_id\n  left join public.course_chapters ch on i.source_type = 'chapter' and ch.id = i.source_id\n  left join public.chapter_tests cht on cht.id = ch.chapter_test_id and cht.student_app_id = p.student_app_id\n  left join public.course_ebook_progress ep on ep.test_slug = cht.slug and ep.student_id = p.student_id\n    and ep.tenant_id = p.tenant_id and ep.student_app_id = p.student_app_id\n  left join public.chapter_tests test on i.source_type = 'chapter_test' and test.id = i.source_id and test.student_app_id = p.student_app_id\n  left join lateral (select bool_or(at.passed) passed, count(*) > 0 started from public.chapter_test_attempts at\n    where at.test_id = test.id and at.student_id = p.student_id and at.tenant_id = p.tenant_id) ta on true\n  left join public.chapter_practice_units u on i.source_type = 'chapter_practice' and u.id = i.source_id and u.student_app_id = p.student_app_id\n  left join public.student_chapter_practice_progress pp on pp.practice_unit_id = u.id and pp.student_id = p.student_id and pp.tenant_id = p.tenant_id\n  left join public.growth_toolbox_exercises ex on i.source_type = 'specialized_practice' and ex.id = i.source_id and ex.student_app_id = p.student_app_id\n  left join lateral (select bool_or(s.status = 'completed' and s.completed_at is not null) completed, count(*) > 0 started\n    from public.toolbox_practice_sessions s where s.exercise_id = ex.id and s.student_id = p.student_id\n      and s.tenant_id = p.tenant_id and s.started_at >= p.starts_at + make_interval(mins =>\n        i.day_offset * 1440 + i.start_minute - (select min(pi.day_offset * 1440 + pi.start_minute)\n          from public.curriculum_plan_template_items pi where pi.template_id = p.template_id))) tp on true\n  left join public.curriculum_plan_assessments ca on ca.plan_id = p.id and ca.item_id = i.id\n  left join public.learning_assignments a on a.id = ca.assignment_id and a.tenant_id = p.tenant_id and a.student_app_id = p.student_app_id\n    and (a.target_scope = 'all_students' or exists(select 1 from public.learning_assignment_targets target where target.assignment_id = a.id and target.student_id = p.student_id))\n  left join lateral (select s.id,s.submission_state,s.grade_released_at from public.learning_submissions s\n    where s.assignment_id = a.id and s.student_id = p.student_id and s.tenant_id = p.tenant_id\n    order by s.attempt_number desc, s.submitted_at desc limit 1) sub on true\n)\nselect coalesce(jsonb_agg(to_jsonb(facts) - 'source_type' || jsonb_build_object('tracked',source_type <> 'manual')), '[]'::jsonb) from facts;\n$function$\n",
+        "identityArguments": "p_plan_ids uuid[]",
+        "name": "get_curriculum_execution",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true
+      }
+    ],
+    "removed": []
+  },
+  "indexes": {
+    "added": [
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX curriculum_plan_assessments_assignment_id_key ON public.curriculum_plan_assessments USING btree (assignment_id)",
+        "name": "curriculum_plan_assessments_assignment_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX curriculum_plan_assessments_pkey ON public.curriculum_plan_assessments USING btree (plan_id, item_id)",
+        "name": "curriculum_plan_assessments_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "valid": true
+      }
+    ],
+    "removed": []
+  },
+  "policies": {
+    "added": [
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "staff read adopted curriculum items",
+        "qual": "private.staff_has_curriculum_template(template_id)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "curriculum_plan_template_items",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "staff read adopted curriculum templates",
+        "qual": "private.staff_has_curriculum_template(id)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "curriculum_plan_templates",
+        "with_check": null
+      }
+    ],
+    "removed": []
+  },
+  "relations": {
+    "added": [
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=arwdDxtm/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "curriculum_plan_assessments",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  },
+  "triggers": {
+    "added": [
+      {
+        "definition": "CREATE TRIGGER curriculum_learning_source_guard BEFORE INSERT OR UPDATE ON public.curriculum_plan_template_items FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_learning_source()",
+        "enabled": "O",
+        "name": "curriculum_learning_source_guard",
+        "schema": "public",
+        "table": "curriculum_plan_template_items"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_learning_publication_guard BEFORE UPDATE ON public.curriculum_plan_templates FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_learning_publication()",
+        "enabled": "O",
+        "name": "curriculum_learning_publication_guard",
+        "schema": "public",
+        "table": "curriculum_plan_templates"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_exam_roster_guard BEFORE INSERT OR UPDATE ON public.institution_curriculum_plan_students FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_exam_roster()",
+        "enabled": "O",
+        "name": "curriculum_exam_roster_guard",
+        "schema": "public",
+        "table": "institution_curriculum_plan_students"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_exam_cancellation_guard BEFORE UPDATE ON public.institution_curriculum_plans FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_exam_cancellation()",
+        "enabled": "O",
+        "name": "curriculum_exam_cancellation_guard",
+        "schema": "public",
+        "table": "institution_curriculum_plans"
+      }
+    ],
+    "removed": []
+  },
+  "types": {
+    "added": [
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_curriculum_plan_assessments",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "curriculum_plan_assessments",
+        "notNull": false,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  }
+}

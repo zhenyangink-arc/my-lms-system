@@ -1,0 +1,32 @@
+{
+  "productionDbWrites": 0,
+  "productionMigrations": 0,
+  "productionDeploy": 0,
+  "pm2Mutations": 0,
+  "runtimeWrites": 0,
+  "launcherWrites": 0,
+  "tailscaleMutations": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "contentWrites": 0,
+  "authWrites": 0,
+  "reconcilerCalls": 0,
+  "persistentCancelCalls": 0,
+  "newBackups": 0,
+  "restores": 0,
+  "status": "PASS",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "agentRows": {
+    "agent_definition_versions": 0,
+    "agent_conversations": 0,
+    "agent_runs": 0,
+    "agent_messages": 0,
+    "agent_run_events": 0
+  },
+  "otherAppsUnchanged": true,
+  "r5cHistoryPreserved": true,
+  "r5cFreshBackupRetained": true,
+  "backupRule": "No new recovery point required for read-only acceptance closure.",
+  "evidenceBoundary": "Fixed read-only SQL, no business RPC, GET/HEAD only; task-scope counters, not global concurrent activity claim"
+}

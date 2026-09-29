@@ -1,0 +1,32 @@
+{
+  "sourceHashes": {
+    "src/app/[space]/dashboard/admin/development-execution/page.tsx": "2a978a00b562a9d0f7854b4986f483d4928aeff2c4462a4b9a43cecfe2f7a20b",
+    "src/features/development-execution/components/provisioning-form.tsx": "8da7cfae914e33acb6eaf30653e8d464002880cabed6b471ded0821047257696",
+    "src/features/development-execution/server/provisioning-composition.server.ts": "867463a756258fedf1579cd0832ee256f0c0bf6d137aa08a6475ab11b1d3c3ca",
+    "src/features/development-execution/server/provisioning-contract.ts": "179430f5d6ca8357d4c76e2b7998efd8fd5df9a3e8d8fc423afd2a3bd9570a7c",
+    "src/features/development-execution/server/provisioning-entrypoint.server.ts": "0240919fa05428120dbc212413d66c73cc009fdecf8b1c533943837d27bbde0f",
+    "src/features/development-execution/server/provisioning-journal.server.ts": "4996f6c2ba58a88ebe21c5c709f5081e58916a9338265475d1431e4914f3a21c",
+    "src/features/development-execution/server/provisioning-readback.server.ts": "6951f0cbde04bd5f40e330dba94b2a57071833f2b0fa150c9a79a1a7caa944f8",
+    "src/features/development-execution/server/provisioning-transport.server.ts": "36ef141239b704c5e91f43a4ca9000ceb2974e758f69f0b0e57af4fe9503917a",
+    "src/features/development-execution/server/provisioning.actions.ts": "6e6ae7b35171207df98f4f8e4e2010bf7075ad6ef8ac4522f5a7e343051547de",
+    "src/features/development-execution/server/provisioning.service.ts": "1ae76d4cf31d5e0cd57559dc1122e70aa98fd81e8922bc2e30045bf19821c055",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts": "fc11bc041ddfec9e348e11a12450c3a20f85eb0d5438c914410db8687b8d325a"
+  },
+  "workspaceModified": [
+    "src/features/development-execution/server/provisioning-composition.server.ts",
+    "src/features/development-execution/server/provisioning.actions.ts"
+  ],
+  "workspaceNew": [
+    "src/features/development-execution/server/provisioning-entrypoint.server.ts",
+    "src/features/development-execution/server/provisioning-transport.server.ts",
+    "src/features/development-execution/components/provisioning-form.tsx",
+    "src/app/[space]/dashboard/admin/development-execution/page.tsx"
+  ],
+  "tests": {
+    "tests/teaching-agent-r7cb-b2a-action.test.mjs": "b98a6c80274f34aa38c28c1ea3aa6cb06170fab6cca13d23e044a6c76197db1f",
+    "tests/teaching-agent-r7cb-b2a-entrypoint.test.mjs": "24d5ee1b354ae7b54914969015d9255920dad2ba27e61a8d58376c25d7dee655",
+    "tests/fixtures/teaching-agent-r7cb/b2a-ui-browser.mjs": "4c164445b242539f776d9c60d3b79ffdaf17dd829cf2f20e65ffd6821e9a3824"
+  },
+  "immutableB2Core": "5 MATCH",
+  "B1Source": "UNCHANGED"
+}

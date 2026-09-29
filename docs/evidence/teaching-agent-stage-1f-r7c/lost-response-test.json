@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "environment": "ISOLATED TEST DB",
+  "testFile": "tests/teaching-agent-r7c-durable.test.mjs",
+  "testCase": "lost response committed/no-commit, independent readback, no retry",
+  "committed": "COMPLETED via new readback; may resume",
+  "noCommit": "INCOMPLETE; hold",
+  "readUnavailable": "UNKNOWN; hold",
+  "automaticSubmissionRetry": 0
+}

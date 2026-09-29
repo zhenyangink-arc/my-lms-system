@@ -1,0 +1,64 @@
+{
+  "checkedAt": "2026-09-13T02:48:16.161Z",
+  "tailscale8443": {
+    "tcp": {
+      "HTTPS": true
+    },
+    "web": [
+      [
+        "kmgwak-system-product-name.taila18cd5.ts.net:8443",
+        {
+          "Handlers": {
+            "/": {
+              "Proxy": "http://127.0.0.1:3000"
+            }
+          }
+        }
+      ]
+    ]
+  },
+  "processes": [],
+  "checks": [
+    {
+      "url": "http://127.0.0.1:3000/",
+      "exit": 0,
+      "status": "200",
+      "redirect": ""
+    },
+    {
+      "url": "https://kmgwak-system-product-name.taila18cd5.ts.net:8443/",
+      "exit": 0,
+      "status": "200",
+      "redirect": ""
+    },
+    {
+      "url": "https://kmgwak-system-product-name.taila18cd5.ts.net:8443/platform/dashboard/admin/apps/korean/textbooks",
+      "exit": 0,
+      "status": "200",
+      "redirect": "",
+      "bodyCheck": {
+        "hasNextRedirect": true,
+        "hasAuthLoginDestination": true,
+        "hasSignInText": false,
+        "hasWorkbenchTitle": false
+      },
+      "authorizationAccepted": false
+    },
+    {
+      "url": "https://kmgwak-system-product-name.taila18cd5.ts.net:8443/platform/dashboard/admin/apps/korean/textbooks/workbench",
+      "exit": 0,
+      "status": "200",
+      "redirect": "",
+      "bodyCheck": {
+        "hasNextRedirect": true,
+        "hasAuthLoginDestination": true,
+        "hasSignInText": false,
+        "hasWorkbenchTitle": false
+      },
+      "authorizationAccepted": false
+    }
+  ],
+  "loggedInOwnerE2e": false,
+  "configurationChanged": false,
+  "processInspection": "PM2 host PIDs are not visible in this command environment /proc; do not infer process absence"
+}

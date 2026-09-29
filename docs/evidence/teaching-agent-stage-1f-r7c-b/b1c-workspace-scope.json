@@ -1,0 +1,20 @@
+{
+  "productSourceLocks": "8/8 MATCH",
+  "changedProductFilesInPreparation": 0,
+  "migrationInstall": 1,
+  "dbBusinessWrites": 0,
+  "authWrites": 0,
+  "deploy": 1,
+  "pm2Mutations": "one named stop/start",
+  "tailscaleMutations": 0,
+  "artifactsBuiltOrSwitched": 1,
+  "writes": "R7C-B report/evidence plus temporary local preparation scripts only",
+  "rawUuidEvidenceMatches": [],
+  "currentBusinessWrites": 0,
+  "logicalProductFilesAddedToLive": 4,
+  "extraProductFixes": 0,
+  "operationsDirectory": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/20260917T061353Z",
+  "backupDirectory": "/home/yangzhen/backups/uply/20260917T061353Z",
+  "B2IdentityWrites": 0,
+  "authorizationDeviation": "NO"
+}

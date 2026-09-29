@@ -1,0 +1,3614 @@
+[
+  {
+    "version": "202607130000",
+    "filename": "202607130000_profiles_auth_baseline.sql",
+    "sha256": "fb253590049897f4cd0e048da370640582a2315be6220f5a9dffd929c5946dde",
+    "runnerPredecessor": null,
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607130010",
+    "filename": "202607130010_course_catalog_baseline.sql",
+    "sha256": "443a4a93993cd18331851a979a1fbb4e1e42e1e0e2863a33c7762f5e05a5a564",
+    "runnerPredecessor": "202607130000_profiles_auth_baseline.sql",
+    "explicitReferencedRelations": [
+      "public.course_categories"
+    ]
+  },
+  {
+    "version": "202607130020",
+    "filename": "202607130020_lesson_content_baseline.sql",
+    "sha256": "b4b8c3e49f129e862bf7d4ab0e3eb85c03b05388563758e0e8a42e1a5914f011",
+    "runnerPredecessor": "202607130010_course_catalog_baseline.sql",
+    "explicitReferencedRelations": [
+      "public.courses",
+      "public.lessons",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607130025",
+    "filename": "202607130025_platform_core_course_catalog_baseline.sql",
+    "sha256": "ff477aa7e1e7b6c31bb15f994b7055f06d02baab487011fc34e404086148aee5",
+    "runnerPredecessor": "202607130020_lesson_content_baseline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607130030",
+    "filename": "202607130030_lesson_activity_baseline.sql",
+    "sha256": "ec9b9756411f4a3ed42533b41e6a1a2ed6f6bbe0e4ca85f507e08c4fe89948f6",
+    "runnerPredecessor": "202607130025_platform_core_course_catalog_baseline.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.courses",
+      "public.lessons"
+    ]
+  },
+  {
+    "version": "202607130040",
+    "filename": "202607130040_auto_enable_rls_baseline.sql",
+    "sha256": "83b7758a2b158222ef1a896ae9548e42d94c2e6df51c4d28b024530aa9f6f8cb",
+    "runnerPredecessor": "202607130030_lesson_activity_baseline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607140001",
+    "filename": "202607140001_student_planning_workspace.sql",
+    "sha256": "3795a6974c174820a22d774cf11e8c8985836066d9588e78e5204c0d236607ab",
+    "runnerPredecessor": "202607130040_auto_enable_rls_baseline.sql",
+    "explicitReferencedRelations": [
+      "auth.users"
+    ]
+  },
+  {
+    "version": "202607140002",
+    "filename": "202607140002_registration_and_management_audit.sql",
+    "sha256": "d09f1a9749bddc993c8983336d319b191672cc81fc9b82d1d0058a1b43535e84",
+    "runnerPredecessor": "202607140001_student_planning_workspace.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607140003",
+    "filename": "202607140003_korean_university_library.sql",
+    "sha256": "1d0b7ca6f862051d6ecbf2e4121b8b7da0503ebc9bdc4ab3fa518fb8756913e3",
+    "runnerPredecessor": "202607140002_registration_and_management_audit.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.korean_universities"
+    ]
+  },
+  {
+    "version": "202607140004",
+    "filename": "202607140004_expand_korean_university_catalog.sql",
+    "sha256": "6dfd8937971c4f1acf35c063e1158fba293cd6dafec3eb2b09eaaae02806a9fc",
+    "runnerPredecessor": "202607140003_korean_university_library.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150001",
+    "filename": "202607150001_student_profile_details.sql",
+    "sha256": "692c8cbf2eab8d9287148b47d004c4884012a34efd00950406f1a44cc360af8f",
+    "runnerPredecessor": "202607140004_expand_korean_university_catalog.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150002",
+    "filename": "202607150002_profile_completion_date.sql",
+    "sha256": "6ea2711d75e234a10e1c440e0d53c396877f9246dafb9d933f20aae9f61453ca",
+    "runnerPredecessor": "202607150001_student_profile_details.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150003",
+    "filename": "202607150003_school_management_and_membership.sql",
+    "sha256": "40e7ad6eeaf2eb1355f8d0faaaa56a1c5842f89eb23bd0384692a5cf03935a1c",
+    "runnerPredecessor": "202607150002_profile_completion_date.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.korean_universities",
+      "public.korean_university_programs",
+      "public.schools"
+    ]
+  },
+  {
+    "version": "202607150004",
+    "filename": "202607150004_account_management_upgrade.sql",
+    "sha256": "9a21bafe1307b254ef471374f7674c66f3e1ef8e26ad71ee5b542a4d5c547ae2",
+    "runnerPredecessor": "202607150003_school_management_and_membership.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150005",
+    "filename": "202607150005_application_document_review_workflow.sql",
+    "sha256": "5dacd852fe44d8544313079097feff5752e9a9bff697558e021e955274e4d7ff",
+    "runnerPredecessor": "202607150004_account_management_upgrade.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.student_application_documents"
+    ]
+  },
+  {
+    "version": "202607150006",
+    "filename": "202607150006_repair_legacy_application_document_statuses.sql",
+    "sha256": "e5d26a6ccc9b4bdb9b730694cb931b8b9a5c6869592cecd58f8e52f977ddd81e",
+    "runnerPredecessor": "202607150005_application_document_review_workflow.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150007",
+    "filename": "202607150007_application_document_resubmission.sql",
+    "sha256": "72603e8aebbf066f728f6ee15f279749a9f890a8b3e684361f34b9848f6c0690",
+    "runnerPredecessor": "202607150006_repair_legacy_application_document_statuses.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150008",
+    "filename": "202607150008_visa_preparation_management.sql",
+    "sha256": "fdf8b6e28773013a487a6b7afdbd6cc2e571f51398f0a6134403cd4b5c8e3b84",
+    "runnerPredecessor": "202607150007_application_document_resubmission.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.student_visa_tasks"
+    ]
+  },
+  {
+    "version": "202607150009",
+    "filename": "202607150009_owner_account_deletion.sql",
+    "sha256": "f9f20ae23af84037f099157d66ceed071978ce02cdd422a9cdc29c96a6087db3",
+    "runnerPredecessor": "202607150008_visa_preparation_management.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607150010",
+    "filename": "202607150010_restrict_visa_student_delete.sql",
+    "sha256": "dcc3a2648f1091aae2e035d874e7c85a885272f4eba73c45b0afe701d0720ffb",
+    "runnerPredecessor": "202607150009_owner_account_deletion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150011",
+    "filename": "202607150011_protect_profile_self_service_fields.sql",
+    "sha256": "950db81dd97497f858e2d220c8bdaa116610689f321d151da69e15bba6d46172",
+    "runnerPredecessor": "202607150010_restrict_visa_student_delete.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150012",
+    "filename": "202607150012_fix_current_role_keyword_collision.sql",
+    "sha256": "d6d15f59538849cbeb01c566706274745bb9ee0dd5519cfb013da9c00fb6f417",
+    "runnerPredecessor": "202607150011_protect_profile_self_service_fields.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607150013",
+    "filename": "202607150013_visa_type_degree_levels.sql",
+    "sha256": "bcf2096a5585eb9d378f1b5908b6a29f371952c9d08a01e02d927142d50d83e5",
+    "runnerPredecessor": "202607150012_fix_current_role_keyword_collision.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607160001",
+    "filename": "202607160001_announcements_and_permissions.sql",
+    "sha256": "93e79fb49012e4acf0a7387f0f974e6a665598c377b84367f48fef16e9ad407e",
+    "runnerPredecessor": "202607150013_visa_type_degree_levels.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170001",
+    "filename": "202607170001_learning_assignments_and_exams.sql",
+    "sha256": "95410918411140dfde97ae93a675da76e96e0c0e7a2e2fa08645569923f718f8",
+    "runnerPredecessor": "202607160001_announcements_and_permissions.sql",
+    "explicitReferencedRelations": [
+      "public.courses",
+      "public.learning_assignment_questions",
+      "public.learning_assignments",
+      "public.learning_submissions",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170002",
+    "filename": "202607170002_conversation_practice_management.sql",
+    "sha256": "b93f33ce1d2459a81c0ba4ed4cd938838434429e91e805399656c62cb0bda101",
+    "runnerPredecessor": "202607170001_learning_assignments_and_exams.sql",
+    "explicitReferencedRelations": [
+      "public.conversation_practice_scenarios",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170003",
+    "filename": "202607170003_split_announcement_reader_and_management.sql",
+    "sha256": "adfba6e6b165f2ead80a904fdaa6ad2f465ad5ca926698248dd20b78e3d19f74",
+    "runnerPredecessor": "202607170002_conversation_practice_management.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607170004",
+    "filename": "202607170004_help_center_and_support_tickets.sql",
+    "sha256": "934d749c5b2c4a3966a35d14463d74f5196e8fdf1984f54698d9f9ebcac75e68",
+    "runnerPredecessor": "202607170003_split_announcement_reader_and_management.sql",
+    "explicitReferencedRelations": [
+      "public.help_tickets",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170005",
+    "filename": "202607170005_grade_center_management.sql",
+    "sha256": "0aba35d494113b0dd30c00a50eef53b29e5a47f111e78a344f24cec65d83a469",
+    "runnerPredecessor": "202607170004_help_center_and_support_tickets.sql",
+    "explicitReferencedRelations": [
+      "public.grade_items",
+      "public.grade_records",
+      "public.learning_assignments",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170006",
+    "filename": "202607170006_tighten_student_grade_visibility.sql",
+    "sha256": "a4b9ace5aecc17cf96090333bad5126138a9c6a9f7c636376742a227bc0c892a",
+    "runnerPredecessor": "202607170005_grade_center_management.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607170007",
+    "filename": "202607170007_learning_records_management.sql",
+    "sha256": "1d860eecf6c36532e84bc97a80cdc541a70bcb810eb175c402fbb4241fca4250",
+    "runnerPredecessor": "202607170006_tighten_student_grade_visibility.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607170008",
+    "filename": "202607170008_resource_library_management.sql",
+    "sha256": "636e57f4583768b00070e4b4a22bed7bee3411f56dafb3d4309794992efc6935",
+    "runnerPredecessor": "202607170007_learning_records_management.sql",
+    "explicitReferencedRelations": [
+      "public.library_resources",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607180001",
+    "filename": "202607180001_university_application_deadlines.sql",
+    "sha256": "32b5c1ca6284e73503fddf93e83f653611f2bbaeb6f93fe5a8a2bf781a7f6f85",
+    "runnerPredecessor": "202607170008_resource_library_management.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180002",
+    "filename": "202607180002_target_application_document_checklists.sql",
+    "sha256": "dff8e3e32799f2f84fd20f69572bec9020c82a707fdab66a24d8a7ee2cb9aa2b",
+    "runnerPredecessor": "202607180001_university_application_deadlines.sql",
+    "explicitReferencedRelations": [
+      "public.student_university_targets"
+    ]
+  },
+  {
+    "version": "202607180003",
+    "filename": "202607180003_admin_delete_student_service_cards.sql",
+    "sha256": "99300a3340dc40dd4d3ecac2d115d186b495d63c24a34b11e5ee294dc8d746cb",
+    "runnerPredecessor": "202607180002_target_application_document_checklists.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607180004",
+    "filename": "202607180004_fix_university_deadline_function_volatility.sql",
+    "sha256": "3ebf4fb5ea1d19cfabc106e27c2d8b830e424c76320c403a695db374073c67ed",
+    "runnerPredecessor": "202607180003_admin_delete_student_service_cards.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180005",
+    "filename": "202607180005_owner_delete_own_service_cards.sql",
+    "sha256": "6e07b851b12577e3b5ff047b573e4d9d998c42ecb276a274810b92124f46cc72",
+    "runnerPredecessor": "202607180004_fix_university_deadline_function_volatility.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180006",
+    "filename": "202607180006_university_application_document_requirements.sql",
+    "sha256": "d71259f48892608d59685ce9e45cd6eb10cc16c4a1144f313ac84bf663c6adba",
+    "runnerPredecessor": "202607180005_owner_delete_own_service_cards.sql",
+    "explicitReferencedRelations": [
+      "public.korean_universities",
+      "public.university_application_document_requirements"
+    ]
+  },
+  {
+    "version": "202607180007",
+    "filename": "202607180007_university_document_requirement_notes.sql",
+    "sha256": "f87ab5ccf620ce4a43925bf3c37212c0bd11f43cf5e76f0805fdbb823038cb93",
+    "runnerPredecessor": "202607180006_university_application_document_requirements.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180008",
+    "filename": "202607180008_university_document_requirements_by_stage.sql",
+    "sha256": "83c1d3a06586fe1ae148fad9fc888002ec89bd9e699249d07d7e9cf1d7e0b6fd",
+    "runnerPredecessor": "202607180007_university_document_requirement_notes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180009",
+    "filename": "202607180009_enforce_application_document_stage_match.sql",
+    "sha256": "7eaa384efbc42e6c9aa84fea7c77c02a63b9255fd6f2e96ecdbeff3bc1f9acfb",
+    "runnerPredecessor": "202607180008_university_document_requirements_by_stage.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180010",
+    "filename": "202607180010_simplify_application_document_checklist.sql",
+    "sha256": "8951db28c5bff5e8c680d83c581bdbefb0a6b921a70a6ac505ed68d8052cce4c",
+    "runnerPredecessor": "202607180009_enforce_application_document_stage_match.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180011",
+    "filename": "202607180011_add_not_needed_document_status.sql",
+    "sha256": "c3018230c090c1372869885fe7737b397e7299003762a29dba4e8d3a62a47fc0",
+    "runnerPredecessor": "202607180010_simplify_application_document_checklist.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180012",
+    "filename": "202607180012_sync_document_due_date_from_target.sql",
+    "sha256": "99fff9376947d3bbe4890d7818afc0d4804c29442a4138456ed11188f4914fbc",
+    "runnerPredecessor": "202607180011_add_not_needed_document_status.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180013",
+    "filename": "202607180013_application_documents_submission_lock.sql",
+    "sha256": "ed17490f05f80782db7a7848345b7c05686dc6ff679f6f130273d02f0926685b",
+    "runnerPredecessor": "202607180012_sync_document_due_date_from_target.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180014",
+    "filename": "202607180014_admin_item_controls.sql",
+    "sha256": "c02e6701a4b7685d7cec9ee505cfda400486d97d08d7e2cbcac54ca3904e91f3",
+    "runnerPredecessor": "202607180013_application_documents_submission_lock.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180015",
+    "filename": "202607180015_lock_prevents_document_delete.sql",
+    "sha256": "f40a20391292c2a7c5b7f95a306d5d8668afa47c0f3c0ad415520001209b7a24",
+    "runnerPredecessor": "202607180014_admin_item_controls.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180016",
+    "filename": "202607180016_admin_note_and_lock_edit.sql",
+    "sha256": "d7728883330e46cd7c719e0f7c71fb8508bc608f524d3554bf3a727c852c3a0d",
+    "runnerPredecessor": "202607180015_lock_prevents_document_delete.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180017",
+    "filename": "202607180017_admin_lock_target_documents.sql",
+    "sha256": "f05dd1f4f0090a798688fb1f51f552757560763ec5252d98a1be37ef0b0e84b0",
+    "runnerPredecessor": "202607180016_admin_note_and_lock_edit.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607180018",
+    "filename": "202607180018_lock_university_target_admin_only_unlock.sql",
+    "sha256": "90e31c43abf98d9fa31933be44a21df3d889aeedfcd486ebbb49dfb2a06331e5",
+    "runnerPredecessor": "202607180017_admin_lock_target_documents.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190001",
+    "filename": "202607190001_courier_shipping_info.sql",
+    "sha256": "35c00d0fcf6d659b8d914f8662f3957a1c3176c52cbd41367a3041364b560a89",
+    "runnerPredecessor": "202607180018_lock_university_target_admin_only_unlock.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190002",
+    "filename": "202607190002_application_stage_timeline.sql",
+    "sha256": "fca3087292108fe58f3fa690a9f13abfb7a92212003e31238e49d4459b4f26d1",
+    "runnerPredecessor": "202607190001_courier_shipping_info.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190003",
+    "filename": "202607190003_expand_application_stages.sql",
+    "sha256": "5f36698ff2e373773bfed5944d881f7fc9de8c85ae3a15727bda411cab58bd41",
+    "runnerPredecessor": "202607190002_application_stage_timeline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190004",
+    "filename": "202607190004_courier_requires_stage_2.sql",
+    "sha256": "3e6547f47db75c0cd58f8fb37c5dba6229ad3199579406f97e19868aaee5484c",
+    "runnerPredecessor": "202607190003_expand_application_stages.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190005",
+    "filename": "202607190005_auto_initialize_visa_workspace.sql",
+    "sha256": "55d204aa737a4519a9e26bcaf1910d1e165804c70b6da4ffcf94ce2c7faedd1c",
+    "runnerPredecessor": "202607190004_courier_requires_stage_2.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190006",
+    "filename": "202607190006_visa_workspace_requires_stage_9.sql",
+    "sha256": "96981daaf3c48eb47c3a2b769195d4b34634bb443efdb40448acf7502a0a6755",
+    "runnerPredecessor": "202607190005_auto_initialize_visa_workspace.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190007",
+    "filename": "202607190007_visa_case_source_target.sql",
+    "sha256": "861931c93ed8826c82b05e38d0015a17ed7a88f65f73734d47ae769432215522",
+    "runnerPredecessor": "202607190006_visa_workspace_requires_stage_9.sql",
+    "explicitReferencedRelations": [
+      "public.student_university_targets"
+    ]
+  },
+  {
+    "version": "202607190008",
+    "filename": "202607190008_university_visa_application_requirements.sql",
+    "sha256": "5c9d234d23e2656ca20791f06de70eeb50bf1466a5d26f092f4981b27e179c8a",
+    "runnerPredecessor": "202607190007_visa_case_source_target.sql",
+    "explicitReferencedRelations": [
+      "public.korean_universities",
+      "public.university_visa_application_requirements"
+    ]
+  },
+  {
+    "version": "202607190009",
+    "filename": "202607190009_archive_visa_requirement_protection.sql",
+    "sha256": "dea48c7c2a41b42594512d4a5c2d1e2f3765a57fd45c77ac5d947f48e7a2899e",
+    "runnerPredecessor": "202607190008_university_visa_application_requirements.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190010",
+    "filename": "202607190010_active_visa_task_write_policies.sql",
+    "sha256": "6b724acdaa162c583c2a73423286cc5339d446749dc72f1819fad22170c8d0e8",
+    "runnerPredecessor": "202607190009_archive_visa_requirement_protection.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190011",
+    "filename": "202607190011_visa_application_channels.sql",
+    "sha256": "08651fa5e36849cc11c4044535721e01f4a24e0102623e27e03f8bcef9b31f11",
+    "runnerPredecessor": "202607190010_active_visa_task_write_policies.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190012",
+    "filename": "202607190012_fix_visa_channel_role_check.sql",
+    "sha256": "6df6fe73f67fcedfd0234101670d51222ad2c0bf6fcf25a4d63408d8f440d4fa",
+    "runnerPredecessor": "202607190011_visa_application_channels.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190013",
+    "filename": "202607190013_require_channel_before_stage_nine.sql",
+    "sha256": "578b00e21c92ddc6f9eebc555d8f393fbc7bc5bd45fe4ede3d037ad4b0f5bcfe",
+    "runnerPredecessor": "202607190012_fix_visa_channel_role_check.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190014",
+    "filename": "202607190014_lock_student_visa_application_channel.sql",
+    "sha256": "dfe8fd965849ad088a1f9dd94f5f881f1a840c892da08dc505c718d330ed6cf3",
+    "runnerPredecessor": "202607190013_require_channel_before_stage_nine.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190015",
+    "filename": "202607190015_lock_student_visa_type_and_entry_date.sql",
+    "sha256": "f3775011f9ef3af85a6ff2ff45576f0ba110d07cccfec6ea430fbb8d98ee5862",
+    "runnerPredecessor": "202607190014_lock_student_visa_application_channel.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190016",
+    "filename": "202607190016_add_admin_preparing_visa_stage.sql",
+    "sha256": "6166df0be4d520131f969a675527fb29a76d67a42469cdceff2a594d11c4c395",
+    "runnerPredecessor": "202607190015_lock_student_visa_type_and_entry_date.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190017",
+    "filename": "202607190017_courier_no_stage_gate.sql",
+    "sha256": "dccb6b73cd395ed584a1d796bc5cf26e7e2bcac0893b4aa5ff55348b863469e7",
+    "runnerPredecessor": "202607190016_add_admin_preparing_visa_stage.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190018",
+    "filename": "202607190018_courier_requires_stage_3.sql",
+    "sha256": "c867a21c50c1d324d9dfde62474c940f22fe44d6ca7093157052c19908ead766",
+    "runnerPredecessor": "202607190017_courier_no_stage_gate.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190019",
+    "filename": "202607190019_courier_requires_stage_2.sql",
+    "sha256": "4a4b8c6159e21b236e346a25be0e8538bade6e5d56a01918e5d4d9100e07e9c4",
+    "runnerPredecessor": "202607190018_courier_requires_stage_3.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190020",
+    "filename": "202607190020_visa_case_residence_province_city.sql",
+    "sha256": "3f278f41b18a0f9f4a3002da82776a536c73914888866dea620101449ea1cb7c",
+    "runnerPredecessor": "202607190019_courier_requires_stage_2.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190021",
+    "filename": "202607190021_visa_case_entry_and_airports.sql",
+    "sha256": "cc7a309595e1b732dab5a9c8b62b5354acec514608cec46a277c50c598636ebc",
+    "runnerPredecessor": "202607190020_visa_case_residence_province_city.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190022",
+    "filename": "202607190022_visa_case_accommodation_status.sql",
+    "sha256": "22611f485681fb890f38c9d06f20700af0a2c8fbacfd9874e0c65729ba89940d",
+    "runnerPredecessor": "202607190021_visa_case_entry_and_airports.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607190023",
+    "filename": "202607190023_visa_case_airport_pickup_service.sql",
+    "sha256": "66e465dd46b7e063e14d8f0e11eae20e44c9972a347cfb924223379bcb245369",
+    "runnerPredecessor": "202607190022_visa_case_accommodation_status.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200001",
+    "filename": "202607200001_ai_token_usage.sql",
+    "sha256": "18916f913d9c9cb5d25256763c96387db53ac7e30d19913f9717f7d9d8275309",
+    "runnerPredecessor": "202607190023_visa_case_airport_pickup_service.sql",
+    "explicitReferencedRelations": [
+      "auth.users"
+    ]
+  },
+  {
+    "version": "202607200002",
+    "filename": "202607200002_multi_tenant_foundation.sql",
+    "sha256": "b3b0142064c1ab76c967a438072ca619c063732dfd9e41aa58f6d68ff32c7962",
+    "runnerPredecessor": "202607200001_ai_token_usage.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607200003",
+    "filename": "202607200003_tenant_accounts_and_lifecycle.sql",
+    "sha256": "bd17ba6771bb458d9b2c8ea43172b357a44962dc10a2b3d987925144a9d9629c",
+    "runnerPredecessor": "202607200002_multi_tenant_foundation.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607200004",
+    "filename": "202607200004_tenant_disable_and_delete_semantics.sql",
+    "sha256": "4e733beb55130d1cffbb9df7678daa0ca3d8e448a75cb8788292d0300945e637",
+    "runnerPredecessor": "202607200003_tenant_accounts_and_lifecycle.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200005",
+    "filename": "202607200005_remove_confirmed_legacy_tenants.sql",
+    "sha256": "84364743cb3b80809608b644feeb334c809e3b6b3f08d541d2954d3cfbb52001",
+    "runnerPredecessor": "202607200004_tenant_disable_and_delete_semantics.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200006",
+    "filename": "202607200006_platform_deputy_tenant_operator.sql",
+    "sha256": "781aa94ecac7696980aa86272a0d5fd44a98e0f3bc64668817bd10ed00afa088",
+    "runnerPredecessor": "202607200005_remove_confirmed_legacy_tenants.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200007",
+    "filename": "202607200007_keep_platform_operators_out_of_tenant_members.sql",
+    "sha256": "50144dcd1895820015be50af690c0fb0448efd0517f255b6e6e80876d3bb4ab9",
+    "runnerPredecessor": "202607200006_platform_deputy_tenant_operator.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200008",
+    "filename": "202607200008_tenant_admin_global_role.sql",
+    "sha256": "117d24cba631b41c2c6003caecc8ba109350a4ee3dac2f6fba05e573061a8cc5",
+    "runnerPredecessor": "202607200007_keep_platform_operators_out_of_tenant_members.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200009",
+    "filename": "202607200009_global_identity_roles.sql",
+    "sha256": "edcb994273611817f68dab05c42d0d2dc2a72fa35c8c55cebbc7dda5e178a802",
+    "runnerPredecessor": "202607200008_tenant_admin_global_role.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200010",
+    "filename": "202607200010_account_permission_helpers_baseline.sql",
+    "sha256": "df49f89aee5659b9a46deb2d307c28d12d8102bf5e85be5b024fe5b308bfe904",
+    "runnerPredecessor": "202607200009_global_identity_roles.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607200011",
+    "filename": "202607200011_is_owner_account_baseline.sql",
+    "sha256": "52bc6bfdb9c29e263b73bdbd749b4ada26a617aa0288fcab3d008a136f2bcf87",
+    "runnerPredecessor": "202607200010_account_permission_helpers_baseline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210001",
+    "filename": "202607210001_tenant_id_on_business_tables.sql",
+    "sha256": "7b6eaa204895eba2415a5d0afec87ecec91044fd6ef38ebf28338789cbd88461",
+    "runnerPredecessor": "202607200011_is_owner_account_baseline.sql",
+    "explicitReferencedRelations": [
+      "public.conversation_practice_scenarios",
+      "public.course_categories",
+      "public.courses",
+      "public.grade_items",
+      "public.grade_records",
+      "public.help_tickets",
+      "public.learning_assignment_questions",
+      "public.learning_assignments",
+      "public.learning_submissions",
+      "public.lessons",
+      "public.library_resources",
+      "public.student_university_targets",
+      "public.student_visa_tasks",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607210002",
+    "filename": "202607210002_tenant_scoped_rls.sql",
+    "sha256": "d2bd1af5aa43c0cb9518f183e2cb3d37ff71eb10e861e1b17f5b92ba317c97fb",
+    "runnerPredecessor": "202607210001_tenant_id_on_business_tables.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210003",
+    "filename": "202607210003_tenant_scoped_rpcs_and_lifecycle.sql",
+    "sha256": "7c415632fe468dd63f1ae0c5fcb43b79827aed6674eadc0e5f1b9849a8e0521a",
+    "runnerPredecessor": "202607210002_tenant_scoped_rls.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210004",
+    "filename": "202607210004_split_platform_and_tenant_super_admin.sql",
+    "sha256": "36d83460c4672e475c5c3952c1a6d77cd5c505ddab512cd5f61ae4e425dd2d9e",
+    "runnerPredecessor": "202607210003_tenant_scoped_rpcs_and_lifecycle.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210005",
+    "filename": "202607210005_static_tenant_permanent_deletion.sql",
+    "sha256": "af5079f800508a12e97afaaae6719a113b2def5c09b8d6c8ae7a94aeb88a7753",
+    "runnerPredecessor": "202607210004_split_platform_and_tenant_super_admin.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210006",
+    "filename": "202607210006_platform_owner_full_admin.sql",
+    "sha256": "167d5514c0472eddc447d87a06d407ca66f9b37d00e660f7890434b86a3cf4fa",
+    "runnerPredecessor": "202607210005_static_tenant_permanent_deletion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210007",
+    "filename": "202607210007_platform_owner_tenant_bypass.sql",
+    "sha256": "7065c80809b7a1a4d0ef178d236bc6bad51954d39d16e9cdd282edd78786ada2",
+    "runnerPredecessor": "202607210006_platform_owner_full_admin.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210008",
+    "filename": "202607210008_remove_puffy_bootstrap_tenant.sql",
+    "sha256": "043ce956ec0c0438ca2efcc14b3f5d98261be5ab6cd14893ef9b675ac2a142b1",
+    "runnerPredecessor": "202607210007_platform_owner_tenant_bypass.sql",
+    "explicitReferencedRelations": [
+      "public.courses",
+      "public.lessons"
+    ]
+  },
+  {
+    "version": "202607210009",
+    "filename": "202607210009_block_platform_student_activity.sql",
+    "sha256": "9633a33a3163f0e7b385b057530e6f8b7d59712b95fc99f04b00e9615a79716c",
+    "runnerPredecessor": "202607210008_remove_puffy_bootstrap_tenant.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210010",
+    "filename": "202607210010_fix_managed_account_creation_audit.sql",
+    "sha256": "5408bd8576e53694b804e7f42e3861c9f7c4403e7c8fcfefd0443855871d78d4",
+    "runnerPredecessor": "202607210009_block_platform_student_activity.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210011",
+    "filename": "202607210011_revert_managed_account_creation_audit_fix.sql",
+    "sha256": "d14cda566d29e3a5a117839e8aac90862010416138d2c8f10f0374eba4d897f7",
+    "runnerPredecessor": "202607210010_fix_managed_account_creation_audit.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210012",
+    "filename": "202607210012_allow_platform_tenant_hard_delete_memberships.sql",
+    "sha256": "13e0c1bc8ea4a22f2eb7ddc9e2b4cc19fef8512eed1cb99a9caf77db5a2ba84a",
+    "runnerPredecessor": "202607210011_revert_managed_account_creation_audit_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210013",
+    "filename": "202607210013_fix_tenant_manager_auth_creation_audit.sql",
+    "sha256": "3ffb280394ccde2af960c3e9258dd65c925835d70c133f307a195126c41a8c27",
+    "runnerPredecessor": "202607210012_allow_platform_tenant_hard_delete_memberships.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210014",
+    "filename": "202607210014_revert_tenant_manager_auth_creation_audit_fix.sql",
+    "sha256": "a3bc338a51689e4e8ce438022d5e31dc9489fab800e2d0eb8c86fff99bfadd66",
+    "runnerPredecessor": "202607210013_fix_tenant_manager_auth_creation_audit.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210015",
+    "filename": "202607210015_fix_tenant_manager_profile_audit_order.sql",
+    "sha256": "93b86847804710aeaecc5f5feef0e0593ad093f89878f6d1a11bd3f122d472fe",
+    "runnerPredecessor": "202607210014_revert_tenant_manager_auth_creation_audit_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210016",
+    "filename": "202607210016_fix_platform_catalog_requirement_sync.sql",
+    "sha256": "08954daeea19eda20ac33ecdda63f7b353ecca7464f7ab7fae1aa85f30cfd9bf",
+    "runnerPredecessor": "202607210015_fix_tenant_manager_profile_audit_order.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210017",
+    "filename": "202607210017_restrict_requirement_sync_to_platform_catalog_managers.sql",
+    "sha256": "5843b0d0411d55e1d06e69f78d8224874a4c598da6ba38e3dbf9de132ec55958",
+    "runnerPredecessor": "202607210016_fix_platform_catalog_requirement_sync.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210018",
+    "filename": "202607210018_fix_target_lock_tenant_admin_detection.sql",
+    "sha256": "5bdf57599ade9d96bc1c9565f8fbeb76195f63afba8d568a2b17dc248d631a5b",
+    "runnerPredecessor": "202607210017_restrict_requirement_sync_to_platform_catalog_managers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607210019",
+    "filename": "202607210019_fix_document_item_tenant_admin_detection.sql",
+    "sha256": "9b046c384e25919649a7fe2b424b3c44b5be31d00ce559cc23693160f52c9530",
+    "runnerPredecessor": "202607210018_fix_target_lock_tenant_admin_detection.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607260001",
+    "filename": "202607260001_korean_chapter_test_attempts.sql",
+    "sha256": "c63d2609521d9f95bd8910cfa205af8b9e05801da26f5bb56991b25e3cb35bb4",
+    "runnerPredecessor": "202607210019_fix_document_item_tenant_admin_detection.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607260002",
+    "filename": "202607260002_course_test_question_bank.sql",
+    "sha256": "c89cf430ff3baf9a9b41eb29f9b17674df11dc69bcdddf99c2ef815ce2bbbdf9",
+    "runnerPredecessor": "202607260001_korean_chapter_test_attempts.sql",
+    "explicitReferencedRelations": [
+      "public.course_tests"
+    ]
+  },
+  {
+    "version": "202607260003",
+    "filename": "202607260003_secure_course_test_scoring.sql",
+    "sha256": "04fc9f70e76e0482c607ad7010ddecfccafa92dd24ebccb182e00fdf9c705963",
+    "runnerPredecessor": "202607260002_course_test_question_bank.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607260004",
+    "filename": "202607260004_platform_standard_question_bank.sql",
+    "sha256": "5b0492f330933cf9240fa6d3ae92ba56fef4b9430b19c028347ff54bf5333d4b",
+    "runnerPredecessor": "202607260003_secure_course_test_scoring.sql",
+    "explicitReferencedRelations": [
+      "public.course_test_questions",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607270001",
+    "filename": "202607270001_expand_korean_standard_question_bank.sql",
+    "sha256": "67cc192d9bfbee3ed772321c1b42d47bb887babc451407735d97fef829a0aada",
+    "runnerPredecessor": "202607260004_platform_standard_question_bank.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270002",
+    "filename": "202607270002_standard_assessment_papers.sql",
+    "sha256": "314f1827f74a18f4737f454535a8f9b892f4a67912352fe0339e896728cc1b82",
+    "runnerPredecessor": "202607270001_expand_korean_standard_question_bank.sql",
+    "explicitReferencedRelations": [
+      "public.assessment_paper_questions",
+      "public.assessment_papers",
+      "public.course_test_questions",
+      "public.course_tests",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607270003",
+    "filename": "202607270003_disable_tenant_single_question_assignment.sql",
+    "sha256": "cf7d532f39e7868ee02f75144cc0d14c95a92ccdbc31ccb44f581e2c10787ca7",
+    "runnerPredecessor": "202607270002_standard_assessment_papers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270004",
+    "filename": "202607270004_chapter_test_random_selection.sql",
+    "sha256": "03cbe4fdbdb611eca29d664d675c9f1d265b11b839196d7c71a23d3e368f9ee7",
+    "runnerPredecessor": "202607270003_disable_tenant_single_question_assignment.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270005",
+    "filename": "202607270005_course_test_lesson_channel.sql",
+    "sha256": "92e6a3b3c1ce6e55280deb5596913394458c4afdec120fb23accbbe4d67cd5d2",
+    "runnerPredecessor": "202607270004_chapter_test_random_selection.sql",
+    "explicitReferencedRelations": [
+      "public.lessons"
+    ]
+  },
+  {
+    "version": "202607270006",
+    "filename": "202607270006_normalize_hangul_chapter_test_duration.sql",
+    "sha256": "80035ed52bdf2be2d9d3043c5316b89b0cb78ef9de620a1d078c99d5be9d35d6",
+    "runnerPredecessor": "202607270005_course_test_lesson_channel.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270007",
+    "filename": "202607270007_align_korean_beginner_lesson_titles.sql",
+    "sha256": "f89342731e6b816a91547e881f1e5c98a873baa1bbc32121c6e4584f7bb96b83",
+    "runnerPredecessor": "202607270006_normalize_hangul_chapter_test_duration.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270008",
+    "filename": "202607270008_vip2_korean_learning_permissions.sql",
+    "sha256": "908f18975c318ad027c599a0c3ccb13221abe424017f8f469f50c761ad4e01dc",
+    "runnerPredecessor": "202607270007_align_korean_beginner_lesson_titles.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607270009",
+    "filename": "202607270009_enforce_vip2_assignment_conversation_boundaries.sql",
+    "sha256": "703bab113d713c08a941068def0af2e74566bf1f1de5594016912ef10983a402",
+    "runnerPredecessor": "202607270008_vip2_korean_learning_permissions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607300001",
+    "filename": "202607300001_overwrite_course_test_attempts.sql",
+    "sha256": "c7501f7ead5af418ee5ce4d3db2633a7d8585bf487b7d28cd09b4814f321abe9",
+    "runnerPredecessor": "202607270009_enforce_vip2_assignment_conversation_boundaries.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607300002",
+    "filename": "202607300002_course_question_reviews.sql",
+    "sha256": "e84786d0ffb0e63834a49abcb4c4bd52d22871ca7bf663c485e1b58076655e6c",
+    "runnerPredecessor": "202607300001_overwrite_course_test_attempts.sql",
+    "explicitReferencedRelations": [
+      "public.course_test_questions",
+      "public.course_tests",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607300003",
+    "filename": "202607300003_course_ebook_progress.sql",
+    "sha256": "08decc3a8c20e4b4ef61956b1052240e557167dba041e7c0b7af3456da3089d2",
+    "runnerPredecessor": "202607300002_course_question_reviews.sql",
+    "explicitReferencedRelations": [
+      "public.course_tests",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607300004",
+    "filename": "202607300004_course_ebook_effective_reading.sql",
+    "sha256": "adb7208f0ee7f54078e5d5ef669396e3a1b403a1e1cca70f4a421ef2602a2629",
+    "runnerPredecessor": "202607300003_course_ebook_progress.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607300005",
+    "filename": "202607300005_platform_account_roles.sql",
+    "sha256": "67e19f9add42578ed7e8492494dfbc95550478afc736e580d1d07e18ac15d669",
+    "runnerPredecessor": "202607300004_course_ebook_effective_reading.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310001",
+    "filename": "202607310001_grade_items_course_link.sql",
+    "sha256": "2af154b6d9ec2a5162eb3c0de739f04a963aadd283c96ecf34f4d4a59d018a3b",
+    "runnerPredecessor": "202607300005_platform_account_roles.sql",
+    "explicitReferencedRelations": [
+      "public.courses"
+    ]
+  },
+  {
+    "version": "202607310002",
+    "filename": "202607310002_chapter_homework_plans.sql",
+    "sha256": "869d456567289519c740fb19983ce72393c6f1afc7fbedf8af2443b87d618cfe",
+    "runnerPredecessor": "202607310001_grade_items_course_link.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_homework_plans",
+      "public.course_tests"
+    ]
+  },
+  {
+    "version": "202607310003",
+    "filename": "202607310003_chapter_homework_skill_content.sql",
+    "sha256": "7bbe3bbb1fc42ddd5ab3e420aa6275a05f1d03ee7ba0241fe72f5368aef7903b",
+    "runnerPredecessor": "202607310002_chapter_homework_plans.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310004",
+    "filename": "202607310004_chapter_homework_questions.sql",
+    "sha256": "00d7def7a64b7d4d6b56c3c56a2f346910a3cef253e4d9f229aff216293f6f74",
+    "runnerPredecessor": "202607310003_chapter_homework_skill_content.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_homework_plans",
+      "public.course_test_questions"
+    ]
+  },
+  {
+    "version": "202607310005",
+    "filename": "202607310005_sync_chapter_titles.sql",
+    "sha256": "a7377f191d46d3f83e59bd76188fbd2b586614be2505a977df434c02a2aa65ee",
+    "runnerPredecessor": "202607310004_chapter_homework_questions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310006",
+    "filename": "202607310006_prune_chapter_test_difficulties.sql",
+    "sha256": "7e383ec489de98f8242a2107916fd45f2a831ec6038af0f1be05d4828fa4d3c6",
+    "runnerPredecessor": "202607310005_sync_chapter_titles.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310007",
+    "filename": "202607310007_language_question_banks.sql",
+    "sha256": "5bf73a9d2680d30c4f78c65188fa6478b32ecd2f1214e5ff8dac86227ec4be7b",
+    "runnerPredecessor": "202607310006_prune_chapter_test_difficulties.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_tests",
+      "public.exam_bank_materials",
+      "public.exam_bank_questions",
+      "public.homework_bank_materials",
+      "public.homework_bank_questions",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202607310008",
+    "filename": "202607310008_language_question_bank_manager_policies.sql",
+    "sha256": "181666ed599aff0242888e54735e34fc2a1e7370559b3eb1e29178c10d5d4301",
+    "runnerPredecessor": "202607310007_language_question_banks.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310009",
+    "filename": "202607310009_korean_answer_key_validation.sql",
+    "sha256": "2b1d010523e9d810e496f72291208bf70fc499f543338f95be7110e96d7963e6",
+    "runnerPredecessor": "202607310008_language_question_bank_manager_policies.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310010",
+    "filename": "202607310010_ebook_question_bank_sections.sql",
+    "sha256": "b0eeaf4e15de8b08a28f6ddfb43b3ad6d3c23f1d29c73eaca9e2966e09ce40a8",
+    "runnerPredecessor": "202607310009_korean_answer_key_validation.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310011",
+    "filename": "202607310011_balance_chapter_test_ebook_coverage.sql",
+    "sha256": "be01ae8031d8ca6d7861df35f757630ae429d72a654fc3d3779c7627136ae541",
+    "runnerPredecessor": "202607310010_ebook_question_bank_sections.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310012",
+    "filename": "202607310012_unique_chapter_vocabulary_prompts.sql",
+    "sha256": "f213659a6d3744e1200f57fe1a7364c7ad7ea384b13d66289e83839b47d30a19",
+    "runnerPredecessor": "202607310011_balance_chapter_test_ebook_coverage.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310013",
+    "filename": "202607310013_smart_digital_textbook_chapter_one.sql",
+    "sha256": "a5bac09ed17a7853cb84aef73c6e659c11d07569c7ea3b728ee6364db7f72a01",
+    "runnerPredecessor": "202607310012_unique_chapter_vocabulary_prompts.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.chapter_tests",
+      "public.digital_textbook_activities",
+      "public.digital_textbook_chapters",
+      "public.digital_textbook_modules",
+      "public.digital_textbook_nodes",
+      "public.digital_textbook_versions",
+      "public.digital_textbooks",
+      "public.lessons",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202607310014",
+    "filename": "202607310014_smart_digital_textbook_private_audio.sql",
+    "sha256": "824cc5a00283f5f54422eb840326ee44a26bb6401c00321b3df58d64a7f09198",
+    "runnerPredecessor": "202607310013_smart_digital_textbook_chapter_one.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202607310015",
+    "filename": "202607310015_platform_course_inspector_role.sql",
+    "sha256": "93cb4a6a79de2866f6e8395c79052eab76d8f755120ea0f87acaa33ee534992b",
+    "runnerPredecessor": "202607310014_smart_digital_textbook_private_audio.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608010001",
+    "filename": "202608010001_student_course_category_learning_plans.sql",
+    "sha256": "5cd2c8a38b377cc0b3e3d618fa5dccb8c1456d9b4915d83e80f13ef6a98f9042",
+    "runnerPredecessor": "202607310015_platform_course_inspector_role.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.course_categories",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608010002",
+    "filename": "202608010002_course_catalog_workspace.sql",
+    "sha256": "a8530a54a98fc30d839eed7d828af52ddd91a6fe1581b0d9af53a93da62ed001",
+    "runnerPredecessor": "202608010001_student_course_category_learning_plans.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_tests",
+      "public.course_chapters",
+      "public.courses",
+      "public.lessons",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608020001",
+    "filename": "202608020001_unified_grade_reviews.sql",
+    "sha256": "ed285b0b35c41e9891b410b01e0e8a340b57ee3fca388119f71f7232b057ba46",
+    "runnerPredecessor": "202608010002_course_catalog_workspace.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020002",
+    "filename": "202608020002_platform_grade_overview.sql",
+    "sha256": "d160c52802ba4cc50c91e91f5d26889d393aab305199829abc772c78eecddea8",
+    "runnerPredecessor": "202608020001_unified_grade_reviews.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020003",
+    "filename": "202608020003_platform_learning_record_overview.sql",
+    "sha256": "7e77a60ee6944a755c30b31e7ae1d632b50e8c835c9359597d056408991abfac",
+    "runnerPredecessor": "202608020002_platform_grade_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020004",
+    "filename": "202608020004_platform_managed_resource_library.sql",
+    "sha256": "ae24ba6211c268d1cc030aa0db5929074d5cea62e079784b42ccab4a8afb3865",
+    "runnerPredecessor": "202608020003_platform_learning_record_overview.sql",
+    "explicitReferencedRelations": [
+      "public.library_resources"
+    ]
+  },
+  {
+    "version": "202608020005",
+    "filename": "202608020005_library_resources_by_course.sql",
+    "sha256": "0b00ee76ee74f3b77e4a10b9bb05e8138f0f4bbc7fca4a63d869e5c153b910c5",
+    "runnerPredecessor": "202608020004_platform_managed_resource_library.sql",
+    "explicitReferencedRelations": [
+      "public.courses"
+    ]
+  },
+  {
+    "version": "202608020006",
+    "filename": "202608020006_library_resources_by_lesson.sql",
+    "sha256": "a4d957dd0bc9955d972b442c2123f3661ed5eed5deccbf0ee8faeb7400b0a2c0",
+    "runnerPredecessor": "202608020005_library_resources_by_course.sql",
+    "explicitReferencedRelations": [
+      "public.lessons"
+    ]
+  },
+  {
+    "version": "202608020007",
+    "filename": "202608020007_complete_platform_lesson_catalog.sql",
+    "sha256": "24c1e1e58423bcf52bfcd25dbf5307b71041f4bd866bbc2126cd33275495c371",
+    "runnerPredecessor": "202608020006_library_resources_by_lesson.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020008",
+    "filename": "202608020008_restrict_university_management_to_platform.sql",
+    "sha256": "19a1b43871cd64f33b473b80edc99fbd2702d2eb45f6856a3939d92e0a01e6a9",
+    "runnerPredecessor": "202608020007_complete_platform_lesson_catalog.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020009",
+    "filename": "202608020009_add_visa_applicable_scopes.sql",
+    "sha256": "7a68d56023b0d27b49f9f26a682ddc022808cacc045968e2777e8ed99d3918e3",
+    "runnerPredecessor": "202608020008_restrict_university_management_to_platform.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020010",
+    "filename": "202608020010_document_review_workflow.sql",
+    "sha256": "6310093e1a7b5f462c9283785f211e00aa9e6357bf06ccec791178650ddf146d",
+    "runnerPredecessor": "202608020009_add_visa_applicable_scopes.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.student_university_targets",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608020011",
+    "filename": "202608020011_visa_management_oversight.sql",
+    "sha256": "8043bd1a56341316f93bf075d6d246c577a498b8a14a802184e1f21f313d279f",
+    "runnerPredecessor": "202608020010_document_review_workflow.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608020012",
+    "filename": "202608020012_secure_visa_card_deletion.sql",
+    "sha256": "2b4a6ccb2ed30d63e16c468a0f543d46f02fdaf6440354bf9b47b3bbe1dc6413",
+    "runnerPredecessor": "202608020011_visa_management_oversight.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020013",
+    "filename": "202608020013_platform_visa_case_audit.sql",
+    "sha256": "bf2a0ba1137d7bf309fde32423ba97e140899efef21d3caf646612980d0cb965",
+    "runnerPredecessor": "202608020012_secure_visa_card_deletion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020014",
+    "filename": "202608020014_announcement_visibility_and_reads.sql",
+    "sha256": "3791649ccfa8f4917be87e57ecac3275842d037d68757bce242f54d89cb4df89",
+    "runnerPredecessor": "202608020013_platform_visa_case_audit.sql",
+    "explicitReferencedRelations": [
+      "public.announcements",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608020015",
+    "filename": "202608020015_help_center_roles_and_oversight.sql",
+    "sha256": "2d16d4eab63e7c39280cc90a8a7c26f31c56c82b978bc6d9fde42b6a4853089d",
+    "runnerPredecessor": "202608020014_announcement_visibility_and_reads.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608020016",
+    "filename": "202608020016_unified_permission_center.sql",
+    "sha256": "184be6e5fa2dcf714357a4cbfc37687d56a8564655d56959ff137b2402fcb248",
+    "runnerPredecessor": "202608020015_help_center_roles_and_oversight.sql",
+    "explicitReferencedRelations": [
+      "public.permission_grants",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608030001",
+    "filename": "202608030001_student_course_category_favorites.sql",
+    "sha256": "55d8900c24cb3508874f0ad3aae92fbce055c0d96c30fd47d442fe462865ece0",
+    "runnerPredecessor": "202608020016_unified_permission_center.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.course_categories",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608040001",
+    "filename": "202608040001_reserve_platform_tenant_slug.sql",
+    "sha256": "43cc0364e9d6174f4bb727cf3fa2b4958bbcd4a39e58e1f2c7e49eb23d5a97a7",
+    "runnerPredecessor": "202608030001_student_course_category_favorites.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050001",
+    "filename": "202608050001_tenant_student_learning_record_overview.sql",
+    "sha256": "b2d8ba43886d51620a482ace5e72cdb776e32424c2e82315d3bb97a8f1fc5b42",
+    "runnerPredecessor": "202608040001_reserve_platform_tenant_slug.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050002",
+    "filename": "202608050002_dynamic_chapter_test_slug_check.sql",
+    "sha256": "2f7460f00b7f379214007fd811e67f93eee53cd415b6bd0c8cd74bb88c26253c",
+    "runnerPredecessor": "202608050001_tenant_student_learning_record_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050003",
+    "filename": "202608050003_chapter_test_lesson_completion.sql",
+    "sha256": "bcecef7ceb406e67874a40ed84ac99fd66d62e39bf9d765087d144bbbfcd85e7",
+    "runnerPredecessor": "202608050002_dynamic_chapter_test_slug_check.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050004",
+    "filename": "202608050004_document_checklist_respects_target_lock.sql",
+    "sha256": "b8ee36388ddf1dc997a143ab23dea28b0ddd6c873838774e542201ea058812cd",
+    "runnerPredecessor": "202608050003_chapter_test_lesson_completion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050005",
+    "filename": "202608050005_university_comparison_permission_whitelist.sql",
+    "sha256": "a7560d6f93978aded63fbfa1b7d5a6c321d23aaae649c6395af17b48307c1ff6",
+    "runnerPredecessor": "202608050004_document_checklist_respects_target_lock.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050006",
+    "filename": "202608050006_ai_token_usage_quota_index.sql",
+    "sha256": "3e5939a7500ec94eb791f4264a2f986a2245d51ba5ee54b8aebad59dbbc59346",
+    "runnerPredecessor": "202608050005_university_comparison_permission_whitelist.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050007",
+    "filename": "202608050007_submit_course_test_sequence_guard.sql",
+    "sha256": "5bd748273bd7829739f632ee388d128c8a7607b448191e00cf02bd1fc1ce8b1c",
+    "runnerPredecessor": "202608050006_ai_token_usage_quota_index.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050008",
+    "filename": "202608050008_grade_review_request_lock.sql",
+    "sha256": "109071c45ac4bed36492c6637fd8df1a4a7d29b3d9db7dfca2517eaa84556e3b",
+    "runnerPredecessor": "202608050007_submit_course_test_sequence_guard.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050009",
+    "filename": "202608050009_record_ebook_progress_rpc.sql",
+    "sha256": "1c5c61bbabca12b0fd2a7fa96919f20bad0114587b0fbb1aae45cb59ca8ac9bb",
+    "runnerPredecessor": "202608050008_grade_review_request_lock.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050010",
+    "filename": "202608050010_assignment_submit_checks_starts_at.sql",
+    "sha256": "14e195c2d68349bd0e23e8ec3b250ff85a64b91d0823ba0b47c38869e241386c",
+    "runnerPredecessor": "202608050009_record_ebook_progress_rpc.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050011",
+    "filename": "202608050011_university_assessment_dedup.sql",
+    "sha256": "e748342998c2ef539155b5630a23c6ca025767e3897ac17b56d73e9eec7f0e83",
+    "runnerPredecessor": "202608050010_assignment_submit_checks_starts_at.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608050012",
+    "filename": "202608050012_comparison_limit_ignores_unpublished.sql",
+    "sha256": "fc5ad29f4afed496f2c232431ccc79af2e638c46bf9d2d57c41eafd9c7ae553e",
+    "runnerPredecessor": "202608050011_university_assessment_dedup.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060001",
+    "filename": "202608060001_is_admin_shim.sql",
+    "sha256": "53d99217d05e5fa715f3eb694f1f6a933a86ecdb78ae72881dac1eb34ec5cca2",
+    "runnerPredecessor": "202608050012_comparison_limit_ignores_unpublished.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060002",
+    "filename": "202608060002_account_deletion_data_snapshot.sql",
+    "sha256": "3e8d8a2cf00a750ab6c1a107653180bd142f5a2c5f6363071992cf960f42fd93",
+    "runnerPredecessor": "202608060001_is_admin_shim.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060003",
+    "filename": "202608060003_active_account_platform_roles.sql",
+    "sha256": "c70a232b41dcbb88e6bd7365bd46f12c8141028e9b9eacb7605cb83f2b17d22c",
+    "runnerPredecessor": "202608060002_account_deletion_data_snapshot.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060004",
+    "filename": "202608060004_course_content_audit_log_tenant_scope.sql",
+    "sha256": "cc2d1382d32469fca2b8be96256f9a1b1df08a3230ac3fc3284ada1c8d72ea97",
+    "runnerPredecessor": "202608060003_active_account_platform_roles.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060005",
+    "filename": "202608060005_visa_auto_sync_system_exemption.sql",
+    "sha256": "8e4f22f25c3784260150dd208bfaec1148c95bd92f50503e10ca066551d9ed4d",
+    "runnerPredecessor": "202608060004_course_content_audit_log_tenant_scope.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060006",
+    "filename": "202608060006_test_and_ebook_progress_tier_check.sql",
+    "sha256": "f6bc0f65629f7ffa7e45e06dcc309aa62e0de5b8c96a8716977600b2275e4035",
+    "runnerPredecessor": "202608060005_visa_auto_sync_system_exemption.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060007",
+    "filename": "202608060007_course_favorites_plans_tenant_isolation.sql",
+    "sha256": "fbb9b01bf9ddfd258292a593dcc3984849dbb4fde0ce6a84e582051da049b732",
+    "runnerPredecessor": "202608060006_test_and_ebook_progress_tier_check.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060008",
+    "filename": "202608060008_profile_audit_tracks_global_role.sql",
+    "sha256": "f0486b49bb43bb66dab0c576c88187f5c033cb7615ad3ad5127ab8930956f9a0",
+    "runnerPredecessor": "202608060007_course_favorites_plans_tenant_isolation.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060009",
+    "filename": "202608060009_cleanup_stale_super_admin_role.sql",
+    "sha256": "9c475d8b5913d6982be94ebcf4cf8bc20cdf8f6c007c485c281c3b7758c529a0",
+    "runnerPredecessor": "202608060008_profile_audit_tracks_global_role.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060010",
+    "filename": "202608060010_digital_textbook_unpublished_content_filter.sql",
+    "sha256": "89955c95f1d1ff19d37c42693dc1328dd4ce73598e1e258c1db1b49524e8c92e",
+    "runnerPredecessor": "202608060009_cleanup_stale_super_admin_role.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060011",
+    "filename": "202608060011_storage_policy_cleanup.sql",
+    "sha256": "16111f43b6c4bed03eff87c6e4e603782f4000a5694c0d79183c2110fbeb1f55",
+    "runnerPredecessor": "202608060010_digital_textbook_unpublished_content_filter.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060012",
+    "filename": "202608060012_growth_toolbox_items.sql",
+    "sha256": "1731f0a1e118e996006935562631d6ec0f205354eb43bab8d2c3b291a35fe447",
+    "runnerPredecessor": "202608060011_storage_policy_cleanup.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060013",
+    "filename": "202608060013_growth_toolbox_related_course.sql",
+    "sha256": "c7514d8824385133abc035b27965a0f98ebacbf80304bd2896e77e887ddc0bd9",
+    "runnerPredecessor": "202608060012_growth_toolbox_items.sql",
+    "explicitReferencedRelations": [
+      "public.courses"
+    ]
+  },
+  {
+    "version": "202608060014",
+    "filename": "202608060014_growth_toolbox_vocabulary.sql",
+    "sha256": "b3bfada430eba3fa60d99585c1ecf6135aa7b471484833a26e81bbd624df76e8",
+    "runnerPredecessor": "202608060013_growth_toolbox_related_course.sql",
+    "explicitReferencedRelations": [
+      "public.digital_textbook_chapters"
+    ]
+  },
+  {
+    "version": "202608060015",
+    "filename": "202608060015_growth_toolbox_grammar.sql",
+    "sha256": "902ff931d744e1ee12b5c4036d30ada8db43c9de5c042d214d608afab72a6ce9",
+    "runnerPredecessor": "202608060014_growth_toolbox_vocabulary.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060016",
+    "filename": "202608060016_growth_toolbox_grammar_v2.sql",
+    "sha256": "95739dbba58abe20c79b770fbbb43a824a77b0c54bb22d093918639056b6c9c8",
+    "runnerPredecessor": "202608060015_growth_toolbox_grammar.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608060017",
+    "filename": "202608060017_ebook_progress_reading_seconds.sql",
+    "sha256": "899392f432bee9653fec30461a9b19910aeb81809dcf2f38207cb4fe64e02a8d",
+    "runnerPredecessor": "202608060016_growth_toolbox_grammar_v2.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070001",
+    "filename": "202608070001_student_teacher_assignments.sql",
+    "sha256": "398540334b9150829712c82317f8b51a358e1c574a373f06bf23964de05b5c8f",
+    "runnerPredecessor": "202608060017_ebook_progress_reading_seconds.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608070002",
+    "filename": "202608070002_staff_profile_hired_at.sql",
+    "sha256": "766c3dfc80fd5f47f7843239eca855f65035be198fa012e34b08ec2c25c13b72",
+    "runnerPredecessor": "202608070001_student_teacher_assignments.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070003",
+    "filename": "202608070003_staff_profiles.sql",
+    "sha256": "f2ef0f73f6a29a6efa3da95a8eec9d69ad0598ad752ce94e7b0929885fc69413",
+    "runnerPredecessor": "202608070002_staff_profile_hired_at.sql",
+    "explicitReferencedRelations": [
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202608070004",
+    "filename": "202608070004_teacher_teaching_data_access.sql",
+    "sha256": "ca40a07f8c93719f97c295a11116a8754585ae3081dcddf5a7e0770a2dbba9c2",
+    "runnerPredecessor": "202608070003_staff_profiles.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070005",
+    "filename": "202608070005_teacher_lesson_progress_access.sql",
+    "sha256": "8526b0ff5a0fff7f97fe02473fa25f4efb98a1deb8ee96f542b1e85a36a0d33c",
+    "runnerPredecessor": "202608070004_teacher_teaching_data_access.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070006",
+    "filename": "202608070006_teacher_learning_record_write.sql",
+    "sha256": "53cf01f9ef17575e65e1b4b02d3ffe9e80832ef4a45dd03bef723eca072f416f",
+    "runnerPredecessor": "202608070005_teacher_lesson_progress_access.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070007",
+    "filename": "202608070007_live_class_sessions.sql",
+    "sha256": "ebb62bc94e7fa9e71ae3ff8a65bbb904054e8c1a1ef702fd29037d6cb53ea49c",
+    "runnerPredecessor": "202608070006_teacher_learning_record_write.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.courses",
+      "public.lessons",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608070008",
+    "filename": "202608070008_live_class_events.sql",
+    "sha256": "b3f20c0f08d6ce84948e3ec359b2d4926142a067ff8bfdc9a8d47b6a8e0cc515",
+    "runnerPredecessor": "202608070007_live_class_sessions.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.live_class_sessions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608070009",
+    "filename": "202608070009_realtime_channel_auth.sql",
+    "sha256": "29097017ec88d77f1836b705eed8b708fdcac6512e2a4f4d94f0de4a43575206",
+    "runnerPredecessor": "202608070008_live_class_events.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070010",
+    "filename": "202608070010_group_class_members.sql",
+    "sha256": "000b926a9877bed12a48006502f39dcb590e0ba053e057b28cb1a0dbd90757b9",
+    "runnerPredecessor": "202608070009_realtime_channel_auth.sql",
+    "explicitReferencedRelations": [
+      "public.live_class_sessions",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202608070011",
+    "filename": "202608070011_fix_live_class_rls_recursion.sql",
+    "sha256": "01fa7094dad2fbe1d93fa35e2c1ff37f69c517356491784d32f8f720b44f58ac",
+    "runnerPredecessor": "202608070010_group_class_members.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070012",
+    "filename": "202608070012_drop_session_student_not_null.sql",
+    "sha256": "4149e58a9c1a2f81e4941a7ad0917e79b23e73d4270ddc67169678be12b8ae2e",
+    "runnerPredecessor": "202608070011_fix_live_class_rls_recursion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608070013",
+    "filename": "202608070013_tighten_live_class_helper_functions.sql",
+    "sha256": "6d22841020e822e0e09a446bf3906f38924cbfe39c9bf97a1bebd0f81e5a0bc8",
+    "runnerPredecessor": "202608070012_drop_session_student_not_null.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080001",
+    "filename": "202608080001_student_assigned_teachers_rpc.sql",
+    "sha256": "4177c28f79f2371bee0648f3d96f4803ca21a3188577d13a96f9342641eb95b2",
+    "runnerPredecessor": "202608070013_tighten_live_class_helper_functions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080002",
+    "filename": "202608080002_learning_time_log.sql",
+    "sha256": "2371d28482f768597ae9793199d258b8612b2c7f1825756aa1a6462987586fbe",
+    "runnerPredecessor": "202608080001_student_assigned_teachers_rpc.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608080003",
+    "filename": "202608080003_toolbox_study_time.sql",
+    "sha256": "e5e6ebc4b60d06ce4920e4a9b61adc107073b5b2747fbde26d07bbbdae9c1136",
+    "runnerPredecessor": "202608080002_learning_time_log.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080004",
+    "filename": "202608080004_home_tree_visibility.sql",
+    "sha256": "8746f101afd3c707e0616ce2e6b1d9226e18fc944b859dda97daa0549204ee43",
+    "runnerPredecessor": "202608080003_toolbox_study_time.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080005",
+    "filename": "202608080005_fix_platform_audit_tenant.sql",
+    "sha256": "8b1b310f1a21a1f28cfa642c2e7cd03e89c757b00c60d8b3f93d9fbdf26afc6a",
+    "runnerPredecessor": "202608080004_home_tree_visibility.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080006",
+    "filename": "202608080006_course_tree_views.sql",
+    "sha256": "810eebb5ab196fb861c8cca610e286bed020100d870ef0de512ae4c06c937f23",
+    "runnerPredecessor": "202608080005_fix_platform_audit_tenant.sql",
+    "explicitReferencedRelations": [
+      "public.course_tree_views"
+    ]
+  },
+  {
+    "version": "202608080007",
+    "filename": "202608080007_drop_show_on_home_tree.sql",
+    "sha256": "1ca2564478beb575bd2d646dfcb753d95307f469cbd9ef74f538f4672ba899d8",
+    "runnerPredecessor": "202608080006_course_tree_views.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080008",
+    "filename": "202608080008_tighten_live_class_data_model.sql",
+    "sha256": "2abd186f3309d89821ff278db6b6d1c39832a03617084e31b86f6130d96ffa8f",
+    "runnerPredecessor": "202608080007_drop_show_on_home_tree.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080009",
+    "filename": "202608080009_tighten_live_class_rls_privileges.sql",
+    "sha256": "d8bf2f0deaac06d99d89c4e48d55b2ee3925ccdc57b042324e8187237e5abb1c",
+    "runnerPredecessor": "202608080008_tighten_live_class_data_model.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080010",
+    "filename": "202608080010_unique_active_live_classes.sql",
+    "sha256": "68e1c0294e43c4dfac137d5d4d4b797b894b8b8855ecb36f2950298e030bbd0b",
+    "runnerPredecessor": "202608080009_tighten_live_class_rls_privileges.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608080011",
+    "filename": "202608080011_live_class_sfu_voice.sql",
+    "sha256": "d6ad43e5b16222271d7ef866a56b870331d1fc148837d120f7d326063525a362",
+    "runnerPredecessor": "202608080010_unique_active_live_classes.sql",
+    "explicitReferencedRelations": [
+      "public.live_class_sessions",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202608090001",
+    "filename": "202608090001_fix_tenant_visa_requirement_sync.sql",
+    "sha256": "28e471ce53024502929ef464604437a65975e42dab3edd37657378fc139e1425",
+    "runnerPredecessor": "202608080011_live_class_sfu_voice.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608140001",
+    "filename": "202608140001_chapter_test_requires_ebook_completion.sql",
+    "sha256": "a592753e2194e6586bca1d783e687f406066b52a823d28fe720947f87a091a6a",
+    "runnerPredecessor": "202608090001_fix_tenant_visa_requirement_sync.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608140002",
+    "filename": "202608140002_reset_corrupt_ebook_reading_time.sql",
+    "sha256": "614fdc5af0771b2d21b3fca6a70f027bd44cc622719bb4d0cd84492d8c441941",
+    "runnerPredecessor": "202608140001_chapter_test_requires_ebook_completion.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608150001",
+    "filename": "202608150001_ebook_completion_uses_active_time.sql",
+    "sha256": "11d99d957beed9344393381ff4f4ba87f1af01647ef51bab262645f78f1581cc",
+    "runnerPredecessor": "202608140002_reset_corrupt_ebook_reading_time.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608150002",
+    "filename": "202608150002_idempotent_ebook_reading_segments.sql",
+    "sha256": "cdec216372e9f58c1ede378f1d94cbc86e12e5597c827c4c5ee8ffb30be4022b",
+    "runnerPredecessor": "202608150001_ebook_completion_uses_active_time.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608150003",
+    "filename": "202608150003_student_grade_skill_profiles.sql",
+    "sha256": "4477fcd86bc7f03f721695cdf6fb82b15ca7f05cbfc1fb6bfa845b21471d279b",
+    "runnerPredecessor": "202608150002_idempotent_ebook_reading_segments.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608150004",
+    "filename": "202608150004_toolbox_practice_ability.sql",
+    "sha256": "56fdf1010c27d95ef036125dec85a462c583fdc834696686c37b1dc2904c4248",
+    "runnerPredecessor": "202608150003_student_grade_skill_profiles.sql",
+    "explicitReferencedRelations": [
+      "public.courses",
+      "public.digital_textbook_chapters",
+      "public.growth_toolbox_exercises",
+      "public.growth_toolbox_questions",
+      "public.profiles",
+      "public.tenants",
+      "public.toolbox_practice_attempts",
+      "public.toolbox_practice_sessions"
+    ]
+  },
+  {
+    "version": "202608150005",
+    "filename": "202608150005_student_application_domains.sql",
+    "sha256": "67cb4d5477c40330cad62711f7600f9fd508b3c2ce1775ca1cc955c21bd50c96",
+    "runnerPredecessor": "202608150004_toolbox_practice_ability.sql",
+    "explicitReferencedRelations": [
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608150006",
+    "filename": "202608150006_tenant_scoped_ebook_progress.sql",
+    "sha256": "a38473a5a309b776cf63138fd62706f762372912b486c8762803c9f1d3813222",
+    "runnerPredecessor": "202608150005_student_application_domains.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608150007",
+    "filename": "202608150007_korean_chapter_test_app_guard.sql",
+    "sha256": "784c2da1c239fdd6da4bb45ef7b709f8cb43a6783f262518206d6d5a8f98be19",
+    "runnerPredecessor": "202608150006_tenant_scoped_ebook_progress.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608150008",
+    "filename": "202608150008_admin_application_access.sql",
+    "sha256": "304fcea9eee18fe7812726162b0764fa01e3baf8bf92e35552a1b42f669d6f95",
+    "runnerPredecessor": "202608150007_korean_chapter_test_app_guard.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608150009",
+    "filename": "202608150009_recover_korean_catalog_prerequisites.sql",
+    "sha256": "2766b5891626598bcb12e058c652c29f7d6c746e2bdd99d6edd5fdc5128e46d0",
+    "runnerPredecessor": "202608150008_admin_application_access.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160001",
+    "filename": "202608160001_application_domain_hardening.sql",
+    "sha256": "94d2a2e51fad6e037601b8e2caf247863d67b3590e0447dcd40afa60570824b3",
+    "runnerPredecessor": "202608150009_recover_korean_catalog_prerequisites.sql",
+    "explicitReferencedRelations": [
+      "public.student_apps"
+    ]
+  },
+  {
+    "version": "202608160002",
+    "filename": "202608160002_application_access_trigger_fix.sql",
+    "sha256": "467441d26e0100b127116335b012d3ecf82b49d30b9214243a90c40e59a338e5",
+    "runnerPredecessor": "202608160001_application_domain_hardening.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160003",
+    "filename": "202608160003_application_access_audit_trigger_fix.sql",
+    "sha256": "cb1c9e522a9e42f49d3a63905b39553314416ebd9ee84d94c10917b0185041bb",
+    "runnerPredecessor": "202608160002_application_access_trigger_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160004",
+    "filename": "202608160004_explicit_app_ownership_trigger_fix.sql",
+    "sha256": "a416037189d8fc43c6440424701ebec0edf46b04bfe03604e1f22fea65514af7",
+    "runnerPredecessor": "202608160003_application_access_audit_trigger_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160005",
+    "filename": "202608160005_route_namespace_and_privilege_hardening.sql",
+    "sha256": "0cdfb70c4453361e8093cce8f40ef772385784fe1f6d66a22bf5fc4e25f09df3",
+    "runnerPredecessor": "202608160004_explicit_app_ownership_trigger_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160006",
+    "filename": "202608160006_client_privilege_baseline.sql",
+    "sha256": "c195c1d3aaee264f601ba4d77f27b4e2fcf9657b3a8b7e94c25865e730789208",
+    "runnerPredecessor": "202608160005_route_namespace_and_privilege_hardening.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160007",
+    "filename": "202608160007_view_privilege_baseline.sql",
+    "sha256": "bcdecf4be53319935d2ef85f610dcc5576c72ea249634f4d423e8cd4ffda38e4",
+    "runnerPredecessor": "202608160006_client_privilege_baseline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160008",
+    "filename": "202608160008_legacy_rpc_privilege_cleanup.sql",
+    "sha256": "f8ecec3d4fcf9948265d8be3b38dd8f3c841238ad7ddd5d96b13cc303d17712d",
+    "runnerPredecessor": "202608160007_view_privilege_baseline.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160009",
+    "filename": "202608160009_student_admin_contract_alignment.sql",
+    "sha256": "8b9a5a9c14439095356b10cad14bb8eb05a3d6019604dc7333da8d9f43907319",
+    "runnerPredecessor": "202608160008_legacy_rpc_privilege_cleanup.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160010",
+    "filename": "202608160010_library_application_scope.sql",
+    "sha256": "3a7bc922476b47b45dc25e0667fb4e57349bfb32c01a56ea4711f6f160cdbf28",
+    "runnerPredecessor": "202608160009_student_admin_contract_alignment.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160011",
+    "filename": "202608160011_application_workspace_permission_alignment.sql",
+    "sha256": "0938784488a1d5feb1423d16592c43d52aac62215de5ef8e92b8299a6fb1b8d3",
+    "runnerPredecessor": "202608160010_library_application_scope.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160012",
+    "filename": "202608160012_expand_korean_course_catalog.sql",
+    "sha256": "154b5f0963db9a7895c2f4df654f381f02a431a74051ef95a034b3f7bc843967",
+    "runnerPredecessor": "202608160011_application_workspace_permission_alignment.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160013",
+    "filename": "202608160013_chapter_aligned_skill_practice.sql",
+    "sha256": "f28a9c3bcfbf7c7f8c37832a91b0add8771acb8742599736dee30dbd65fdf181",
+    "runnerPredecessor": "202608160012_expand_korean_course_catalog.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_tests"
+    ]
+  },
+  {
+    "version": "202608160014",
+    "filename": "202608160014_toolbox_submission_app_scope.sql",
+    "sha256": "78db1cff3f881ff198c22e199b2975ae52b345d689b92879f8371bf059a5ffae",
+    "runnerPredecessor": "202608160013_chapter_aligned_skill_practice.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608160015",
+    "filename": "202608160015_toolbox_course_catalog_alignment.sql",
+    "sha256": "bb64ff6f5119d7cb1174aa55db3b6ee2de4d63fb7d8a838174d0085c35630fdd",
+    "runnerPredecessor": "202608160014_toolbox_submission_app_scope.sql",
+    "explicitReferencedRelations": [
+      "public.course_chapters"
+    ]
+  },
+  {
+    "version": "202608160016",
+    "filename": "202608160016_student_learning_activity_events.sql",
+    "sha256": "bd59258c1b6ecde57f86881ad745e8b4fdf051d82deee4d3f632d93adfb6ab3d",
+    "runnerPredecessor": "202608160015_toolbox_course_catalog_alignment.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608170001",
+    "filename": "202608170001_fix_ebook_progress_accumulation.sql",
+    "sha256": "839e9a74b1c6e675b9d5b484ff06a1f4c3c1240ae63f7bbfdf68a1eaf215ff99",
+    "runnerPredecessor": "202608160016_student_learning_activity_events.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608170002",
+    "filename": "202608170002_platform_conversation_practice_management.sql",
+    "sha256": "11d2ed2233f8d4a970fc48f0c87725dcf56015b42d67a194fcf4e0da10e89850",
+    "runnerPredecessor": "202608170001_fix_ebook_progress_accumulation.sql",
+    "explicitReferencedRelations": [
+      "public.conversation_practice_scenarios",
+      "to"
+    ]
+  },
+  {
+    "version": "202608170003",
+    "filename": "202608170003_tenant_admin_dashboard_aggregates.sql",
+    "sha256": "ef51ac8d4dd1f0022fc66e189acf2ddde2092698529de0132fc0d7e37198a48f",
+    "runnerPredecessor": "202608170002_platform_conversation_practice_management.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608170004",
+    "filename": "202608170004_platform_management_app_overview.sql",
+    "sha256": "8635d5e28602d6564c2a8e629fe024e89e7198b3174975c2956efb0b0081ffaa",
+    "runnerPredecessor": "202608170003_tenant_admin_dashboard_aggregates.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608170005",
+    "filename": "202608170005_platform_management_app_overview_invoker_fix.sql",
+    "sha256": "0a568e0e962a87b2f261654b6c5a4ae22cfab2adb046a4183d4aadcac564c925",
+    "runnerPredecessor": "202608170004_platform_management_app_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608170006",
+    "filename": "202608170006_platform_lesson_activity_app_scope.sql",
+    "sha256": "255510b950a67c54fe7acb6e22a685e5cd934e1efd899dfc5944d7615e6f5022",
+    "runnerPredecessor": "202608170005_platform_management_app_overview_invoker_fix.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180001",
+    "filename": "202608180001_korean_level_one_course_overview.sql",
+    "sha256": "1fe0fb672a790bfa073c82c6f8759bd6e972a13753b768e9233e25c372f4222a",
+    "runnerPredecessor": "202608170006_platform_lesson_activity_app_scope.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180002",
+    "filename": "202608180002_keep_korean_level_one_intro_chapters_unlocked.sql",
+    "sha256": "52fa2b2ef3f2f5d423eac4222ad889024629dd9cf9c59ffe413c56aa779fe7c1",
+    "runnerPredecessor": "202608180001_korean_level_one_course_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180003",
+    "filename": "202608180003_unlock_korean_level_one_after_overview.sql",
+    "sha256": "f04a3caf84875f54f615af3c969fb547ae60c85dcc7553666526930548064bf0",
+    "runnerPredecessor": "202608180002_keep_korean_level_one_intro_chapters_unlocked.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180004",
+    "filename": "202608180004_prevent_smart_textbook_decorative_labels.sql",
+    "sha256": "f5862bd88f271a2816a2ed5e5a17d61bb75d411344153cecf6cad73251b7f67f",
+    "runnerPredecessor": "202608180003_unlock_korean_level_one_after_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180005",
+    "filename": "202608180005_chapter_one_golden_smart_textbook.sql",
+    "sha256": "46c2947336dd06569125ad5c4ebe6fa563e636e5d72c71b70b7a65aca4b4bf1e",
+    "runnerPredecessor": "202608180004_prevent_smart_textbook_decorative_labels.sql",
+    "explicitReferencedRelations": [
+      "public.digital_textbook_activities",
+      "public.digital_textbook_nodes"
+    ]
+  },
+  {
+    "version": "202608180006",
+    "filename": "202608180006_chapter_one_submission_security.sql",
+    "sha256": "816e1f96a189f19ed5cc77539981ece8d6ddf9df40ae65c09b45aab8a71ad74b",
+    "runnerPredecessor": "202608180005_chapter_one_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180007",
+    "filename": "202608180007_chapter_two_golden_smart_textbook.sql",
+    "sha256": "4eeecb4a8024312ae454a3ef82be86b820506f7d09b4ba1e3f0dc460f38d38e9",
+    "runnerPredecessor": "202608180006_chapter_one_submission_security.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180008",
+    "filename": "202608180008_open_activity_unscored_mastery.sql",
+    "sha256": "782a87f1204cd22bb15616d7316f33af2c91ccee87f350d1844b45f25ae42ae7",
+    "runnerPredecessor": "202608180007_chapter_two_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180009",
+    "filename": "202608180009_chapter_three_golden_smart_textbook.sql",
+    "sha256": "b5439268009298fb0a5e4ce002f50b33e08f9537994607a4687e6963127fe7f2",
+    "runnerPredecessor": "202608180008_open_activity_unscored_mastery.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180010",
+    "filename": "202608180010_chapter_four_golden_smart_textbook.sql",
+    "sha256": "1e75d79ca8af48f8d2d89f37975dd3bab231fd8fe5fd5c0975c67c39917345f3",
+    "runnerPredecessor": "202608180009_chapter_three_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180011",
+    "filename": "202608180011_chapter_five_golden_smart_textbook.sql",
+    "sha256": "dadc1f59eebb933433f2680d7b6c688584f410921f00825bb5bf220e099409d3",
+    "runnerPredecessor": "202608180010_chapter_four_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180012",
+    "filename": "202608180012_chapter_six_golden_smart_textbook.sql",
+    "sha256": "d8c30caec62bd5b2739a8a95081530c76d90132e0648b8cfa243e94fbe60dbc4",
+    "runnerPredecessor": "202608180011_chapter_five_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180013",
+    "filename": "202608180013_chapter_seven_golden_smart_textbook.sql",
+    "sha256": "6c545d777dfaa8de8a9d51ff351d3a0142177cc92cf7429328997beeb7db8fdc",
+    "runnerPredecessor": "202608180012_chapter_six_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180014",
+    "filename": "202608180014_chapter_eight_golden_smart_textbook.sql",
+    "sha256": "df62cecccf73a95a9a4416a97e7561e75c8abde2cd6a1fdf056feb23c128fe3c",
+    "runnerPredecessor": "202608180013_chapter_seven_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180015",
+    "filename": "202608180015_chapter_nine_golden_smart_textbook.sql",
+    "sha256": "2001eea928aa8c4ca66127b5d2a087e44d9666995147e1115181305e9a4b84bf",
+    "runnerPredecessor": "202608180014_chapter_eight_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180016",
+    "filename": "202608180016_chapter_ten_golden_smart_textbook.sql",
+    "sha256": "15c5c6a5bba39777660577a898fe743f50052b06ea2b81467b2d62aee4aea94e",
+    "runnerPredecessor": "202608180015_chapter_nine_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180017",
+    "filename": "202608180017_chapter_eleven_golden_smart_textbook.sql",
+    "sha256": "fe9b3ef7e7b85d5408081abb011850cb35a51e1f2f2f7f3755b1c824583c80f3",
+    "runnerPredecessor": "202608180016_chapter_ten_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180018",
+    "filename": "202608180018_chapter_twelve_golden_smart_textbook.sql",
+    "sha256": "7218a15f61620ea6e3493e1aca5f298cb96b603fe97131563f27b8e10a54c92f",
+    "runnerPredecessor": "202608180017_chapter_eleven_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180019",
+    "filename": "202608180019_chapter_thirteen_golden_smart_textbook.sql",
+    "sha256": "0a448826b610e8298afc297900aa9a44d14af240b5b564d7e5f9a840042134d2",
+    "runnerPredecessor": "202608180018_chapter_twelve_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180020",
+    "filename": "202608180020_chapter_fourteen_golden_smart_textbook.sql",
+    "sha256": "f7afce52571636f00d39d70a16a2659c780b75f7dd9eb129f5e05c20be179080",
+    "runnerPredecessor": "202608180019_chapter_thirteen_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180021",
+    "filename": "202608180021_chapter_fifteen_golden_smart_textbook.sql",
+    "sha256": "5dc74b1ee513c562f63b0076982a28529f704c501b5becd99e5c78942d333434",
+    "runnerPredecessor": "202608180020_chapter_fourteen_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180022",
+    "filename": "202608180022_chapter_sixteen_golden_smart_textbook.sql",
+    "sha256": "1c412aa382f81f41cb02c98f8fa914380f66e08fb526bd8465271fd0259fbcb3",
+    "runnerPredecessor": "202608180021_chapter_fifteen_golden_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180023",
+    "filename": "202608180023_speaking_recording_evidence.sql",
+    "sha256": "e09b4b998165142e52ac7acc5d4b48e6e8ed082d98f3b212fab22e09a6e5c84b",
+    "runnerPredecessor": "202608180022_chapter_sixteen_golden_smart_textbook.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.digital_textbook_activities",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608180024",
+    "filename": "202608180024_add_chapter_one_korean_transcriptions.sql",
+    "sha256": "c979e403b58e9f006efc0aee20206961f88b59583924dbbfa7d94d5c5a7d22ff",
+    "runnerPredecessor": "202608180023_speaking_recording_evidence.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180025",
+    "filename": "202608180025_add_chapters_two_to_sixteen_korean_transcriptions.sql",
+    "sha256": "5374f32465edb6c509bb8c8db6520f1c10b50480c4eea1ce799782ad263d1d0a",
+    "runnerPredecessor": "202608180024_add_chapter_one_korean_transcriptions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180026",
+    "filename": "202608180026_add_chapter_one_second_grammar_round.sql",
+    "sha256": "7c78aca4bc718e3ef91f04c1891ac98f23ec0b4fcf525e5a7e5e752390a4b52d",
+    "runnerPredecessor": "202608180025_add_chapters_two_to_sixteen_korean_transcriptions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180027",
+    "filename": "202608180027_restore_objective_activity_recording.sql",
+    "sha256": "e8ed01c58bbd358c8b0e44de8f85ca7f4722c2865fd7133617daf5c4203cd075",
+    "runnerPredecessor": "202608180026_add_chapter_one_second_grammar_round.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180028",
+    "filename": "202608180028_expand_chapter_one_vocabulary_practice.sql",
+    "sha256": "4d0cceae791a7ed65747045c0ec32011780b96c70556357323471451ef82c283",
+    "runnerPredecessor": "202608180027_restore_objective_activity_recording.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180029",
+    "filename": "202608180029_expand_chapter_one_grammar_practice.sql",
+    "sha256": "f3f3600391917120397ce47fdb5c3308b1d5792ade9ce8f1516aa4ace197e549",
+    "runnerPredecessor": "202608180028_expand_chapter_one_vocabulary_practice.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180030",
+    "filename": "202608180030_merge_chapter_one_grammar_rounds.sql",
+    "sha256": "4f6ea50c6f7355a2c31c55b35cca24728cac2a80ee54c865db0adfbffe17196f",
+    "runnerPredecessor": "202608180029_expand_chapter_one_grammar_practice.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180031",
+    "filename": "202608180031_expand_chapters_two_to_sixteen_practice.sql",
+    "sha256": "68c306d63aa3d033792e689f7ee505613b228754023efb7dd812c2db4b4fdc41",
+    "runnerPredecessor": "202608180030_merge_chapter_one_grammar_rounds.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180032",
+    "filename": "202608180032_platform_owner_publish_textbook_chapter.sql",
+    "sha256": "cff4a21ad1e55ee046ac18827cd892fb979a30eee2816376c84894a14b715d94",
+    "runnerPredecessor": "202608180031_expand_chapters_two_to_sixteen_practice.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180033",
+    "filename": "202608180033_lock_down_textbook_chapter_publish_rpc.sql",
+    "sha256": "dd49dd543c5aa2abc4593278265a5a47a8e0b93cf3891e0c79cf43b981819feb",
+    "runnerPredecessor": "202608180032_platform_owner_publish_textbook_chapter.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608180034",
+    "filename": "202608180034_six_skill_chapter_homework.sql",
+    "sha256": "62bc803b23107584894c42041d2941b149948e1dad431774d49ca3ee44e0d239",
+    "runnerPredecessor": "202608180033_lock_down_textbook_chapter_publish_rpc.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_homework_plans"
+    ]
+  },
+  {
+    "version": "202608180035",
+    "filename": "202608180035_assignment_speaking_recordings.sql",
+    "sha256": "3fc33551937eba6d2af324f594240689cd4d6dbc8a77aef014b4ed5480e36048",
+    "runnerPredecessor": "202608180034_six_skill_chapter_homework.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.learning_assignment_questions",
+      "public.learning_assignments",
+      "public.learning_submissions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608180036",
+    "filename": "202608180036_assignment_chapter_completion_unlock.sql",
+    "sha256": "4e1e1c9d9449245f78b9f10dc8b02c3a47799cfe95e29325f65333a6c0e4fd9b",
+    "runnerPredecessor": "202608180035_assignment_speaking_recordings.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190000",
+    "filename": "202608190000_bootstrap_assessment_seed_sources.sql",
+    "sha256": "85a5b8db604af81d00f5c7ea8fe3fdf8836c12474854f686cc2ce2b0c06b4094",
+    "runnerPredecessor": "202608180036_assignment_chapter_completion_unlock.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190001",
+    "filename": "202608190001_homework_v11_grading_and_integrity.sql",
+    "sha256": "36e63387318f6b614cadac3ac16f6ab420358354f4a5cce685f6900db8155503",
+    "runnerPredecessor": "202608190000_bootstrap_assessment_seed_sources.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190002",
+    "filename": "202608190002_rebuild_homework_listening_from_canonical_activity.sql",
+    "sha256": "588c41c05e829919ba89b6bb376f6d5152c7153c67291829a6126e5dcd8f8ecf",
+    "runnerPredecessor": "202608190001_homework_v11_grading_and_integrity.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190003",
+    "filename": "202608190003_force_homework_listening_backfill.sql",
+    "sha256": "3b315a92e6db0e70ac6954c3ef68efa7920cde880c904a6b88585c2267033932",
+    "runnerPredecessor": "202608190002_rebuild_homework_listening_from_canonical_activity.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190004",
+    "filename": "202608190004_fix_listening_backfill_trigger_order.sql",
+    "sha256": "22ca1f6116703f1bf074e6789909ccfa48316da2134743c2908ccf0d75f1d05b",
+    "runnerPredecessor": "202608190003_force_homework_listening_backfill.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190005",
+    "filename": "202608190005_assignment_learning_loop.sql",
+    "sha256": "ab6e5bc843719bad954766000eeb41b386912485b415ea7e37d59896de63516a",
+    "runnerPredecessor": "202608190004_fix_listening_backfill_trigger_order.sql",
+    "explicitReferencedRelations": [
+      "public.learning_assignment_questions",
+      "public.learning_assignments",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190006",
+    "filename": "202608190006_platform_assessment_release_governance.sql",
+    "sha256": "3e7ab29cabbcf7c8521a2f55d0661da507469218350660af7202e94f0f2c9a2a",
+    "runnerPredecessor": "202608190005_assignment_learning_loop.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190007",
+    "filename": "202608190007_seed_korean_chapter_one_pilot_papers.sql",
+    "sha256": "447787282302cad54c7e291c61bd69f21b9a27cdfceefacab8c9341778db7edb",
+    "runnerPredecessor": "202608190006_platform_assessment_release_governance.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190008",
+    "filename": "202608190008_seed_korean_chapters_two_to_sixteen_paper_drafts.sql",
+    "sha256": "dbd96b51d9c9b418f1bf15041e023a56f30501ff8b3bcb2d396b362b50d3bcb0",
+    "runnerPredecessor": "202608190007_seed_korean_chapter_one_pilot_papers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190009",
+    "filename": "202608190009_batch_release_assessment_papers.sql",
+    "sha256": "8920830bdc8dbd78b70f86cb1fae67e4a9677b0c638b32394343b82de600a06a",
+    "runnerPredecessor": "202608190008_seed_korean_chapters_two_to_sixteen_paper_drafts.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190010",
+    "filename": "202608190010_assignment_exam_delivery_settings.sql",
+    "sha256": "abfd309c34363b6500f8db23907a40c29b51da0d783fc450f6c5b4388e5b3f89",
+    "runnerPredecessor": "202608190009_batch_release_assessment_papers.sql",
+    "explicitReferencedRelations": [
+      "public.assessment_papers",
+      "public.learning_assignments",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190011",
+    "filename": "202608190011_assignment_submission_state_machine.sql",
+    "sha256": "2dcbe0ff109d5011d52447b49597f16a1daaa576686d5772dad591359d763673",
+    "runnerPredecessor": "202608190010_assignment_exam_delivery_settings.sql",
+    "explicitReferencedRelations": [
+      "public.learning_assignments",
+      "public.learning_submissions",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190012",
+    "filename": "202608190012_assignment_exam_authoritative_timing.sql",
+    "sha256": "4e9364df83e9107a6aa9b46b6076e1387f754e33020c9e07bcc7834e07fc5b64",
+    "runnerPredecessor": "202608190011_assignment_submission_state_machine.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190013",
+    "filename": "202608190013_assignment_rubric_grading_and_release.sql",
+    "sha256": "12da70e099d4820d511b161c80a166d683222303a6a6ae31f1f221a710dd507a",
+    "runnerPredecessor": "202608190012_assignment_exam_authoritative_timing.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190014",
+    "filename": "202608190014_seed_korean_level_one_stage_exam_drafts.sql",
+    "sha256": "3565371ed2cb98d8161efcbba22bcf6911de255c1471e0eaabf5ff9e1e194106",
+    "runnerPredecessor": "202608190013_assignment_rubric_grading_and_release.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190015",
+    "filename": "202608190015_chapter_practice_content.sql",
+    "sha256": "1ed79d74fd415809aecea86a1dac3b49d9c7e3d7da3068d593271f7af49181a0",
+    "runnerPredecessor": "202608190014_seed_korean_level_one_stage_exam_drafts.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_practice_units",
+      "public.course_chapters",
+      "public.digital_textbook_chapters",
+      "public.student_apps"
+    ]
+  },
+  {
+    "version": "202608190016",
+    "filename": "202608190016_student_practice_progress_and_review_items.sql",
+    "sha256": "223f121cf010a7d701f57f0ea65762b218df02f2a40e59572b034a92372ea10f",
+    "runnerPredecessor": "202608190015_chapter_practice_content.sql",
+    "explicitReferencedRelations": [
+      "public.chapter_practice_blocks",
+      "public.chapter_practice_units",
+      "public.course_chapters",
+      "public.courses",
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190017",
+    "filename": "202608190017_unified_student_review_center.sql",
+    "sha256": "f52b4c0f66d0da7bceffd538a2f9f8ab07cde1a3414160148106f15e2149b590",
+    "runnerPredecessor": "202608190016_student_practice_progress_and_review_items.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190018",
+    "filename": "202608190018_student_weekly_learning_plans.sql",
+    "sha256": "fed3bc133848e1cf10ec4eab7bab3cf45b0f3dfbcba1100e3e2db56a9b6bed18",
+    "runnerPredecessor": "202608190017_unified_student_review_center.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190019",
+    "filename": "202608190019_teacher_learning_recommendations.sql",
+    "sha256": "c3c1958c55da7b577a87cbdd78797d731018ca0b2e6439388d7166aa1e6999f6",
+    "runnerPredecessor": "202608190018_student_weekly_learning_plans.sql",
+    "explicitReferencedRelations": [
+      "public.live_class_sessions",
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190020",
+    "filename": "202608190020_student_learning_task_preferences.sql",
+    "sha256": "d32a6b20c73ead9873fbc8d752f6db3b6b4fb59432e71f74a5a23301909a7900",
+    "runnerPredecessor": "202608190019_teacher_learning_recommendations.sql",
+    "explicitReferencedRelations": [
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608190021",
+    "filename": "202608190021_teacher_class_today_snapshot.sql",
+    "sha256": "196f6f5e535a3d4ba3291d8ab918079ce5af9fcca1e3cee24c53a7b47105817b",
+    "runnerPredecessor": "202608190020_student_learning_task_preferences.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190022",
+    "filename": "202608190022_institution_platform_learning_overview.sql",
+    "sha256": "3412a0d07b04f81f36588ecfdd26494bcde602fc7d5fc7ef4c41c928a3c05ede",
+    "runnerPredecessor": "202608190021_teacher_class_today_snapshot.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190023",
+    "filename": "202608190023_seed_korean_level_one_midterm_v1_draft.sql",
+    "sha256": "aecc564586eacc706b13f81a2345b3c79ce127cbc0c75295fc752474dd48ff38",
+    "runnerPredecessor": "202608190022_institution_platform_learning_overview.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608190024",
+    "filename": "202608190024_complete_korean_level_one_midterm_v1_draft.sql",
+    "sha256": "93c1ab50dca1f44616ce50f7e04e0469e4118a0a78f204d8e5262bdeb126dc1c",
+    "runnerPredecessor": "202608190023_seed_korean_level_one_midterm_v1_draft.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608200001",
+    "filename": "202608200001_assignment_grade_release_rls.sql",
+    "sha256": "a6bb6151d3538195d787787257ae606b61a74804a188cfdfaac2f96681f435d3",
+    "runnerPredecessor": "202608190024_complete_korean_level_one_midterm_v1_draft.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608200002",
+    "filename": "202608200002_seed_korean_level_one_final_v1_draft.sql",
+    "sha256": "f882a128b08b6ab6eed4e3c7663c62514f09b4552444db501def97b288ea1f86",
+    "runnerPredecessor": "202608200001_assignment_grade_release_rls.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608200003",
+    "filename": "202608200003_course_completion_policies_and_evaluations.sql",
+    "sha256": "24c415b53e5c8246bb879df9f9c5c470662a848daec7e59aa1358ed36852bd55",
+    "runnerPredecessor": "202608200002_seed_korean_level_one_final_v1_draft.sql",
+    "explicitReferencedRelations": [
+      "public.course_completion_policies",
+      "public.courses",
+      "public.profiles",
+      "public.student_apps",
+      "public.tenant_memberships",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608200004",
+    "filename": "202608200004_single_student_completion_evaluator.sql",
+    "sha256": "681a72e8ee3dceb102780448e4983f765f0b65d67a2d0a6c2484ffb143740e7e",
+    "runnerPredecessor": "202608200003_course_completion_policies_and_evaluations.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608200005",
+    "filename": "202608200005_completion_refresh_orchestration.sql",
+    "sha256": "e32531dcd5fa6883b4fce82ec5b978a2eafc8f0a91d681da7aa7b287138548b2",
+    "runnerPredecessor": "202608200004_single_student_completion_evaluator.sql",
+    "explicitReferencedRelations": [
+      "public.course_completion_policies",
+      "public.course_completion_refresh_tasks",
+      "public.courses",
+      "public.profiles",
+      "public.student_apps",
+      "public.student_course_completion_evaluations",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608200006",
+    "filename": "202608200006_course_completion_certificates.sql",
+    "sha256": "75fd81a7899e4e69462a89c460946b467386e230a62fb5071d87a5b7188f7293",
+    "runnerPredecessor": "202608200005_completion_refresh_orchestration.sql",
+    "explicitReferencedRelations": [
+      "public.course_completion_certificates",
+      "public.courses",
+      "public.profiles",
+      "public.student_apps",
+      "public.student_course_completion_evaluations",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608200007",
+    "filename": "202608200007_completion_retake_connections.sql",
+    "sha256": "9b071226ec6f1280caee56d25ba41fc55ac18b19c5e664c49facb054ca1c5796",
+    "runnerPredecessor": "202608200006_course_completion_certificates.sql",
+    "explicitReferencedRelations": [
+      "public.assessment_paper_questions",
+      "public.assessment_papers"
+    ]
+  },
+  {
+    "version": "202608200008",
+    "filename": "202608200008_course_completion_statistics.sql",
+    "sha256": "90803599aa31c646927ffd529fd35ec03802628d154cf165e419cb68befeddcb",
+    "runnerPredecessor": "202608200007_completion_retake_connections.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608210001",
+    "filename": "202608210001_publish_chapter_one_mission_scene.sql",
+    "sha256": "dd72a59bd18192b82c7a2ea1ebae9f27f2c96e6c59bf5bd5a0a609208e4acc1b",
+    "runnerPredecessor": "202608200008_course_completion_statistics.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608210002",
+    "filename": "202608210002_add_chapter_one_orientation_dialogue_groups.sql",
+    "sha256": "0d8eb051ba48e217b418a85bc5c7e0da43dd9df627207c1f4ee28bac9a16ef86",
+    "runnerPredecessor": "202608210001_publish_chapter_one_mission_scene.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608210003",
+    "filename": "202608210003_correct_chapter_one_orientation_dialogue_groups_target.sql",
+    "sha256": "ae4264c969c0448ac5456c77214c60e077ad10d3038b4dc2cfec909b05ed278a",
+    "runnerPredecessor": "202608210002_add_chapter_one_orientation_dialogue_groups.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608210004",
+    "filename": "202608210004_expand_chapter_one_orientation_diagnostics.sql",
+    "sha256": "9931239ae0ae25f672fc37ba7e1efc516df54bcc81ff53a702798b5f6ef96cf6",
+    "runnerPredecessor": "202608210003_correct_chapter_one_orientation_dialogue_groups_target.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220001",
+    "filename": "202608220001_publish_chapter_one_vocabulary_scene.sql",
+    "sha256": "2af3bff8bc080f41ff37788b54d5fd12d220778735457554ec78f791164f3df2",
+    "runnerPredecessor": "202608210004_expand_chapter_one_orientation_diagnostics.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220002",
+    "filename": "202608220002_publish_chapter_one_vocabulary_scene_wide.sql",
+    "sha256": "2e23abd453d3657a475b375fb9105dc4ea61d160f7a06f91657f19f02e2028c2",
+    "runnerPredecessor": "202608220001_publish_chapter_one_vocabulary_scene.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220003",
+    "filename": "202608220003_publish_chapter_one_vocabulary_scene_panorama.sql",
+    "sha256": "232b0a7d10c3225112cb7a673ead0864ee76a0187cdac25cf2c3323155b2ba02",
+    "runnerPredecessor": "202608220002_publish_chapter_one_vocabulary_scene_wide.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220004",
+    "filename": "202608220004_position_chapter_one_vocabulary_hotspots.sql",
+    "sha256": "fa499c4121e28286d9fc6f2fab67935a15eb7c43b5fe654f663ff094a0fed884",
+    "runnerPredecessor": "202608220003_publish_chapter_one_vocabulary_scene_panorama.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220005",
+    "filename": "202608220005_correct_chapter_one_vocabulary_hotspots.sql",
+    "sha256": "30bc54b6a0de547a1c4947a155adf53ef8287254ee5b5b3f964c060340370140",
+    "runnerPredecessor": "202608220004_position_chapter_one_vocabulary_hotspots.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220006",
+    "filename": "202608220006_publish_chapter_one_vocabulary_scene_lossless.sql",
+    "sha256": "b67518400786e7aafed57315c00204fdc1c756a2fe4361449b0535c1f1eb8e2b",
+    "runnerPredecessor": "202608220005_correct_chapter_one_vocabulary_hotspots.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220007",
+    "filename": "202608220007_publish_chapter_one_vocabulary_scene_2x.sql",
+    "sha256": "8ad9513567076feb3eec6907372013c97ee7184203ee545de436ec75fb99274a",
+    "runnerPredecessor": "202608220006_publish_chapter_one_vocabulary_scene_lossless.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220008",
+    "filename": "202608220008_publish_chapter_one_steps_three_to_eight_scenes.sql",
+    "sha256": "efaa4e5a7c40290bf92fcf83427e02ef2ba6513ffe7f6f7f836de0ff8ad449cb",
+    "runnerPredecessor": "202608220007_publish_chapter_one_vocabulary_scene_2x.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220009",
+    "filename": "202608220009_correct_chapter_one_task_scene_aspect_ratio.sql",
+    "sha256": "3823f05698586f9142f2b0401405ff651fadf5a96f34ad4e3bac4aebb2fed1e6",
+    "runnerPredecessor": "202608220008_publish_chapter_one_steps_three_to_eight_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220010",
+    "filename": "202608220010_remove_chapter_one_grammar_focus_gate.sql",
+    "sha256": "21edd693e08e0637e7d6272cada7f120969de1be7fef707f5002e1b72e643263",
+    "runnerPredecessor": "202608220009_correct_chapter_one_task_scene_aspect_ratio.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220011",
+    "filename": "202608220011_add_chapter_one_grammar_choice_and_judgment.sql",
+    "sha256": "36aef2d6789470551f3785193b82e42dad1aa85aaa9d7d6731994742686929d5",
+    "runnerPredecessor": "202608220010_remove_chapter_one_grammar_focus_gate.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220012",
+    "filename": "202608220012_keep_grammar_punctuation_in_prompts.sql",
+    "sha256": "b3092385d648f0a32a93a2e61d259a803df533096137dc5a0288979c61f07014",
+    "runnerPredecessor": "202608220011_add_chapter_one_grammar_choice_and_judgment.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220013",
+    "filename": "202608220013_expand_chapter_one_pattern_cards.sql",
+    "sha256": "517f7253cc66cc40e8442eb622218225fc49080e7a59258c47d2be154d7d9cc8",
+    "runnerPredecessor": "202608220012_keep_grammar_punctuation_in_prompts.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608220014",
+    "filename": "202608220014_add_chapter_one_pattern_choice_groups.sql",
+    "sha256": "f840a8c7f94c43dc2b46518830b9bcaffe8f9613a073ce26d41e55da71991ab6",
+    "runnerPredecessor": "202608220013_expand_chapter_one_pattern_cards.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230001",
+    "filename": "202608230001_redesign_chapter_one_pattern_choice_content.sql",
+    "sha256": "636b0231412e1723f385e89eae47b84ff432070abc727d08ed600609b36a08a8",
+    "runnerPredecessor": "202608220014_add_chapter_one_pattern_choice_groups.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230002",
+    "filename": "202608230002_add_conversation_scenes_to_pattern_choices.sql",
+    "sha256": "4e4686290e0ce2845122adbac74c441ad8883d2b44a5982268e31808466874c5",
+    "runnerPredecessor": "202608230001_redesign_chapter_one_pattern_choice_content.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230003",
+    "filename": "202608230003_convert_pattern_choices_to_guided_conversation.sql",
+    "sha256": "dbb6b59e805429dd53e68902b21d5e90d72ce35003092deb243316845b38d7ae",
+    "runnerPredecessor": "202608230002_add_conversation_scenes_to_pattern_choices.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230004",
+    "filename": "202608230004_add_guided_conversation_audio_manifest.sql",
+    "sha256": "2a6c85a6fb22be0802f876d7b1c04e609cb89a74e305d6385ec73942b6c7c95a",
+    "runnerPredecessor": "202608230003_convert_pattern_choices_to_guided_conversation.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230005",
+    "filename": "202608230005_add_chapter_one_pattern_composition.sql",
+    "sha256": "f9a59733cb863dbee4faf3091fd0f2746b4ddf44e95eccb9db24f30a6b8ce31e",
+    "runnerPredecessor": "202608230004_add_guided_conversation_audio_manifest.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230006",
+    "filename": "202608230006_expand_pattern_composition_to_two_way_dialogue.sql",
+    "sha256": "48b4b8c27ef8f96902a32c834e85e90cdd69e763d856c3efc063705cde9a84b0",
+    "runnerPredecessor": "202608230005_add_chapter_one_pattern_composition.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230007",
+    "filename": "202608230007_present_pattern_order_as_expression_path.sql",
+    "sha256": "1eca46149c684134dbf9bc5f80cb868fc467616e481aa4ad37fa57ef8a725000",
+    "runnerPredecessor": "202608230006_expand_pattern_composition_to_two_way_dialogue.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230008",
+    "filename": "202608230008_redesign_chapter_one_dialogue_pages.sql",
+    "sha256": "32eaefcc1e0ddd8950b6fa7fc832cbe8dff1ce08f628964044bc46a23dd1a9fb",
+    "runnerPredecessor": "202608230007_present_pattern_order_as_expression_path.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230009",
+    "filename": "202608230009_apply_chapter_one_dialogue_pages_to_smart_textbook.sql",
+    "sha256": "adcc1fb8cf27499a2f038b0f2b303b93f09608e349e11a08266b6eb3ec77db91",
+    "runnerPredecessor": "202608230008_redesign_chapter_one_dialogue_pages.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230010",
+    "filename": "202608230010_add_chapter_one_dialogue_roleplay.sql",
+    "sha256": "0b3245d8125bceab7a7b42eedcaefa7ea31a0f29172869e40e1477f4b2e42f4f",
+    "runnerPredecessor": "202608230009_apply_chapter_one_dialogue_pages_to_smart_textbook.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230011",
+    "filename": "202608230011_require_chapter_one_dialogue_roleplay.sql",
+    "sha256": "6479e8be0288db33d920c0fe1e5a3876e7e73e1244b0e5944d870101e10b7638",
+    "runnerPredecessor": "202608230010_add_chapter_one_dialogue_roleplay.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608230012",
+    "filename": "202608230012_recalculate_dialogue_progress_after_roleplay_requirement.sql",
+    "sha256": "502d71fcaf2f951bce76c20c531ba2acdd5552db59c71072a716889f2ab748e1",
+    "runnerPredecessor": "202608230011_require_chapter_one_dialogue_roleplay.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240001",
+    "filename": "202608240001_design_chapter_one_listen_speak_flow.sql",
+    "sha256": "2c83d8c0772bda5b1fa63164eebb220a9d4e5a5b566e13312e86f98e435fdc68",
+    "runnerPredecessor": "202608230012_recalculate_dialogue_progress_after_roleplay_requirement.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240002",
+    "filename": "202608240002_expand_chapter_one_listening_diagnostics.sql",
+    "sha256": "ef87ded2b549b572f447678a06370d04767566afbecc1374924ebc458e72dfb3",
+    "runnerPredecessor": "202608240001_design_chapter_one_listen_speak_flow.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240003",
+    "filename": "202608240003_finalize_chapter_one_listening_master.sql",
+    "sha256": "519fae341988c8bc9660f09ee5acd90087462ccdf3881af25ff90b6da6c7ab8a",
+    "runnerPredecessor": "202608240002_expand_chapter_one_listening_diagnostics.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240004",
+    "filename": "202608240004_publish_chapter_one_temporary_listening_audio.sql",
+    "sha256": "a33cbcdbb13b085999889ed1cd387f666dbc48a782d60ae40adbdd33f2515595",
+    "runnerPredecessor": "202608240003_finalize_chapter_one_listening_master.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240005",
+    "filename": "202608240005_persist_digital_textbook_page_progress.sql",
+    "sha256": "0594d5dfe1b4ac84ef54e76dc1a0ab9f77742c3e801ccfe1d72b2c8435b4344c",
+    "runnerPredecessor": "202608240004_publish_chapter_one_temporary_listening_audio.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.digital_textbook_activities",
+      "public.digital_textbook_versions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608240006",
+    "filename": "202608240006_split_chapter_one_listening_into_two_tracks.sql",
+    "sha256": "3ca570d1f76bca8af51c06b6863a926d8a0e69ceaac3fbb812cbcd7e6244d50f",
+    "runnerPredecessor": "202608240005_persist_digital_textbook_page_progress.sql",
+    "explicitReferencedRelations": [
+      "public.digital_textbook_activities"
+    ]
+  },
+  {
+    "version": "202608240007",
+    "filename": "202608240007_balance_chapter_one_listening_answers.sql",
+    "sha256": "25af72ad599dc2682e47c6d7cf8bbb5702fedf49134bf411ccf7bbbe7fc6d56b",
+    "runnerPredecessor": "202608240006_split_chapter_one_listening_into_two_tracks.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240008",
+    "filename": "202608240008_add_two_track_repeat_materials.sql",
+    "sha256": "5a4b995694ca370d19db5df9b3ef82397eb7440c4e72daf01d9572d7ebeb1c04",
+    "runnerPredecessor": "202608240007_balance_chapter_one_listening_answers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240009",
+    "filename": "202608240009_design_independent_speaking_output.sql",
+    "sha256": "872aaf643f6ca3a01508e3e23adfba526a3ce33899323bb9681a6d4490648f80",
+    "runnerPredecessor": "202608240008_add_two_track_repeat_materials.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240010",
+    "filename": "202608240010_require_independent_speaking_for_listen_speak_progress.sql",
+    "sha256": "e1164e7600a3852e8c8dbcdbb44f8fb53766ca79cf8799d54749fed81736690f",
+    "runnerPredecessor": "202608240009_design_independent_speaking_output.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240011",
+    "filename": "202608240011_publish_chapters_two_to_sixteen_listening_audio.sql",
+    "sha256": "f5edb3d15554a2023f5069ae2e233e4829748f3f77abf21987bb4ce9521a00d4",
+    "runnerPredecessor": "202608240010_require_independent_speaking_for_listen_speak_progress.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240012",
+    "filename": "202608240012_publish_chapter_two_primary_scene.sql",
+    "sha256": "2e3a5eacc54077a1996653ae98e33d02deaf8b100f2cc2ac000e197afb00b4b1",
+    "runnerPredecessor": "202608240011_publish_chapters_two_to_sixteen_listening_audio.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240013",
+    "filename": "202608240013_publish_chapters_three_to_sixteen_primary_scenes.sql",
+    "sha256": "c301782a17e7cf718cb5b15a1d5770d5866b9ab96ad766e5ac51a53665d3c4d3",
+    "runnerPredecessor": "202608240012_publish_chapter_two_primary_scene.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240014",
+    "filename": "202608240014_publish_chapter_two_module_scenes.sql",
+    "sha256": "4e2704816a6cd86fbc1056c34a481979c83c3b0390d03b5521ec34a35758d467",
+    "runnerPredecessor": "202608240013_publish_chapters_three_to_sixteen_primary_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240015",
+    "filename": "202608240015_publish_chapter_three_module_scenes.sql",
+    "sha256": "fb543d64dcffb1532199bdf946818acbf1d851930cb5c2c26b9f919a3bf36dd5",
+    "runnerPredecessor": "202608240014_publish_chapter_two_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240016",
+    "filename": "202608240016_publish_chapter_four_module_scenes.sql",
+    "sha256": "0ffd151d67c7ee4536868c5ea04df577115df4cba011099fc3403a8b60ed817f",
+    "runnerPredecessor": "202608240015_publish_chapter_three_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240017",
+    "filename": "202608240017_publish_chapter_five_module_scenes.sql",
+    "sha256": "82d1ebc5f6c2fe25aac3e79a3707349189d0ffbb1dcf54ddcc5aff9e7a225980",
+    "runnerPredecessor": "202608240016_publish_chapter_four_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240018",
+    "filename": "202608240018_publish_chapter_six_module_scenes.sql",
+    "sha256": "6cf8e575a4681884840277b3a6f7375b5e3a94aab0b7b927eb6484dc148edba3",
+    "runnerPredecessor": "202608240017_publish_chapter_five_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240019",
+    "filename": "202608240019_publish_chapter_seven_module_scenes.sql",
+    "sha256": "0a0ea69d4bd29e3e2b99ef5fb49de52a36ddbf4e18d5c0ed024b7e71f991ef6a",
+    "runnerPredecessor": "202608240018_publish_chapter_six_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240020",
+    "filename": "202608240020_publish_chapter_eight_module_scenes.sql",
+    "sha256": "30fb0056ca67f220374512c348efcd0b94325e13619879ec246e27073f21ab72",
+    "runnerPredecessor": "202608240019_publish_chapter_seven_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240021",
+    "filename": "202608240021_publish_chapter_nine_module_scenes.sql",
+    "sha256": "2d81ffc125a83782c0bd84c7d448f83cd05eacc4001b4faf962245856d5e98d8",
+    "runnerPredecessor": "202608240020_publish_chapter_eight_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240022",
+    "filename": "202608240022_publish_chapter_ten_module_scenes.sql",
+    "sha256": "42452b9efecc46752f6d5d7510066ca80cf0ff3b5f4a1136bd983d0aa2e25a30",
+    "runnerPredecessor": "202608240021_publish_chapter_nine_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240023",
+    "filename": "202608240023_publish_chapter_eleven_module_scenes.sql",
+    "sha256": "e37593fdb0070c5f02ac2669df5b09899cae421eb4e54264428d91ce8c6f5219",
+    "runnerPredecessor": "202608240022_publish_chapter_ten_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240024",
+    "filename": "202608240024_publish_chapter_twelve_module_scenes.sql",
+    "sha256": "c285bc2bc133849a86420a919fbc49e3695aceb12b95d5c85b49ba021cedcecc",
+    "runnerPredecessor": "202608240023_publish_chapter_eleven_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240025",
+    "filename": "202608240025_publish_chapter_thirteen_module_scenes.sql",
+    "sha256": "0ba09e03ed1003da954b7a266fca96b399fb809f596ca0c038856ec7572a05f1",
+    "runnerPredecessor": "202608240024_publish_chapter_twelve_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240026",
+    "filename": "202608240026_publish_chapter_fourteen_module_scenes.sql",
+    "sha256": "7eaaeddffb283ded83a0ad1b1d0633708666ad13f5993e0d683161be3f4a11b8",
+    "runnerPredecessor": "202608240025_publish_chapter_thirteen_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240027",
+    "filename": "202608240027_publish_chapter_fifteen_module_scenes.sql",
+    "sha256": "f4fc8848da9cb018bd117293c5f9ceaad2c409dfd516d73368885158df56210b",
+    "runnerPredecessor": "202608240026_publish_chapter_fourteen_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240028",
+    "filename": "202608240028_publish_chapter_sixteen_module_scenes.sql",
+    "sha256": "103ec02db15189dabeee0429c9d0f9e3cdc43b90da623ef7c6b1ac90cc00c434",
+    "runnerPredecessor": "202608240027_publish_chapter_fifteen_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240029",
+    "filename": "202608240029_remove_broken_legacy_ebook_progress_rpc.sql",
+    "sha256": "0333496e964e6c0460bd5236c5f006175e61e8ebdb5024d622e31019fc614f37",
+    "runnerPredecessor": "202608240028_publish_chapter_sixteen_module_scenes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608240030",
+    "filename": "202608240030_persist_guided_repeat_progress.sql",
+    "sha256": "4554f4a971b9032d63952bb970ca667cda6f20d784fce69e06197767e0863d2e",
+    "runnerPredecessor": "202608240029_remove_broken_legacy_ebook_progress_rpc.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.digital_textbook_activities",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608260001",
+    "filename": "202608260001_teaching_agent_phase_one.sql",
+    "sha256": "a02570c1fb3f85fbb38d8a998cbe8a9e4f6a8a08bdf8d3dac4794a92e891cec3",
+    "runnerPredecessor": "202608240030_persist_guided_repeat_progress.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.digital_textbook_modules",
+      "public.digital_textbook_teaching_lessons",
+      "public.digital_textbook_teaching_sessions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608260002",
+    "filename": "202608260002_multi_subject_learning_agent_runtime.sql",
+    "sha256": "e51a626b444156e11359a333c84b1560d1ae98ed15f086d6ce75b6e385f454d8",
+    "runnerPredecessor": "202608260001_teaching_agent_phase_one.sql",
+    "explicitReferencedRelations": [
+      "public.learning_agent_profiles"
+    ]
+  },
+  {
+    "version": "202608260003",
+    "filename": "202608260003_split_ai_usage_by_provider.sql",
+    "sha256": "bc89ce92d7ff18e2bfe745f1bafe7c206e19e3b43f7e8b96159e4769119fb3a6",
+    "runnerPredecessor": "202608260002_multi_subject_learning_agent_runtime.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608260004",
+    "filename": "202608260004_learning_agent_model_switch_audit.sql",
+    "sha256": "ed3e0642974ba59283a1202f6889d5e2b473788883ebe1f295fcfd1f9a22337c",
+    "runnerPredecessor": "202608260003_split_ai_usage_by_provider.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.learning_agent_profiles"
+    ]
+  },
+  {
+    "version": "202608260005",
+    "filename": "202608260005_uply_guide_agent.sql",
+    "sha256": "3e00480106a707aed94f9989d75700d57aa2287769b97e9c828b7fe2cefccdc0",
+    "runnerPredecessor": "202608260004_learning_agent_model_switch_audit.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.guide_agent_sessions",
+      "public.learning_agent_profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608260006",
+    "filename": "202608260006_learning_agent_script_studio.sql",
+    "sha256": "ba697ea7476360446bec07d4d350c2e9b456bf9358d36a7b5d70d8a7aebab3c6",
+    "runnerPredecessor": "202608260005_uply_guide_agent.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.digital_textbook_activities",
+      "public.learning_agent_lessons",
+      "public.learning_agent_script_nodes",
+      "public.learning_agent_script_versions",
+      "public.learning_agent_sessions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608260007",
+    "filename": "202608260007_chapter_one_orientation_teaching_displays.sql",
+    "sha256": "1f349db54d9348fdca43875a6cf031d3ce2a763547b7ab4b222db7d8804d948d",
+    "runnerPredecessor": "202608260006_learning_agent_script_studio.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608260008",
+    "filename": "202608260008_learning_agent_student_task_events.sql",
+    "sha256": "8f9a900675fb8c1bbb250cfaa001519fcce658b36df09b60fd0a1641f86126a4",
+    "runnerPredecessor": "202608260007_chapter_one_orientation_teaching_displays.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.learning_agent_script_nodes",
+      "public.learning_agent_script_versions",
+      "public.learning_agent_sessions",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202608270001",
+    "filename": "202608270001_link_orientation_scene_visual_cue.sql",
+    "sha256": "c071d8489795577d7511185b9761df524951ba89b9fcc3a5c7e1f052517f58ac",
+    "runnerPredecessor": "202608260008_learning_agent_student_task_events.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608270002",
+    "filename": "202608270002_add_visual_cue_duration.sql",
+    "sha256": "0d6ff4aa957b2938997b312de2e41385dee455edf6c3261197491c177630b20f",
+    "runnerPredecessor": "202608270001_link_orientation_scene_visual_cue.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608270003",
+    "filename": "202608270003_learning_agent_node_interactions.sql",
+    "sha256": "c4a6b5aa2ccbd82946fc394161087087ba8b397f960e5e92d8a08d5ff5b38b4e",
+    "runnerPredecessor": "202608270002_add_visual_cue_duration.sql",
+    "explicitReferencedRelations": [
+      "public.learning_agent_script_nodes"
+    ]
+  },
+  {
+    "version": "202608270004",
+    "filename": "202608270004_publish_korean_course_cover_series.sql",
+    "sha256": "42f99be7a3539a6782d54f0e5d0a6873f942db9f9ad7ed7beaf8c7b639b2573c",
+    "runnerPredecessor": "202608270003_learning_agent_node_interactions.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608270005",
+    "filename": "202608270005_number_beginner_lesson_covers.sql",
+    "sha256": "56bb4d16ea74314785e05ceabd40bd2b2850db7d9cf8c6e14ea3f0106bd87732",
+    "runnerPredecessor": "202608270004_publish_korean_course_cover_series.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608270006",
+    "filename": "202608270006_correct_beginner_lesson_cover_numbers.sql",
+    "sha256": "1daa7de23747dd75b8a9f516761e0ef767e4c6bace07b67cc761c3cbdc6b343d",
+    "runnerPredecessor": "202608270005_number_beginner_lesson_covers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280001",
+    "filename": "202608280001_defer_chapter_one_orientation_answer.sql",
+    "sha256": "8147c63b5651eb35b05e2a26e2b1b4c6c260bfd78c424f3aa2129f7aaebcad63",
+    "runnerPredecessor": "202608270006_correct_beginner_lesson_cover_numbers.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280002",
+    "filename": "202608280002_rename_korean_agent_to_teacher_kim.sql",
+    "sha256": "e47e8630183485c14a497c9860ca96c5e648b2c018d7b821ac1b4dbee5f4b5a3",
+    "runnerPredecessor": "202608280001_defer_chapter_one_orientation_answer.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280003",
+    "filename": "202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql",
+    "sha256": "831cbdc85400d27815f1a1214adc3cf12176ef547dfc90503ca0b21eb9d75480",
+    "runnerPredecessor": "202608280002_rename_korean_agent_to_teacher_kim.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280004",
+    "filename": "202608280004_update_teacher_kim_display_name.sql",
+    "sha256": "6a819bfa13f7687de9ce975e29f461d1a1fde785fa1bd806d61f46b69981ee15",
+    "runnerPredecessor": "202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280005",
+    "filename": "202608280005_remove_learning_agent_display_body.sql",
+    "sha256": "7636c9ebe90294d385ec4253dd87f2bde74e460f008f5a172c5e1ca23ac31b97",
+    "runnerPredecessor": "202608280004_update_teacher_kim_display_name.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608280006",
+    "filename": "202608280006_add_learning_agent_script_audio_assets.sql",
+    "sha256": "e8987cf4912c14740fcb835fe62b2fda6b94514c0bd7fe142d6616453878c54d",
+    "runnerPredecessor": "202608280005_remove_learning_agent_display_body.sql",
+    "explicitReferencedRelations": [
+      "public.learning_agent_script_nodes"
+    ]
+  },
+  {
+    "version": "202608280007",
+    "filename": "202608280007_default_teacher_kim_for_all_script_nodes.sql",
+    "sha256": "8b9a002d327e9557bc82228dd1feabe1a5b6a77d7124fd398914e2303f45b5d8",
+    "runnerPredecessor": "202608280006_add_learning_agent_script_audio_assets.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608290001",
+    "filename": "202608290001_harden_learning_agent_script_flow.sql",
+    "sha256": "4ac60ba2b06ee2a4ce8b6845ba560ced834ab4ed98e0db7d1f6c9b610564c07a",
+    "runnerPredecessor": "202608280007_default_teacher_kim_for_all_script_nodes.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202608310001",
+    "filename": "202608310001_inherit_learning_agent_script_audio.sql",
+    "sha256": "d3560de75c2e0d3fd0fbe6b865642f52b46f4bbd5952a5c3ca7c5294cd93a3c2",
+    "runnerPredecessor": "202608290001_harden_learning_agent_script_flow.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609010001",
+    "filename": "202609010001_add_character_style_templates.sql",
+    "sha256": "227f9a4725ce13d2df1ee892e81cc1ac7d4103a65ea81efa5c71b27855192013",
+    "runnerPredecessor": "202608310001_inherit_learning_agent_script_audio.sql",
+    "explicitReferencedRelations": [
+      "auth.users"
+    ]
+  },
+  {
+    "version": "202609010002",
+    "filename": "202609010002_add_blackboard_layout_templates.sql",
+    "sha256": "b283f6295feb2309679ee60fb49e547ec5838402ea1679ce1a724acae5f6745a",
+    "runnerPredecessor": "202609010001_add_character_style_templates.sql",
+    "explicitReferencedRelations": [
+      "auth.users"
+    ]
+  },
+  {
+    "version": "202609010003",
+    "filename": "202609010003_add_smart_textbook_learning_target_registry.sql",
+    "sha256": "0d3c10969eb0599446940bdc1eb8a4c7f06a7a0c6d53a13ee7364e3c0849beb3",
+    "runnerPredecessor": "202609010002_add_blackboard_layout_templates.sql",
+    "explicitReferencedRelations": [
+      "auth.users"
+    ]
+  },
+  {
+    "version": "202609010004",
+    "filename": "202609010004_add_generic_module_learning_target_registry.sql",
+    "sha256": "c8a042e898a6717093e3b8cfcf66d82f5b22e0e69efd46675677bc1afe1455b0",
+    "runnerPredecessor": "202609010003_add_smart_textbook_learning_target_registry.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609010005",
+    "filename": "202609010005_add_teaching_area_toggle_learning_targets.sql",
+    "sha256": "c22aef456603407e428df66c8f9deef95a890455cd32fe8566acef921426f93f",
+    "runnerPredecessor": "202609010004_add_generic_module_learning_target_registry.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609010006",
+    "filename": "202609010006_split_teaching_area_toggle_learning_target.sql",
+    "sha256": "c639121c2f6ddd169198dcc086dacd08e5efe20fa6c439c2c31949c7bb37f0b8",
+    "runnerPredecessor": "202609010005_add_teaching_area_toggle_learning_targets.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609020001",
+    "filename": "202609020001_add_split_character_style_template_coordinates.sql",
+    "sha256": "48118fdc7eb0f6e90fa3342d10424e5bd175c3907b2249015db368eddb7050a9",
+    "runnerPredecessor": "202609010006_split_teaching_area_toggle_learning_target.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609020002",
+    "filename": "202609020002_add_narrow_character_style_template_coordinates.sql",
+    "sha256": "f7ca902c848f425e7dcf6f7a9c48f74d8f3048fe4373e32d610b3291972ac411",
+    "runnerPredecessor": "202609020001_add_split_character_style_template_coordinates.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609020003",
+    "filename": "202609020003_add_narrow_character_scale.sql",
+    "sha256": "3e727256cd449fecb4c6aafbd709c3a6c145ed0ad9af953d533d2ad70e9d4df9",
+    "runnerPredecessor": "202609020002_add_narrow_character_style_template_coordinates.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609040001",
+    "filename": "202609040001_add_profile_motto_and_tags.sql",
+    "sha256": "f07b82712871dc48e366c086beec7dcdc218e6d8209736c9f02fc291147885a4",
+    "runnerPredecessor": "202609020003_add_narrow_character_scale.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609040002",
+    "filename": "202609040002_agent_operations_center.sql",
+    "sha256": "ac405e0946247699ebf2f6757466db2bebb63bf420891485f3882257b028c705",
+    "runnerPredecessor": "202609040001_add_profile_motto_and_tags.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.learning_agent_profiles"
+    ]
+  },
+  {
+    "version": "202609040003",
+    "filename": "202609040003_point_agent_rule_to_korean_level_one.sql",
+    "sha256": "a9dcad91b4489e149b0720563dfa070ccd53a0998b58f5a0bf06c2ec2e68a4d3",
+    "runnerPredecessor": "202609040002_agent_operations_center.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609040004",
+    "filename": "202609040004_harden_agent_operations.sql",
+    "sha256": "c9c1b8d3c1dbc321d9e20417af245a08b6f532f01dd65b86eb6001341ae374d5",
+    "runnerPredecessor": "202609040003_point_agent_rule_to_korean_level_one.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.guide_agent_messages",
+      "public.guide_agent_sessions",
+      "public.learning_agent_profiles"
+    ]
+  },
+  {
+    "version": "202609040005",
+    "filename": "202609040005_agent_rule_versions_per_rule.sql",
+    "sha256": "3ca75499ab41dbb48040f1281bf8ca4d1aff8b32965dd4b2bf6b120c400c33e6",
+    "runnerPredecessor": "202609040004_harden_agent_operations.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609040006",
+    "filename": "202609040006_touch_guide_agent_session_on_message.sql",
+    "sha256": "5a11b277bcd69c5a813c2d8a932c16f2e17c4f893a670b90f354282fc95a73cd",
+    "runnerPredecessor": "202609040005_agent_rule_versions_per_rule.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050001",
+    "filename": "202609050001_curriculum_learning_plan_workflow.sql",
+    "sha256": "fc46323dd3c3b9a9069430a481b152968c662d68c2409109090cd9986b279eee",
+    "runnerPredecessor": "202609040006_touch_guide_agent_session_on_message.sql",
+    "explicitReferencedRelations": [
+      "public.courses",
+      "public.curriculum_plan_templates",
+      "public.institution_curriculum_plans",
+      "public.profiles",
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202609050002",
+    "filename": "202609050002_curriculum_plan_tenant_integrity.sql",
+    "sha256": "8b912c66f386469f4a5930e8c98df74495fd6931ac3698d929807baf32853dc8",
+    "runnerPredecessor": "202609050001_curriculum_learning_plan_workflow.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050003",
+    "filename": "202609050003_curriculum_plan_access_hardening.sql",
+    "sha256": "4ad247c2e9039a52136329a1689fcc84ebddc65c1f2ff4fa0ddaf639c3f29092",
+    "runnerPredecessor": "202609050002_curriculum_plan_tenant_integrity.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050004",
+    "filename": "202609050004_curriculum_plan_atomic_publish.sql",
+    "sha256": "d672aabf234bf0636d54a727ec387d182e5bf87bfe14a0e4c0018fb57480336b",
+    "runnerPredecessor": "202609050003_curriculum_plan_access_hardening.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050005",
+    "filename": "202609050005_curriculum_plan_lesson_source_integrity.sql",
+    "sha256": "a90c316ebb8d1ac3823fe30f80560f1ffe34f56090272f3ca7942aecf5324537",
+    "runnerPredecessor": "202609050004_curriculum_plan_atomic_publish.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050006",
+    "filename": "202609050006_curriculum_plan_progress_visibility.sql",
+    "sha256": "0601f844c14b604ef2de5b95c94061dd9b0a8ae9d3c69056879d47329c75090f",
+    "runnerPredecessor": "202609050005_curriculum_plan_lesson_source_integrity.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050007",
+    "filename": "202609050007_korean_level_three_to_six_placeholders.sql",
+    "sha256": "e8be13bddc490e80c35b2ee6a8b1fead705d5679deeae82a24b8251b3ab37111",
+    "runnerPredecessor": "202609050006_curriculum_plan_progress_visibility.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050008",
+    "filename": "202609050008_korean_level_one_lesson_numbering.sql",
+    "sha256": "39f689a95adfcef1b88f630d0211a050a4d867090323d8092304cb21217a9b6d",
+    "runnerPredecessor": "202609050007_korean_level_three_to_six_placeholders.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050009",
+    "filename": "202609050009_korean_intermediate_advanced_lesson_numbering.sql",
+    "sha256": "ccf9eb7392bfdf0c423885ceb6de0db76e855073359f3835a98a62aec4bf8f60",
+    "runnerPredecessor": "202609050008_korean_level_one_lesson_numbering.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050010",
+    "filename": "202609050010_remove_curriculum_plan_test_data.sql",
+    "sha256": "1c3f5f247554a8e27434330f66f52fc64ed2db9640f88dd166de758d31a4a9a9",
+    "runnerPredecessor": "202609050009_korean_intermediate_advanced_lesson_numbering.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050011",
+    "filename": "202609050011_curriculum_plan_chapter_source_support.sql",
+    "sha256": "d9819f7abcb785e06b7dd2b2a01ac3f5d135e4ea7e5ed8a16cfcb8be169d66bd",
+    "runnerPredecessor": "202609050010_remove_curriculum_plan_test_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050012",
+    "filename": "202609050012_curriculum_plan_chapter_source_type_check.sql",
+    "sha256": "8ed06fc6af28038eca3c33e44b30dcbac325ba8624daed880c56a72bf40e4b0a",
+    "runnerPredecessor": "202609050011_curriculum_plan_chapter_source_support.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050013",
+    "filename": "202609050013_remove_chapter_batch_test_data.sql",
+    "sha256": "7e432058d1a82f15865a819c34bad5101ede76fa5619337a2a79700d7929d00c",
+    "runnerPredecessor": "202609050012_curriculum_plan_chapter_source_type_check.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050014",
+    "filename": "202609050014_remove_retire_test_data.sql",
+    "sha256": "e1147ce486f924b1fb139d4a6d022c2265c8f63c2e11fb695c8a63c033735b07",
+    "runnerPredecessor": "202609050013_remove_chapter_batch_test_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050015",
+    "filename": "202609050015_remove_cancel_test_data.sql",
+    "sha256": "fe4b5d6fa7f8ea42501516830d28813552561395e49afd75766902666faf22f3",
+    "runnerPredecessor": "202609050014_remove_retire_test_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050016",
+    "filename": "202609050016_curriculum_plan_chapter_test_source_support.sql",
+    "sha256": "b9a5f9cea1e7a3c46b1ac7d2c3fdf3decccd05cdd5d2637a245f4c94d50f9418",
+    "runnerPredecessor": "202609050015_remove_cancel_test_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050017",
+    "filename": "202609050017_remove_chapter_test_binding_test_data.sql",
+    "sha256": "482a3e04fbcfe3171c1b305f53efd1e21ed769ee5856e17602e09d56c10bd6e1",
+    "runnerPredecessor": "202609050016_curriculum_plan_chapter_test_source_support.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609050018",
+    "filename": "202609050018_remove_student_view_demo_data.sql",
+    "sha256": "a4d1bfb2fa99ea015337d534da0ee8418dc6e4ea1ee175edf2149990d2f9a72d",
+    "runnerPredecessor": "202609050017_remove_chapter_test_binding_test_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609060001",
+    "filename": "202609060001_align_korean_beginner_lesson_sort_order.sql",
+    "sha256": "d4347ad560b8762bdf6fe1d483b8a9a6c9fbd8b16426b536044be25fa6dd3c52",
+    "runnerPredecessor": "202609050018_remove_student_view_demo_data.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609060002",
+    "filename": "202609060002_enforce_lesson_progress_consistency.sql",
+    "sha256": "4f81e67f47befdb3bcc1a9fb73fce495c17469122d4629d5fd4cc255e73f3f22",
+    "runnerPredecessor": "202609060001_align_korean_beginner_lesson_sort_order.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609070001",
+    "filename": "202609070001_teaching_script_atomic_video.sql",
+    "sha256": "b059740a02633afe7fe5c15e7a30f9c766f972f4826d537d937f5cad20c6683c",
+    "runnerPredecessor": "202609060002_enforce_lesson_progress_consistency.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609080001",
+    "filename": "202609080001_chapter_practice_bindings.sql",
+    "sha256": "172585efdcb178dc2a1394b9c9e2a4dc1bbfac065b217a25e9011dd663d70dd2",
+    "runnerPredecessor": "202609070001_teaching_script_atomic_video.sql",
+    "explicitReferencedRelations": [
+      "public.student_apps"
+    ]
+  },
+  {
+    "version": "202609080002",
+    "filename": "202609080002_chapter_practice_explicit_function_grants.sql",
+    "sha256": "b10c3762ef489a752f28461e197227da0336341cf7ca591ec6b278d5b9a1f334",
+    "runnerPredecessor": "202609080001_chapter_practice_bindings.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609080003",
+    "filename": "202609080003_teaching_script_source_reviews.sql",
+    "sha256": "24737673bcea6c0b53a9b75fcc1ab6171c1380fb3d7824c8ff42c257da87075a",
+    "runnerPredecessor": "202609080002_chapter_practice_explicit_function_grants.sql",
+    "explicitReferencedRelations": [
+      "public.learning_agent_script_versions"
+    ]
+  },
+  {
+    "version": "202609080004",
+    "filename": "202609080004_teaching_operations.sql",
+    "sha256": "0d43d2bb14bc3b43457dcf5671b615e2a046b7aaa5845a6421d481e1cdff368d",
+    "runnerPredecessor": "202609080003_teaching_script_source_reviews.sql",
+    "explicitReferencedRelations": [
+      "public.curriculum_plan_template_items",
+      "public.institution_curriculum_plans",
+      "public.learning_assignments",
+      "public.profiles"
+    ]
+  },
+  {
+    "version": "202609080005",
+    "filename": "202609080005_completion_policy_management.sql",
+    "sha256": "44079b7845187ef97e189262c4f603d458e16901da5dc77f6c31bb0bdca6edf5",
+    "runnerPredecessor": "202609080004_teaching_operations.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609080006",
+    "filename": "202609080006_platform_application_settings.sql",
+    "sha256": "0afcc241468e5c60044edf6dba04cd079a8923551d0cbee9fc347cdbe5aaacd3",
+    "runnerPredecessor": "202609080005_completion_policy_management.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609080007",
+    "filename": "202609080007_conversation_platform_manager_guard.sql",
+    "sha256": "22f019ae9354e96e87d664a78de739c373f158a61baffc8b1be14a6315cc9267",
+    "runnerPredecessor": "202609080006_platform_application_settings.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609080008",
+    "filename": "202609080008_institution_learning_followups.sql",
+    "sha256": "74c5bdf40a7d06ca2f94e27cb1001d8c0c6301fba9b3350e6f4c7cb2de5a8ba0",
+    "runnerPredecessor": "202609080007_conversation_platform_manager_guard.sql",
+    "explicitReferencedRelations": [
+      "public.student_apps",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202609090001",
+    "filename": "202609090001_recording_evidence_atomic_v2.sql",
+    "sha256": "664025f0a2c3f2874bad561e45fad2b63ccb6d12faa559b1ffbff6c39b9d34fa",
+    "runnerPredecessor": "202609080008_institution_learning_followups.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609090002",
+    "filename": "202609090002_recording_domain_coordination.sql",
+    "sha256": "8feade9424fb7b2c76716428571b699f099c5cc77b01de3c7fb4d3d30bda3646",
+    "runnerPredecessor": "202609090001_recording_evidence_atomic_v2.sql",
+    "explicitReferencedRelations": [
+      "auth.users",
+      "public.tenants",
+      "recording_private.domain_instances"
+    ]
+  },
+  {
+    "version": "202609100001",
+    "filename": "202609100001_runtime_publish_foundation.sql",
+    "sha256": "8dbff15e8f74d70228e1a5440afa603dfe1af963c078decd6c89ebb0b27c2874",
+    "runnerPredecessor": "202609090002_recording_domain_coordination.sql",
+    "explicitReferencedRelations": [
+      "public.digital_textbook_chapters",
+      "public.digital_textbook_versions",
+      "public.digital_textbooks",
+      "public.profiles",
+      "runtime_publish_private.snapshots"
+    ]
+  },
+  {
+    "version": "202609100002",
+    "filename": "202609100002_runtime_publication_dependency_fence.sql",
+    "sha256": "cecd409633d4849115716b75b686eb86241ddcc94baa8d24d7fe3b5a422b0332",
+    "runnerPredecessor": "202609100001_runtime_publish_foundation.sql",
+    "explicitReferencedRelations": [
+      "runtime_publish_private.snapshots"
+    ]
+  },
+  {
+    "version": "202609100003",
+    "filename": "202609100003_runtime_admission_control.sql",
+    "sha256": "2f993901f0f3b23474aad88e07c9b58daaa4e5c74c4b8b1eb759d58a54a65b3a",
+    "runnerPredecessor": "202609100002_runtime_publication_dependency_fence.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609100004",
+    "filename": "202609100004_runtime_single_version_authoring.sql",
+    "sha256": "b7b8836e639933e5548ba9080f6823d975a77be07651ba74be04be64322ca9d5",
+    "runnerPredecessor": "202609100003_runtime_admission_control.sql",
+    "explicitReferencedRelations": [
+      "public.digital_textbooks",
+      "public.profiles",
+      "runtime_publish_private.snapshots"
+    ]
+  },
+  {
+    "version": "202609100005",
+    "filename": "202609100005_chapter_publish_semantic_compatibility.sql",
+    "sha256": "78f9fae8f971cb20343ff04eba8a17c2e5796428904dd62cdcfe817b8e43881d",
+    "runnerPredecessor": "202609100004_runtime_single_version_authoring.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609110001",
+    "filename": "202609110001_allow_evidence_graded_roleplay_publication.sql",
+    "sha256": "a786590ea6b3793266d0020ca422587da50f84561d3f377af999f97a961f96cd",
+    "runnerPredecessor": "202609100005_chapter_publish_semantic_compatibility.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609110002",
+    "filename": "202609110002_restore_single_version_publish_wrapper.sql",
+    "sha256": "e567ee37c8a89520a985d10d169c746e3d33cf9f5aa98cc140f3e8e6c13e50a6",
+    "runnerPredecessor": "202609110001_allow_evidence_graded_roleplay_publication.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609130001",
+    "filename": "202609130001_textbook_grammar_authoring.sql",
+    "sha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a",
+    "runnerPredecessor": "202609110002_restore_single_version_publish_wrapper.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609130002",
+    "filename": "202609130002_textbook_grammar_practice_binding.sql",
+    "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8",
+    "runnerPredecessor": "202609130001_textbook_grammar_authoring.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609130003",
+    "filename": "202609130003_runtime_authoring_nonretryable_error.sql",
+    "sha256": "0c5a16609d3c7196284f86cecb96f250988d2ff78834a92d8e0cce5966edd73d",
+    "runnerPredecessor": "202609130002_textbook_grammar_practice_binding.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609140000",
+    "filename": "202609140000_agent_core_foundation.sql",
+    "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+    "runnerPredecessor": "202609130003_runtime_authoring_nonretryable_error.sql",
+    "explicitReferencedRelations": [
+      "public.agent_conversations",
+      "public.agent_definition_versions",
+      "public.agent_messages",
+      "public.agent_runs",
+      "public.profiles",
+      "public.tenants"
+    ]
+  },
+  {
+    "version": "202609140001",
+    "filename": "202609140001_agent_runtime_completion_evidence.sql",
+    "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+    "runnerPredecessor": "202609140000_agent_core_foundation.sql",
+    "explicitReferencedRelations": []
+  },
+  {
+    "version": "202609140002",
+    "filename": "202609140002_agent_run_cancel_request.sql",
+    "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+    "runnerPredecessor": "202609140001_agent_runtime_completion_evidence.sql",
+    "explicitReferencedRelations": []
+  }
+]

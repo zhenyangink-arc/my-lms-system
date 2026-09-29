@@ -1,0 +1,212 @@
+{
+  "basis": "Source-derived expected state, NOT installed/verified production state",
+  "migrations": [
+    {
+      "version": "202609140000",
+      "sourceSha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "functions": [
+        "agent_core_private.immutable",
+        "agent_core_private.actor_guard",
+        "agent_core_private.definition_guard",
+        "agent_core_private.run_json",
+        "agent_core_private.check_budget",
+        "public.admit_agent_run_v1",
+        "public.transition_agent_run_v1",
+        "public.append_agent_run_event_v1",
+        "public.record_agent_usage_v1"
+      ],
+      "tables": [
+        "public.agent_definition_versions",
+        "public.agent_conversations",
+        "public.agent_runs",
+        "public.agent_messages",
+        "public.agent_run_events"
+      ],
+      "explicitIndexes": [
+        "agent_runs_one_active",
+        "agent_run_usage_once",
+        "agent_runs_actor_created",
+        "agent_messages_conversation_created",
+        "agent_usage_call_once"
+      ],
+      "triggers": [
+        "agent_definition_immutable",
+        "agent_event_immutable",
+        "agent_definition_guard"
+      ],
+      "newPolicies": [
+        "agent_usage_browser_insert_boundary",
+        "agent_usage_browser_update_boundary",
+        "agent_usage_browser_delete_boundary"
+      ],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140001",
+      "sourceSha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "functions": [
+        "agent_core_private.definition_guard",
+        "public.append_agent_run_event_v2",
+        "public.transition_agent_run_v1"
+      ],
+      "tables": [],
+      "explicitIndexes": [],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140002",
+      "sourceSha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "functions": [
+        "agent_core_private.student_transport_guard",
+        "public.get_student_agent_run_status_v1",
+        "public.request_agent_run_cancel_v1",
+        "public.check_agent_run_cancel_v1",
+        "public.transition_agent_run_v1",
+        "public.reserve_student_agent_event_sequence_v1"
+      ],
+      "tables": [],
+      "explicitIndexes": [],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140003",
+      "sourceSha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "functions": [
+        "private.guard_curriculum_learning_source",
+        "private.guard_curriculum_learning_publication",
+        "private.staff_has_curriculum_template",
+        "public.dispatch_curriculum_plan_exam",
+        "private.guard_curriculum_exam_roster",
+        "private.guard_curriculum_exam_cancellation",
+        "public.get_curriculum_execution"
+      ],
+      "tables": [
+        "public.curriculum_plan_assessments"
+      ],
+      "explicitIndexes": [],
+      "triggers": [
+        "curriculum_learning_source_guard",
+        "curriculum_learning_publication_guard",
+        "curriculum_exam_roster_guard",
+        "curriculum_exam_cancellation_guard"
+      ],
+      "newPolicies": [
+        "\"staff read adopted curriculum templates\"",
+        "\"staff read adopted curriculum items\""
+      ],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140004",
+      "sourceSha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "functions": [
+        "public.save_completion_policy_draft",
+        "public.publish_completion_policy_draft",
+        "public.get_completion_refresh_health",
+        "public.retry_failed_completion_refresh"
+      ],
+      "tables": [],
+      "explicitIndexes": [],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140005",
+      "sourceSha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "functions": [
+        "private.can_read_published_textbook",
+        "private.can_read_published_teaching_module",
+        "private.student_script_segments"
+      ],
+      "tables": [],
+      "explicitIndexes": [],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140006",
+      "sourceSha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "functions": [
+        "public.find_reconcilable_agent_runs_v1",
+        "public.reconcile_agent_run_v1",
+        "public.reconcile_agent_run_batch_v1"
+      ],
+      "tables": [],
+      "explicitIndexes": [
+        "agent_runs_reconcile_deadline"
+      ],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    },
+    {
+      "version": "202609140007",
+      "sourceSha256": "9d5c34d4e9ef0ff2e9de72db9d3ab1e5ac02bd248f222ddd312042a8c94339a4",
+      "functions": [
+        "public.create_teaching_content_skeleton"
+      ],
+      "tables": [],
+      "explicitIndexes": [],
+      "triggers": [],
+      "newPolicies": [],
+      "topLevelTransaction": "BEGIN/COMMIT",
+      "replaySafe": false
+    }
+  ],
+  "finalFunctions": [
+    "agent_core_private.actor_guard",
+    "agent_core_private.check_budget",
+    "agent_core_private.definition_guard",
+    "agent_core_private.immutable",
+    "agent_core_private.run_json",
+    "agent_core_private.student_transport_guard",
+    "agent_core_private.transition_agent_run_base_v1",
+    "agent_core_private.transition_agent_run_evidence_v1",
+    "private.can_read_published_teaching_module",
+    "private.can_read_published_textbook",
+    "private.guard_curriculum_exam_cancellation",
+    "private.guard_curriculum_exam_roster",
+    "private.guard_curriculum_learning_publication",
+    "private.guard_curriculum_learning_source",
+    "private.staff_has_curriculum_template",
+    "private.student_script_segments",
+    "public.admit_agent_run_v1",
+    "public.append_agent_run_event_v1",
+    "public.append_agent_run_event_v2",
+    "public.check_agent_run_cancel_v1",
+    "public.create_teaching_content_skeleton",
+    "public.dispatch_curriculum_plan_exam",
+    "public.find_reconcilable_agent_runs_v1",
+    "public.get_completion_refresh_health",
+    "public.get_curriculum_execution",
+    "public.get_student_agent_run_status_v1",
+    "public.publish_completion_policy_draft",
+    "public.reconcile_agent_run_batch_v1",
+    "public.reconcile_agent_run_v1",
+    "public.record_agent_usage_v1",
+    "public.request_agent_run_cancel_v1",
+    "public.reserve_student_agent_event_sequence_v1",
+    "public.retry_failed_completion_refresh",
+    "public.save_completion_policy_draft",
+    "public.transition_agent_run_v1"
+  ],
+  "publicMovedBaseOrEvidenceExpected": false,
+  "newTableCount": 6,
+  "newAgentTableCount": 5,
+  "ledgerExpected": 457,
+  "latestExpected": "202609140007",
+  "condition": "Starting ledger exactly 449/latest 202609130003, original ordered hash unchanged, no concurrent migration"
+}

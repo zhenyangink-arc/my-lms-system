@@ -1,0 +1,122 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "publicationMigrationRequired": "YES",
+  "basis": [
+    {
+      "path": "supabase/migrations/202609100001_runtime_publish_foundation.sql",
+      "lines": [
+        15,
+        66,
+        82
+      ],
+      "finding": "Snapshot CHECK and base publish function only accept publish-foundation/1."
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "lines": [
+        30244
+      ],
+      "finding": "Existing constraint name snapshots_check is recorded in local baseline; installation must assert actual definition in its own separately approved preflight."
+    }
+  ],
+  "publicationMigration": {
+    "filename": null,
+    "versionNumber": null,
+    "status": "SCOPE_DESIGNED; AUTHORING_AND_INSTALL_REQUIRE_SEPARATE_APPROVAL",
+    "newTables": 0,
+    "rowRewrite": 0,
+    "historicalMigrationEdits": 0,
+    "logicalPurpose": "Versioned canonical native publication envelopes in existing store",
+    "exactDDLResponsibilities": [
+      {
+        "object": "runtime_publish_private.snapshots.snapshots_check",
+        "change": "Forward replace only revision/kind/id association predicate to accept exact v1 legacy and v2 canonical-native; missing/NULL/unknown combinations must be false, not SQL CHECK unknown. Other Manifest1.0/uply-runtime1/chapter/private-payload constraints unchanged."
+      },
+      {
+        "object": "public.publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "change": "Add exact v2 native envelope/kind acceptance alongside unchanged v1 branch. Preserve owner guard, scope graph, advisory scope lock, pointer FOR UPDATE, CAS including absent pointer, ID collision, atomic snapshot+bindings+pointer+history, monotonic generation and rollback history eligibility. Keep common native private result.manifest/report.sourceRevision paths so generic association checks remain real, not fake legacy readiness."
+      },
+      {
+        "object": "public.publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "change": "Explicit version/kind-aware dependency/secret admission. Preserve v1 roleplay exception exactly; native does not inherit that exception and requires the bounded native activity contract/one actual grader secret. Preserve authoring lock, capture equality, existing fence insert and fenced rollback checks."
+      },
+      {
+        "object": "Existing public/base function ACLs",
+        "change": "Keep only public publish_runtime_snapshot_v2 service entry executable by service_role. Reassert base/v1 and private helpers are not direct public/authenticated/service_role entrypoints; no browser grant. No Student RLS/Auth change."
+      }
+    ],
+    "unchangedObjects": [
+      "public.publish_runtime_snapshot_v2 single-version outer wrapper",
+      "capture_rows/capture/semantic_capture",
+      "dependency_fences schema",
+      "check_authoring_statement and authoring lock/trigger set",
+      "assert_runtime_dependency_fence_v1",
+      "read_runtime_publication_v1",
+      "read_runtime_snapshot_for_owner_v1",
+      "runtime_publication_session_v1/base session",
+      "snapshots/bindings/history immutability triggers",
+      "pointers/history/sessions tables and FK scope",
+      "authoring_control/runtime_requests/retired_snapshots"
+    ],
+    "whySeparate": "Publication envelope acceptance and Agent completion evidence are separate authorities and approvals. Do not put any publication DDL in the completion migration."
+  },
+  "completionMigration": {
+    "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "state": "NOT_CREATED; proposal retained unchanged",
+    "scope": "Existing versioned Agent artifact/trace/completion validation only",
+    "currentInstall": 0
+  },
+  "latestSourceSemantics": [
+    [
+      "202609100001",
+      "Immutable store, base CAS/current/session"
+    ],
+    [
+      "202609100002",
+      "Single-snapshot capture, authoring lock, dependency fence, guarded publisher"
+    ],
+    [
+      "202609100004",
+      "semantic_capture, edit-window/draining, request leases, retirement, session and publish wrappers"
+    ],
+    [
+      "202609110001",
+      "Historical roleplay secret exception temporarily replaced outer publisher"
+    ],
+    [
+      "202609110002",
+      "Restored outer single-version wrapper; roleplay exception moved to base"
+    ],
+    [
+      "202609130001",
+      "Latest semantic_capture also normalizes empty authoring_grammar_identities"
+    ],
+    [
+      "202609130003",
+      "Latest authoring fence rejects with PT409 without auto retry"
+    ]
+  ],
+  "preservationMeaning": "PRESERVED is a source/design obligation, not an executed migration test. Retired historical snapshots stay immutable/readable for authorized historical audit but are not made executable again.",
+  "futureInstallOrder": "Separate publication migration approval/install and completion migration approval/install, each after owned isolated validation. No ordering assumption that completion migration fixes publication. Deploy only a separately reviewed artifact after prerequisites."
+}

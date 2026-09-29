@@ -1,0 +1,33 @@
+{
+  "status": "PROVEN BY CURRENT CONTENT STATE",
+  "scope": "disposable synthetic course and real A1 JWT only; not production proof",
+  "lessons": [
+    {
+      "slug": "hangul-introduction",
+      "unlock": "immediate",
+      "publishedNodeCandidates": 8,
+      "pins": 16,
+      "eligible": true
+    },
+    {
+      "slug": "basic-pronunciation",
+      "unlock": "prerequisite_passed",
+      "publishedNodeCandidates": 1,
+      "pins": 0,
+      "eligible": false
+    },
+    {
+      "slug": "daily-greetings",
+      "unlock": "prerequisite_passed",
+      "publishedNodeCandidates": 0,
+      "pins": 0,
+      "eligible": false
+    }
+  ],
+  "eligibleCount": 1,
+  "lessonAllowlist": "NOT REQUIRED for this frozen content state",
+  "invalidation": "Any new eligible lesson or inability to freeze pilot content invalidates this proof",
+  "studentPolicyChanged": false,
+  "productionCandidateCount": 0,
+  "liveProviderRequests": 0
+}

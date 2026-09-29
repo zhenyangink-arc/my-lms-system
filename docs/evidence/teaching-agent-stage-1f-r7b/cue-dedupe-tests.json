@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "scope": [
+    "session",
+    "snapshot digest",
+    "step",
+    "media revision",
+    "cue alias"
+  ],
+  "pendingBeforePause": true,
+  "repeatedTimeupdate": "one checkpoint / activity reveal",
+  "duplicateSubmissionCallback": "one attempt / resume",
+  "completedReplay": "no mandatory retrigger",
+  "singleTargetMediaOwner": "verified"
+}

@@ -1,0 +1,64 @@
+{
+  "currentDatabaseBusinessWrites": 0,
+  "currentAuthWrites": 0,
+  "frozenNodeWrites": 0,
+  "scriptVersionWrites": 0,
+  "learningObjectiveWrites": 0,
+  "migration": 0,
+  "newBusinessSchema": false,
+  "isolatedDatabaseBootstrap": "Existing business DDL reproduced in ephemeral test DB; synthetic parent/Auth FK stubs only; no Auth service/session/login",
+  "finalFullSuite": {
+    "databases": 3,
+    "perFixtureLogicalActivityCount": 1,
+    "perFixtureExecutionNodeCount": 1,
+    "perFixturePrivateAnswerCount": 1,
+    "scenarioFixtures": 20,
+    "attemptInserts": 16,
+    "nodeProgressInserts": 13,
+    "nodeProgressUpdates": 3,
+    "activityPageProgressWrites": 0,
+    "cueRows": 0,
+    "safeLedger": [
+      {
+        "databaseSafeHash": "d312ddcb8e1e1c4c2dec5ed618ef7a39619987e524432ab251daed89883c75ef",
+        "observedAtUtc": "2026-09-17T03:29:15.630Z",
+        "executionNodes": 1,
+        "activities": 1,
+        "privateAnswerRows": 1,
+        "attempts": 0,
+        "nodeProgressRows": 0,
+        "rpcProgressUpdates": 0
+      },
+      {
+        "databaseSafeHash": "068b0e27a6a79db54152dbed97a6f6639a3f1df46e11766e8281c96ad138d520",
+        "observedAtUtc": "2026-09-17T03:29:24.387Z",
+        "executionNodes": 13,
+        "activities": 13,
+        "privateAnswerRows": 13,
+        "attempts": 11,
+        "nodeProgressRows": 9,
+        "rpcProgressUpdates": 2
+      },
+      {
+        "databaseSafeHash": "bb3f2d48e318d3e34e608e73e6d72d2dd339b1b898385ca725b380859e2c36e2",
+        "observedAtUtc": "2026-09-17T03:29:26.538Z",
+        "executionNodes": 6,
+        "activities": 6,
+        "privateAnswerRows": 6,
+        "attempts": 5,
+        "nodeProgressRows": 4,
+        "rpcProgressUpdates": 1
+      }
+    ]
+  },
+  "earlierDevelopmentRuns": "Additional disposable test runs occurred while resolving a known SQL set-returning-function expression error and adding evidence checks. These were distinct fresh test fixtures, not retries after unknown commits. No current DB connection was used.",
+  "earlierIsolatedNegativeControl": {
+    "table": "digital_textbook_activities",
+    "operation": "UPDATE",
+    "rows": 1,
+    "purpose": "Simulate content drift in one owned test fixture",
+    "scopeNote": "This extra test-only fault injection was not enumerated in the initial INSERT/attempt/progress plan. It was removed and replaced with read-port fault injection; the owned test DB was disposed. Current DB writes remained 0."
+  },
+  "unknownCommitPolicy": "No blind write retry; independent read-only verification. Deliberate duplicate requests are isolated negative tests.",
+  "cleanup": "Only owned isolated test containers removed after assertions. No current/legacy data deleted."
+}

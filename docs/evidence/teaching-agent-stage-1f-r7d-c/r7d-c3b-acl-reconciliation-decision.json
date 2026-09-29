@@ -1,0 +1,67 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "overall": "BLOCKED_UNRESOLVED",
+  "primaryClassification": "BLOCKED_UNRESOLVED",
+  "expectedAclRoles": [
+    "postgres",
+    "authenticated"
+  ],
+  "actualAclRoles": [
+    "postgres",
+    "authenticated",
+    "service_role"
+  ],
+  "extraGrant": "service_role EXECUTE",
+  "confirmedFacts": [
+    "Body SHA matches",
+    "Historical live serviceExecute true before 130002 replacement",
+    "Current postgres/public default functions grant service_role",
+    "Full bootstrap serializes target grant; minimal 34b harness omits environment and first creation history",
+    "No production service-role caller found; authenticated path found",
+    "PUBLIC and anon execute false"
+  ],
+  "unresolved": [
+    "Original default-privilege provisioning/grant event cannot be uniquely attributed from available snapshots and migration source",
+    "No explicit target-specific least-privilege requirement authorizes retaining service-role execution; absence of product caller alone does not prove historical grant unintended"
+  ],
+  "requiredNextEvidence": [
+    "Dated platform provisioning/DDL audit identifying relevant initial postgres/public defaults or explicit target grant before 202609080001/earliest observation",
+    "Reviewed security contract decision for whether this Owner-guarded RPC should retain service-role EXECUTE"
+  ],
+  "decisionConstraints": [
+    "Do not treat isolated ACL as final authority",
+    "Do not accept live ACL simply to pass preflight",
+    "Do not revoke on lack of product caller alone",
+    "Do not modify001/002 or invent003/pre001 fix before desired contract is resolved"
+  ],
+  "nextApproval": "NONE",
+  "approvalPackageCreated": false,
+  "baselineReconciliationAuthorized": false,
+  "forwardAclFixProposed": false,
+  "releaseResumeAuthorizedByThisAudit": false,
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED"
+}

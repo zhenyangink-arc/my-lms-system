@@ -1,0 +1,76 @@
+{
+  "status": "PARTIAL",
+  "currentTools": [
+    {
+      "name": "get_current_lesson_context",
+      "provides": [
+        "verified published selection",
+        "lesson/module title",
+        "original sentence",
+        "objectives",
+        "content version",
+        "opaque segment ref",
+        "locale",
+        "revision/asOf/evidence/completeness"
+      ],
+      "omits": [
+        "raw node configuration",
+        "answer keys",
+        "private metadata",
+        "adjacent/authored explanations"
+      ]
+    },
+    {
+      "name": "get_current_teaching_state",
+      "semantic": "last_saved_teaching_position",
+      "provides": [
+        "own active session",
+        "script version ref",
+        "last saved node/segment/index",
+        "phase",
+        "state revision"
+      ],
+      "omits": [
+        "required task",
+        "full state",
+        "grading keys",
+        "visual playback position"
+      ]
+    }
+  ],
+  "futureReadPortProposal": {
+    "binding": [
+      "authenticated actor/tenant/course authorization",
+      "opaque runtime session",
+      "immutable snapshot/content digest",
+      "script version and node mapping",
+      "state revision and generation"
+    ],
+    "facts": [
+      "current teaching node and objectives",
+      "current activity public prompt/ref",
+      "authoritative attempt/completion summary without answer key",
+      "runtime allowed presentation actions",
+      "state availability and freshness"
+    ],
+    "playbackObservation": "Optional client-observed position explicitly tagged observation-only; not proof of progress or mastery.",
+    "staleOrUnauthorized": "Fail closed or explicit unavailable/partial; never substitute another lesson or old Agent.",
+    "revisionDistinction": "contentRevision != authoritative student state evidence/revision != client playback generation; current learning-history revision is only content sourceRevision."
+  },
+  "decisionContract": "Skill reads facts via registered tool -> validated explanation/presentation proposal -> runtime validates target/action/generation. Domain progression/grade/publish are never Agent tool-side arbitrary writes. Lesson Tool is not the runtime command API.",
+  "example": {
+    "student": "这个字怎么组成？",
+    "futureSkill": "explain_current_lesson (proposal, not existing registry entry)",
+    "tool": "Read bound Node2/Node6, objectives and formal saved state",
+    "decision": "Explain only that example or request an allowed visual highlight",
+    "authority": "Runtime may present a bound block; only official domain action may change progression"
+  },
+  "sources": [
+    "tool-contract",
+    "lesson-tool",
+    "state-tool",
+    "lesson-port",
+    "state-port",
+    "policy-repository"
+  ]
+}

@@ -1,0 +1,480 @@
+diff --git a/src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx b/src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx
+index e1357e5..6cbbb32 100644
+--- a/src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx
++++ b/src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/runtime-v1-preview/page.tsx
+@@ -5,13 +5,27 @@ import { createRecordingAuditContinuation } from '@/features/smart-textbook-runt
+ import { AuditRuntimeClient } from '@/features/smart-textbook-runtime/components/audit-client';
+ import { runtimeReadiness } from '@/features/smart-textbook-runtime/core/block-registry';
+ import {z} from 'zod';
++import { publicationDiagnostics } from '@/lib/smart-textbook-publishing/diagnostics.server';
++import { PublicationIssues } from '@/features/digital-textbook/workbench/publication-issues';
+ 
+ /** Isolated owner-only, tracking-disabled inspection; no student route import or switch. */
+ export default async function RuntimeAuditPage({params,searchParams}:{params:Promise<{space:string;appSlug:string}>;searchParams:Promise<{recordingAudit?:string|string[];locale?:string|string[]}>}){
+   const {user}=await requirePlatformOwner();
+   const {appSlug,space}=await params;
+   if(appSlug!=='korean')notFound();
+-  const data=await readAuditSource(),manifest=data.result.manifest!;
++  const base=`/${encodeURIComponent(space)}/dashboard/admin/apps/korean`;
++  const contentHref=`${base}/textbooks/workbench`,scriptsHref=`${base}/teaching-scripts`;
++  let data:Awaited<ReturnType<typeof readAuditSource>>;
++  try{data=await readAuditSource();}catch(error){
++    return <main className="mx-auto max-w-7xl space-y-4 p-4">
++      <h1 className="text-2xl font-bold">已保存内容预览</h1>
++      <p role="alert">当前内容未通过编译，未启动预览。学生已发布版本不会被本次预览替换。</p>
++      <PublicationIssues diagnostics={publicationDiagnostics(error)} contentHref={contentHref} scriptsHref={scriptsHref}/>
++      <a className="inline-flex min-h-11 items-center text-primary underline" href={contentHref}>返回第一章内容工作台</a>
++      <p className="text-sm text-muted-foreground">若没有具体定位，请刷新重试；仍失败时联系维护人员核对读取权限和运行依赖。不要重复发布或删除素材。</p>
++    </main>;
++  }
++  const manifest=data.result.manifest;
+   const query=await searchParams;
+   const locale=z.enum(['zh-CN','ko-KR']).parse(query.locale??'zh-CN');
+   let sessionId:string;
+@@ -20,11 +34,13 @@ export default async function RuntimeAuditPage({params,searchParams}:{params:Pro
+   }
+   const readiness=runtimeReadiness(manifest,data.result.nonUiRuntimeReady);
+   return <main className="mx-auto max-w-7xl space-y-4 p-4">
+-    <h1 className="text-2xl font-bold">第一章 Runtime 组件对照</h1>
+-    <p>当前为平台负责人检查入口，不保存学生正式作答或学习进度。完整兼容执行器尚未通过验收。</p>
++    <h1 className="text-2xl font-bold">已保存内容预览</h1>
++    <p>使用与发布相同的编译与校验规则，显示打开本页时已保存的内容，不包含未保存表单。此预览不会发布，也不保存学生正式作答或学习进度。</p>
++    <p>学生只会加载已经发布的版本；预览通过不代表已经发布。修改保存后请重新打开预览。</p>
++    <a className="inline-flex min-h-11 items-center text-primary underline" href={contentHref}>返回第一章内容工作台</a>
+     <a href={`/${encodeURIComponent(space)}/dashboard/admin/apps/korean/teaching-scripts/preview?scriptVersionId=${data.source.teachingVersions[0].id}`}>打开旧教材预览对照</a>
+     <p>非 UI 就绪：{readiness.nonUiRuntimeReady?'是':'否'}；章节可执行：{readiness.runtimeReady?'是':'否'}</p>
+-    <AuditRuntimeClient manifest={manifest} context={{runtimeSessionId:sessionId,snapshotId:manifest.snapshot.id,sourceState:'published',trackingDisabled:true,locale,supportMode:'bilingual'}}
++    <AuditRuntimeClient manifest={manifest} context={{runtimeSessionId:sessionId,snapshotId:manifest.snapshot.id,sourceState:'draft',trackingDisabled:true,locale,supportMode:'bilingual'}}
+       state={{snapshotId:manifest.snapshot.id,revision:data.result.report.sourceRevision,completedStepIds:[],attempts:[],activityProgress:[],pageProgress:[],guidedRepeat:[],speakingEvidence:[]}}/>
+   </main>;
+ }
+diff --git a/src/features/digital-textbook/workbench/chapter-workbench.tsx b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+index 1c515f0..eb85d73 100644
+--- a/src/features/digital-textbook/workbench/chapter-workbench.tsx
++++ b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
+ import { CardTitleWithHint } from '@/components/ui/card-title-with-hint';
+ import { chapterWorkbenchAction } from './actions';
+ import { GrammarTextEditor } from './grammar-text-editor';
++import { PublicationIssues } from './publication-issues';
++import type { PublicationDiagnostic } from '@/lib/smart-textbook-publishing/diagnostics';
+ import type { ChapterWorkbenchData, PublicationCheck, WorkbenchActivity, WorkbenchResult } from './contracts';
+ 
+ type Props = { initial: ChapterWorkbenchData; previewHref: string; contentHref: string; scriptsHref: string };
+@@ -19,6 +21,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+   const [check, setCheck] = useState<PublicationCheck|null>(null);
+   const [message, setMessage] = useState('先查看内容；需要修改时进入编辑。');
+   const [failed, setFailed] = useState(false);
++  const [diagnostics,setDiagnostics]=useState<PublicationDiagnostic[]>([]);
+   const [busy, setBusy] = useState(false);
+   const lock = useRef(false);
+   const [editor, setEditor] = useState<WorkbenchActivity|null>(null);
+@@ -28,12 +31,12 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+   const step = data.steps.find(s=>s.id===active);
+   async function run(input: unknown): Promise<WorkbenchResult|null> {
+     if(lock.current) return null;
+-    lock.current=true; setBusy(true); setFailed(false);
++    lock.current=true; setBusy(true); setFailed(false); setDiagnostics([]);
+     try {
+       const result = await new Promise<WorkbenchResult>((resolve,reject)=>{
+         startTransition(async()=>{try{resolve(await chapterWorkbenchAction(input));}catch(error){reject(error);}});
+       });
+-      if(!result.ok) { setMessage(result.message); setFailed(true); setCheck(null); }
++      if(!result.ok) { setMessage(result.message); setFailed(true); setCheck(null); setDiagnostics(result.diagnostics??[]); }
+       return result;
+     } catch { setFailed(true); setMessage('请求未完成，状态可能已改变。请刷新核对，不要重复盲目提交。'); setCheck(null); return null; }
+     finally {lock.current=false;setBusy(false);}
+@@ -88,6 +91,8 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+         {([['activities','活动内容'],['teaching','教学脚本'],['publish','校验发布']] as const).map(([key,label])=><button key={key} type="button" onClick={()=>setSection(key)} disabled={busy||editing} aria-current={section===key?'page':undefined} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${section===key?'bg-primary/10 text-primary':'text-muted-foreground hover:bg-muted'}`}>{label}</button>)}
+       </nav>
+       <p role={failed?'alert':'status'} aria-live="polite" className={`rounded-lg px-4 py-3 text-sm leading-6 ${failed?'bg-destructive/10 text-destructive':state==='editing'?'bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200':'bg-muted/60 text-muted-foreground'}`}>{busy?'正在处理，请勿重复操作…':message}</p>
++      <PublicationIssues diagnostics={diagnostics} contentHref={contentHref} scriptsHref={scriptsHref} autoFocus
++        onLocate={editing?undefined:id=>{if(data.steps.some(s=>s.id===id)){setActive(id);setSection('activities');}}}/>
+     </header>
+     {section==='publish'?<div className="grid items-start gap-5 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_280px]">
+       <div className="space-y-5">
+diff --git a/src/features/digital-textbook/workbench/contracts.ts b/src/features/digital-textbook/workbench/contracts.ts
+index 7bbb3e9..48cc587 100644
+--- a/src/features/digital-textbook/workbench/contracts.ts
++++ b/src/features/digital-textbook/workbench/contracts.ts
+@@ -1,4 +1,5 @@
+ import type { TextbookGrammarCard } from '@/lib/textbook-grammar-content';
++import type { PublicationDiagnostic } from '@/lib/smart-textbook-publishing/diagnostics';
+ export type WorkbenchGrammarCard = {nodeId:string;cardId:string;expected:string;card:TextbookGrammarCard};
+ export type Pointer = { snapshotId: string; generation: number } | null;
+ export type WorkbenchActivity = {
+@@ -17,7 +18,7 @@ export type PublicationCheck = {
+   snapshotId: string; digest: string; expected: Pointer; steps: number; activities: number;
+ };
+ export type WorkbenchResult =
+-  | { ok: false; message: string }
++  | { ok: false; message: string; diagnostics?: PublicationDiagnostic[] }
+   | { ok: true; kind: 'read'; data: ChapterWorkbenchData }
+   | { ok: true; kind: 'begin'; state: 'draining' | 'editing'; inflight: number }
+   | { ok: true; kind: 'save' }
+diff --git a/src/features/digital-textbook/workbench/publication-issues.tsx b/src/features/digital-textbook/workbench/publication-issues.tsx
+new file mode 100644
+index 0000000..9247ee8
+--- /dev/null
++++ b/src/features/digital-textbook/workbench/publication-issues.tsx
+@@ -0,0 +1,25 @@
++'use client';
++import { useEffect, useRef } from 'react';
++import Link from 'next/link';
++import type { PublicationDiagnostic } from '@/lib/smart-textbook-publishing/diagnostics';
++
++export function PublicationIssues({diagnostics,contentHref,scriptsHref,onLocate,autoFocus=false}:{
++  diagnostics:PublicationDiagnostic[];contentHref:string;scriptsHref:string;
++  onLocate?:(stepId:string)=>void;autoFocus?:boolean;
++}){
++  const ref=useRef<HTMLElement>(null);
++  useEffect(()=>{if(autoFocus)ref.current?.focus();},[diagnostics,autoFocus]);
++  if(!diagnostics.length)return null;
++  return <section ref={ref} tabIndex={-1} role="alert" aria-label="需要处理的内容"
++    className="space-y-3 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm focus-visible:outline-2 focus-visible:outline-ring">
++    <h2 className="font-semibold">需要处理的内容</h2>
++    <ul className="space-y-4">{diagnostics.map((d,i)=><li key={`${d.code}:${d.stepId}:${i}`} className="space-y-2">
++      <p className="font-medium">{d.stepTitle} · {d.area}</p>
++      <p className="leading-6">{d.message}</p>
++      <div className="flex flex-wrap gap-x-4 gap-y-2">
++        {d.stepId&&onLocate&&<button type="button" className="min-h-11 text-primary underline underline-offset-4" onClick={()=>onLocate(d.stepId!)}>定位学习步骤</button>}
++        <Link className="inline-flex min-h-11 items-center text-primary underline underline-offset-4" href={d.action==='teaching'?scriptsHref:contentHref}>{d.action==='teaching'?'查看教学脚本':d.action==='refresh'?'返回内容工作台核对':'查看教材内容'}</Link>
++      </div>
++    </li>)}</ul>
++  </section>;
++}
+diff --git a/src/features/digital-textbook/workbench/service.server.ts b/src/features/digital-textbook/workbench/service.server.ts
+index a9b784d..a7509fc 100644
+--- a/src/features/digital-textbook/workbench/service.server.ts
++++ b/src/features/digital-textbook/workbench/service.server.ts
+@@ -10,6 +10,7 @@ import { beginChapterOneEditing, editChapterOneActivity } from '@/lib/smart-text
+ import { compileChapterOnePublication, publishChapterOne, publicationHistory, validatePublication } from '@/lib/smart-textbook-publishing/publisher.server';
+ import type { ChapterWorkbenchData, WorkbenchResult } from './contracts';
+ import { grammarAuthoringCards, grammarSaveSchema, saveChapterOneGrammar } from '@/lib/smart-textbook-publishing/grammar-authoring.server';
++import { publicationDiagnostics } from '@/lib/smart-textbook-publishing/diagnostics.server';
+ 
+ const inputSchema = z.discriminatedUnion('operation', [
+   z.strictObject({ operation: z.literal('read') }),
+@@ -80,6 +81,8 @@ export async function chapterWorkbenchOperation(input: unknown): Promise<Workben
+     if (message.includes('CONFLICT') || message.includes('CHECK_STALE')) return {ok:false,message:'内容或发布版本已变化。请刷新内容，重新校验后再发布。'};
+     if (message.includes('EDIT_REJECTED')) return {ok:false,message:'保存被拒绝：请确认已进入编辑状态，刷新后核对内容；不会覆盖并发修改。'};
+     if (message.includes('EDIT_WINDOW')) return {ok:false,message:'暂不能进入编辑，请等待在途学习请求结束后重试；不会强制清理请求。'};
++    const diagnostics=publicationDiagnostics(error);
++    if(diagnostics.length)return {ok:false,message:'内容校验未通过，请查看下方定位与处理建议。本次未发布，也未跳过校验。',diagnostics};
+     return {ok:false,message:'读取或发布前置检查未通过。未跳过任何校验，请核对章节、媒体和发布依赖后重试。'};
+   }
+ }
+diff --git a/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts b/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts
+index e929f1c..2b6904d 100644
+--- a/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts
++++ b/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts
+@@ -27,7 +27,10 @@ const resolver={async resolve(input:unknown){
+ }};
+ const boundary=createLearningBoundary(resolver,async a=>{
+   const sessionId=a.sessionId.slice('learning-session-'.length),base={sessionId,snapshotId:a.snapshotId};
+-  const local=(capsuleRef:string)=>({...base,capsuleRef,locale:a.locale});
++  // These four existing actions accept the opaque audit session, capsule and
++  // locale only. Snapshot authority is resolved from that server session;
++  // don't widen their strict request schemas with an extra client field.
++  const local=(capsuleRef:string)=>({sessionId,capsuleRef,locale:a.locale});
+   const flow=(capsuleRef:string,request:object)=>auditFlow({...base,capsuleRef,...request});
+   const record=async<T>(input:object,signal:AbortSignal,blob?:Blob)=>await auditRecording({...base,...input},signal,blob) as T;
+   const recording:RecordingRuntimeServices={load:(c,s)=>record({op:'load',capsuleRef:c},s),restore:(c,activityRef,s)=>record({op:'restore',capsuleRef:c,activityRef},s),
+diff --git a/src/features/smart-textbook-runtime/server/audit-source.server.ts b/src/features/smart-textbook-runtime/server/audit-source.server.ts
+index 3f31acf..822872c 100644
+--- a/src/features/smart-textbook-runtime/server/audit-source.server.ts
++++ b/src/features/smart-textbook-runtime/server/audit-source.server.ts
+@@ -1,19 +1,15 @@
+ import 'server-only';
+-import { readChapterOneLegacySource } from '../../../lib/smart-textbook-legacy-adapter/reader.server';
+-import { readChapterOneServiceEvidence } from '../../../lib/smart-textbook-legacy-adapter/service-reader.server';
+-import { finalizeChapterOneNonUiReadiness } from '../../../lib/smart-textbook-legacy-adapter/final-readiness.server';
+-import identities from '../../../lib/smart-textbook-publishing/assets/v1/chapter-one-identities.server';
+-import history from '../../../lib/smart-textbook-publishing/assets/v1/chapter-one-service-identities.server';
++import { compileChapterOnePublication } from '../../../lib/smart-textbook-publishing/publisher.server';
++import { assertPublishableSnapshot } from '../../../lib/smart-textbook-publishing/artifact.server';
+ import { createAdminClient } from '../../../lib/supabase/admin';
+ 
+-/** Fixed chapter reader + existing frozen identity ledgers, not test source content.
+- * Only the owner-guarded audit gateway calls this. No production pointer or cache of users. */
++/** Same authorized capture, identity projection, media policy and compiler as
++ * publication; no publish, pointer change or production learning write. */
+ export async function readAuditSource(){
++  const bundle=await compileChapterOnePublication();
++  assertPublishableSnapshot(bundle);
+   const admin=createAdminClient();
+-  const source=await readChapterOneLegacySource(admin);
+-  const evidence=await readChapterOneServiceEvidence(admin,source);
+-  const result=finalizeChapterOneNonUiReadiness(source,identities,history,evidence);
+-  if(!result.nonUiRuntimeReady||!result.manifest||!result.services)throw Error('第一章源数据已变化或私有绑定未通过验证，请重新审计。');
+-  return {admin,source,result:{...result,manifest:result.manifest,services:result.services}};
++  const {source,result}=bundle.privatePayload;
++  return {admin,source,result};
+ }
+ export type AuditSource=Awaited<ReturnType<typeof readAuditSource>>;
+diff --git a/src/lib/smart-textbook-publishing/diagnostics.server.ts b/src/lib/smart-textbook-publishing/diagnostics.server.ts
+new file mode 100644
+index 0000000..6e9abed
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/diagnostics.server.ts
+@@ -0,0 +1,56 @@
++import 'server-only';
++import { z } from 'zod';
++import { profile } from '../smart-textbook-legacy-adapter/profile.server';
++import type { LegacyChapterOneSource } from '../smart-textbook-legacy-adapter/source.server';
++import type { ConversionEntry } from '../smart-textbook-legacy-adapter/report.server';
++import type { PublicationDiagnostic } from './diagnostics';
++
++const descriptions = {
++  identity: {area:'内容身份',message:'内容与已保存的稳定身份不一致。请核对最近修改；此类修改需要补齐身份映射，不能直接发布。',action:'content'},
++  content: {area:'学习内容',message:'此处内容不符合当前支持的结构。请核对最近修改；不要通过删除字段绕过检查。',action:'content'},
++  teaching: {area:'教学脚本',message:'教学版本、节点或任务依赖未通过兼容校验。请核对已发布脚本；当前教材编译仍受 v23 兼容范围限制。',action:'teaching'},
++  media: {area:'图片与音频',message:'媒体或关联内容已变化，原媒体准入证据不再适用。请核对素材与播放文本，并完成媒体复核；不要直接更改 ready 状态。',action:'content'},
++  binding: {area:'运行依赖',message:'目标、进度或服务绑定未通过校验。请保留当前数据并联系维护人员核对；本次不会跳过检查。',action:'refresh'},
++  capture: {area:'内容读取',message:'无法取得一致的教材数据。请刷新后重试；若仍失败，请联系维护人员检查读取权限和编辑窗口。',action:'refresh'},
++  format: {area:'内容格式',message:'已保存数据不符合当前内容契约。请核对最近修改；原始数据和私密配置不会显示在错误提示中。',action:'content'},
++} as const;
++
++function item(code:PublicationDiagnostic['code'],moduleId?:string):PublicationDiagnostic {
++  const step=Object.values(profile).find(p=>p.moduleId===moduleId);
++  return {code,stepId:step?.moduleId??null,stepTitle:step?.title['zh-CN']??'第一章',...descriptions[code]};
++}
++export class PublicationDiagnosticError extends Error {
++  readonly diagnostics:PublicationDiagnostic[];
++  constructor(diagnostics:PublicationDiagnostic[]){
++    super('PUBLICATION_DIAGNOSTIC');
++    this.diagnostics=diagnostics;
++  }
++}
++export function compilationDiagnostics(source:LegacyChapterOneSource,entries:ConversionEntry[]):PublicationDiagnostic[] {
++  const rows=entries.map(e=>{
++    const loc=e.source;
++    const node=source.nodes.find(n=>n.id===loc.nodeId)||source.nodes.find(n=>source.activities.some(a=>a.id===loc.activityId&&a.node_id===n.id));
++    const media=source.media.find(m=>m.id===loc.mediaId);
++    const moduleId=loc.moduleId??node?.module_id??source.nodes.find(n=>n.id===media?.node_id)?.module_id;
++    // Only internal categories are recognized. No source title, reason or JSON
++    // path is echoed, even when the source contains hostile/private strings.
++    const path=loc.path;
++    const code:PublicationDiagnostic['code']=path.startsWith('identityMap')||e.reason==='Missing or ambiguous frozen identity allocation'?'identity'
++      :loc.teachingNodeId||path.startsWith('teaching')||path.startsWith('configuration')?'teaching'
++      :path.startsWith('media')||path.startsWith('speech')?'media'
++      :path.startsWith('content')||path.startsWith('public_config')?'content':'binding';
++    return item(code,moduleId);
++  });
++  return [...new Map(rows.map(r=>[`${r.code}:${r.stepId}`,r])).values()];
++}
++export function publicationDiagnostics(error:unknown):PublicationDiagnostic[] {
++  if(error instanceof PublicationDiagnosticError)return error.diagnostics;
++  if(error instanceof z.ZodError)return [item('format')];
++  const message=error instanceof Error?error.message:'';
++  if(message==='PUBLICATION_CAPTURE_UNAVAILABLE'||message.startsWith('CAPTURE_'))return [item('capture')];
++  if(message.startsWith('GRAMMAR_IDENTITY_'))return [item('identity',profile.grammar.moduleId)];
++  if(message.startsWith('PUBLICATION_MEDIA_'))return [item('media')];
++  if(message.startsWith('PUBLICATION_BINDINGS_')||message.startsWith('PUBLICATION_ADMISSION:')||message==='PUBLICATION_COMPILE_BLOCKED')return [item('binding')];
++  return [];
++}
++export function mediaDiagnostic(moduleId?:string){return item('media',moduleId);}
+diff --git a/src/lib/smart-textbook-publishing/diagnostics.ts b/src/lib/smart-textbook-publishing/diagnostics.ts
+new file mode 100644
+index 0000000..ce8b36d
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/diagnostics.ts
+@@ -0,0 +1,11 @@
++import 'server-only';
++/** Type-only client imports; publication modules never become browser runtime imports.
++ * Explicit owner-facing projection. Never carry raw exception text or private JSON paths. */
++export type PublicationDiagnostic = {
++  code: 'identity' | 'content' | 'teaching' | 'media' | 'binding' | 'capture' | 'format';
++  stepId: string | null;
++  stepTitle: string;
++  area: string;
++  message: string;
++  action: 'content' | 'teaching' | 'refresh';
++};
+diff --git a/src/lib/smart-textbook-publishing/publisher.server.ts b/src/lib/smart-textbook-publishing/publisher.server.ts
+index 99cba4f..d6e5c53 100644
+--- a/src/lib/smart-textbook-publishing/publisher.server.ts
++++ b/src/lib/smart-textbook-publishing/publisher.server.ts
+@@ -10,6 +10,7 @@ import { publicationRepository, type PublicationPointer } from './repository.ser
+ import { publicationIdentities } from './grammar-identities.server';
+ import history from './assets/v1/chapter-one-service-identities.server';
+ import { digest } from '../smart-textbook-legacy-adapter/identity.server';
++import { compilationDiagnostics, mediaDiagnostic, PublicationDiagnosticError } from './diagnostics.server';
+ 
+ async function owner(){const auth=await requireActiveUser();if(auth.profile?.global_role!=='platform_owner')throw Error('PUBLICATION_OWNER_ONLY');return auth.user.id;}
+ /** Owner DAL used by operator tools and the authoring Server Action. All operations reauthorize; compilation
+@@ -18,7 +19,18 @@ export async function compileChapterOnePublication(){
+   const actor=await owner(),admin=createAdminClient();
+   const {source,evidence,dependencies}=await captureChapterOnePublication(admin,actor,chapterOnePublicationScope);
+   const compiled=finalizeChapterOneNonUiReadiness(source,publicationIdentities(dependencies.digital_textbook_nodes),history,evidence);
+-  return packageSnapshot(source,evidence,withMediaPublicationPolicy(source,compiled,digest(dependencies)),dependencies);
++  if(!compiled.nonUiRuntimeReady)throw new PublicationDiagnosticError(compilationDiagnostics(source,compiled.remainingNonUiUnsupported));
++  try {
++    return packageSnapshot(source,evidence,withMediaPublicationPolicy(source,compiled,digest(dependencies)),dependencies);
++  } catch(error) {
++    if(error instanceof Error&&error.message.startsWith('PUBLICATION_MEDIA_REAUDIT_REQUIRED:')){
++      const ref=error.message.slice('PUBLICATION_MEDIA_REAUDIT_REQUIRED:'.length);
++      const binding=compiled.bindings.media.find(m=>m.ref===ref);
++      const asset=source.media.find(m=>m.id===binding?.sourceId);
++      throw new PublicationDiagnosticError([mediaDiagnostic(source.nodes.find(n=>n.id===asset?.node_id)?.module_id)]);
++    }
++    throw error;
++  }
+ }
+ export async function validatePublication(bundle:PublicationBundle){await owner();return validateSnapshotBundle(bundle);}
+ export async function publishChapterOne(expected:PublicationPointer|null,checkedManifestDigest?:string){
+diff --git a/tests/chapter-authoring-preview.test.mjs b/tests/chapter-authoring-preview.test.mjs
+new file mode 100644
+index 0000000..f51d00e
+--- /dev/null
++++ b/tests/chapter-authoring-preview.test.mjs
+@@ -0,0 +1,135 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFile,mkdir } from 'node:fs/promises';
++import { createServer } from 'node:http';
++import { build } from 'esbuild';
++import { chromium } from '@playwright/test';
++import postcss from 'postcss';
++import tailwind from '@tailwindcss/postcss';
++import { publishedChapterFixture,publishedOverrides } from './fixtures/published-chapter-one.mjs';
++import { serverModule } from './fixtures/runtime-4a2.server.mjs';
++import { literal as q,json } from './fixtures/recording-v2-postgres.mjs';
++
++test('saved source preview uses formal compiler, real owner boundary and unchanged publication admission',{timeout:300000},async t=>{
++  let f,browser,server;
++  try{
++    f=await publishedChapterFixture();
++    await f.db.query(await readFile('supabase/migrations/202609130001_textbook_grammar_authoring.sql','utf8'));
++    const overrides={...publishedOverrides};
++    const owner=`export async function requirePlatformOwner(){const a=globalThis.__publishedChapter.auth;if(a.profile?.global_role!=='platform_owner')throw Error('FORBIDDEN');return a;} export function isPlatformCourseAuditorRole(r){return r==='platform_owner';}`;
++    for(const p of ['../../../lib/admin','@/lib/admin'])overrides[p]=owner;
++    const api=await serverModule('tests/fixtures/authoring-preview.server.ts',overrides),call=api.chapterWorkbenchOperation;
++    const original=await api.readAuditSource();
++    const oldSession=api.createRecordingAuditContinuation(f.auth.user.id,original);
++    const check=await call({operation:'check'});assert(check.ok);
++    assert.equal((await call({operation:'publish',expected:check.check.expected,digest:check.check.digest})).ok,true);
++    const publishedBefore=await f.loader.loadPublishedRuntimeSnapshot();
++    const beforeCounts=await f.db.query('select (select count(*) from digital_textbook_attempts),(select count(*) from digital_textbook_speaking_evidence)');
++    assert.equal((await call({operation:'begin'})).ok,true);
++    const read=await call({operation:'read'});assert(read.ok);
++    const grammar=read.data.steps.flatMap(s=>s.nodes.flatMap(n=>n.grammarCards??[]))[0];
++    const changed='预览与发布一致的语法形式';
++    const patch={form:changed,function:grammar.card.function,caution:grammar.card.caution,source:grammar.card.source};
++    assert.equal((await call({operation:'save-grammar',cardId:grammar.cardId,expected:grammar.expected,patch})).ok,true);
++    let preview=await api.readAuditSource(),bundle=await api.compileChapterOnePublication();
++    await t.test('saved grammar rebind is identical in preview and publisher; no publish/attempt side effects',async()=>{
++      assert.deepEqual(preview.result.manifest,bundle.manifest);
++      assert.deepEqual(preview.result.bindings,bundle.privatePayload.result.bindings);
++      assert.equal(preview.result.manifest.steps.length,8);assert.equal(preview.result.manifest.activityRefs.length,19);
++      assert.equal(preview.result.manifest.blocks.filter(b=>b.type==='multiple_choice').length,3);
++      assert.equal(preview.source.teachingVersions[0].version_number,23);
++      assert.equal((await call({operation:'read'})).data.pointer.snapshotId,publishedBefore.bundle.snapshotId);
++      assert.throws(()=>api.createRecordingAuditContinuation(f.auth.user.id,preview,oldSession),/REVISION/);
++      assert.equal(await f.db.query('select (select count(*) from digital_textbook_attempts),(select count(*) from digital_textbook_speaking_evidence)'),beforeCounts);
++    });
++    let session=api.createRecordingAuditContinuation(f.auth.user.id,preview);
++    let workbench=(await call({operation:'read'})).data;
++    const js=await build({stdin:{contents:`import React from 'react';import{createRoot}from'react-dom/client';import{AuditRuntimeClient}from'./src/features/smart-textbook-runtime/components/audit-client';import{ChapterWorkbench}from'./src/features/digital-textbook/workbench/chapter-workbench';const root=createRoot(document.getElementById('root'));fetch('/data').then(r=>r.json()).then(p=>root.render(location.pathname==='/workbench'?<ChapterWorkbench initial={p.workbench} contentHref='/content' scriptsHref='/scripts' previewHref='/preview'/>:<AuditRuntimeClient manifest={p.manifest} context={p.context} state={p.state}/>));`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,outdir:'/tmp/authoring-preview-browser',platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"','process.env':'{}'},plugins:[{name:'action-transport',setup(b){b.onResolve({filter:/^\.\/actions$/},a=>a.importer.includes('workbench')?{path:'action',namespace:'isolated'}:undefined);b.onLoad({filter:/.*/,namespace:'isolated'},()=>({contents:`export async function chapterWorkbenchAction(input){return fetch('/operation',{method:'POST',body:JSON.stringify(input)}).then(r=>r.json());}`}));}}]});
++    const styles=(await postcss([tailwind()]).process(await readFile('src/app/globals.css','utf8'),{from:process.cwd()+'/src/app/globals.css'})).css;
++    const errors=[],payloads=[];
++    server=createServer(async(req,res)=>{try{
++      const send=x=>{payloads.push(JSON.stringify(x));res.setHeader('content-type','application/json');res.end(JSON.stringify(x));};
++      if(req.url==='/bundle.js'){res.setHeader('content-type','text/javascript');res.end(js.outputFiles.find(f=>f.path.endsWith('.js')).text);return;}
++      if(req.url==='/style.css'){res.setHeader('content-type','text/css');res.end(styles+js.outputFiles.find(f=>f.path.endsWith('.css')).text);return;}
++      if(req.url==='/data')return send({workbench,manifest:preview.result.manifest,context:{runtimeSessionId:session,snapshotId:preview.result.manifest.snapshot.id,sourceState:'draft',trackingDisabled:true,locale:'zh-CN',supportMode:'bilingual'},state:{snapshotId:preview.result.manifest.snapshot.id,revision:preview.result.report.sourceRevision,completedStepIds:[],attempts:[],activityProgress:[],pageProgress:[],guidedRepeat:[],speakingEvidence:[]}});
++      if(req.method==='POST'){
++        let raw='';for await(const c of req)raw+=c;const input=JSON.parse(raw);
++        if(req.url==='/operation')return send(await call(input));
++        const request=new Request(`http://127.0.0.1${req.url}`,{method:'POST'});
++        const value=req.url.endsWith('/teacher')?await api.auditTeacherBoundary(request,input):await api.auditLearningBoundary(request,input);
++        if(value instanceof Blob){res.setHeader('content-type',value.type);res.end(Buffer.from(await value.arrayBuffer()));return;}
++        return send(value);
++      }
++      res.setHeader('content-type','text/html;charset=utf-8');res.end('<html lang="zh-CN"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><main class="p-4" data-dashboard-ui="management" data-management-workspace="platform"><div id="root"></div></main><script type="module" src="/bundle.js"></script></body></html>');
++    }catch(e){errors.push(e.message);res.statusCode=409;res.end('{}');}});
++    await new Promise(r=>server.listen(0,'127.0.0.1',r));
++    browser=await chromium.launch({headless:true});const page=await browser.newPage();page.on('pageerror',e=>errors.push(e.message));
++    const url=`http://127.0.0.1:${server.address().port}`;
++    await t.test('Chromium strict complete AuditRuntimeClient loads saved grammar through real audit services; reload',async()=>{
++      await page.goto(`${url}/preview`);
++      await page.waitForTimeout(500);assert.deepEqual(errors,[],'browser bootstrap errors');
++      await page.getByRole('button',{name:'主题助词与判断句',exact:true}).click();
++      await page.getByText(changed,{exact:true}).first().waitFor();
++      assert.equal(await page.locator('nav').count(),1);
++      await page.reload();
++      await page.getByText(changed,{exact:true}).first().waitFor();
++      assert.deepEqual(errors,[]);
++    });
++    await t.test('owner enforcement on preview and issue disclosure; private errors never echo',async()=>{
++      for(const role of ['student','organization_owner','teacher']){
++        f.auth.profile.global_role=role;
++        await assert.rejects(api.readAuditSource(),/OWNER_ONLY/);
++        const r=await call({operation:'check'});assert.equal(r.ok,false);assert.equal(r.diagnostics,undefined);
++      }
++      f.auth.profile.global_role='platform_owner';
++      assert.deepEqual(api.publicationDiagnostics(new Error('secret object_key service_role private transcript')),[]);
++      const hostile=api.compilationDiagnostics(preview.source,[{source:{path:'content.secret.object_key',nodeId:'private'},result:'unsupported',reason:'private transcript'}]);
++      assert.doesNotMatch(JSON.stringify(hostile),/secret|object_key|private transcript/);
++    });
++    await t.test('unsupported vocabulary edit: check and preview both reject, Chromium focuses actionable step diagnostic',async()=>{
++      const node=preview.source.nodes.find(n=>n.content.vocabulary);
++      const content=structuredClone(node.content);content.vocabulary[0].zh+='（隔离修改）';
++      await f.db.query(`update digital_textbook_nodes set content=${json(content)} where id=${q(node.id)}`);
++      const r=await call({operation:'check'});assert.equal(r.ok,false);
++      assert(r.diagnostics.some(d=>d.code==='identity'&&d.stepId===node.module_id));
++      await assert.rejects(api.readAuditSource(),/PUBLICATION_DIAGNOSTIC/);
++      await page.goto(`${url}/workbench`);await page.getByRole('button',{name:'校验发布',exact:true}).click();
++      await page.getByRole('button',{name:'校验待发布内容',exact:true}).click();
++      const summary=page.getByRole('alert',{name:'需要处理的内容'});await summary.waitFor();
++      assert(await summary.evaluate(e=>e===document.activeElement));
++      await mkdir('/tmp/uply-authoring-preview-evidence',{recursive:true});
++      for(const width of [1440,375]){
++        await page.setViewportSize({width,height:950});
++        assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'diagnostics fit narrow viewport');
++        await page.screenshot({path:`/tmp/uply-authoring-preview-evidence/diagnostics-${width}.png`,fullPage:true});
++      }
++      await summary.getByRole('button',{name:'定位学习步骤'}).first().click();
++      assert.equal(await page.getByRole('navigation',{name:'章节学习步骤'}).getByRole('button',{name:/问候与人物身份/}).getAttribute('aria-current'),'step');
++      assert.doesNotMatch(JSON.stringify(r),/object_key|answer_key|service_role/);
++      await f.db.query(`update digital_textbook_nodes set content=${json(node.content)} where id=${q(node.id)}`);
++    });
++    await t.test('changed media and later script version remain blocked in BOTH paths',async()=>{
++      const media=preview.source.media[0];
++      await f.db.query(`update digital_textbook_media_assets set alt_text=${json({'zh-CN':'隔离修改'})} where id=${q(media.id)}`);
++      let r=await call({operation:'check'});assert.equal(r.ok,false);assert(r.diagnostics?.length);
++      await assert.rejects(api.readAuditSource());
++      await f.db.query(`update digital_textbook_media_assets set alt_text=${json(media.alt_text)} where id=${q(media.id)}`);
++      const version=preview.source.teachingVersions[0];
++      await f.db.query(`update learning_agent_script_versions set version_number=24 where id=${q(version.id)}`);
++      r=await call({operation:'check'});assert.equal(r.ok,false);assert(r.diagnostics.some(d=>d.code==='teaching'));
++      await assert.rejects(api.readAuditSource(),/PUBLICATION_DIAGNOSTIC/);
++      await f.db.query(`update learning_agent_script_versions set version_number=23 where id=${q(version.id)}`);
++    });
++    await t.test('republish uses same checked preview digest; student Loader gets saved grammar, preview never writes learning records',async()=>{
++      const r=await call({operation:'check'});assert(r.ok);assert.equal(r.check.digest,bundle.manifestDigest);
++      const published=await call({operation:'publish',expected:r.check.expected,digest:r.check.digest});assert(published.ok);
++      const loaded=await f.loader.loadPublishedRuntimeSnapshot();assert.equal(loaded.bundle.manifestDigest,bundle.manifestDigest);
++      assert.equal(await f.db.query('select (select count(*) from digital_textbook_attempts),(select count(*) from digital_textbook_speaking_evidence)'),beforeCounts);
++      assert.doesNotMatch(payloads.join('\n'),/object_key|objectKey|answer_key|service_role|privatePayload|proof_keys/);
++    });
++    await mkdir('/tmp/uply-authoring-preview-evidence',{recursive:true});
++    await page.screenshot({path:'/tmp/uply-authoring-preview-evidence/diagnostics.png',fullPage:true});
++  }finally{
++    await browser?.close();if(server)await new Promise(r=>server.close(r));await f?.dispose();
++  }
++});
+diff --git a/tests/fixtures/authoring-preview.server.ts b/tests/fixtures/authoring-preview.server.ts
+new file mode 100644
+index 0000000..ce4d5f4
+--- /dev/null
++++ b/tests/fixtures/authoring-preview.server.ts
+@@ -0,0 +1,8 @@
++// Single bundle preserves the real bounded audit session stores.
++export { readAuditSource } from '../../src/features/smart-textbook-runtime/server/audit-source.server';
++export { createRecordingAuditContinuation, auditSession } from '../../src/features/smart-textbook-runtime/server/audit-session.server';
++export { auditLearningBoundary } from '../../src/features/smart-textbook-runtime/server/audit-learning-boundary.server';
++export { auditTeacherBoundary } from '../../src/features/smart-textbook-runtime/server/audit-teacher-boundary.server';
++export { chapterWorkbenchOperation } from '../../src/features/digital-textbook/workbench/service.server';
++export { compileChapterOnePublication } from '../../src/lib/smart-textbook-publishing/publisher.server';
++export { publicationDiagnostics, compilationDiagnostics } from '../../src/lib/smart-textbook-publishing/diagnostics.server';

@@ -1,0 +1,14 @@
+{
+  "contract": "development-provisioning-entrypoint/1",
+  "approval": "Approval B",
+  "enabled": true,
+  "environment": "canonical-uply-development-8443",
+  "databaseIdentity": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+  "apiOriginSha256": "ff8db3ba3da8be9b994619fb66af48143c9ea9236e6454d2c59705d7b3279ea3",
+  "budgetSha256": "2f19347af4611a4c44b82424cafef66e19417ffc142c93432f54ccedf1dbb7c2",
+  "dbServiceSha256": "9540a50b93e528433a856aba8f2f98029c488cb8f3dd68f6a30941629a8fdb8c",
+  "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "buildId": "vZokoJqpKDRZxnpQcQpah",
+  "issuedAt": "SET_AT_APPROVED_ACTIVATION_UTC",
+  "expiresAt": "ISSUED_AT_PLUS_AT_MOST_30_MINUTES"
+}

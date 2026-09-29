@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "credentialLiteralMatchesAllStatic": 0,
+  "serverTransportMarkersAllStatic": 0,
+  "globalGenericFieldNameHit": {
+    "field": "answer_key",
+    "file": "teaching-scripts/page-4d7340cb880f076a.js",
+    "meaning": "Existing authoring field-name localization map only",
+    "loadedByB3RuntimePage": false,
+    "canonicalPrivateAnswerValue": false
+  },
+  "runtimeClientMarkerMatches": 0,
+  "manifestPrivateMarkers": 0,
+  "networkResponsesScanned": 9,
+  "responsePrivateMarkers": 0,
+  "privateApprovalAndJournalForbiddenFields": 0,
+  "progressPrivateMarker": false,
+  "DOMPrivateMarker": false,
+  "console": "Only expected HTTP500 from approved response suppression; no secret/grader logs",
+  "actualCurrentDbReceipt": "activity-completion/2 CURRENT_DEVELOPMENT_DB; no private answer",
+  "ledger": 458,
+  "RPC": "MATCH",
+  "privateValueEvidencePersisted": false,
+  "boundary": "Option choices are public. Submission correctness is feedback; no private grading key or full frozen Node7 authoring text emitted."
+}

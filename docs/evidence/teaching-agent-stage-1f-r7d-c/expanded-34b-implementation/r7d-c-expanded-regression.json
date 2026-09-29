@@ -1,0 +1,84 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS_WITH_EXPLICIT_SKIPS",
+  "total": 433,
+  "pass": 430,
+  "skip": 3,
+  "fail": 0,
+  "C2": {
+    "executedThisTurn": true,
+    "pass": 52,
+    "skip": 0,
+    "fail": 0,
+    "includedInTotal": true
+  },
+  "excludingC2": {
+    "pass": 378,
+    "skip": 3,
+    "fail": 0
+  },
+  "existingExpectedResultsModified": false,
+  "skippedCases": [
+    "isolated PostgreSQL: production Supabase SDK/repository domain reads, RLS, hashes and smoke",
+    "isolated integrated DB: actual Stage0B repository admission/events/usage/CAS plus teaching zero-write invariant",
+    "isolated PostgreSQL: real Student Tools through Core/1A repository, hashes unchanged on 23 tables"
+  ],
+  "skipReason": "Existing opt-in isolated DB integration cases were not enabled in this regression command. New production migrations/durability/CAS tests separately ran against owned isolated PG; do not claim the three skipped cases passed.",
+  "coverage": [
+    "C2 Skill/Evidence/Planning",
+    "R7D Tool/Facts/Evidence",
+    "Explain/Student Tools/Student Domain/Student Runtime",
+    "Core executor and persistence guard",
+    "R7B completion/execution/projection",
+    "R7C binding/durable",
+    "B3 scope/budget/composition/contracts/transaction",
+    "publication foundation legacy regression"
+  ],
+  "ExplainPinnedDefinitionComparison": {
+    "comparison": "All prior pinned fields exactly match C2 isolated baseline; new internal dispatch intent is explicit explain_segment.",
+    "result": "IDENTICAL_EXISTING_CONTRACT",
+    "comparedFields": [
+      "profile",
+      "persona",
+      "instructions",
+      "skill",
+      "definitionDigest"
+    ],
+    "newInternalMetadata": {
+      "intent": "explain_segment"
+    },
+    "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+    "priorPinnedValueSha256": "7ff012e60a02d3310a8c0afb861e74fbb27cee82f697f7af2034ced21eb16bc5",
+    "currentPriorFieldsSha256": "80e5ba084858aec435f05a2052cf74f2380753cde66c49d635178db30987aed9",
+    "currentDBReads": 0,
+    "providerRequests": 0,
+    "agentRuns": 0
+  },
+  "log": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/logs/regression.log",
+    "sha256": "7ae0497578f50639248991ae993ea841aa90c03028dd8e16cb83476df2f87513",
+    "mode": "0o664",
+    "bytes": 44146
+  }
+}

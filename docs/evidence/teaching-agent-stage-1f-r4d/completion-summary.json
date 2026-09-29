@@ -1,0 +1,10 @@
+{
+  "reportCompletedAt": "2026-09-15T06:39:38.925943+00:00",
+  "snapshotStart": "2026-09-15T06:31:24.914920+00:00",
+  "backupAgeSecondsAtReportCompletion": 494.011023,
+  "backupAgeMinutesAtReportCompletion": 8.23351705,
+  "goLiveRpoValidity": "TIME-BOUND — RECHECK REQUIRED",
+  "within15MinutesAtThisObservation": true,
+  "stage1g": "NOT READY",
+  "productionAuthorizationGranted": false
+}

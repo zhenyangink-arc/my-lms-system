@@ -1,0 +1,71 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "exactProjectDirectEndpoint": "UNKNOWN",
+  "officialEndpointPatternAvailable": true,
+  "projectHostnameSynthesized": false,
+  "DNSLookup": false,
+  "endpointProbe": false,
+  "safeConfigObservation": {
+    "activeService": "uply",
+    "endpointClass": "REMOTE_SUPAVISOR_SESSION_POOLER",
+    "port": 5432,
+    "database": "postgres",
+    "userClass": "postgres.<project>",
+    "sslmode": "verify-full",
+    "CAPath": "/connection/root.crt",
+    "otherCheckedServicePathsExist": false
+  },
+  "search": {
+    "hostReferences": [],
+    "networkEvidencePaths": [
+      "supabase/config.toml",
+      "scripts/teaching-agent-r4c/inventory.py"
+    ],
+    "scanIncludesIgnoredEvidence": true
+  },
+  "network": {
+    "exit": 0,
+    "defaultRoutePresent": false,
+    "routeCount": 53,
+    "reachabilityTested": false
+  },
+  "credentialFilesOpened": [],
+  "privateKeyContentsRead": false,
+  "credentialReuse": "UNKNOWN_FOR_DIRECT; no password generated, copied or tested",
+  "additionalOperationalPrerequisites": [
+    "Official project-specific direct hostname/port from a trusted existing export or provider Connect configuration; never synthesize DNS from project ref.",
+    "Applicable direct CA identity and SSL policy.",
+    "Usable IPv6 route or verified IPv4 add-on endpoint; no network changes authorized.",
+    "Database credential applicability, connection budget/timeouts and maintenance suitability."
+  ],
+  "historicalPoolerSelectionIntent": "NOT_FOUND; IPv4 is an official use case and a local constraint, not proven original motivation."
+}

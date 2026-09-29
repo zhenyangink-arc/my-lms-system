@@ -1,0 +1,204 @@
+{
+  "acquisitionProfileSha256": {
+    "DIRECT": "92fe3d598614b91eba59fd8d5c6f9f6fcf2b9d1496ac29f30855e87cc4eeb4e9",
+    "SESSION": "e9e2d0ae3d596ad9f30343c2b84cd7f581434b0fde5cc93d1ffb17337e60e07c"
+  },
+  "acquisitionSourceDigest": "6317a9632b69dc7793b632a8c22428ee691d3cec42749c2beda35e7744be4785",
+  "acquisitionSourceHashes": {
+    "scripts/teaching-agent-r7d-c3b/backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "scripts/teaching-agent-r7d-c3b/capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "scripts/teaching-agent-r7d-c3b/checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "scripts/teaching-agent-r7d-c3b/maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "scripts/teaching-agent-r7d-c3b/plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "scripts/teaching-agent-r7d-c3b/plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py": "0702a657d8f4e2a58ef83f98955aa5923080e57cc43063fdd8eba068cd60913a",
+    "scripts/teaching-agent-r7d-c3b/receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/Dockerfile.v1": "6190dcdabf49a20b38c4a2f54527d66ea8bf73f0b0d67586e4a02a3597d180fe",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/artifact-lock-v1.json": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/build-recipe-v1.json": "fd5a7faef5385332880d25917ac2b126dfd30a6b7609bef14c58cb704dbf24f9",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/entrypoint-v1.sh": "127077521ca6f0c2132a0acbdfa9aa3f78d6431551f74f838522d887e4cd303b",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/pg17.6-session-readonly-receipt-v1.patch": "7bd5b096a990bb2f1d608a1037c15b7dcd02d34e0ef50f335fe287edd896186f",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/receipt-contract-v1.json": "e13aae9d817453cf8e50e1e4a2a0e455f880e89a54b3bf91373b3983aab9ac51",
+    "scripts/teaching-agent-r7d-c3b/runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "scripts/teaching-agent-r7d-c3b/target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "scripts/teaching-agent-r7d-c3b/transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "actualModifyPaths": [
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py",
+    "tests/teaching_agent_source_provenance_acquisition_test.py",
+    "docs/teaching-agent-source-provenance-acquisition.md"
+  ],
+  "addedImplementationPaths": [
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/pg17.6-session-readonly-receipt-v1.patch",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/build-recipe-v1.json",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/artifact-lock-v1.json",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/receipt-contract-v1.json",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/Dockerfile.v1",
+    "scripts/teaching-agent-r7d-c3b/roles_exporter/entrypoint-v1.sh"
+  ],
+  "approvedModifyPaths": [
+    "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py",
+    "tests/teaching_agent_source_provenance_acquisition_test.py",
+    "docs/teaching-agent-source-provenance-acquisition.md"
+  ],
+  "contract": "source-provenance-session-implementation/1",
+  "d17LeafBindings": [
+    {
+      "bytes": 10015,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-backup-authorization-lifecycle-v4-authority-resolution-validation-completion.json",
+      "sha256": "fb47eeb3281a478f280aa2c9d970c5bb2218932039043b44aa2db243d39d3d5e"
+    },
+    {
+      "bytes": 7629,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-backup-authorization-lifecycle-v4-implementation-completion.json",
+      "sha256": "27a749ed7c35843b8297cdc57b4e9fc01b42fbbc3d5558295db2066766ee867c"
+    },
+    {
+      "bytes": 1609,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-backup-authorization-lifecycle-v4-package-lock.json",
+      "sha256": "81cd44df6882cf1e7bcc667286465be35cb3663341e6b8538e7e3f626409050e"
+    }
+  ],
+  "d19DesignSha256": "a205da202b3361969c47e247d1f169eda409f89537cc1193a7c978b6889bc706",
+  "d26DesignSha256": "d83a4acaa12b85c3a4fdab193993762774053fe95b0d576946afa313ed085334",
+  "deletedImplementationPaths": [],
+  "exactTestSelectionSha256": "57e26012c7d73c0f9166f4e409ec78c37f7e8ef4c9e6691448989f6baf10340d",
+  "exporterArtifactLockSha256": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763",
+  "fileChanges": [
+    {
+      "afterSha256": "0702a657d8f4e2a58ef83f98955aa5923080e57cc43063fdd8eba068cd60913a",
+      "beforeSha256": "74cdce63e757d9338790567409c5e13bdda37e20397f7f0b815715731937f1e9",
+      "path": "scripts/teaching-agent-r7d-c3b/provenance_acquisition.py"
+    },
+    {
+      "afterSha256": "6dac6760834e43780f17027c1e4ce9983b40c3c9306072e785e5a5a217961d3e",
+      "beforeSha256": "c3c917420c609cad0f7a155420e0f95dff8d07979f584a0373e55df91f8aa3c3",
+      "path": "tests/teaching_agent_source_provenance_acquisition_test.py"
+    },
+    {
+      "afterSha256": "6cc29943403ef7ec3eb5a46c72ec05ad5a381b43fb87da493a3cdd0765972d3e",
+      "beforeSha256": "85d42d50833e7e0f6feb6f8ccddf5f4efd3bb0da2f16bfa89b4b4c7590dde126",
+      "path": "docs/teaching-agent-source-provenance-acquisition.md"
+    },
+    {
+      "afterSha256": "7bd5b096a990bb2f1d608a1037c15b7dcd02d34e0ef50f335fe287edd896186f",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/pg17.6-session-readonly-receipt-v1.patch"
+    },
+    {
+      "afterSha256": "fd5a7faef5385332880d25917ac2b126dfd30a6b7609bef14c58cb704dbf24f9",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/build-recipe-v1.json"
+    },
+    {
+      "afterSha256": "451ea9af3a10719703f78dafa6c15f08b55aed3eaf0f11983c7ad55626a3e763",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/artifact-lock-v1.json"
+    },
+    {
+      "afterSha256": "e13aae9d817453cf8e50e1e4a2a0e455f880e89a54b3bf91373b3983aab9ac51",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/receipt-contract-v1.json"
+    },
+    {
+      "afterSha256": "6190dcdabf49a20b38c4a2f54527d66ea8bf73f0b0d67586e4a02a3597d180fe",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/Dockerfile.v1"
+    },
+    {
+      "afterSha256": "127077521ca6f0c2132a0acbdfa9aa3f78d6431551f74f838522d887e4cd303b",
+      "beforeSha256": null,
+      "path": "scripts/teaching-agent-r7d-c3b/roles_exporter/entrypoint-v1.sh"
+    }
+  ],
+  "formalRepositoryTestsRun": 0,
+  "operationalPackageDigest": "1f80cfc251818c882b1cd37f58157f03ee985ba89ee422c40447a90c35fc333f",
+  "operationalPackageHashes": {
+    "backup_adapter.py": "85693528241f5449e6dd5d3b3a52fabe40b9558f704519d067cfb61949fd59c1",
+    "capture_authorization.py": "61f2105991a0d9ddbee41954afd3d001e419dbd05ae80282fda6dabcc3a81744",
+    "checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "maintenance_transport.py": "8db6ea7cfa2aa7151bdb46efa910bac7ffa6240e768f047e036208a5badc74ea",
+    "plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "plan_registry.json": "70663e781f13cf350e07822bdb304dcf74fa4a61a1adf1e1a0c1cd42956b2610",
+    "receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "runner.py": "12c8fcf57d979c821ef604f4d51d206856a8463ef6b00731a5c7a84b25c6c885",
+    "target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+  },
+  "predecessorEvidenceBindings": {
+    "D19": {
+      "bytes": 1613787,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-attempt2-e3-recovery-d19-source-only-bootstrap-provenance-acquisition-contract-design-review.json",
+      "sha256": "a205da202b3361969c47e247d1f169eda409f89537cc1193a7c978b6889bc706"
+    },
+    "D26Design": {
+      "bytes": 180482,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-d26-direct-source-acquisition-design.json",
+      "sha256": "d83a4acaa12b85c3a4fdab193993762774053fe95b0d576946afa313ed085334"
+    },
+    "D26Implementation": {
+      "bytes": 8834,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-d26-direct-source-acquisition-implementation.json",
+      "sha256": "50027584adb804a9937ebd5e30d0111fea4c8f4a7f38aa9edd1354421989dc60"
+    },
+    "D27Validation": {
+      "bytes": 533463,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-d27-direct-source-acquisition-fresh-validation.json",
+      "sha256": "b00f5b44dd8990dd36c2f2d6a6564541d548507b6cf0da668972179755b100c5"
+    },
+    "D28Completion": {
+      "bytes": 4771,
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-direct-source-acquisition-v3-validation-completion.json",
+      "sha256": "b8faaa04dafcce66c7fc5b58a2bb1943b3b857c65daf9a82c3ef73917c479279"
+    }
+  },
+  "productionCounters": {
+    "AgentRun": 0,
+    "PM2": 0,
+    "Provider": 0,
+    "approvalRotation": 0,
+    "authorizationReplay": 0,
+    "deployment": 0,
+    "migrationInstall": 0,
+    "mint": 0,
+    "preinstall": 0,
+    "productionBackup": 0,
+    "productionCOMMIT": 0,
+    "productionCredentialAccess": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionHostAccess": 0,
+    "productionProvenanceAcquisition": 0,
+    "productionRestore": 0,
+    "productionRolesExport": 0,
+    "publish": 0
+  },
+  "queryRegistrySha256": "852bcc36e10a21da2d61ed220238f8b6f329d386722b311217cb322066173d0f",
+  "recordedAt": 1790615591,
+  "rolesGateRegistrySha256": "124ebebaa8b0ae513d463e5b1443159a377620e419ad116c8324ce3198b0c5c4",
+  "schemaVersion": 1,
+  "sessionDesignSha256": "b445df04c4ee6a46f066d0ecd2b050e2200a8b3827e421a1622c3d5278c3ebfa",
+  "staticChecks": {
+    "actualBuiltLockNoFakeHash": true,
+    "acyclicBindings": true,
+    "closedSchemas": true,
+    "directSemanticsPreserved": true,
+    "exactArgvEnv": true,
+    "fd3BridgeBound": true,
+    "protectedOperationalPackageUnchanged": true,
+    "seventeenSourceClosure": true,
+    "sharedClaimsNoReplay": true,
+    "stdoutNoReceipt": true,
+    "twoContextClosure": true
+  },
+  "status": "IMPLEMENTATION_BUILT_AWAITING_FRESH_VALIDATION",
+  "transportPolicySha256": {
+    "DIRECT": "8921a33f721940fe3a4684a7429bc1dfb97867452769aad308ad296812e68b08",
+    "SESSION": "90d5d1d36ad26f1088aac8b4f31159994bb40d687bcc5ce70ce78e722e931982"
+  },
+  "validationContextHashes": {
+    "docs/teaching-agent-source-provenance-acquisition.md": "6cc29943403ef7ec3eb5a46c72ec05ad5a381b43fb87da493a3cdd0765972d3e",
+    "tests/teaching_agent_source_provenance_acquisition_test.py": "6dac6760834e43780f17027c1e4ce9983b40c3c9306072e785e5a5a217961d3e"
+  }
+}

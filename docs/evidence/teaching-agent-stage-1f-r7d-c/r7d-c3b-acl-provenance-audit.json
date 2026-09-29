@@ -1,0 +1,60 @@
+{
+  "stage": "R7D-C3B-ACL-D1",
+  "recordedAt": "2026-09-18T07:45:53.053966+00:00",
+  "mode": "READ_ONLY_DIAGNOSIS_ONLY",
+  "currentDBReadOnlyTransactions": 2,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "candidateRebuild": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "publish": 0,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "release": "BLOCKED",
+  "testsExecuted": 0,
+  "Stage1G": "NOT_READY",
+  "overall": "BLOCKED_UNRESOLVED",
+  "primaryClassification": "BLOCKED_UNRESOLVED",
+  "establishedFinding": "ISOLATED_BASELINE_INCOMPLETE_FOR_LIVE_ACL",
+  "extraGrantSource": "HISTORICAL_ENVIRONMENT_OBSERVED; ORIGINAL_GRANT_EVENT_UNKNOWN",
+  "earliestLocatedGrantObservation": "2026-09-13T02:52:53.957Z",
+  "earliestEvidence": {
+    "path": "docs/evidence/textbook-grammar-consistency-20260913/deployment-database-preflight.json",
+    "sha256": "545fa207c6a69d4ade3484909d54f120cfabc9e5307f952c489698d435c3354a"
+  },
+  "fullBootstrapMatchesRecordedHash": true,
+  "currentDefaultsSupportNaturalCreationGrant": true,
+  "doesNotProve": "Who/when installed creation-time default ACL or separately granted target EXECUTE; target-specific authorization intent.",
+  "artifactLocks": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "match": true
+    }
+  ],
+  "historicalPreflightPreserved": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+    "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+  },
+  "noPendingMigrationInstallationOrReleaseAttempt": true
+}

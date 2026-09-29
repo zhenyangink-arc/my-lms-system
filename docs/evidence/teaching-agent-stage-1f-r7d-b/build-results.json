@@ -1,0 +1,30 @@
+{
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "candidateBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "nextBuild": "PASS",
+  "typescript": "PASS",
+  "scopedLint": "PASS",
+  "diffCheck": "PASS",
+  "sourceManifest": "candidate-source-lock.json",
+  "artifacts": {
+    "candidate-build.tar.gz": {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-build.tar.gz",
+      "sha256": "c95ba807a5e4094062a2af1e465d01e3ec5413765a31fd14359a84499eb046fd",
+      "bytes": 7810148
+    },
+    "candidate-source.tar.gz": {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7d-b-candidate/candidate-source.tar.gz",
+      "sha256": "2cd8714bad62443c813d436267b8dd37f3a330e0f9723b8febc075be139fda7d",
+      "bytes": 9942
+    }
+  },
+  "route": "/[space]/dashboard/admin/development-execution/lesson-facts/page",
+  "routeMode": "dynamic server-only; fixed environment and Owner guard; no navigation link",
+  "childBundle": "existing B3 child built from locked candidate; not executed",
+  "dependencies": "UNCHANGED",
+  "notes": [
+    "Root tsc initially scanned old partial build/source copies; acceptance uses sealed candidate only.",
+    "Fresh candidate required next typegen before tsc to generate RouteContext; no product workaround.",
+    "Initial new test loader order and erasable TypeScript syntax fixed before final run."
+  ]
+}

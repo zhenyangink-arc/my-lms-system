@@ -1,0 +1,15 @@
+{
+  "scope": "existing process log tails, values withheld",
+  "streams": [
+    {
+      "stream": "stdout",
+      "bytesScanned": 2599,
+      "privateMarkerDetected": false
+    },
+    {
+      "stream": "stderr",
+      "bytesScanned": 1816,
+      "privateMarkerDetected": true
+    }
+  ]
+}

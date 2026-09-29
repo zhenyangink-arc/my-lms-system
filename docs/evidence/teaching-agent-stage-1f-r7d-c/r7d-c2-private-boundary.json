@@ -1,0 +1,67 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "PASS",
+  "privateAnswerLeakage": "NONE in tested isolated paths",
+  "rawIdentifiersReturned": false,
+  "tested": [
+    "strict empty Tool input",
+    "strict empty summary input",
+    "private answer marker injection rejected",
+    "safe bounded DTO no secret/private digest/actor/tenant raw IDs",
+    "returned Tool data mutation cannot alter ledger",
+    "server-only modules",
+    "no new Skill/ledger markers in client bundle"
+  ],
+  "scan": {
+    "productPaths": {
+      "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts": "6f13ea423870793901b82acd1a83f89a44faac255a24eae7115ae7e000c156c1",
+      "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts": "93139887b671af606c2e9c2f99efe9f290b86943444a8c9b8e1766216053be4f",
+      "src/features/teaching-agent/server/skills/teaching-skill-contract.ts": "d3275eb7dce08bca624cfa6acebcbab5fccd8329b8327dd3242239feed9c3588",
+      "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts": "9ba9214edd5162bcfa3f12f3abbbccfd02eeb924c7ad918fa16f42df1dbd75bb",
+      "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts": "b19e126e5b2f9bf460ec7b83f9a8d73e2639212200a94a456ddda691fb575940",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts": "fbe01e6df5f7b6827c7b8ed95708fafde189c2c2cb838cea75f988221a90eefe",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+      "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6"
+    },
+    "protectedUnchanged": 2025,
+    "outsideScopeChanges": 0,
+    "candidateBuild": "UKkT6kYp5AF8gjNUW4OOx",
+    "candidateMatchesWorkspace": true,
+    "clientMarkerHits": {
+      "summarize-current-lesson-execution": [],
+      "student-execution-summary": [],
+      "tool-evidence-ledger": [],
+      "createLessonExecutionSkillCapabilities": [],
+      "PRIVATE-SENTINEL": [],
+      "C2_NETWORK_FORBIDDEN": [],
+      "r7dc2-font-mock": []
+    },
+    "expectedPublicPlaceholder": {
+      "meaning": "synthetic NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; not credential/private marker",
+      "bundleFiles": [
+        ".next/static/chunks/7120-b2d836a1a0f2638d.js",
+        ".next/static/chunks/2714-5ac92ae0df1e85d5.js",
+        ".next/static/chunks/app/login/page-17da1cfb0b6ba4fc.js",
+        ".next/static/chunks/app/account-disabled/page-676a82ccb97bde44.js"
+      ]
+    },
+    "fixtureCredentialsOnly": true,
+    "currentDBReads": 0,
+    "currentDBWrites": 0
+  },
+  "scope": "No fresh live-secret or current-DB scan: no current DB/config read allowed. Build uses no real credentials. Public dummy key appears by expected NEXT_PUBLIC bundling rules and is not classified as secret leakage.",
+  "sourceBoundary": "Exactly2 modified +7 new products; all other protected source/test/schema/package files unchanged except four authorized new C2 test/fixture files."
+}

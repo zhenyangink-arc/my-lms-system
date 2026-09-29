@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 6,
+  "title": "一个音节里面有什么？",
+  "formalType": "explanation",
+  "purpose": "借한初步认识初声、中声、终声。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "NEEDS_REVISION",
+  "pedagogicalAccuracy": "NEEDS_REVISION",
+  "terminology": "NEEDS_REVISION",
+  "length": "PASS",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "한的ㅎ=초성、ㅏ=중성、ㄴ=종성准确。앞对初声可作先后简化；가운데易造成固定中央误解。下面可再有一个辅音是对本课单终声例子的可接受简化，不应推广为所有终声永远一个字母；不展开复合终声。ㅎ虽未在Node4列举，但在本例被明确显示，可先指认这一字母，不要求新增记忆表。",
+  "classification": "MUST_FIX",
+  "issueIds": [
+    "M3"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "M3",
+      "classification": "MUST_FIX",
+      "proposedText": "한 글자에서 모음을 중성이라고 해요.\n모음의 자리는 모양에 따라 달라요.\n“가”에서 ㅏ는 ㄱ의 오른쪽에 있어요.\n“고”에서 ㅗ는 ㄱ의 아래에 있어요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=6",
+  "renderedReference": "ui-render-validation.json / order=6",
+  "nodeWrites": 0
+}

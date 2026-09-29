@@ -1,0 +1,5 @@
+{
+  "extraProductFile": "src/app/[space]/dashboard/admin/development-execution/lesson-facts/page.tsx",
+  "reason": "Normal authenticated Owner needs a read-only server entrypoint to invoke new development capability; no CLI impersonation, no navigation links, no B3 write scope.",
+  "deployment": "NOT AUTHORIZED / NOT PERFORMED"
+}

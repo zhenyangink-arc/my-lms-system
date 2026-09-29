@@ -1,0 +1,274 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "READY",
+  "execution": "NOT EXECUTED",
+  "count": 35,
+  "cases": [
+    {
+      "id": "R7DC-01",
+      "name": "allowed-tool",
+      "given": "Skill/Profile/policy intersection includes exact durable Tool",
+      "expected": "Visible",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-02",
+      "name": "disallowed-tool",
+      "given": "Explain or another disallowing Skill",
+      "expected": "Durable Tool invisible",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-03",
+      "name": "permission",
+      "given": "Wrong permission or denied policy",
+      "expected": "Denied before read",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-04",
+      "name": "subject",
+      "given": "Different subject binding",
+      "expected": "Denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-05",
+      "name": "tenant",
+      "given": "Different tenant binding",
+      "expected": "Denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-06",
+      "name": "lesson",
+      "given": "Different lesson binding",
+      "expected": "Denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-07",
+      "name": "activity-version",
+      "given": "Different Activity or version/snapshot",
+      "expected": "Denied/stale",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-08",
+      "name": "input",
+      "given": "Model adds actor, tenant, lesson, source, UUID or credential to {}",
+      "expected": "TOOL_INVALID_INPUT; no read",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-09",
+      "name": "present",
+      "given": "Fresh genuine executor receipt with exact scope/version",
+      "expected": "Local Skill gate accepts safe summary; no persisted Run",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-10",
+      "name": "missing",
+      "given": "No receipt",
+      "expected": "REQUIRED_EVIDENCE_MISSING; completed prohibited",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-11",
+      "name": "version",
+      "given": "Other Tool version",
+      "expected": "Rejected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-12",
+      "name": "stale",
+      "given": "Age >30s or expired authority/deadline",
+      "expected": "Rejected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-13",
+      "name": "other-run",
+      "given": "Receipt from another Run/Skill/model-call binding",
+      "expected": "Rejected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-14",
+      "name": "forged",
+      "given": "Model ref, prompt string, memory or user completion claim",
+      "expected": "Rejected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-15",
+      "name": "copied-handle",
+      "given": "Serialized/copied authorization handle",
+      "expected": "Denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-16",
+      "name": "fixture-source",
+      "given": "Isolated fixture labels itself current DB",
+      "expected": "Rejected by trusted source binding",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-17",
+      "name": "unknown",
+      "given": "UNKNOWN receipt with attemptNumber0",
+      "expected": "Unavailable, not zero attempts",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-18",
+      "name": "tool-error",
+      "given": "Required Tool not visible/stale/unavailable/read failure",
+      "expected": "No guessing or old receipt reuse",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-19",
+      "name": "explain",
+      "given": "Explain missing lesson context but has durable receipt",
+      "expected": "Rejected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-20",
+      "name": "explain-positive",
+      "given": "Explain valid original sentence evidence",
+      "expected": "Existing behavior preserved",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-21",
+      "name": "persona",
+      "given": "Persona requests extra Tool/cross-tenant access",
+      "expected": "Same permissions; no expansion",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-22",
+      "name": "fallback",
+      "given": "Required Tool unavailable",
+      "expected": "No legacy/provider/DB shortcut",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-23",
+      "name": "planning",
+      "given": "Assemble planning context with completed historical facts nearby",
+      "expected": "No completion/attempt/mastery injected",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-24",
+      "name": "cursor",
+      "given": "Activity source node exists; durable cursor absent",
+      "expected": "Null/unavailable retained",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-25",
+      "name": "leakage",
+      "given": "Malicious private marker/raw row in result",
+      "expected": "Schema/projection rejects; no secret in output/trace",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-26",
+      "name": "output",
+      "given": "Model invents mastery/attempt/completion claims",
+      "expected": "Authoritative summary only server-derived; rejected inconsistent fields",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-27",
+      "name": "failed-after-ok",
+      "given": "New Tool read fails after earlier success",
+      "expected": "Earlier evidence invalidated",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-28",
+      "name": "fresh-read",
+      "given": "Two independent authorized calls",
+      "expected": "Each uses fresh read; cached receipt cannot satisfy second",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-29",
+      "name": "duplicate",
+      "given": "Duplicate tool call ID or concurrent dispatch",
+      "expected": "Rejected; no extra accepted receipt",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-30",
+      "name": "final-race",
+      "given": "Binding/authorization drifts between Tool success and final",
+      "expected": "Completion denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-31",
+      "name": "unrelated-skill",
+      "given": "Skill requires only lesson context",
+      "expected": "No forced durable Tool call",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-32",
+      "name": "published-boundary",
+      "given": "B2 inactive/suspended Draft via production admission",
+      "expected": "Denied",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-33",
+      "name": "definition-pin",
+      "given": "Unknown profile/Skill/evidence policy version",
+      "expected": "Rejected; no silent version substitution",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-34",
+      "name": "database-gate",
+      "given": "Future durable policy without matching persisted tool receipt",
+      "expected": "Existing persisted completion transition refuses; future isolated SQL test",
+      "status": "PLANNED"
+    },
+    {
+      "id": "R7DC-35",
+      "name": "sql-provenance",
+      "given": "Activity ref presented as segmentRef",
+      "expected": "Rejected; no sentence-reference forgery",
+      "status": "PLANNED"
+    }
+  ],
+  "harness": "Existing Core executor/registries with isolated deterministic ports, no Provider loop, no formal pending/completed Run, no current DB. SQL cases require separate persistence implementation scope.",
+  "regressionSuites": [
+    "tests/teaching-agent-student-tools-skills.test.mjs",
+    "tests/teaching-agent-student-domain.test.mjs",
+    "tests/teaching-agent-student-runtime.test.mjs",
+    "tests/agent-core-foundation.test.mjs",
+    "tests/teaching-agent-r7d-lesson-facts.test.mjs",
+    "tests/teaching-agent-r7d-lesson-tool.test.mjs",
+    "tests/teaching-agent-r7d-evidence.test.mjs",
+    "relevant R7B/R7C/B3 isolated regression"
+  ],
+  "providerTests": "Live/provider suites excluded. Audit tests first to ensure isolated/no formal Agent Run persistence before executing.",
+  "acceptance": "Preserve existing expectations and skipped cases; report actual numbers when C2 runs. No current PASS count invented."
+}

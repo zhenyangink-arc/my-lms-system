@@ -1,0 +1,31 @@
+{
+  "nodeNumber": 8,
+  "title": "今天学了什么？",
+  "formalType": "summary",
+  "purpose": "回顾结构与可选终声，结束课前导航。",
+  "koreanGrammar": "PASS",
+  "koreanNaturalness": "PASS",
+  "beginnerDifficulty": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "length": "PASS",
+  "objectiveAlignment": "PARTIAL",
+  "issue": "总结符合前文，종성이 올 수 있어요已带可选含义，并未说每字必有终声。建议拆开并列串以减歧义。다음에는 글자를 하나씩 더 자세히 배워 볼게요自然礼貌，不必强改为另一句尾。",
+  "classification": "SHOULD_FIX",
+  "issueIds": [
+    "S4"
+  ],
+  "recommendedRevision": [
+    {
+      "id": "S4",
+      "classification": "SHOULD_FIX",
+      "proposedText": "한 글자에는 초성과 중성이 있어요.\n종성은 있을 수도, 없을 수도 있어요."
+    }
+  ],
+  "reviewStatus": "NEEDS_REVISION",
+  "lengthNote": "按一次一个概念评估；无朗读时长测试。Node4总篇幅不长，但末句过长。Node6需分段停顿，非要求扩展术语。",
+  "politeStyle": "PASS",
+  "persistedReference": "persisted-nodes.json / order=8",
+  "renderedReference": "ui-render-validation.json / order=8",
+  "nodeWrites": 0
+}

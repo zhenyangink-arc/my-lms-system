@@ -1,0 +1,15 @@
+{
+  "case": "A",
+  "status": "NO EXISTING TARGET CONTENT",
+  "existingTargetContent": "NONE",
+  "cleanup": "No target content deletion; separate explicitly approved stale non-target fence retirement completed",
+  "policy": "NEW AUTHORING CONTENT IS CANONICAL",
+  "catalogSlotReferencesPreserved": true,
+  "catalogReferenceRows": 20,
+  "contentBranchExternalDependencies": 0,
+  "note": "Existing published catalogue slot has progress/session/test/chapter/prerequisite references. Do not delete or replace catalogue lesson. No textbook branch exists, so additive official skeleton creation has no old-content deletion requirement.",
+  "canonicalChainCountBefore": 0,
+  "canonicalChainCountNow": 1,
+  "dependencyFence": "RESOLVED",
+  "currentCanonical": "ONE DRAFT"
+}

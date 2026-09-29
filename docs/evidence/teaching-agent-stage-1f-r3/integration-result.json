@@ -1,0 +1,323 @@
+{
+  "raw": [
+    {
+      "label": "A1",
+      "table": "learning_agent_sessions",
+      "case": "ownSession",
+      "rows": 1,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_sessions",
+      "case": "a2Session",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_sessions",
+      "case": "bSession",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "courses",
+      "case": "bcourse",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "lessons",
+      "case": "blesson",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "digital_textbook_modules",
+      "case": "bmodule",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_script_nodes",
+      "case": "bPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_script_nodes",
+      "case": "adraftNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A1",
+      "table": "learning_agent_script_versions",
+      "case": "adraftVersion",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "A2",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "B1",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "EX",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "IN",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "TA",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "AA",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 0,
+      "error": null,
+      "privateSentinel": false,
+      "answerSentinel": false
+    },
+    {
+      "label": "PO",
+      "table": "learning_agent_script_nodes",
+      "case": "aPublishedNode",
+      "rows": 1,
+      "error": null,
+      "privateSentinel": true,
+      "answerSentinel": true
+    }
+  ],
+  "domain": [
+    {
+      "case": "A1",
+      "status": "ok"
+    },
+    {
+      "case": "A2",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "B1",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "TA",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "AA",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "PO",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "EX",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "IN",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "ownSession",
+      "status": "ok"
+    },
+    {
+      "case": "a2Session",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "bSession",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "completedSession",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "index",
+      "status": "stale"
+    },
+    {
+      "case": "revision",
+      "status": "stale"
+    },
+    {
+      "case": "draftVersion",
+      "status": "stale"
+    },
+    {
+      "case": "draftNode",
+      "status": "stale"
+    },
+    {
+      "case": "otherLesson",
+      "status": "not_found_or_not_visible"
+    },
+    {
+      "case": "otherNode",
+      "status": "stale"
+    }
+  ],
+  "pins": [
+    {
+      "sample": 1,
+      "kind": "cold",
+      "ms": 1942,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 2,
+      "kind": "warm",
+      "ms": 1946,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 3,
+      "kind": "warm",
+      "ms": 1861,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 4,
+      "kind": "warm",
+      "ms": 1900,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 5,
+      "kind": "warm",
+      "ms": 1916,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 6,
+      "kind": "warm",
+      "ms": 1906,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 7,
+      "kind": "warm",
+      "ms": 1912,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 8,
+      "kind": "warm",
+      "ms": 1883,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 9,
+      "kind": "warm",
+      "ms": 1890,
+      "queries": 304,
+      "pinCount": 16
+    },
+    {
+      "sample": 10,
+      "kind": "warm",
+      "ms": 1897,
+      "queries": 304,
+      "pinCount": 16
+    }
+  ],
+  "errors": [],
+  "ports": {
+    "status": "ok",
+    "privateSentinel": false,
+    "answerSentinel": false
+  },
+  "definition": {
+    "published": true,
+    "exact": true,
+    "error": null,
+    "badDigestRejected": true
+  },
+  "expiredJwtStatus": 401,
+  "operations": {
+    "count": 3527,
+    "errors": [],
+    "domainMethods": [
+      "GET"
+    ]
+  }
+}

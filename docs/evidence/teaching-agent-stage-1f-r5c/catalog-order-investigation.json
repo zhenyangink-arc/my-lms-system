@@ -1,0 +1,172 @@
+{
+  "indexes": {
+    "recordsIdentical": true,
+    "matchingOrder": [
+      1,
+      2,
+      0,
+      5,
+      3,
+      4
+    ]
+  },
+  "triggers": {
+    "recordsIdentical": true,
+    "matchingOrder": [
+      5,
+      6,
+      4,
+      1,
+      0,
+      3,
+      2
+    ]
+  },
+  "functions": {
+    "recordsIdentical": "NOT CLAIMED FROM UNORDERED DIGEST",
+    "sourceContract": "PASS",
+    "checked": {
+      "agent_core_private.immutable": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.actor_guard": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.run_json": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.check_budget": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.admit_agent_run_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.definition_guard": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.append_agent_run_event_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.record_agent_usage_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.transition_agent_run_base_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.append_agent_run_event_v2": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.student_transport_guard": {
+        "arguments": true,
+        "acl": true
+      },
+      "agent_core_private.transition_agent_run_evidence_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.get_student_agent_run_status_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.request_agent_run_cancel_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.check_agent_run_cancel_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.transition_agent_run_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.reserve_student_agent_event_sequence_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.guard_curriculum_learning_source": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.guard_curriculum_learning_publication": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.staff_has_curriculum_template": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.dispatch_curriculum_plan_exam": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.guard_curriculum_exam_roster": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.guard_curriculum_exam_cancellation": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.get_curriculum_execution": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.publish_completion_policy_draft": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.save_completion_policy_draft": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.get_completion_refresh_health": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.retry_failed_completion_refresh": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.can_read_published_textbook": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.can_read_published_teaching_module": {
+        "arguments": true,
+        "acl": true
+      },
+      "private.student_script_segments": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.find_reconcilable_agent_runs_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.reconcile_agent_run_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.reconcile_agent_run_batch_v1": {
+        "arguments": true,
+        "acl": true
+      },
+      "public.create_teaching_content_skeleton": {
+        "arguments": true,
+        "acl": true
+      }
+    },
+    "reason": "R5B JSON aggregates do not ORDER BY; raw array SHA is not a canonical set fingerprint. All35 body/owner/config/definer checks PASS, all35 arguments and effective role ACL checks PASS against locked SQL and schema defaults."
+  }
+}

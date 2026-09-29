@@ -1,0 +1,610 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "files": [
+    {
+      "path": "src/features/teaching-agent/server/repositories/contracts.ts",
+      "sha256": "f2abd28bbe5b86cc120f0c1885becc5cbd2c776b097920a581d3d962a05df8dd",
+      "mode": "0o664",
+      "bytes": 2225,
+      "previousSha256": "fb9ac6c238edf6f648cf7b31cccbdfc1e70d1959d8e50a3f4d27da475cfa1cae",
+      "previousPresence": "EXISTS",
+      "responsibility": "Scoped published read interface",
+      "reason": "Version the trusted facts repository/authority seam without adding writes or changing StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/index.ts",
+      "sha256": "56d75a718f53b7a35bca4fd257fa56d6534585a72354164a1c0a8f409b5866ac",
+      "mode": "0o664",
+      "bytes": 2585,
+      "previousSha256": "5d2d1c2c7c913a188a112ee6d1187dfb637d412252847421c944b911c2e84b3d",
+      "previousPresence": "EXISTS",
+      "responsibility": "Domain Port versions",
+      "reason": "Expose bounded 1.1 read interfaces while retaining 1.0 interfaces."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "sha256": "064c2f385d03be3899d4db3e93b6cad2d5705bedafee1510067462cd4d308033",
+      "mode": "0o664",
+      "bytes": 5030,
+      "previousSha256": "14ea3bde7e4cbd0ef416f003c065e824e4f703961e1a8c94555ea10f7d08885e",
+      "previousPresence": "EXISTS",
+      "responsibility": "Versioned private facts grants",
+      "reason": "Separate issued production handles/v3 provenance from existing development handles; preserve 1.0 issuance behavior."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-read-port.ts",
+      "sha256": "3e409af6d35f0f3226c1e9a805f5d58244220f2568ed48e77852e29ab6101236",
+      "mode": "0o664",
+      "bytes": 3247,
+      "previousSha256": "b1f09b66aa97941e9bece547d4acce218e00d63732a579abad936128f209564a",
+      "previousPresence": "EXISTS",
+      "responsibility": "Read Port version routing",
+      "reason": "Project only verified matching version snapshots, with freshness/fail-closed mapping."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/contracts.ts",
+      "sha256": "d0f938bb22ee66d06ae79f5cb210171d171ced58ff45e870cc1b25d9d9d13ec4",
+      "mode": "0o664",
+      "bytes": 6387,
+      "previousSha256": "ef3af71543f82692c0a2ecb9f1abf08def31a63556fb1d73dbe4b83899e868c8",
+      "previousPresence": "EXISTS",
+      "responsibility": "Tool DTO versions",
+      "reason": "Add strict-empty 1.1 input and bounded published-source output; preserve 1.0 schema."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/get-current-lesson-execution-facts.ts",
+      "sha256": "35f59d90142180195c5cc9dfd493bfaf901a9ab6a3f71fef7b07356890ee94a4",
+      "mode": "0o664",
+      "bytes": 2255,
+      "previousSha256": "b19cec83e3a9ec8724cd8aa7da21b5997f3f7a5e55e50bc22a5bb3087d8f95cd",
+      "previousPresence": "EXISTS",
+      "responsibility": "Tool registration factory",
+      "reason": "Add explicit 1.1 registration pinned to production port; retain 1.0 behavior."
+    },
+    {
+      "path": "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "sha256": "b7d7c64304a1ddada4690a2cd1d0809e69ea4abca71daf31ea7ddc47d5f9d949",
+      "mode": "0o664",
+      "bytes": 979,
+      "previousSha256": "4bbd3010c6648f204581a6d93644455cdd340fd3eabb6da159860dc99f0d33b5",
+      "previousPresence": "EXISTS",
+      "responsibility": "Request-local Tool registry",
+      "reason": "Make exact 1.1 available only to the selected permitted production Skill/Profile."
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "sha256": "ecb1ef29897c1fcdfb94b379a52daaa09428a8aabf1661df8a21f54959cdd4be",
+      "mode": "0o664",
+      "bytes": 1752,
+      "previousSha256": "fa81a6e4724637f71bdfe74f915efe0d3d9a80e262a07c6b2234f12b26eed13c",
+      "previousPresence": "EXISTS",
+      "responsibility": "Skill registry",
+      "reason": "Pin production summary1.1 separately from Explain1.0 and unregistered C2 summary1.0."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "sha256": "9539dd9cb9163c483fe33c8a2b420697eed5d210c519ad63e38bf649acc715bb",
+      "mode": "0o664",
+      "bytes": 2633,
+      "previousSha256": "0e3466f2d01707450d2314bd4c2475162a60e7267fba0771ba530c557adfb8bf",
+      "previousPresence": "EXISTS",
+      "responsibility": "Self-read permission mapping",
+      "reason": "Authorize verified self/tenant/lesson/version/Activity only; no write/admin permission."
+    },
+    {
+      "path": "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "sha256": "9bc3ca59a5a833e741a54e4e22371f025abcd1155852bd8743a6f69633dabf1f",
+      "mode": "0o664",
+      "bytes": 4194,
+      "previousSha256": "06bc6e0c4b2af14bd331654348984e4dd2ba1dd27e2e28303663e6baa90489d5",
+      "previousPresence": "EXISTS",
+      "responsibility": "Versioned Profile",
+      "reason": "Introduce explicit new Profile version; preserve old definition and Persona limits."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "sha256": "48adfaa529abc98a28e0547677bdd1e8011886661b8fa32d28d03ab246538c38",
+      "mode": "0o664",
+      "bytes": 3991,
+      "previousSha256": "cf84a8b1a25d6cd18814d5c3676a18816dfadfe45371cde9e67d0a0d37952c50",
+      "previousPresence": "EXISTS",
+      "responsibility": "Pinned runtime definition",
+      "reason": "Pin selected Skill/Profile/tool schemas and versioned artifact requirement set."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "sha256": "ff55f59f60601e814271fcc81843970f4fbf0b068f1012a3abd5b638d1e2b633",
+      "mode": "0o664",
+      "bytes": 4069,
+      "previousSha256": "f1479e1b6974d6fa7453b00da1891beadd62eda9c8c85f6a1b1572acd3d476ce",
+      "previousPresence": "EXISTS",
+      "responsibility": "Planning assembly",
+      "reason": "Keep auto planning, no authoritative facts in planning context, final toolChoice none."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "sha256": "0b7346ccf1eed97c9f0d77689ff4b205063fe8c9ccc0266c718d498f55ad10e4",
+      "mode": "0o664",
+      "bytes": 4093,
+      "previousSha256": "35b32c13ca55149ab912988c5bc1065ffc70aa2b1b0a5226b50970f38434c2d2",
+      "previousPresence": "EXISTS",
+      "responsibility": "Completion guard",
+      "reason": "Validate all typed mandatory receipts and server-project authoritative summary."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "sha256": "288aa1ecc45ba26912507d2479cc54b9f4cb5a761ed121be70af3218e6bfb9c3",
+      "mode": "0o664",
+      "bytes": 15333,
+      "previousSha256": "f357213af68b438bd8abed3c4f30f66153ebcd355c4ac2f0226760b256ffcf63",
+      "previousPresence": "EXISTS",
+      "responsibility": "Existing coordinator dispatch",
+      "reason": "Select Explain or summary within the existing coordinator; no second runtime/fallback."
+    },
+    {
+      "path": "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "sha256": "e1bd8d0d877163f9a3260c59c185a8bc6a5f7522809313af10cf5304c9ef3891",
+      "mode": "0o664",
+      "bytes": 4033,
+      "previousSha256": "cd407526610559e0b2511785bc459599c52a1b294b6455c52b18647a6593780b",
+      "previousPresence": "EXISTS",
+      "responsibility": "Runtime composition",
+      "reason": "Connect verified Student selection to production issuer and capability factory, preserving Explain admission."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "sha256": "af316db64508c11d81438860ccd5f9151f7e5df7eee2a85446c363dde997cf54",
+      "mode": "0o664",
+      "bytes": 2506,
+      "previousSha256": "a8b3b044ae631387410357643971ba604fa8578b0d01dac28da1f76fb5b11445",
+      "previousPresence": "EXISTS",
+      "responsibility": "Skill definition versions",
+      "reason": "Add summary1.1 with exact Tool1.1 evidence while preserving summary1.0."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "sha256": "d2994be40a6f5edb5615e2e928c006f7fe8462f1fda7a90836e09f00be3fe3e5",
+      "mode": "0o664",
+      "bytes": 5544,
+      "previousSha256": "e680429121dc6d8bcb3a1d94484e4b270d543a90a2ce0f636d08a90ef28e1101",
+      "previousPresence": "EXISTS",
+      "responsibility": "Skill evidence versions",
+      "reason": "Reject development/v1.0/fixture/cross-run/stale evidence at production gate."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "sha256": "1f92c879d1e69fc5a683995da479a07201c48e6929fcd1b4a88162deee82ee51",
+      "mode": "0o664",
+      "bytes": 1684,
+      "previousSha256": "15bbd8e3e32a520a05a15433408654ebcf484ae09b58dfb99ceac251e15b5fd6",
+      "previousPresence": "EXISTS",
+      "responsibility": "Summary output versions",
+      "reason": "Server-bounded1.1 summary from verified Tool facts; unknown current cursor retained."
+    },
+    {
+      "path": "src/features/agent-core/contracts/server.ts",
+      "sha256": "88009d079280e38488caadde310d5d5d2ff6ae5d2118e677d491d6e84c229c8e",
+      "mode": "0o664",
+      "bytes": 3738,
+      "previousSha256": "07d866debe25512f8c19f867fcef9574603f93c1578b67b07f369835bafa29ae",
+      "previousPresence": "EXISTS",
+      "responsibility": "Core server artifact versions",
+      "reason": "Typed multi-evidence artifact schema; keep schemaVersion1 semantics."
+    },
+    {
+      "path": "src/features/agent-core/observability/trace.ts",
+      "sha256": "29f5fd21b0b1a4a20eadab7d8a6df35cf7cd792698cb2cd4ab8e00eab04a4b80",
+      "mode": "0o664",
+      "bytes": 4363,
+      "previousSha256": "95346cbeec6e3a740d42967c6b134881db46e5516f5063da229aba8b2542d7c5",
+      "previousPresence": "EXISTS",
+      "responsibility": "Safe strict trace",
+      "reason": "Versioned receipt/subject/content/run/tool-call association without sensitive DTO fields."
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "sha256": "19f0070d9c2f0083f3bcff7d488570752bc5cd22a2baf29bae8a38b880c8b7a9",
+      "mode": "0o664",
+      "bytes": 9807,
+      "previousSha256": "838cb311bcb840e615a6c25fe46438bcf64d7ffc6acd8cdae9c72eb63dce1332",
+      "previousPresence": "EXISTS",
+      "responsibility": "Persistence artifact/trace validation",
+      "reason": "Serialize/validate new typed contract; preserve CAS/fencing/cancellation repository behavior."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/core/execution-contracts.ts",
+      "sha256": "51f4cb12e8665d7673348f17f5dc3dbdf69ebd6ba5b6da0500c2ff94f94e0051",
+      "mode": "0o664",
+      "bytes": 6278,
+      "previousSha256": "995c84ef8b1b14560c1eb8669f4c5b4817f8bf2de64a1889ad387244be2f56af",
+      "previousPresence": "EXISTS",
+      "responsibility": "Runtime receipt versions",
+      "reason": "Add activity-completion/3 independently of development v2 receipt."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "sha256": "75af21f3f45e76d754eff1fda0c4a29899c60327757b7164629c0eb19e2ac562",
+      "mode": "0o664",
+      "bytes": 10071,
+      "previousSha256": "252401ffbb4cd85b15976b80bd8b2ddde1ace44ed5293bad5028d06e4da9b5a5",
+      "previousPresence": "EXISTS",
+      "responsibility": "Validated completion read projection",
+      "reason": "Reuse same-snapshot projection with explicit published policy; preserve development submission/readback."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts",
+      "sha256": "1a226f0c85a5e42782ccb1b862647f6785f07e8889366197a189f377b469f43c",
+      "mode": "0o664",
+      "bytes": 6619,
+      "previousSha256": "dbf6b5049376dc9e9575d4f7a757cf68af8a5ce2e59ac7fe5ba5741b625f3485",
+      "previousPresence": "EXISTS",
+      "responsibility": "Trusted durable repository",
+      "reason": "Read publication/definition/attempt/progress under one verified READ ONLY snapshot; retain existing submit authority unchanged."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "sha256": "647e2097f17c4b1c2d0de71cf18c3a55781c18e438706977d973577b8b223502",
+      "mode": "0o664",
+      "bytes": 9638,
+      "previousSha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "previousPresence": "EXISTS",
+      "responsibility": "Version-dispatched official artifact certification",
+      "reason": "Preserve legacy exports/digest semantics and narrow LegacyPublicationBundle; add NativePublicationBundle to PublicationBundle union, strict revision/kind dispatch and native packaging/certification. Unknown or contradictory discriminants fail before any legacy validator. Keep the public Manifest contract unchanged."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "sha256": "4a4967c73964141b6f3319cdc4ead023c9959b834ada421933e9f41b1a371fb5",
+      "mode": "0o664",
+      "bytes": 3854,
+      "previousSha256": "60246d47b5e7280c9c8b90025cf6e7816b030ba2d06e6050106928a9d1542662",
+      "previousPresence": "EXISTS",
+      "responsibility": "Canonical native capture projection",
+      "reason": "Reuse the existing capture_runtime_publication_v1 RPC and 18-table dependency schema. Add a scope-verified native projection of the same captured rows; no readChapterOneLegacySource/service-reader call in the native strategy. Preserve legacy projectPublicationCapture/captureChapterOnePublication behavior."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "sha256": "bd6d4eff089437d43bafbeb448f29a149bbe26f44ad968f565699df94ee434c0",
+      "mode": "0o664",
+      "bytes": 3274,
+      "previousSha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "previousPresence": "EXISTS",
+      "responsibility": "Same publisher; explicit producer strategy",
+      "reason": "Add an explicitly selected canonical-native compile/publish operation in this module, using the existing Owner guard, capture, artifact factory and publicationRepository.publish CAS. Keep legacy operations explicit and unchanged; no native-to-legacy fallback and no new route/action/publisher service."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "sha256": "b54ea95b2056f3072b1ce4c2b1dda64745bfbeec55dad45e79b60efafaf52230",
+      "mode": "0o664",
+      "bytes": 3328,
+      "previousSha256": "d9e6bc1b9e3fecf1b18d0a5965b44faa6d4f26966af268b4ce4b09b96cc0b5a4",
+      "previousPresence": "EXISTS",
+      "responsibility": "Versioned repository result and snapshot transaction seam",
+      "reason": "Official current/session/owner-snapshot reads certify the union and verify pointer/scope associations. Publish/rollback use the same existing RPCs/store. Narrow the trusted client requirement to its actual rpc surface so a fixed server READ ONLY transaction adapter can read official publication data on the durable repository connection. No arbitrary SQL API/model-supplied client."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "sha256": "cfa45a84b9468922075cbf13b0a38df548ca6cea2f2764d54efb123742dadc0b",
+      "mode": "0o664",
+      "bytes": 2476,
+      "previousSha256": "883d50a83853f11f178485eeec99b1785b29cc618a8f35ef099fbc1d0918de63",
+      "previousPresence": "EXISTS",
+      "responsibility": "Existing legacy consumer narrowing",
+      "reason": "Existing loadPublishedRuntimeSnapshot stays a legacy course resolver: after generic repository current, explicitly require publish-foundation/1 before private payload access. Preserve the existing Chapter One default and returned legacy data type. It is not the native Student issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "sha256": "e66cd951787e07ca21986a2b5e147f50c445070dc5a838a0a1d8feedafc8d8c8",
+      "mode": "0o664",
+      "bytes": 3695,
+      "previousSha256": "06b308f77ce69bc38aaf555e3e455b34ccf6f4ebf631d6856df13040aca2ab27",
+      "previousPresence": "EXISTS",
+      "responsibility": "Legacy learning session boundary narrowing",
+      "reason": "Generic repository session may certify either artifact; this existing capsule-based resolver explicitly rejects non-legacy before data.result/services/source access. Preserve its legacy return type so all existing downstream consumers remain unchanged. Native facts uses official current read, not a new session or this legacy resolver."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-native-activity-read.server.ts",
+      "sha256": "77eb3fadf1a33693f8cdce098df91a5efe50a97115f1de34810ca06326e98bf0",
+      "mode": "0o644",
+      "bytes": 7131,
+      "previousSha256": null,
+      "previousPresence": "ABSENT",
+      "responsibility": "Published durable read adapter",
+      "reason": "Fixed server transport/DB identity; Student-verified scope; official repository certification plus fence and same-snapshot durable rows. Never import Owner/dev issuer or fixed Chapter One resolver."
+    },
+    {
+      "path": "src/features/teaching-agent/server/domain-ports/production-lesson-facts-binding.server.ts",
+      "sha256": "ce95a1013f5c84efa878964a8bd00d5f04b9e4706262fa44c2dd29501287e5a3",
+      "mode": "0o644",
+      "bytes": 5011,
+      "previousSha256": null,
+      "previousPresence": "ABSENT",
+      "responsibility": "Production facts authority issuer",
+      "reason": "Opaque run-authorized subject/tenant/lesson/version/Activity handle, deadline, provenance and revalidation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-production-lesson-execution-capabilities.ts",
+      "sha256": "d64c69d254dec14038e763754325a8cb01595d598f2109f155fdaef747747348",
+      "mode": "0o644",
+      "bytes": 5655,
+      "previousSha256": null,
+      "previousPresence": "ABSENT",
+      "responsibility": "Production Skill capabilities",
+      "reason": "Existing registries/Core executor/private ledger; exact1.1 binding and mandatory evidence; no activation implied."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/native-publication.server.ts",
+      "sha256": "1e6f2664a329fe76e07814f8d57da1bb2d292159a31c3477070a3b827ad9a62e",
+      "mode": "0o644",
+      "bytes": 17734,
+      "previousSha256": null,
+      "previousPresence": "ABSENT",
+      "responsibility": "Native contract codec/compiler within existing publication framework",
+      "reason": "Own the strict native captured-source/private binding schema, deterministic safe Manifest projection and semantic certification. No DB client, auth, publication write, storage table, RPC or second publisher. Called only by official artifact/capture/publisher strategies."
+    }
+  ],
+  "migrations": [
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "mode": "0o664",
+      "bytes": 23761
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "mode": "0o664",
+      "bytes": 13366
+    }
+  ],
+  "tests": [
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "mode": "0o664",
+      "bytes": 10114
+    },
+    {
+      "path": "tests/teaching-agent-r7d-production-binding.test.mjs",
+      "sha256": "2f2d599a1489c2a9fda208da6e0a11d6e43010eeed85f602b63439db21e2b879",
+      "mode": "0o664",
+      "bytes": 6668
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "mode": "0o664",
+      "bytes": 9783
+    },
+    {
+      "path": "tests/teaching-agent-r7d-legacy-publication-compatibility.test.mjs",
+      "sha256": "798e38e014e9264336d3c7b212aa96ac8f0aace889ea3408070afc240ff3a329",
+      "mode": "0o664",
+      "bytes": 3122
+    },
+    {
+      "path": "tests/teaching-agent-r7d-native-publication.test.mjs",
+      "sha256": "78098805fd76d0eb01ee4bb3923ebe621f0b24b4acbd501fd853e526c80b2c3b",
+      "mode": "0o664",
+      "bytes": 6024
+    },
+    {
+      "path": "tests/teaching-agent-r7d-production-provenance.test.mjs",
+      "sha256": "4e28c74275a9d22b18b47273f491232b21da95b2ee6869e71d0420d24b7000b1",
+      "mode": "0o664",
+      "bytes": 5673
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "9f066e0b8ab5899df0a9925af663a8c5309b059a6706dcf2cc8dbc00f2ee7fad",
+      "mode": "0o664",
+      "bytes": 6182
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/published-fixture.mjs",
+      "sha256": "92d7a5beded8cbad94a42f55337e509fc5523e6f4f0dfe2abd693ce180c26d3e",
+      "mode": "0o664",
+      "bytes": 4450
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/production-harness.mjs",
+      "sha256": "53ea5354fab3544123084284701fc5f6f72fa0a664e31dc0a15aff5edd8313bd",
+      "mode": "0o664",
+      "bytes": 4912
+    }
+  ],
+  "unchangedBoundaries": [
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "sha256": "e3c4734c292fe389a1fcc6435a764a65db1d41fd2308b1c89546fe89d49e76ec",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "PublicationBundle union retains common snapshotId and privatePayload.dependencies. Existing fence RPC remains kind-neutral and exact; no change required."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "sha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical 75-media audit / Chapter One exceptions remain legacy-only; native cannot invoke this exemption policy."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "sha256": "48c710f2bbe109a0898f813ddb7f8131d2a3cf1c27b779532df6810525c76d8d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen historical validator remains intact; dispatch moves outside it, so no loosening or generalized optional fields."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "sha256": "c346e65e1dfbee89933a669b599e881fd4dbc695ca929a819a838e770cee929f",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Historical capsule/readiness bindings remain only for v1."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "sha256": "2a676789a1c1dc48666e62272e71aacf7388f174110ca0a90c56122e79bd39ab",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse only canonical()/digest()/persistent-key identity utilities; no frozen identity map/legacy walks in native strategy."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "sha256": "d7dcb0896b154aafc08b90831b507ca03389aadbe2ff9ef7c806f29a0cf0bccc",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing native text/multiple_choice Manifest1.0.0 and native compatibility profile suffice for the bounded first native publication contract; no new runtime DTO."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "sha256": "9a04e9065b721b11e1a36ec3e92f4bc1387241a798733bde0fcde7aa833e190e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Reuse published generic structural/association validation; native certificate adds source semantics instead of weakening generic validator."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "sha256": "f69d2fe6c7ebfcb8ba020cf09771ff44454f69d47041b70d3727d38f9a74867c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Fixed Node5/Node7 native-execution/1 cue fixture is not generalized or installed into production snapshot."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "sha256": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Frozen development preview compiler is not production authority and is not reused."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "sha256": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Draft/alias-specific B1/B3 validator stays unchanged; production published policy is a separate versioned read policy in approved completion/native authority code."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "sha256": "80d7b41a9ca90fd3a0c08d3d9db002686c0466ff29e226d5c60a051a0a1be3e1",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Its ReturnType-derived legacy Authority remains narrow after resolver guard; no native submission path added."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "sha256": "0e0a0c7c5bbed2c6e76ab69bc68e41341b22a8413b5601bd991ac9d50f6c8c72",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Capsule/recording/legacy ports see only legacy resolver output; never route native Tool facts here."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "sha256": "a294f34ad49c0e4e99dcd037e98b7459f21a50a539ad9b0e6f6ab2efa8644568",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Legacy source/services type remains stable; this is not a native Teaching Agent issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "sha256": "ac30e3a19fc8fd44448861906c182e2d0aa75bc68aeb73a13b4b589c656539d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview consumes unchanged legacy Authority subset; no new production adapter dependency."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "sha256": "a2ff5de5104f350c2523df7f0840cd3a75f6eeabf48e0d3fa2df3a34cf353b42",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Owner preview remains separate; no native production capability."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "sha256": "b873ae944de5aecc22abccab08a37badddd5715496d967f88655a1848357e2d5",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "sha256": "3045d571a8c1e9ea194985aa4b02d234bcf252aaa97fa61e1b3b64739367d720",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "sha256": "4659a71e3724d70f526e1542706143bd3ebba23096c4e3598f580a1388c052e4",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Public summarize_execution intake deferred to separate activation approval; existing explain-only contract maintained."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "sha256": "2f5541c0327a8b1e09087e4aaced2649b5546c7821d6f0d132ee0a53dca662cd",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing feature/rollout/authentication wiring untouched; source-only future native factory does not enable a public intent."
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "sha256": "12c38a4bdd7318b98cbbc8735df101f06074eabb77744a7e2670f15c7afb457e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing active-self/published Student admission is retained. Publication authority uses new approved adapter after verified binding, not a replacement StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "sha256": "61f4ff9637f6086314ac1a6eafb80cd12c1c77f5618db919f91cbec99bc2de2d",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "No relaxation of active membership, tenant, published content or per-call authorization."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "sha256": "9f3b4d0c35e2c6f07446a5f4e4a0289c8150890c0e069fd1668ef60f4c37ac0e",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Opaque selection authority remains issuer-owned; native mapping uses verified scope/source node, not model UUIDs or inferred cursor."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "sha256": "6a574a0d6ffad3db8ad502873e0e1d45478d0269262f35b8d3c770e0e3b27351",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Current verified selection can scope the initial summary; no new public input shape in this implementation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "sha256": "cb57bd21070ad03c21bb1a492e4d74b07b2fbdac6378c9850531051a934e375a",
+      "presence": "EXISTS",
+      "mode": "0o664",
+      "reason": "Existing policy/verifier composition reused by the approved runtime factory without alteration."
+    }
+  ],
+  "buildCopySourceHashes": "34/34 MATCH",
+  "baselineSnapshotSha256": "905f2846090c27185acd5810784cb938daff57b3a68622b4161c95bbdf9d0b8c",
+  "historicalApprovalFilesModified": false
+}

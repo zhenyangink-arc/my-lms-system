@@ -1,0 +1,19 @@
+{
+  "status": "BLOCKED pending actual Auth-build parity and isolated negative verification",
+  "candidateControls": [
+    "ban set within initial official Admin create transaction, not a later open login window",
+    "no usable password or phone/SSO association; inactive application profile; zero preexisting sessions/refresh grants",
+    "permanent policy intent enforced by reject-before-expiry guard; a long ban duration is finite, not an immutable forever flag",
+    "server scope issuer checks ban horizon covers scope TTL, metadata/tenant/registry ownership, non-login status and environment binding on every admission",
+    "production composition does not load test issuer; issuer never creates JWT/student session; production StudentPolicy unchanged"
+  ],
+  "proofRequired": [
+    "actual server build/version parity confirmed (local test image v2.195.0 is a reference, not proof of current hosted version)",
+    "isolated Auth service: password grant rejected with non-login principal, not merely unknown password",
+    "isolated Auth service: magic-link verify and email/SMS OTP verify rejected before session issue; no live messages/links generated on current DB",
+    "isolated refresh/PKCE/OAuth/token-issuance paths cannot mint a session for banned principal; reject unexpected identity attachment",
+    "read-only count confirms no sessions/refresh tokens for subject and application requireActiveUser/StudentPolicy rejects interactive admission",
+    "unban/expiry/profile drift denies scope until reverified"
+  ],
+  "ifUnsupported": "STOP identity provisioning. Do not edit Auth triggers or relax StudentPolicy; keep B1 canonical content, continue owned isolated durable tests and submit a separate minimal identity/storage-contract alternative. No second progress store is authorized."
+}

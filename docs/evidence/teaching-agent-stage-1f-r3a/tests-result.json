@@ -1,0 +1,32 @@
+{
+  "broad": {
+    "tests": 1146,
+    "pass": 1135,
+    "fail": 0,
+    "skipped": 11
+  },
+  "optIn": {
+    "tests": 199,
+    "pass": 199,
+    "fail": 0,
+    "skipped": 0
+  },
+  "blackboard": {
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0
+  },
+  "baselineUnit": {
+    "pass": 7,
+    "skip": 3
+  },
+  "stagingGuards": {
+    "pass": 4
+  },
+  "typecheck": "PASS",
+  "eslint": "PASS",
+  "newDatabaseAssertions": 37,
+  "newJwtDenials": 27,
+  "rlsJwtRegression": 138
+}

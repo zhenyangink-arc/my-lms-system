@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "checks": {
+    "serverVersion": true,
+    "migrationLedgerCount": true,
+    "latestMigration": true,
+    "ledgerSha256": true,
+    "agentTables": true,
+    "agentPrefixedTables": true,
+    "projectIdentitySha256": true,
+    "hostIdentitySha256": true,
+    "pm2": true,
+    "runtime": true,
+    "launcherSha256": true,
+    "tailscale": true
+  },
+  "frozenMigrationsUnchanged": {
+    "supabase/migrations/202609140000_agent_core_foundation.sql": true,
+    "supabase/migrations/202609140001_agent_runtime_completion_evidence.sql": true,
+    "supabase/migrations/202609140002_agent_run_cancel_request.sql": true,
+    "supabase/migrations/202609140003_teaching_operations_reissue.sql": true,
+    "supabase/migrations/202609140004_completion_policy_management_reissue.sql": true,
+    "supabase/migrations/202609140005_student_teaching_content_isolation.sql": true,
+    "supabase/migrations/202609140006_agent_run_reconciliation.sql": true,
+    "supabase/migrations/202609140007_teaching_content_skeleton.sql": true
+  },
+  "productionDbWrites": 0,
+  "productionReconcilerRuns": 0,
+  "productionPersistentCancel": 0,
+  "productionAgentRuns": 0,
+  "liveProviderRequests": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionDeploys": 0,
+  "pm2Changes": 0,
+  "runtimeChanges": 0,
+  "tailscaleMutations": 0,
+  "featureWrites": 0,
+  "allowlistWrites": 0,
+  "schedulerInstalls": 0,
+  "productionReceiptDirectoryCreated": false,
+  "scope": "Task actions only; no claim that concurrent users made zero business changes",
+  "observedAtUTC": "2026-09-15T07:28:20.948005+00:00"
+}

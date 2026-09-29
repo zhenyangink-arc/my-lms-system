@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "tests": 15,
+  "passed": 15,
+  "failed": 0,
+  "command": "node --experimental-strip-types --test tests/teaching-agent-r7cb-authoring.test.mjs tests/teaching-agent-r7cb-authoring-db.test.mjs",
+  "logSha256": "e777ec2d5b1ca840d92a8beba8f9d02cad6096a06ea1ef90203d2aeaab590693",
+  "coverage": [
+    "Owner/non-owner/inactive/provisioned checks",
+    "RPC ACL",
+    "frozen contract mismatch",
+    "private input validation",
+    "partial state rejected",
+    "each INSERT failure rolls back whole transaction",
+    "concurrent create dedupe",
+    "existing mismatched private binding rejected",
+    "public receipt strict shape",
+    "client/server boundary and unknown-result submission hold"
+  ],
+  "isolation": "Owned disposable PG with minimal synthetic auth stubs; current Auth service not called",
+  "durableRuntimeRegression": "NOT RUN in B1; attempt/progress writes excluded by Approval A",
+  "limitations": [
+    "No current DB RPC/UI application verified",
+    "No browser successful creation tested"
+  ]
+}

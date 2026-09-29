@@ -1,0 +1,363 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "scopeStatus": "LOCKED",
+  "existingOperationalFilesToModify": [],
+  "newOperationalFiles": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "operation": "ADD",
+      "purpose": "CLI/finite state orchestration; one registered plan per invocation; preflight/backup/apply/verify, no batch or retries.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "operation": "ADD",
+      "purpose": "Strict exact-single-migration-plan/1 validation, approval/operator-attestation binding, no additional fields, immutable byte/hash/path checks; standard library only.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "operation": "ADD",
+      "purpose": "Reviewed finite plan IDs/raw plan hashes and three migration path/raw/body hash tuples; production registration only a non-executable000 DRAFT initially. No executable001/002 plans.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "operation": "ADD",
+      "purpose": "Finite named catalog checks with fixed query builders and structured arguments; ledger/function/ACL/effective roles/schema/delta/publication/completion inventories; backup catalog extraction uses reviewed existing query semantics.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "operation": "ADD",
+      "purpose": "Reviewed hash/byte-range outer-envelope handling; one atomic BEGIN/body/ledger/check/COMMIT sequence, lock contract and nonce/phase protocol; no imports from historical runner.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "operation": "ADD",
+      "purpose": "Versioned fixed libpq maintenance profile; TLS/project/database/role/image locks, readonly sessions versus private apply session, no execute-SQL public interface; owned-isolated test adapter cannot select production profile.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "operation": "ADD",
+      "purpose": "Versioned orchestration adapter for existing R4D pg_dump/exported-snapshot/roles/no-password/archive-seal/owned pg_restore mechanism and existing backup directory policy; plan-driven baseline replaces stage constants only in new module.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "operation": "ADD",
+      "purpose": "Exclusive 0600 file+directory fsync receipts and attempt journal, hashes/timestamps/plan identity, redaction, unknown-commit preservation; no evidence overwrite.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "operation": "ADD",
+      "purpose": "Fixed non-secret production profile identity pins and operational paths; no passwords/DSNs/keys; no caller override. Owned fixture identity lives only in test fixture.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "operation": "ADD",
+      "purpose": "Immutable000 design plan instantiated as DRAFT_NOT_EXECUTABLE until separately captured full ledger-source digest and actual operational locks are reviewed/sealed; may not fabricate current observation.",
+      "classification": "OPERATIONAL_SOURCE_OR_CONFIG"
+    }
+  ],
+  "newTestFiles": [
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "operation": "ADD",
+      "purpose": "Plan/CLI/authorization/path/hash/lexer/state protocol unit and subprocess negative tests, no network.",
+      "classification": "TEST"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "operation": "ADD",
+      "purpose": "Owned PG17 exact000, injected failures/concurrency and three separate000/001/002 invocations; historical production ledger shape.",
+      "classification": "TEST"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "operation": "ADD",
+      "purpose": "Owned fake-source PG dump/restore/seal/hash/mode/expiry/identity and cleanup tests; never reads production connection or backup data.",
+      "classification": "TEST"
+    }
+  ],
+  "newFixtureFiles": [
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "operation": "ADD",
+      "classification": "TEST_FIXTURE",
+      "purpose": "Owned labeled network-none PG17 setup/cleanup; full immutable app baseline + reviewed9 incrementals, actual ledger table shape and449 metadata +9 increments. No current credentials, ports, or production backup mounts."
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "operation": "ADD",
+      "classification": "TEST_FIXTURE",
+      "purpose": "Clearly synthetic three-plan/approval/check cases for458->461. Runtime rejects fixture/isolated identity in production. Not executable production001/002 plans."
+    }
+  ],
+  "newDocumentationFiles": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "operation": "ADD",
+      "classification": "DOC",
+      "purpose": "Operator workflow, approval boundary, no-retry/unknown-commit decision table, backup and manual reconciliation runbook."
+    }
+  ],
+  "existingDocumentationAppendOnly": [
+    "docs/teaching-agent-stage-1f-r7d-c-skill-tool-binding-audit.md"
+  ],
+  "counts": {
+    "operationalModify": 0,
+    "operationalAdd": 10,
+    "testAdd": 3,
+    "fixtureAdd": 2,
+    "documentationAdd": 1,
+    "newImplementationFilesTotal": 16,
+    "productFiles": 0,
+    "migrationFiles": 0
+  },
+  "newPathsAbsent": true,
+  "readOnlyDependencyLocks": [
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "sha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "sha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "sha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "sha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "sha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "sha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "mode": "0o664"
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "sha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "mode": "0o664"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "mode": "0o664"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "mode": "0o664"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "mode": "0o600"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "mode": "0o600"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "mode": "0o600"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "mode": "0o600"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "mode": "0o664"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "sha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "mode": "0o664"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "sha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "mode": "0o664"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "mode": "0o664"
+    }
+  ],
+  "privateHistoricalQuerySources": [
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/inventory-query.sql",
+      "sha256": "c1188b8ab6a72ed7529affd0004761dc71017c9a6f005946c31436fe903c17eb",
+      "runtimeDependency": false
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/extra-inventory-query.sql",
+      "sha256": "29c1683bfe7acee962b7d93bacd629ad2b2fb7506e975c215a2153b0fc42daae",
+      "runtimeDependency": false
+    },
+    {
+      "path": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6/additional-catalog-query.sql",
+      "sha256": "542e5e081274cb1002a931dd0eb38985e09b8f3f9a1372d4bb523f60585965f7",
+      "runtimeDependency": false
+    }
+  ],
+  "privateHistoricalSourcesRuntimeDependency": false,
+  "excluded": [
+    "all product source",
+    "all existing R5B/R4D/R5D ops source",
+    "F1 tests/helpers/fixtures",
+    "000/001/002 modifications",
+    "additional migrations/new DB tables/ledger schema changes",
+    "current DB connection/read/write",
+    "real backup/export or credential access",
+    "current migration install",
+    "production001/002 executable plans",
+    "production operator authorization generation",
+    "application build/deploy/PM2/feature/allowlist",
+    "Agent/Provider/Publish/acceptance/transport activation",
+    "new package installation",
+    "legacy cleanup"
+  ],
+  "stopRules": [
+    "Any additional operational source/test/fixture path requires revised scope approval",
+    "Any need to change R5B/R4D stage guards or F1 track STOP",
+    "Any package dependency/product/migration change STOP",
+    "Cannot prove envelope handling atomic => BLOCKED; no raw wrapper execution",
+    "Unknown DB state never filled by guess; production plan stays DRAFT until separate authorized RO capture and reviewed seal"
+  ],
+  "futureEvidenceFiles": [
+    "r7d-c3b-runner-implementation-result.json",
+    "r7d-c3b-runner-source-lock.json",
+    "r7d-c3b-runner-contract-tests.json",
+    "r7d-c3b-runner-isolated-postgres.json",
+    "r7d-c3b-runner-backup-tests.json",
+    "r7d-c3b-runner-000-plan-readiness.json",
+    "approval-r7d-c3b-runner-controlled-preflight.json"
+  ],
+  "futureEvidenceRoot": "docs/evidence/teaching-agent-stage-1f-r7d-c",
+  "productionReadinessInputsPending": [
+    "fresh full statements-inclusive ledger-prefix digest and ledger descriptor",
+    "reviewed actual engine/check/registry/transport/source package hashes",
+    "fresh target/backup/restore identity/window",
+    "operator authorization referencing exact plan+package+backup"
+  ],
+  "pendingInputsMeaning": "Future environment observations/approval material, not unknown source dependencies. No production-ready plan is claimed in this local-only design."
+}

@@ -1,0 +1,221 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "target": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+  "productServiceRoleRequirement": "NO_CURRENT_PRODUCT_REQUIREMENT_FOUND",
+  "authenticatedRequirement": "REQUIRED",
+  "directAndIndirectCallers": [
+    {
+      "kind": "Owner browser -> server action -> authenticated user session",
+      "chain": [
+        "chapter-practice-binding.tsx",
+        "reviewChapterPracticeAction",
+        "requireActiveUser/getAuthContext",
+        "createServerClient with public key + request cookies",
+        "supabase.rpc exact target name"
+      ],
+      "runtime": "PRODUCT_LOCAL_AND_LIVE",
+      "serviceRole": false
+    },
+    {
+      "kind": "isolated SQL test",
+      "path": "tests/chapter-practice-binding-db.test.mjs",
+      "runtime": "TEST_ONLY",
+      "executedThisTurn": false
+    },
+    {
+      "kind": "anon denial diagnostic",
+      "path": "scripts/verify-chapter-practice-anonymous-access.mjs",
+      "runtime": "DIAGNOSTIC_ONLY",
+      "executedThisTurn": false
+    },
+    {
+      "kind": "mock action replacement",
+      "path": "scripts/verify-toolbox-workspace.mjs",
+      "runtime": "ISOLATED_UI_TEST_MOCK",
+      "doesNotCallDatabase": true
+    }
+  ],
+  "callerSourceLocks": [
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "sha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f"
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "sha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3"
+    },
+    {
+      "path": "src/lib/admin.ts",
+      "sha256": "214e1998c245078d83625d9753e9d5ffc007e57672cbde6f4bbb42819bbb8b0d"
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "sha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752"
+    }
+  ],
+  "liveTargetAction": {
+    "path": "/home/yangzhen/releases/uply-first-enable-20260910/source/src/features/growth-toolbox/api/chapter-practice-actions.ts",
+    "sha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42"
+  },
+  "sourceDifferenceNote": "Live action retains extra Owner/non-tenant guard; local action differs. Both share authenticated client construction; no source edit or homogenization.",
+  "searchResults": [
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        18
+      ],
+      "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920"
+    },
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "term": "reviewChapterPracticeAction",
+      "lines": [
+        8
+      ],
+      "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920"
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "term": "reviewChapterPracticeAction",
+      "lines": [
+        7,
+        41
+      ],
+      "sha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f"
+    },
+    {
+      "path": "scripts/verify-chapter-practice-anonymous-access.mjs",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        18
+      ],
+      "sha256": "1d7fa8f208e6c29d8fa2b8d6a6ccca8998746eac6780d0f59f8321cfafe88eaf"
+    },
+    {
+      "path": "scripts/verify-toolbox-workspace.mjs",
+      "term": "reviewChapterPracticeAction",
+      "lines": [
+        29
+      ],
+      "sha256": "4e86f78d3202fce77d563f465d193aa26b7d706fb5fd5012b6c5e48cef7ed260"
+    },
+    {
+      "path": "tests/chapter-practice-binding-db.test.mjs",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        41
+      ],
+      "sha256": "91a267b063ce27e4f75015807b24ac24b7cfb7a39277375dcdadd5d9660dcb98"
+    },
+    {
+      "path": "supabase/migrations/202609130002_textbook_grammar_practice_binding.sql",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        34,
+        114,
+        115
+      ],
+      "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8"
+    },
+    {
+      "path": "supabase/migrations/202609080001_chapter_practice_bindings.sql",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        24,
+        94,
+        95
+      ],
+      "sha256": "172585efdcb178dc2a1394b9c9e2a4dc1bbfac065b217a25e9011dd663d70dd2"
+    },
+    {
+      "path": "supabase/migrations/202609080002_chapter_practice_explicit_function_grants.sql",
+      "term": "review_chapter_practice_binding",
+      "lines": [
+        5,
+        7
+      ],
+      "sha256": "b10c3762ef489a752f28461e197227da0336341cf7ca591ec6b278d5b9a1f334"
+    }
+  ],
+  "indirectWrapperAudit": [
+    {
+      "path": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "finding": "Private helper dispatches fixed publication RPC names; target not selected"
+    },
+    {
+      "path": "src/lib/recording-domain.server.ts",
+      "finding": "Service transport used by recording domain operations; traced recording-evidence-v2.server.ts fixed RPC strings; no target caller found"
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/run-store.ts",
+      "finding": "Closure-private helper dispatches four fixed run-store RPCs; no target"
+    },
+    {
+      "path": "src/features/course-completion/statistics-service.ts",
+      "finding": "Two literal statistics names selected by management scope; authenticated client; no target"
+    },
+    {
+      "path": "src/features/agent-core/persistence/supabase/repositories.ts",
+      "finding": "Fixed Agent event/version RPC selection; no target"
+    }
+  ],
+  "databaseInternalInvocation": "NONE_FOUND_IN_MIGRATIONS",
+  "cronBackendMaintenanceAdminTooling": "NO_CURRENT_PRODUCT_TARGET_CALLER_FOUND",
+  "scopeLimit": "Repository and live-source audit; not a claim that external untracked automation is impossible. Future preflight must STOP if a concrete supported service caller is identified.",
+  "sealedCandidateSourceCheck": [
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "sha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "hasAdminClient": false,
+      "hasTargetRpc": true,
+      "cookieClient": false,
+      "requireActiveUser": true
+    },
+    {
+      "path": "src/lib/auth.ts",
+      "sha256": "7184eb43a1cf2e41702f5fab020ac77e98a7ba670e6bc0851b2d5d691f166ae3",
+      "hasAdminClient": false,
+      "hasTargetRpc": false,
+      "cookieClient": false,
+      "requireActiveUser": true
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "sha256": "1ea45b64158c24629f4cdfcde891560a669301d56f52b1592dd0b80b56514752",
+      "hasAdminClient": false,
+      "hasTargetRpc": false,
+      "cookieClient": true,
+      "requireActiveUser": false
+    }
+  ]
+}

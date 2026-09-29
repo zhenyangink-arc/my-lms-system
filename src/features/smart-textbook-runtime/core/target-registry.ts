@@ -11,6 +11,7 @@ export class RuntimeTargetRegistry {
   private preparations=new Map<string,Set<(signal:AbortSignal)=>Promise<void>>>();
   private playbackOwners=new Map<string,{owner:TtsPlaybackOwner;play:(signal:AbortSignal)=>Promise<void>}>();
   private learningOwners=new Map<string,{generation:number;play:(signal:AbortSignal)=>Promise<void>}>();
+  private nativeOwners=new Map<string,{generation:number;play:()=>Promise<void>}>();
   private declarations:readonly RuntimeTargetV1[];
   private steps:StepController;
   constructor(declarations: readonly RuntimeTargetV1[], steps: StepController) {
@@ -21,6 +22,7 @@ export class RuntimeTargetRegistry {
     const declaration=this.declarations.find(t=>t.id===target);
     if(!parseRuntimeTarget(target)||!declaration||declaration.stepId!==this.steps.activeStepId||this.handles.has(target))throw Error('TARGET_UNAVAILABLE');
     for(const command of Object.keys(handle))if(command!=='dispose'&&!declaration.capabilities.includes(command as TargetCommand))throw Error('TARGET_CAPABILITY_DENIED');
+    if(handle.play&&this.commandOwnerCount(target,'play'))throw Error('MULTIPLE_PLAY_OWNERS');
     this.handles.set(target,handle);
     let disposed=false;
     const dispose=()=>{if(disposed)return;disposed=true;if(this.handles.get(target)===handle)this.handles.delete(target);handle.dispose();};
@@ -42,6 +44,8 @@ export class RuntimeTargetRegistry {
         for(const prepare of next){used.add(prepare);await prepare(lease.signal);if(!this.steps.isCurrent(lease))throw Error('STALE_GENERATION');}
       }
     }
+    const native=this.nativeOwners.get(target);
+    if(command==='play'&&native){if(!this.handles.has(target)||native.generation!==this.steps.generation)throw Error('TARGET_UNAVAILABLE');const lease=this.steps.lease();await native.play();if(!this.steps.isCurrent(lease))throw Error('STALE_GENERATION');return;}
     const learning=this.learningOwners.get(target);
     if(command==='play'&&learning){if(!declaration||!this.handles.has(target)||declaration.stepId!==this.steps.activeStepId||learning.generation!==this.steps.generation)throw Error('TARGET_UNAVAILABLE');const lease=this.steps.lease();await learning.play(cancellation?AbortSignal.any([lease.signal,cancellation]):lease.signal);if(!this.steps.isCurrent(lease))throw Error('STALE_GENERATION');return;}
     const playback=this.playbackOwners.get(target);
@@ -70,7 +74,13 @@ export class RuntimeTargetRegistry {
   /** Read-only command evidence; a DOM anchor and its one playback service are
    * not two competing play owners. Multiple actual play implementations are. */
   commandOwnerCount(target:string,command:TargetCommand) {
-    return command==='play' ? Number(this.learningOwners.has(target))+Number(this.playbackOwners.has(target))+Number(!!this.handles.get(target)?.play) : Number(!!this.handles.get(target)?.[command]);
+    return command==='play' ? Number(this.nativeOwners.has(target))+Number(this.learningOwners.has(target))+Number(this.playbackOwners.has(target))+Number(!!this.handles.get(target)?.play) : Number(!!this.handles.get(target)?.[command]);
+  }
+  mountNativeMediaOwner(target:string,play:()=>Promise<void>){
+    const declaration=this.declarations.find(t=>t.id===target),block=this.steps.manifest.blocks.find(b=>b.id===declaration?.blockId);
+    if(!this.steps.manifest.execution||block?.type!=='video'||declaration?.stepId!==this.steps.activeStepId||declaration.partId!==null||!declaration.capabilities.includes('play')||this.nativeOwners.has(target)||this.commandOwnerCount(target,'play'))throw Error('NATIVE_MEDIA_OWNER_SCOPE');
+    const owner={generation:this.steps.generation,play};this.nativeOwners.set(target,owner);
+    const remove=()=>{if(this.nativeOwners.get(target)===owner)this.nativeOwners.delete(target);};const off=this.steps.onDispose(remove);return()=>{off();remove();};
   }
   /** Service-scoped compatibility owner, not a DOM play inference or completion
    * grant. Actual media fetch reauthorizes at the server; TTS is observation only. */

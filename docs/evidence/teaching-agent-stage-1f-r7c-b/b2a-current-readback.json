@@ -1,0 +1,15 @@
+{
+  "readOnly": true,
+  "transport": "Existing pinned libpq service via read-only Docker psql",
+  "observedAt": "2026-09-17T09:56:36.691643+00:00",
+  "canonicalValid": true,
+  "actor": 0,
+  "tenant": 0,
+  "freeze": "MATCH",
+  "binding": [
+    1,
+    1,
+    1
+  ],
+  "dbWrites": 0
+}

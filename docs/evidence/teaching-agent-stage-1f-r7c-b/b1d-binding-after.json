@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-09-17T07:16:46.108270+00:00",
+  "method": "Independent new READ ONLY TLS connection; private answer validated only as boolean; no secret value/hash exported",
+  "executionNodeCount": 1,
+  "activityCount": 1,
+  "privateAnswerCount": 1,
+  "nodeHash": "ece2b26f5024e61e511b28ed30ce9740639c4b8ebe185a9449746ef1491c9e26",
+  "activityHash": "c2d417cc612a825cfdbb077891ceaac411032a777a89e732da169f66384ed2e6",
+  "nodeBindingValid": true,
+  "activityBindingValid": true,
+  "privateContractValid": true,
+  "sameTransaction": true,
+  "nodeCreatedAt": "2026-09-17T07:15:05.080489+00:00",
+  "activityCreatedAt": "2026-09-17T07:15:05.080489+00:00",
+  "authenticatedSecretSelect": false,
+  "anonSecretSelect": false,
+  "targetAttempts": 0,
+  "targetNodeProgress": 0
+}

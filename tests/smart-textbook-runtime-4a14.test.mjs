@@ -89,5 +89,5 @@ test('4A14 audit client uses one complete Root and opaque Teacher transport; uns
   const registry=await import('../src/features/smart-textbook-runtime/core/block-registry.ts');
   assert.equal(registry.rendererRegistry['compat.teacher.v1'].rendererStatus,'implemented');
   assert.equal(registry.runtimeReadiness(manifest,true).runtimeReady,true);
-  assert.equal(registry.rendererRegistry.video.rendererStatus,'unsupported');
+  assert.equal(registry.rendererRegistry.video.rendererStatus,'implemented');
 });

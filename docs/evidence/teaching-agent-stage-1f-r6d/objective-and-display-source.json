@@ -1,0 +1,66 @@
+{
+  "objectives": {
+    "zh-CN": [
+      "认识韩文字母由辅音、元音和音节块组成的基本结构。",
+      "能辨认并朗读基础元音和常用基础辅音。",
+      "理解初声、中声、终声组成韩语音节的基本方式。",
+      "能将基础辅音与元音组合成简单韩语音节。"
+    ]
+  },
+  "nodeDisplays": [
+    {
+      "order": 2,
+      "display": {
+        "mode": "slides",
+        "slides": [],
+        "placement": {
+          "x": 50,
+          "y": 11,
+          "scale": 1
+        }
+      },
+      "scriptSegments": {
+        "zh-CN": [
+          "한글에는 자음과 모음이 있어요.\r\n\r\n자음은 소리의 시작을 만들어요.\r\n모음은 그 소리를 이어 줘요.\r\n\r\n자음과 모음을 같이 쓰면\r\n한 글자가 돼요.\r\n\r\n예를 들어,\r\nㄱ과 ㅏ를 같이 쓰면\r\n“가”가 돼요."
+        ]
+      },
+      "teacherVideoMode": "legacy"
+    },
+    {
+      "order": 5,
+      "display": {
+        "mode": "slides",
+        "slides": [],
+        "placement": {
+          "x": 50,
+          "y": 11,
+          "scale": 1
+        }
+      },
+      "scriptSegments": {
+        "zh-CN": [
+          "이제 자음과 모음을 같이 써 볼까요?\r\n\r\nㄱ + ㅏ = 가\r\n\r\nㄴ + ㅏ = 나\r\n\r\nㄷ + ㅏ = 다\r\n\r\nㅁ + ㅏ = 마\r\n\r\n이렇게 자음과 모음을 모아서\r\n한 글자를 만들어요."
+        ]
+      },
+      "teacherVideoMode": "legacy"
+    },
+    {
+      "order": 6,
+      "display": {
+        "mode": "slides",
+        "slides": [],
+        "placement": {
+          "x": 50,
+          "y": 11,
+          "scale": 1
+        }
+      },
+      "scriptSegments": {
+        "zh-CN": [
+          "한글 한 글자에는\r\n자음과 모음이 들어가요.\r\n\r\n앞에 오는 자음을\r\n초성이라고 해요.\r\n\r\n가운데 모음을\r\n중성이라고 해요.\r\n\r\n아래에 자음이 하나 더 올 수도 있어요.\r\n이것을 종성이라고 해요.\r\n\r\n예를 들어\r\n“한”을 볼까요?\r\n\r\nㅎ은 초성,\r\nㅏ는 중성,\r\nㄴ은 종성이에요."
+        ]
+      },
+      "teacherVideoMode": "legacy"
+    }
+  ]
+}

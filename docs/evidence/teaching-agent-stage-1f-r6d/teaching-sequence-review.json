@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "reorderProposed": false,
+  "reason": "先整体、后字母、再组合/内部结构、最后两题与总结，顺序合理。导入和总结的重复有支架作用。Node6首次出现ㅎ要就例指认；不需提前教授全部辅音。节点2概念错误与node6术语表达需修订，但不以reorder处理。",
+  "scope": "Exposure / Recognition; not immediate mastery"
+}

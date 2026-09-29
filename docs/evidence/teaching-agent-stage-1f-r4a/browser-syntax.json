@@ -1,0 +1,11 @@
+{
+  "command": [
+    "node",
+    "--check",
+    "scripts/teaching-agent-r3d/author-browser.mjs"
+  ],
+  "exit": 0,
+  "durationSeconds": 0.076,
+  "stdout": "",
+  "stderr": ""
+}

@@ -1,0 +1,87 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "rows": [
+    {
+      "dimension": "Client TLS",
+      "optionA": "PROVEN_HISTORICAL",
+      "optionB": "UNKNOWN_PROJECT_SPECIFIC"
+    },
+    {
+      "dimension": "Server identity",
+      "optionA": "PROVEN_HISTORICAL_ENDPOINT",
+      "optionB": "UNKNOWN_PROJECT_SPECIFIC"
+    },
+    {
+      "dimension": "Backend hop",
+      "optionA": "PROVIDER_MANAGED_BUT_NOT_VERIFIED",
+      "optionB": "NO_POOLER_HOP_BY_PROPOSED_DESIGN; DIRECT_ENDPOINT_NOT_YET_PROVEN"
+    },
+    {
+      "dimension": "Operational complexity",
+      "optionA": "MEDIUM",
+      "optionB": "HIGH_WITH_CURRENT_ENDPOINT_NETWORK_GAPS"
+    },
+    {
+      "dimension": "Requires credential change",
+      "optionA": "NO_EXPECTED_SAME_ENDPOINT",
+      "optionB": "UNKNOWN_PASSWORD; YES_SERVICE_MAPPING"
+    },
+    {
+      "dimension": "Requires profile change",
+      "optionA": "YES_EXPLICIT_VERSIONED_SECURITY_POLICY",
+      "optionB": "YES_NEW_FIXED_DIRECT_PROFILE"
+    },
+    {
+      "dimension": "Requires runner code change",
+      "optionA": "YES",
+      "optionB": "YES"
+    },
+    {
+      "dimension": "Supports capture",
+      "optionA": "YES_BY_DESIGN_NOT_APPROVED",
+      "optionB": "YES_BY_DESIGN_ENDPOINT_UNPROVEN"
+    },
+    {
+      "dimension": "Supports migration apply",
+      "optionA": "YES_SESSION_TRANSACTION_SEMANTICS; PRODUCTION_READINESS_UNRESOLVED",
+      "optionB": "YES_BY_DESIGN_ENDPOINT_UNPROVEN"
+    },
+    {
+      "dimension": "Supports backup",
+      "optionA": "YES_OFFICIAL_GENERAL_PATTERN; EXACT_WORKFLOW_REQUIRES_VALIDATION",
+      "optionB": "YES_OFFICIAL_GENERAL_PATTERN; ENDPOINT_UNPROVEN"
+    }
+  ],
+  "interpretation": "Capabilities are conditional design/official-pattern statements, not proof of this project readiness. Complexity is descriptive, not scoring.",
+  "rankings": null,
+  "winner": null
+}

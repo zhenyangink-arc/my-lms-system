@@ -1,0 +1,41 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS_ISOLATED",
+  "discriminant": "CURRENT_PUBLISHED_DB",
+  "authority": "Private verified Student binding → per-call active identity lease → fixed server pg transport + DB identity → official certified native publication + dependency fence",
+  "sameSnapshot": "One pg Client; REPEATABLE READ READ ONLY; official repository/current, certification, fence, canonical mapping and trusted repository facts all share transaction",
+  "publicReadInput": "Strict empty object; model cannot select identity/DB/provenance",
+  "environmentConfig": [
+    "UPLY_PUBLISHED_FACTS_DATABASE_URL",
+    "UPLY_PUBLISHED_FACTS_DATABASE_IDENTITY"
+  ],
+  "configActivated": false,
+  "freshness": "New snapshot per call, <=30 seconds, deadline checks; final revalidation must match original receipt and cannot refresh original observation time",
+  "negativeTests": {
+    "pass": 29,
+    "fail": 0
+  },
+  "evidenceLimit": "Production-wire fixtures exercise real authority/Core/Tool code with intercepted pg transport and synthetic identity. They are ISOLATED test specimens, not actual CURRENT_PUBLISHED_DB evidence. Actual owned-PG MVCC test separately proves snapshot isolation.",
+  "currentPublishedDBReceiptIssued": false
+}

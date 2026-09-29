@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "clientFilesScanned": 352,
+  "actualPrivateConfigValuesExposed": 0,
+  "serverMarkersExposed": 0,
+  "newRouteServerOnly": true,
+  "unitDtoNoSecrets": "PASS",
+  "isolatedDbAndBrowserBoundaries": "PASS",
+  "currentDbToolDOMNetwork": "NOT EXECUTED - deploy approval pending",
+  "privateDefinitionDigestExposed": false,
+  "rawSubjectIdsExposed": false
+}

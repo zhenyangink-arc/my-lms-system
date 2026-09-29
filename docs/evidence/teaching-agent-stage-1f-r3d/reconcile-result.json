@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "assertions": 18,
+  "checks": [
+    "unchanged runtime completion",
+    "completed immutable",
+    "wrong tenant not found",
+    "wrong fence rejected",
+    "deadline orphan failed",
+    "idempotent events",
+    "late completion rejected",
+    "no assistant for reconciled",
+    "cancel orphan cancelled",
+    "cancelled immutable",
+    "future deadline protected",
+    "anon denied",
+    "authenticated denied",
+    "bounded batch",
+    "future survived batch",
+    "oversize batch rejected",
+    "owner sees failed",
+    "23 teaching table hashes unchanged"
+  ],
+  "network": "none",
+  "fullSupabase": false,
+  "liveProviderRequests": 0,
+  "productionWrites": 0,
+  "cleanup": "owned fixture finally removed container",
+  "sqlVersions": [
+    "202609140000",
+    "202609140001",
+    "202609140002",
+    "202609140006"
+  ],
+  "scope": "Targeted R3A RPC regression; full Auth/RLS and two-session kill evidence remains R3A"
+}

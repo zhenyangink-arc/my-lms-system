@@ -1,0 +1,23 @@
+{
+  "probe": {
+    "compress": true
+  },
+  "r3dCandidate": {
+    "compress": true,
+    "output": "default",
+    "basePath": "",
+    "assetPrefix": "",
+    "distDir": ".next",
+    "poweredByHeader": true
+  },
+  "existingProduction": {
+    "compress": true,
+    "basePath": "",
+    "assetPrefix": "",
+    "distDir": ".next",
+    "poweredByHeader": true
+  },
+  "readOnly": true,
+  "productMiddlewareAndClassroomNotIncluded": true,
+  "gzipNegotiated": false
+}

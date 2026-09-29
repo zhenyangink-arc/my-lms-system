@@ -1,0 +1,13 @@
+{
+  "at": "2026-09-17T10:32:50.678Z",
+  "status": 200,
+  "canonicalRoute": true,
+  "ownerGuardPassed": true,
+  "preflightPass": true,
+  "blocked": false,
+  "scopeDisabled": true,
+  "budgetMatch": true,
+  "buttonCount": 1,
+  "buttonEnabled": true,
+  "provisioningAttempt": 0
+}

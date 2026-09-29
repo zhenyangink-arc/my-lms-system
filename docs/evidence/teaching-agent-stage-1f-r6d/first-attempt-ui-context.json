@@ -1,0 +1,29 @@
+{
+  "status": "FAIL",
+  "reason": "TARGET_UI_CONTEXT_MISMATCH",
+  "expected": {
+    "textbook": "韩文字母入门",
+    "chapter": 0,
+    "module": "课前导航",
+    "scriptVersion": 1,
+    "status": "draft",
+    "nodes": 8
+  },
+  "observed": {
+    "textbook": "韩国语 1 级",
+    "chapter": 1,
+    "module": "课前导航",
+    "scriptVersion": 24,
+    "status": "draft",
+    "nodes": 8
+  },
+  "targetNodesRenderedCompared": 0,
+  "databaseTargetUnchanged": true,
+  "nodeSelectionClicks": 0,
+  "formEdits": 0,
+  "saveClicks": 0,
+  "sessionSecretsRead": false,
+  "ownerIdentityCheck": "NOT EXECUTED: context guard stopped before own-profile GET",
+  "noAutomaticNavigationAfterMismatch": true,
+  "chromeLeftOpen": true
+}

@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-09-13T03:20:45.095025+00:00",
+  "readOnly": "on",
+  "activity": [],
+  "matched": 2,
+  "termination": [
+    {
+      "pid": 2139754,
+      "backendStart": "2026-09-10T20:23:23.821808+00:00",
+      "signalSent": true
+    },
+    {
+      "pid": 2139928,
+      "backendStart": "2026-09-10T20:25:51.023454+00:00",
+      "signalSent": true
+    }
+  ],
+  "remoteWrites": false,
+  "targetVerified": true,
+  "tlsVerified": true,
+  "controlOperation": "user-authorized targeted backend termination",
+  "databaseRowsModifiedByTool": false,
+  "readOnlySqlDoesNotImplyNoControlSideEffects": true
+}

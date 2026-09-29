@@ -1,0 +1,129 @@
+{
+  "at": "2026-09-17T10:34:25.273499+00:00",
+  "classification": "COMPLETE",
+  "checks": {
+    "banHorizon": true,
+    "nonHuman": true,
+    "nonProduction": true,
+    "purpose": true,
+    "sessionsZero": true,
+    "refreshZero": true,
+    "oneEmailIdentity": true,
+    "notProvisionedProductionUser": true,
+    "profileInactive": true,
+    "membershipSuspended": true,
+    "membershipStudent": true,
+    "membershipNonDefault": true,
+    "tenantExact": true
+  },
+  "actor": 1,
+  "tenant": 1,
+  "actorSafeHash": "cf4d2db0a75301af51a807149b0ed32134ce69db7e3767251816b9232722afbe",
+  "tenantSafeHash": "7356e8b33db28d06f9283e6f4a5b9fb90f7d9d630a042093cffbf9d75c0ffbac",
+  "sessions": 0,
+  "refreshTokens": 0,
+  "canonicalValid": true,
+  "frozenContent": "UNCHANGED",
+  "canonicalBinding": [
+    1,
+    1,
+    1
+  ],
+  "netRowDelta": {
+    "auth.users": 1,
+    "auth.identities": 1,
+    "public.profiles": 1,
+    "public.tenants": 1,
+    "public.tenant_memberships": 1,
+    "public.tenant_membership_audit_logs": 1,
+    "public.learning_grading_comments": 4,
+    "public.tenant_student_apps": 5,
+    "auth.audit_log_entries": 0,
+    "public.account_management_audit_logs": 0,
+    "public.tenant_provisioned_accounts": 0,
+    "auth.sessions": 0,
+    "auth.refresh_tokens": 0,
+    "public.digital_textbook_attempts": 0,
+    "public.digital_textbook_node_progress": 0,
+    "public.digital_textbook_activity_page_progress": 0
+  },
+  "tableCounterDelta": {
+    "auth.users": {
+      "insert": 1,
+      "update": 5,
+      "delete": 0
+    },
+    "auth.identities": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.profiles": {
+      "insert": 1,
+      "update": 3,
+      "delete": 0
+    },
+    "public.tenants": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_memberships": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_membership_audit_logs": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "public.tenant_student_apps": {
+      "insert": 5,
+      "update": 0,
+      "delete": 0
+    },
+    "public.learning_grading_comments": {
+      "insert": 4,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "metadata": {
+    "ledger": 458,
+    "latest": "202609170001",
+    "agentRuns": 0
+  },
+  "journal": [
+    {
+      "contract": "development-domain-execution/1",
+      "state": "CLAIMED"
+    },
+    {
+      "stage": "TENANT",
+      "state": "DISPATCHED"
+    },
+    {
+      "stage": "ACTOR",
+      "state": "DISPATCHED"
+    },
+    {
+      "stage": "PROFILE",
+      "state": "DISPATCHED"
+    },
+    {
+      "stage": "MEMBERSHIP",
+      "state": "DISPATCHED"
+    },
+    {
+      "contract": "development-domain-execution/1",
+      "status": "CREATED",
+      "classification": "COMPLETE",
+      "stage": "MEMBERSHIP",
+      "scope": "DISABLED"
+    }
+  ],
+  "scope": "DISABLED",
+  "attempt": 0,
+  "progress": 0
+}

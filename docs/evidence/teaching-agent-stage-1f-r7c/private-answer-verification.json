@@ -1,0 +1,10 @@
+{
+  "status": "SERVER ONLY",
+  "privateStore": "digital_textbook_activity_secrets",
+  "isolatedRowCountPerFixture": 1,
+  "existingGrader": "gradeSmartTextbookActivity",
+  "kindContract": "Existing single_choice private index key",
+  "authenticatedDirectRead": "DENIED in isolated DB",
+  "rawAnswerKeySavedInEvidence": false,
+  "currentDatabasePrivateAnswerCreation": 0
+}

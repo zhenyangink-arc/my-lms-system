@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "ledger": 449,
+  "latest": "202609130003",
+  "orderedLedgerSha256": "d864066c601dd9b7e60144773f34eb456f035cbae9dec114a716048fa5151981",
+  "fullOldLedgerDigest": "cfdade473cb06c8169399c2b99686dec7e3d466965ad9d0d3fd8ea26b5899b03",
+  "network": "none",
+  "portsPublished": [],
+  "databaseMarker": "UPLY_R5B_ISOLATED_FOUNDATION",
+  "productionCredentials": false,
+  "container": "uply-r5b-ad5fe3c7a2f7",
+  "containerId": "5de9e93c0ccb5b11771f7453c1decd912baebfb7e0702953a664cb0edd80748f",
+  "volume": "uply-r5b-ad5fe3c7a2f7-data",
+  "harnessVerificationResumedAfterMissingPreReferenceFix": true
+}

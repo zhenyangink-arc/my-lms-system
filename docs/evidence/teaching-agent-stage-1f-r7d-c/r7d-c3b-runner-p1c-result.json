@@ -1,0 +1,58 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C",
+  "recordedAt": "2026-09-19T07:07:33.407788+00:00",
+  "phase": "LOCAL_SOURCE_AUDIT_AND_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "sourceImplementationEdits": 0,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "productionBackup": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "testsExecuted": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "historicalEvidenceModified": false,
+  "Stage1G": "NOT_READY",
+  "overall": "READY_FOR_CAPTURE_GATE_ORDER_IMPLEMENTATION_APPROVAL",
+  "reconciliationDesign": "LOCKED",
+  "requiredQueryOrder": "LEDGER -> FUNCTION -> PROTECTED_CATALOG",
+  "currentQueryOrder": "LEDGER -> PROTECTED_CATALOG -> FUNCTION",
+  "sameSnapshot": "PRESERVED_BY_DESIGN_NOT_YET_REVALIDATED",
+  "ledgerMismatchDesign": {
+    "functionQueries": 0,
+    "catalogQueries": 0
+  },
+  "functionMismatchDesign": {
+    "catalogQueries": 0
+  },
+  "fullCatalogCoverage": "PRESERVED_BY_DESIGN",
+  "targetConsistency": "DESIGNED",
+  "scope": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-exact-scope.json",
+    "sha256": "865762621628d9952f6d0beb6917599a82220b0e5c1ca7c872912d1fed7fa95c"
+  },
+  "testPlan": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-test-plan.json",
+    "sha256": "2fb064bf18bdc769f9b35c1fd0b46112e7a51110042557313de4ffc37bd60d11"
+  },
+  "operationalModifyScope": 1,
+  "testModifyScope": 2,
+  "addedFilesProposed": 0,
+  "implementationApproval": "READY_AWAITING_EXPLICIT_APPROVAL",
+  "blockerResolution": "DESIGN_ONLY; CURRENT_IMPLEMENTATION_STILL_BLOCKED",
+  "C3BRelease": "BLOCKED",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED"
+}

@@ -1,0 +1,168 @@
+{
+  "status": "PASS",
+  "realJwtChecks": 27,
+  "checks": [
+    {
+      "label": "anon",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "label": "anon",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "label": "anon",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 401,
+      "code": "42501"
+    },
+    {
+      "label": "A1",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "A1",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "A1",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "A2",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "A2",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "A2",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "B1",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "B1",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "B1",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "TA",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "TA",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "TA",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "AA",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "AA",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "AA",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "PO",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "PO",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "PO",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "EX",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "EX",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "EX",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "IN",
+      "rpc": "find_reconcilable_agent_runs_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "IN",
+      "rpc": "reconcile_agent_run_batch_v1",
+      "status": 403,
+      "code": "42501"
+    },
+    {
+      "label": "IN",
+      "rpc": "reconcile_agent_run_v1",
+      "status": 403,
+      "code": "42501"
+    }
+  ]
+}

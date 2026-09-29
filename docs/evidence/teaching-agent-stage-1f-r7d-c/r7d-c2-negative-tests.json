@@ -1,0 +1,320 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "status": "PASS",
+  "passed": 52,
+  "failed": 0,
+  "skipped": 0,
+  "plannedCategories": 35,
+  "coverage": [
+    {
+      "id": "R7DC-01",
+      "name": "allowed-tool",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-01 allowed exact Tool visible and safe summary via real Core/Port/authority (22.443866ms)"
+      ]
+    },
+    {
+      "id": "R7DC-02",
+      "name": "disallowed-tool",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-02 Skill/Profile intersection excludes disallowed Tool (2.168288ms)"
+      ]
+    },
+    {
+      "id": "R7DC-03",
+      "name": "permission",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-03 permission denied (1.066972ms)"
+      ]
+    },
+    {
+      "id": "R7DC-04",
+      "name": "subject",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-04 wrong actorId (0.636721ms)"
+      ]
+    },
+    {
+      "id": "R7DC-05",
+      "name": "tenant",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-05 wrong tenantId (0.554767ms)"
+      ]
+    },
+    {
+      "id": "R7DC-06",
+      "name": "lesson",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-06 target drift rejected (1.570619ms)"
+      ]
+    },
+    {
+      "id": "R7DC-07",
+      "name": "activity-version",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-07 target drift rejected (1.035017ms)",
+        "✔ R7DC-07-version target drift rejected (1.026475ms)"
+      ]
+    },
+    {
+      "id": "R7DC-08",
+      "name": "input",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-08 arbitrary model actorId rejected (1.242513ms)",
+        "✔ R7DC-08 arbitrary model tenantId rejected (0.938134ms)",
+        "✔ R7DC-08 arbitrary model lessonId rejected (0.887715ms)",
+        "✔ R7DC-08 arbitrary model activityId rejected (0.888518ms)",
+        "✔ R7DC-08 arbitrary model versionId rejected (0.930401ms)",
+        "✔ R7DC-08 arbitrary model source rejected (0.880322ms)",
+        "✔ R7DC-08 arbitrary model credential rejected (0.871251ms)"
+      ]
+    },
+    {
+      "id": "R7DC-09",
+      "name": "present",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-09 mandatory receipt satisfies local completion gate (23.35449ms)"
+      ]
+    },
+    {
+      "id": "R7DC-10",
+      "name": "missing",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-10 no receipt cannot complete (1.906741ms)"
+      ]
+    },
+    {
+      "id": "R7DC-11",
+      "name": "version",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-11 wrong exact version cannot be recorded by executor ledger (3.053002ms)",
+        "✔ R7DC-11 wrong allowed Tool version not exposed (0.707327ms)"
+      ]
+    },
+    {
+      "id": "R7DC-12",
+      "name": "stale",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-12 stale evidence and expired deadline rejected (1.998564ms)",
+        "✔ R7DC-12 observation older than30s rejected while authorization/deadline still valid (2.41988ms)"
+      ]
+    },
+    {
+      "id": "R7DC-13",
+      "name": "other-run",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-13 cross-run/skill/authority receipt rejected (2.164695ms)"
+      ]
+    },
+    {
+      "id": "R7DC-14",
+      "name": "forged",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-14 forged/copied receipt and model ref rejected (2.884068ms)"
+      ]
+    },
+    {
+      "id": "R7DC-15",
+      "name": "copied-handle",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-15 copied handle denied (0.870393ms)"
+      ]
+    },
+    {
+      "id": "R7DC-16",
+      "name": "fixture-source",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-16 isolated source cannot pretend current (2.158421ms)"
+      ]
+    },
+    {
+      "id": "R7DC-17",
+      "name": "unknown",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-17 UNKNOWN zero does not mean no attempts (1.686077ms)"
+      ]
+    },
+    {
+      "id": "R7DC-18",
+      "name": "tool-error",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-18/27 failed fresh failure invalidates old evidence without fallback (2.691382ms)",
+        "✔ R7DC-18/27 failed fresh stale invalidates old evidence without fallback (2.49117ms)",
+        "✔ R7DC-18/27 failed fresh denied invalidates old evidence without fallback (2.126105ms)"
+      ]
+    },
+    {
+      "id": "R7DC-19",
+      "name": "explain",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-19 durable success cannot replace mandatory Explain lesson evidence (101.189346ms)"
+      ]
+    },
+    {
+      "id": "R7DC-20",
+      "name": "explain-positive",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-20/31 original Explain and local completion guard pass without durable Tool (44.154098ms)"
+      ]
+    },
+    {
+      "id": "R7DC-21",
+      "name": "persona",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-21 persona presentation never changes existing Profile permissions (0.197076ms)",
+        "✔ R7DC-21 Persona cannot grant denied tool permission (1.241381ms)"
+      ]
+    },
+    {
+      "id": "R7DC-22",
+      "name": "fallback",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-22 no legacy, DB bypass, Provider or coordinator imports in new composition (0.408826ms)"
+      ]
+    },
+    {
+      "id": "R7DC-23",
+      "name": "planning",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-23 planning projection excludes authoritative completion facts (20.937442ms)"
+      ]
+    },
+    {
+      "id": "R7DC-24",
+      "name": "cursor",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-24 missing cursor stays unavailable (3.304207ms)"
+      ]
+    },
+    {
+      "id": "R7DC-25",
+      "name": "leakage",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-25 bounded output contains no private markers/identity (1.922344ms)"
+      ]
+    },
+    {
+      "id": "R7DC-26",
+      "name": "output",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-26 model cannot author numbers/status/refs/free text (3.575625ms)"
+      ]
+    },
+    {
+      "id": "R7DC-27",
+      "name": "failed-after-ok",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-18/27 failed fresh failure invalidates old evidence without fallback (2.691382ms)",
+        "✔ R7DC-18/27 failed fresh stale invalidates old evidence without fallback (2.49117ms)",
+        "✔ R7DC-18/27 failed fresh denied invalidates old evidence without fallback (2.126105ms)"
+      ]
+    },
+    {
+      "id": "R7DC-28",
+      "name": "fresh-read",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-28 fresh calls and cached receipt rejected (2.230514ms)"
+      ]
+    },
+    {
+      "id": "R7DC-29",
+      "name": "duplicate",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-29 duplicate dispatch blocked (2.1283ms)",
+        "✔ R7DC-29 concurrent dispatch blocked (1.954773ms)"
+      ]
+    },
+    {
+      "id": "R7DC-30",
+      "name": "final-race",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-30 finalization binding/permission drift fails closed (2.860731ms)"
+      ]
+    },
+    {
+      "id": "R7DC-31",
+      "name": "unrelated-skill",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-20/31 original Explain and local completion guard pass without durable Tool (44.154098ms)"
+      ]
+    },
+    {
+      "id": "R7DC-32",
+      "name": "published-boundary",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-32 existing StudentPolicy still denies inactive/suspended/Draft (64.15623ms)",
+        "✔ R7DC-32 production/current transport denied at composition (1.091968ms)"
+      ]
+    },
+    {
+      "id": "R7DC-33",
+      "name": "definition-pin",
+      "coverage": "ISOLATED PASS",
+      "testNames": [
+        "✔ R7DC-33 exact Skill definition version pinned (0.577285ms)"
+      ]
+    },
+    {
+      "id": "R7DC-34",
+      "name": "database-gate",
+      "coverage": "STATIC PREREQUISITE GUARD (no SQL execution)",
+      "testNames": [
+        "✔ R7DC-34/35 existing SQL gate remains prerequisite; no Activity disguised as segment (0.208878ms)"
+      ]
+    },
+    {
+      "id": "R7DC-35",
+      "name": "sql-provenance",
+      "coverage": "STATIC PREREQUISITE GUARD (no SQL execution)",
+      "testNames": [
+        "✔ R7DC-34/35 existing SQL gate remains prerequisite; no Activity disguised as segment (0.208878ms)"
+      ]
+    }
+  ],
+  "notClaimed": "Persistent completion SQL semantics for future durable policy are not implemented/tested. C1 cases34/35 assert present migration gate and forbid Activity-as-segment substitution; future isolated SQL acceptance remains prerequisite.",
+  "log": "c2-tests.log"
+}

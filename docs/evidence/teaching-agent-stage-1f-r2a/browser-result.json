@@ -1,0 +1,292 @@
+{
+  "browser": "Chromium",
+  "route": "/r2-lesson",
+  "realAuth": true,
+  "realRuntime": true,
+  "providerFixtureOnly": true,
+  "runs": [
+    {
+      "sample": 1,
+      "ms": 1364,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 208
+        },
+        {
+          "type": "run.status",
+          "atMs": 230
+        },
+        {
+          "type": "run.status",
+          "atMs": 483
+        },
+        {
+          "type": "tool.status",
+          "atMs": 616
+        },
+        {
+          "type": "tool.status",
+          "atMs": 852
+        },
+        {
+          "type": "run.status",
+          "atMs": 985
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1364
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1364
+        }
+      ]
+    },
+    {
+      "sample": 2,
+      "ms": 1326,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 192
+        },
+        {
+          "type": "run.status",
+          "atMs": 210
+        },
+        {
+          "type": "run.status",
+          "atMs": 459
+        },
+        {
+          "type": "tool.status",
+          "atMs": 592
+        },
+        {
+          "type": "tool.status",
+          "atMs": 831
+        },
+        {
+          "type": "run.status",
+          "atMs": 970
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1326
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1326
+        }
+      ]
+    },
+    {
+      "sample": 3,
+      "ms": 1340,
+      "providerCalls": 2,
+      "frames": [
+        {
+          "type": "run.started",
+          "atMs": 201
+        },
+        {
+          "type": "run.status",
+          "atMs": 226
+        },
+        {
+          "type": "run.status",
+          "atMs": 483
+        },
+        {
+          "type": "tool.status",
+          "atMs": 611
+        },
+        {
+          "type": "tool.status",
+          "atMs": 869
+        },
+        {
+          "type": "run.status",
+          "atMs": 988
+        },
+        {
+          "type": "answer.final",
+          "atMs": 1339
+        },
+        {
+          "type": "run.completed",
+          "atMs": 1340
+        }
+      ]
+    }
+  ],
+  "negative": [
+    {
+      "case": "A2",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "B1",
+      "post": 403,
+      "buttons": 0
+    },
+    {
+      "case": "TA",
+      "post": 403
+    },
+    {
+      "case": "AA",
+      "post": 403
+    },
+    {
+      "case": "PO",
+      "post": 403
+    },
+    {
+      "case": "EX",
+      "post": 403
+    },
+    {
+      "case": "IN",
+      "post": 403
+    },
+    {
+      "case": "A2 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "B1 run ownership",
+      "status": 404,
+      "cancel": 404
+    },
+    {
+      "case": "index",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "revision",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "draft",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherLesson",
+      "status": 403,
+      "providerCalls": 0
+    },
+    {
+      "case": "otherNode",
+      "status": 403,
+      "providerCalls": 0
+    }
+  ],
+  "errors": [],
+  "off": {
+    "buttons": 0,
+    "postStatus": 404,
+    "providerCalls": 0
+  },
+  "noAuthStatus": 401,
+  "ui": {
+    "completed": true,
+    "sourceBadge": 1,
+    "ms": 1859,
+    "privateLeak": false
+  },
+  "replay": {
+    "sameRun": true,
+    "sameConversation": true,
+    "replayed": true,
+    "extraProviderCalls": 0,
+    "extraRows": {
+      "agent_runs": 0,
+      "agent_conversations": 0,
+      "agent_messages": 0
+    }
+  },
+  "conflicts": [
+    {
+      "case": "message",
+      "status": 409,
+      "code": "IDEMPOTENCY_CONFLICT",
+      "extraProviderCalls": 0
+    },
+    {
+      "case": "segment",
+      "status": 409,
+      "code": "IDEMPOTENCY_CONFLICT",
+      "extraProviderCalls": 0
+    }
+  ],
+  "activeReplay": {
+    "sameRun": true,
+    "sameConversation": true,
+    "replayed": true,
+    "extraProviderCalls": 0
+  },
+  "ownerStatus": "completed",
+  "cancel": {
+    "status": 200,
+    "terminal": "run.cancelled",
+    "ms": 132,
+    "persisted": "cancelled",
+    "offNew": 404,
+    "offOwnerGet": 200
+  },
+  "deadline": {
+    "ms": 45080,
+    "providerCalls": 1,
+    "terminal": "run.failed",
+    "code": "DEADLINE_EXCEEDED",
+    "terminalAt": 1789386534218,
+    "receivedAt": "2026-09-14T11:48:09.149Z",
+    "fromReceivedAtMs": 45069,
+    "lateProviderCalls": 0,
+    "lateDomainReads": 0,
+    "lateDomainWrites": 0,
+    "lateToolCalls": 0,
+    "observationMs": 2213,
+    "lastProviderAt": 1789386489552,
+    "lastToolAt": null,
+    "lastTeachingReadAt": 1789386489516,
+    "persistence": {
+      "status": "failed",
+      "ended_at": "2026-09-14T11:48:54.212948+00:00",
+      "deadline_at": "2026-09-14T11:48:54.149+00:00"
+    },
+    "infrastructureTables": [
+      "agent_definition_versions",
+      "agent_conversations",
+      "agent_messages",
+      "agent_runs",
+      "agent_run_events",
+      "ai_token_usage"
+    ],
+    "infrastructureRpcs": [
+      "admit_agent_run_v1",
+      "transition_agent_run_v1",
+      "append_agent_run_event_v1",
+      "append_agent_run_event_v2",
+      "record_agent_usage_v1",
+      "reserve_student_agent_event_sequence_v1",
+      "get_student_agent_run_status_v1",
+      "request_agent_run_cancel_v1",
+      "check_agent_run_cancel_v1"
+    ]
+  },
+  "offRecoveryHidden": true,
+  "liveProviderRuns": 0,
+  "liveProviderRequests": 0,
+  "liveProviderTokens": 0,
+  "fixtureProviderCalls": 12
+}

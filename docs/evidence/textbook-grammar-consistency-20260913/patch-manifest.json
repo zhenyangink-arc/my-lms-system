@@ -1,0 +1,220 @@
+{
+  "createdAt": "2026-09-13T02:40:21.203Z",
+  "baseRoot": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "candidateRoot": "/tmp/uply-grammar-consistency.CRGmOO",
+  "mainRoot": "/home/yangzhen/projects/my-lms-system",
+  "mainHead": "b1672390ae96357a2143358235cc10edeff8d488",
+  "baseBuildId": "l9HmPxSMluZWoirjL544P",
+  "patch": "docs/TEXTBOOK_GRAMMAR_CONSISTENCY.patch",
+  "patchSha256": "d585e004d51e7d121f4ffb3bcb1ad107300de402db2e0453a100c7f469b43057",
+  "fileCount": 29,
+  "priorAuditBaselineUnchanged": true,
+  "patchApplyCheck": "passed against isolated copy of exact R file baselines",
+  "productionDeployment": false,
+  "productionMigration": false,
+  "entries": [
+    {
+      "path": "src/app/dashboard/admin/digital-textbook/actions.ts",
+      "baselineSha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+      "candidateSha256": "144e824442bc1ae525ceec3b831ef4bf05ae7970a589b4f69f87489f64b56614",
+      "mainWorkspaceSha256": "76a96c958cb16f9aa79791dff982d5088cc464bebcc78809af8b6a4019cd2189",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/digital-textbook/api/service.ts",
+      "baselineSha256": "1cfa7a84eb9b526248754e693925f67faf5cee12b01d068f24c93f34eaf1028c",
+      "candidateSha256": "f088a81b30d5d93a3ef182e5cdd8c5b0e49118e4382b21cd55bc264d2d1843db",
+      "mainWorkspaceSha256": "6e34c54cde0b3067420ad13ee727a536920aafa8757203b4d8ce1410fa4b3544",
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/api/types.ts",
+      "baselineSha256": "5052b0dea446400933e0748ed3294ce926aa2aa3c4471c3f78793a56e146ef60",
+      "candidateSha256": "b62de7a344dda8d38f802a6f4ac89f6f1a4e42977c31fc7318c20ac8e8c150f4",
+      "mainWorkspaceSha256": "f26351c2d5ed37ef256972185c72cca41fd166d860a3e2108cc719aa04d13ac8",
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-action-dialogs.tsx",
+      "baselineSha256": "ff1d034ec096893f07e9941a49a4d18a5dd9bfcd0d1857a6683ecb5d0632ac81",
+      "candidateSha256": "34993ecfa5239cc037030175e5064504d9195978574c985877a343548c348148",
+      "mainWorkspaceSha256": "ff1d034ec096893f07e9941a49a4d18a5dd9bfcd0d1857a6683ecb5d0632ac81",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+      "baselineSha256": "405c677ee6cca618edfda1b6c48be140189806d05705842f0355e4b0d4ca4ef1",
+      "candidateSha256": "6b49bd44d478db2efbe6a729380b5353423854ef3217203f1af756e9ba609a9d",
+      "mainWorkspaceSha256": "9778790c330ab7bc11a636808bb83e3282ff4f24fd4f5f407defbc4ee40f2102",
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/components/grammar-card-content.tsx",
+      "baselineSha256": null,
+      "candidateSha256": "1593899555ab2d0322e737167864b141b592f41e7ecd17c872e3250de0fede7d",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/digital-textbook/components/textbook-studio.tsx",
+      "baselineSha256": "3c61aa1637a30a5f400f1125db45e09067330aa8309d0116a159670118cebf67",
+      "candidateSha256": "94ad7fd07cf96382c46847ce7b832e3aefda5c2a9d7983ff64573f14e4cd4599",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/chapter-workbench.tsx",
+      "baselineSha256": "11b96bcee4fed50be7191d30fa4a654147c042084205b35bc8cbf328dd1716bb",
+      "candidateSha256": "3654b9e4bed6b1e3451e705741420da7c65bb27864da348a04d411e192e1c04d",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/contracts.ts",
+      "baselineSha256": "6a5102c2b0b72fab08114741a5b84a6c43668a42fab827e1ea6e20d92a187e43",
+      "candidateSha256": "a3754f597708352b79a5d9f233551ab9bdcda28693dd26572f71c1d999666b2a",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/grammar-text-editor.tsx",
+      "baselineSha256": null,
+      "candidateSha256": "af1c2b7f6153015f3faef0924761d7e616f5eda9f80acb47ec70ac59a1afa73a",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/service.server.ts",
+      "baselineSha256": "55b2f1fe2f2b26302d43ce6049f9aee211ec0db763eb74633f4d38d9c1e026e5",
+      "candidateSha256": "3c78fbb62f8e0eb3fcd7a506f44a6ae14764d62168b1d4a473085604ca2ef3f2",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/features/growth-toolbox/api/chapter-practice-actions.ts",
+      "baselineSha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "candidateSha256": "ff28a3501d1561eb475a2b05ef82396435f34b4487fe807775b13472a1751b42",
+      "mainWorkspaceSha256": "bc91e5b046559193bd6027a0713011f374a9037d679cc6c22db52e666d2a5920",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/growth-toolbox/components/chapter-practice-binding.tsx",
+      "baselineSha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+      "candidateSha256": "df7780c231540f39e6126c28b94bb9bf0ed5bd108cbd2f3965c3d8350bc9e48c",
+      "mainWorkspaceSha256": "48d78b657f47a801502d35bc019346608fae8cb90e8277a19d625e632ac48d0f",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/growth-toolbox/components/growth-toolbox-listing.tsx",
+      "baselineSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "candidateSha256": "b4cd9d7dc8dd4d820bfea30d8721925faf5a1d9e42cd576e734eed48588ea564",
+      "mainWorkspaceSha256": "9b1f58754bf656577847cc6fc6ac7e759966ab17fc4dac87832d03a2e1201cbc",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/features/growth-toolbox/components/referenced-grammar-materials.tsx",
+      "baselineSha256": "a95efa01ef4c39562e9bb6f9bbf91d249423e0f8450ffab84217653e7258a93c",
+      "candidateSha256": "ddbdb48459dc2fb772bc6ddd1a41dc70059665d9c950de60fbd835a8299bdc91",
+      "mainWorkspaceSha256": "a95efa01ef4c39562e9bb6f9bbf91d249423e0f8450ffab84217653e7258a93c",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/chapter-practice-binding.ts",
+      "baselineSha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+      "candidateSha256": "e14fbbfda9269acd3358bf0e9c6874734c6fb425d19648cdccd1444c018fcc47",
+      "mainWorkspaceSha256": "336e37a5b60772360e8f869d428679c91e22c4af849097314f5d8849e9888f5a",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "baselineSha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "candidateSha256": "297b78d598b430bcec99258e0630cabd4a5da68bc80be9e7eca25f5a293eb45e",
+      "mainWorkspaceSha256": "9920b9f1e2111e625a0030f704a4bcb68f191667e19b552dbb03be525d88d2b6",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/grammar-authoring.server.ts",
+      "baselineSha256": null,
+      "candidateSha256": "9adc463c01ed3548cfa759b1255a9f83320eaf2891bcce2168ecff2dadde0416",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/grammar-identities.server.ts",
+      "baselineSha256": null,
+      "candidateSha256": "65593e24a66783623d439f2ef898f00f8c3eb97b2f9a6e1160036fb077e1baf3",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/grammar-media-proof.server.ts",
+      "baselineSha256": null,
+      "candidateSha256": "745a20511a50c34a3018ecd3feb8eb04341b3be0e241f9deb0cee5af818111dc",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "baselineSha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "candidateSha256": "09bfd8b6a0b4d67390258af1fa8d6cc149ddb25cee4009c6c254cb383cc9628a",
+      "mainWorkspaceSha256": "5316fbfe4e94973dd533fb931efd86768489c5be0d6931a576d456947f19632f",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "baselineSha256": "9c1114ef9159d1c20793cb664d5de74eb6a0ceda4ad16888f12eedb0ee607087",
+      "candidateSha256": "05434fe2097f6b7568bc0e455aa5d589fb829b5bef1eecc99534196476e58fdf",
+      "mainWorkspaceSha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "src/lib/textbook-grammar-content.ts",
+      "baselineSha256": null,
+      "candidateSha256": "f54a6da3a9424fbe913a150dec0eb12a639b5b4fbc5faddb4becc54b05156361",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "supabase/migrations/202609130001_textbook_grammar_authoring.sql",
+      "baselineSha256": null,
+      "candidateSha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "supabase/migrations/202609130002_textbook_grammar_practice_binding.sql",
+      "baselineSha256": null,
+      "candidateSha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "tests/course-catalog-management-ui.test.mjs",
+      "baselineSha256": "6b1b6ce9282fe29196dd3f63f2c1d1d7ca37d879c982a68e2d9c2ba1a3cc5525",
+      "candidateSha256": "2b92a926f25bd74450d2722f249b0f92acbc5a0a96f7db4858e4af7962d90b4d",
+      "mainWorkspaceSha256": "6b1b6ce9282fe29196dd3f63f2c1d1d7ca37d879c982a68e2d9c2ba1a3cc5525",
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "tests/digital-textbook-workbench.test.mjs",
+      "baselineSha256": "0df876464d449839059b7a9cc869bd4faf32e652af1483b4ee4059b5eb0e3b43",
+      "candidateSha256": "c2b641bc21e23716ad9456000374149d13e8f54c159b3c17a56caeb6f493b6be",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    },
+    {
+      "path": "tests/textbook-grammar-consistency.test.mjs",
+      "baselineSha256": null,
+      "candidateSha256": "7d0c6f88b434f1bd0db6f431033b075ea7be552f9b6a9acc47f51bc742d13319",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": true
+    },
+    {
+      "path": "tests/textbook-navigation.test.mjs",
+      "baselineSha256": "ebcb439c1476cec87e490336f43ef4a478776caba3d9be60ba60c282007ae2e1",
+      "candidateSha256": "3e98ec3ec4e25f296ce1fb8cd1c260d6061762abe210315fe9ea4627704e9ca3",
+      "mainWorkspaceSha256": null,
+      "mainMatchesPatchBaseline": false
+    }
+  ]
+}

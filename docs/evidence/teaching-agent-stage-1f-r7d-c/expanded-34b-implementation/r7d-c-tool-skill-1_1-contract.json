@@ -1,0 +1,56 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "preservedVersions": [
+    "get_current_lesson_execution_facts@1.0.0",
+    "summarize-current-lesson-execution@1.0.0",
+    "student-execution-summary@1.0.0",
+    "explain-pinned-korean-segment@1.0.0"
+  ],
+  "tool": {
+    "id": "get_current_lesson_execution_facts",
+    "version": "1.1.0",
+    "input": "STRICT {}",
+    "riskLevel": 0,
+    "timeoutMs": 12000,
+    "maxOutputBytes": 16384,
+    "permission": "teaching.execution.self.read"
+  },
+  "skill": {
+    "id": "summarize-current-lesson-execution",
+    "version": "1.1.0",
+    "allowedTools": [
+      "get_current_lesson_execution_facts@1.1.0"
+    ],
+    "mandatoryEvidence": [
+      "get_current_lesson_execution_facts@1.1.0"
+    ],
+    "optionalEvidence": []
+  },
+  "output": "student-execution-summary@1.1.0",
+  "authority": "Server projection from verified Tool DTO; model supplies no authoritative facts",
+  "currentTeachingNode": null,
+  "currentPositionAvailability": "unavailable",
+  "versionSubstitution": "REJECTED"
+}

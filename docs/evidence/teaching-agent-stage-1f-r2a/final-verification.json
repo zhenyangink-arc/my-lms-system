@@ -1,0 +1,15 @@
+{
+  "modifiedExistingFiles": 13,
+  "deletedExistingFiles": 0,
+  "outOfScopeChanges": 0,
+  "reportSections": 33,
+  "passGates": 30,
+  "secretPatternMatches": [],
+  "tscExit": 0,
+  "scopedLintExit": 0,
+  "baselineHashUnchanged": true,
+  "productionLedger": 449,
+  "productionAgentTables": 0,
+  "productionWrites": 0,
+  "liveProviderRequests": 0
+}

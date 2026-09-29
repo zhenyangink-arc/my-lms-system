@@ -1,0 +1,43 @@
+{
+  "stage": "R7D-C2",
+  "recordedAt": "2026-09-18T03:06:00.222484+00:00",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "B3Scope": "DISABLED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "Stage1G": "NOT READY",
+  "name": "summarize-current-lesson-execution",
+  "version": "1.0.0",
+  "intent": "summarize_execution",
+  "outputContract": {
+    "name": "student-execution-summary",
+    "version": "1.0.0"
+  },
+  "allowedTools": [
+    {
+      "name": "get_current_lesson_execution_facts",
+      "version": "1.0.0"
+    }
+  ],
+  "evidenceRequirements": {
+    "mandatory": [
+      {
+        "name": "get_current_lesson_execution_facts",
+        "version": "1.0.0"
+      }
+    ],
+    "optional": []
+  },
+  "output": "Server projection of validated Lesson Facts DTO; strict empty model summary input rejects authoritative fields/free text",
+  "completionAlgorithm": "NOT REIMPLEMENTED; existing Lesson Tool same-snapshot validation is authority",
+  "currentPosition": "null / unavailable retained",
+  "partialClarification": "Existing Tool returns partial because cursor is unavailable. Successful validated partial facts are accepted; UNKNOWN/error receipts are not. This corrects the overly broad C1 phrase partial durable evidence cannot satisfy completed claims; no Tool wire contract changed.",
+  "explain": "Exact ID/version/context/procedure/tools/evidence/output unchanged; only named extension type adopted",
+  "statusPublishedMeaning": "In-memory Skill eligibility for explicitly constructed isolated registry; no DB publish or production registration."
+}

@@ -1,0 +1,30 @@
+{
+  "status": "PROPOSED",
+  "provisioning": {
+    "attempt": 0,
+    "node_progress": 0,
+    "activity_page_progress": 0,
+    "lessonProgress": 0
+  },
+  "futureScenarioExampleOnly": {
+    "wrongLogicalAttempts": 1,
+    "correctLogicalAttempts": 1,
+    "maximumLogicalAttempts": 2,
+    "duplicateRequest": "0 extra logical attempts,0 progress advancement",
+    "readbacks": "Read-only",
+    "nodeProgress": "Existing RPC may insert1 then update1; actual exact writes must be independently locked in scenario approval",
+    "activityPageOrLessonProgress": "Default0; enable only if existing contract needs it and separately approved"
+  },
+  "forbidden": [
+    "Frozen Script",
+    "Activity content",
+    "private answer changes",
+    "Auth during execution",
+    "Publish",
+    "Agent definitions",
+    "Pins",
+    "feature/allowlists"
+  ],
+  "budgetAuthority": "Server-held scope with atomic trusted domain write enforcement; client callbacks do not spend or refill authority",
+  "currentDbWrites": 0
+}

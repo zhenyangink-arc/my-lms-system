@@ -1,0 +1,160 @@
+{
+  "baselineVersion": "r6f-content-freeze-v1",
+  "status": "CONTENT FROZEN",
+  "freezeTimestampUtc": "2026-09-17T01:36:21.026410+00:00",
+  "reviewResult": "PASS",
+  "targetAlias": "hangul-introduction",
+  "target": "韩文字母入门 / 第0章 / 课前导航",
+  "scriptVersion": 1,
+  "databaseStatus": "draft",
+  "scriptVersionSafeHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "scriptVersionRowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158",
+  "nodeCount": 8,
+  "nodes": [
+    {
+      "nodeNumber": 1,
+      "safeIdSha256": "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+      "title": "今天认识韩文字母",
+      "formalType": "opening",
+      "sortOrder": 1,
+      "updatedAt": "2026-09-16T10:28:54.462249+00:00",
+      "rowSha256": "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+      "teacherScriptMapSha256": "d4a40ab6d4a0f8a0c9e5bac24e13993bab94cdeb04bc53db45d268f5e78a02bf",
+      "mainRawUtf8Sha256": "9dadd23bcae24e547219cf09455c8ddfe0c6f73fa867b04020786844ece703b2",
+      "koKrRawUtf8Sha256": "9dadd23bcae24e547219cf09455c8ddfe0c6f73fa867b04020786844ece703b2",
+      "mainLfNormalizedSha256": "2d67c30458d24f0e83041cd4716bccce511f01a08f24db5d9a2b799fd417e0cd",
+      "koKrLfNormalizedSha256": "2d67c30458d24f0e83041cd4716bccce511f01a08f24db5d9a2b799fd417e0cd"
+    },
+    {
+      "nodeNumber": 2,
+      "safeIdSha256": "19e75a5c68c0704a1424cedb93823c4cc0cc691aafb598b94153d4428e23d5b8",
+      "title": "韩文字母怎么组成？",
+      "formalType": "explanation",
+      "sortOrder": 2,
+      "updatedAt": "2026-09-16T10:29:55.998257+00:00",
+      "rowSha256": "892dba849c29f16c336f199667942887992591fc5a6e3fda3fe21abe18262cd8",
+      "teacherScriptMapSha256": "b25b2429c150b276b89cd0385919820db65aa66ae402d7eebd4b0082663fd248",
+      "mainRawUtf8Sha256": "368bbd8e83aff367b9e06cb249148af800bbf52e54134c1326bd298490153768",
+      "koKrRawUtf8Sha256": "368bbd8e83aff367b9e06cb249148af800bbf52e54134c1326bd298490153768",
+      "mainLfNormalizedSha256": "bde0eb38e177ee86cc03c3e6544fe80e52f9d540e4dcb3e81e9a3a648b116d55",
+      "koKrLfNormalizedSha256": "bde0eb38e177ee86cc03c3e6544fe80e52f9d540e4dcb3e81e9a3a648b116d55"
+    },
+    {
+      "nodeNumber": 3,
+      "safeIdSha256": "e923e2b12ad3945b5f2ef93e4f005fee599452655709a96ae114f3ec7fd65e86",
+      "title": "先认识基础元音",
+      "formalType": "explanation",
+      "sortOrder": 3,
+      "updatedAt": "2026-09-16T08:05:34.48572+00:00",
+      "rowSha256": "961b23a6e128744783793a15fb445c6611cbed7e9b94ccb5c6bab32d63229b71",
+      "teacherScriptMapSha256": "3bf0063d23def3117b2ed5068cc9afdc6cd97489a0a58d6cc8e8de2464d84a25",
+      "mainRawUtf8Sha256": "3ab836963b95416ec544e8f360571952b23c8d1d8ee99705b8a22425acc07ec1",
+      "koKrRawUtf8Sha256": "3ab836963b95416ec544e8f360571952b23c8d1d8ee99705b8a22425acc07ec1",
+      "mainLfNormalizedSha256": "94b2259aef6ca636aefe2c7282f8a81081a217fd6fff6cc60f30e888782fb26a",
+      "koKrLfNormalizedSha256": "94b2259aef6ca636aefe2c7282f8a81081a217fd6fff6cc60f30e888782fb26a"
+    },
+    {
+      "nodeNumber": 4,
+      "safeIdSha256": "d31c53281b2872bed56cfdb27ffa91d2cc4eda178b013c70f72d0e44245e287b",
+      "title": "再认识基础辅音",
+      "formalType": "explanation",
+      "sortOrder": 4,
+      "updatedAt": "2026-09-16T10:30:22.879552+00:00",
+      "rowSha256": "28d7516c505956a7b50b52db44bf61e08839cb7e19d46ef0d23d982c412dc958",
+      "teacherScriptMapSha256": "14dfec55c4f9b69766fe7c84f4a8e9978dda83200911129e0054751738dbb04b",
+      "mainRawUtf8Sha256": "30b79ed95a169d3ce189c3972be92153946e9ada1185fa8c834f4b7308fb72c1",
+      "koKrRawUtf8Sha256": "30b79ed95a169d3ce189c3972be92153946e9ada1185fa8c834f4b7308fb72c1",
+      "mainLfNormalizedSha256": "ed63082c205e690ad67c78efc908569c0655a65fba602aee7ab5962de3e95085",
+      "koKrLfNormalizedSha256": "ed63082c205e690ad67c78efc908569c0655a65fba602aee7ab5962de3e95085"
+    },
+    {
+      "nodeNumber": 5,
+      "safeIdSha256": "13aac7fe2ce19bc229f6c71484d2443451d8fca313d4f1d1934d29742379ff62",
+      "title": "把辅音和元音放在一起",
+      "formalType": "example",
+      "sortOrder": 5,
+      "updatedAt": "2026-09-16T10:30:47.121181+00:00",
+      "rowSha256": "3b48b709e005413be9c9599fc428a464f33928655234da13e2751c36da505bb8",
+      "teacherScriptMapSha256": "42ede111e83784400b227c7dd87b1d3cec65018f7303818e1b5969b1bb220507",
+      "mainRawUtf8Sha256": "8bda089fbc597cf1ea38aac59c3b69a5aef02ec9b09c36ad6b557766082c248d",
+      "koKrRawUtf8Sha256": "8bda089fbc597cf1ea38aac59c3b69a5aef02ec9b09c36ad6b557766082c248d",
+      "mainLfNormalizedSha256": "5a624f3802c99862c2252cf0c8f0d32d57d3327ed1a55c09d86fbc55c73ccf21",
+      "koKrLfNormalizedSha256": "5a624f3802c99862c2252cf0c8f0d32d57d3327ed1a55c09d86fbc55c73ccf21"
+    },
+    {
+      "nodeNumber": 6,
+      "safeIdSha256": "d5a053756489e51339ea72e33f6484f8291089bd9043622769626de59ba0f096",
+      "title": "一个音节里面有什么？",
+      "formalType": "explanation",
+      "sortOrder": 6,
+      "updatedAt": "2026-09-16T10:31:12.017133+00:00",
+      "rowSha256": "b1f9d770a40cb8096ef8df40a375afe15612f4add7c5882b1e8c91f8dd1d2c50",
+      "teacherScriptMapSha256": "ee72717378420337f4f2f7d0ddcc463a1d5cf992bd353a365ccb7922590eba47",
+      "mainRawUtf8Sha256": "58bf579d8acc3f1cfd425cef81130a0ee28b166ad050daa2bec7caa60a252749",
+      "koKrRawUtf8Sha256": "58bf579d8acc3f1cfd425cef81130a0ee28b166ad050daa2bec7caa60a252749",
+      "mainLfNormalizedSha256": "4c460a448c41b4502aaab4ee655c50635d4dc2de0ab22b590752617cedab4aa9",
+      "koKrLfNormalizedSha256": "4c460a448c41b4502aaab4ee655c50635d4dc2de0ab22b590752617cedab4aa9"
+    },
+    {
+      "nodeNumber": 7,
+      "safeIdSha256": "43b90695aa195bf4432f04cba8629b107e6f229e1854adeaed8293766fa3507a",
+      "title": "一起试一试",
+      "formalType": "instruction",
+      "sortOrder": 7,
+      "updatedAt": "2026-09-16T08:06:46.149325+00:00",
+      "rowSha256": "93b340135770be2aed8ded1fa3bb8310ded773f7799cd054d767fd8c29a7bd4e",
+      "teacherScriptMapSha256": "c4ba959b5a1c766644926dfd9dc8d9d999ca9e7bd60caa5756e90b06c307d882",
+      "mainRawUtf8Sha256": "52368ef9d431b3a65e5be503fcb94474882658ef7650ba2bf63297b3b4af33d6",
+      "koKrRawUtf8Sha256": "140a13b065fe98983e36809eb16aad829c4c16709c0c9db610da22229cc9c05d",
+      "mainLfNormalizedSha256": "1656c671b94b3344c204d12810f357d3209f6ea2672672582a4491ac14d4e702",
+      "koKrLfNormalizedSha256": "1d61cece32b4ff2a641dfa413fd6ff666c169d9480e80c231941b2d86a6a130b"
+    },
+    {
+      "nodeNumber": 8,
+      "safeIdSha256": "e15b403da96a19b8b9c6319686d95cf039e7ed88f1e7df3e144f4b21d80df369",
+      "title": "今天学了什么？",
+      "formalType": "summary",
+      "sortOrder": 8,
+      "updatedAt": "2026-09-16T10:31:33.931448+00:00",
+      "rowSha256": "0e5c8fc654af69801b2977dbc01252668368df6f92a2691f99cbb829fa36168b",
+      "teacherScriptMapSha256": "185ce97672de351d8d27f5a64ae1bec5b6f4db035a47837706b7e4cc3307b9a5",
+      "mainRawUtf8Sha256": "cefc0b7d7f688c8ad330e27830675670cf9689e24dda23f6e2f359b000ef9afc",
+      "koKrRawUtf8Sha256": "cefc0b7d7f688c8ad330e27830675670cf9689e24dda23f6e2f359b000ef9afc",
+      "mainLfNormalizedSha256": "044c73ba9638dd4a2c933229ff3f81a629b270d993d8107454d68a20135cd257",
+      "koKrLfNormalizedSha256": "044c73ba9638dd4a2c933229ff3f81a629b270d993d8107454d68a20135cd257"
+    }
+  ],
+  "objectiveHashes": [
+    {
+      "number": 1,
+      "utf8Sha256": "f2a66d8ad3692ca2ca905724c710fdb50465911d8612b84422fe74c45f1e18e0"
+    },
+    {
+      "number": 2,
+      "utf8Sha256": "df32ad6c92682d226d29ee8547bb5f1b886561fd2e145b8503d804754b55fcfc"
+    },
+    {
+      "number": 3,
+      "utf8Sha256": "46893d34b974c903cb27e8866e099a62e4c9f3339868d7325f18e8ea4dac6499"
+    },
+    {
+      "number": 4,
+      "utf8Sha256": "a7968259415355ac3ab080f3709e36840c9cd9c078350cf865aaa36549d9b93b"
+    }
+  ],
+  "objectiveMapSha256": "85a750709306882092bb04cfcc5471961684b9ac39de964df06064ff950dfce5",
+  "hashRules": {
+    "text": "SHA256 UTF-8; raw CRLF preserved; normalized hashes replace CRLF with LF only",
+    "maps": "SHA256 JSON ensure_ascii=false sort_keys=true with Python default separators",
+    "rowHashes": "SHA256 PostgreSQL to_jsonb(row)::text UTF-8"
+  },
+  "freezeMeaning": "ENGINEERING / CONTENT ACCEPTANCE RECORD ONLY; no new DB status or enforcement mechanism",
+  "futureContentChange": "REQUIRES NEW EXPLICIT REVISION TASK",
+  "publish": 0,
+  "runtime": 0,
+  "provider": 0,
+  "agent": 0,
+  "pins": 0,
+  "nodeWritesDuringR6F": 0,
+  "baselinePayloadSha256": "55a2b81ed6912e392ab17d502e5d2ffce3e0ddce330ae45d09ba79ccadcd43b8"
+}

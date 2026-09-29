@@ -1,0 +1,274 @@
+{
+  "overall": "GO",
+  "gates": [
+    {
+      "id": "G-R6F-1",
+      "name": "R6E Complete",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-2",
+      "name": "Target Exact",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-3",
+      "name": "Script Version1 Draft",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-4",
+      "name": "Node Count Eight",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-5",
+      "name": "Node Order",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-6",
+      "name": "Node Types",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-7",
+      "name": "UI/Persisted Match",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-8",
+      "name": "Node1 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-9",
+      "name": "Node2 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-10",
+      "name": "Node3 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-11",
+      "name": "Node4 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-12",
+      "name": "Node5 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-13",
+      "name": "Node6 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-14",
+      "name": "Node7 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-15",
+      "name": "Node8 Final Review",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-16",
+      "name": "M1 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-17",
+      "name": "M2 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-18",
+      "name": "M3 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-19",
+      "name": "S1 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-20",
+      "name": "S2 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-21",
+      "name": "S3 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-22",
+      "name": "S4 Resolved",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-23",
+      "name": "O1 Nonblocking",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-24",
+      "name": "O2 Nonblocking",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-25",
+      "name": "Objective1 Full",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-26",
+      "name": "Objective2 Full Text Coverage",
+      "status": "PASS",
+      "note": "FULL TEXT INSTRUCTION COVERAGE; audio and student mastery NOT TESTED."
+    },
+    {
+      "id": "G-R6F-27",
+      "name": "Objective3 Full",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-28",
+      "name": "Objective4 Full",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-29",
+      "name": "Korean Grammar",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-30",
+      "name": "Korean Naturalness",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-31",
+      "name": "Beginner Appropriateness",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-32",
+      "name": "Pedagogical Accuracy",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-33",
+      "name": "Terminology",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-34",
+      "name": "Teaching Sequence",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-35",
+      "name": "Cognitive Load",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-36",
+      "name": "Practice Correctness",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-37",
+      "name": "New MUST_FIX Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-38",
+      "name": "New SHOULD_FIX Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-39",
+      "name": "No R6F Content Writes",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-40",
+      "name": "Script Still Draft",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-41",
+      "name": "No Publish",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-42",
+      "name": "No Runtime",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-43",
+      "name": "Feature OFF",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-44",
+      "name": "Allowlists EMPTY",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-45",
+      "name": "Agent Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-46",
+      "name": "Provider Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-47",
+      "name": "Pins Zero",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-48",
+      "name": "Canonical Content Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-49",
+      "name": "Runtime Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-50",
+      "name": "Tailscale Unchanged",
+      "status": "PASS"
+    },
+    {
+      "id": "G-R6F-51",
+      "name": "Freeze Baseline Created",
+      "status": "PASS",
+      "note": "Documentation baseline only; DB remains draft."
+    },
+    {
+      "id": "G-R6F-52",
+      "name": "Interactive Video Planning Ready",
+      "status": "PASS",
+      "note": "Readiness conclusion only; no implementation entered."
+    },
+    {
+      "id": "G-R6F-53",
+      "name": "Evidence Boundary",
+      "status": "PASS",
+      "note": "JSON/AST/JavaScript syntax, sensitive data and scope scans, freeze hash validation, source locks and git diff --check passed."
+    }
+  ]
+}

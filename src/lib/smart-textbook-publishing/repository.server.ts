@@ -1,11 +1,12 @@
 import 'server-only';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import { canonical } from '../smart-textbook-legacy-adapter/identity.server';
-import { scopeSchema, assertPublishableSnapshot, type PublicationScope, type PublicationBundle } from './artifact.server';
+import { canonical } from '../smart-textbook-legacy-adapter/identity.server.ts';
+import { scopeSchema, assertPublishableSnapshot, type PublicationScope, type PublicationBundle } from './artifact.server.ts';
 export const pointerSchema=z.strictObject({snapshotId:z.string().min(1),generation:z.number().int().positive()});
 export type PublicationPointer=z.infer<typeof pointerSchema>;
-export function publicationRepository(admin:SupabaseClient) {
+/** Restricted RPC seam also supports one verified read-only transaction. */
+export interface PublicationRpcClient { rpc(name:string,args:object):PromiseLike<{data:unknown;error:{message:string}|null}> }
+export function publicationRepository(admin:PublicationRpcClient) {
   const rpc=async(name:string,args:object)=>{const r=await admin.rpc(name,args);if(r.error)throw Error(`PUBLICATION_RPC: ${r.error.message}`);return r.data as unknown;};
   return {
     async current(scope:PublicationScope){

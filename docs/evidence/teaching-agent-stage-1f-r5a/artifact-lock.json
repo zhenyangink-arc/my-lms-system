@@ -1,0 +1,50 @@
+{
+  "status": "LOCKED",
+  "path": "/tmp/uply-r3d-release-candidate/candidate-build.tar.gz",
+  "regularFile": true,
+  "symlink": false,
+  "size": 18760388,
+  "sha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+  "tarReadable": true,
+  "memberCount": 2153,
+  "buildId": "6IhDHN8Dm1nCewiCEZnV5",
+  "artifactFiles": 1377,
+  "artifactDigest": "b088781734cd2191c9027b208da70f04d8931b095afaf8a5bd2efe97a777185b",
+  "applicationSourceDigest": "48b8e7b979b0a158635c82e31e9e0f948742e0e5a0f2ca5e5bab553ec458708c",
+  "sourceInputCount": 1306,
+  "sourceScope": [
+    "src/**",
+    "public/**",
+    "package.json",
+    "package-lock.json",
+    "next.config.ts",
+    "tsconfig.json",
+    "postcss.config.mjs"
+  ],
+  "sourceMapReference": "docs/evidence/teaching-agent-stage-1f-r4/release-integrity.json#sourceInputs",
+  "requiredServerFiles": {
+    "version": 1,
+    "count": 19,
+    "missing": [],
+    "output": null,
+    "distDir": ".next",
+    "buildWorkspaceExists": false
+  },
+  "packageNextVersion": "^16.2.10",
+  "installedBuilderNextVersion": "16.2.10",
+  "nodeModulesIncluded": false,
+  "publicPackageConfigFileCount": 17,
+  "checks": {
+    "archiveSha": true,
+    "buildId": true,
+    "artifactDigest": true,
+    "sourceDigest": true,
+    "sourceInputs": true,
+    "extraFilesMatch": true,
+    "requiredServerFilesPresent": true
+  },
+  "definitionDigestLockedMetadata": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+  "definitionVerification": "Definition manifest metadata unchanged and all source inputs match; no runtime pin/Provider executed",
+  "candidatePersistence": "TEMPORARY LOCATION / DURABILITY RISK",
+  "archiveExtractedCopiedMoved": false
+}

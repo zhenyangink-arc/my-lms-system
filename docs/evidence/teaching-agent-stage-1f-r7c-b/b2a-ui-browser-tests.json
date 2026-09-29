@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "case": "ready enabled",
+      "pass": true
+    },
+    {
+      "case": "double click + UNKNOWN no retry",
+      "pass": true
+    },
+    {
+      "case": "reload retains local submission fence",
+      "pass": true
+    },
+    {
+      "case": "BLOCKED disabled",
+      "pass": true
+    },
+    {
+      "case": "EXISTING disabled",
+      "pass": true
+    },
+    {
+      "case": "connection loss holds",
+      "pass": true
+    },
+    {
+      "case": "public UI no secrets/input controls",
+      "pass": true
+    }
+  ],
+  "scope": "Actual React component and existing Chrome in static isolated harness; Server Action substituted. No live provisioning or authenticated route request.",
+  "currentDbWrites": 0
+}

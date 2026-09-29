@@ -1,0 +1,39 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "comparison": "All prior pinned fields exactly match C2 isolated baseline; new internal dispatch intent is explicit explain_segment.",
+  "result": "IDENTICAL_EXISTING_CONTRACT",
+  "comparedFields": [
+    "profile",
+    "persona",
+    "instructions",
+    "skill",
+    "definitionDigest"
+  ],
+  "newInternalMetadata": {
+    "intent": "explain_segment"
+  },
+  "definitionDigest": "4b6299be0d5fcb33b9bdc10e8c35ac894905cfbf55540522e8628380e2ff3d8c",
+  "priorPinnedValueSha256": "7ff012e60a02d3310a8c0afb861e74fbb27cee82f697f7af2034ced21eb16bc5",
+  "currentPriorFieldsSha256": "80e5ba084858aec435f05a2052cf74f2380753cde66c49d635178db30987aed9"
+}

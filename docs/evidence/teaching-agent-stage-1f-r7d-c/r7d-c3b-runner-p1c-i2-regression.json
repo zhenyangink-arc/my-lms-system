@@ -1,0 +1,35 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1C-I2",
+  "recordedAt": "2026-09-20T01:28:34.435743+00:00",
+  "status": "PASS",
+  "planned": 172,
+  "executed": 172,
+  "passed": 172,
+  "failed": 0,
+  "skipped": 0,
+  "node": {
+    "passed": 155,
+    "failed": 0,
+    "skipped": 0
+  },
+  "R5B": {
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0
+  },
+  "oldExpectedChanges": 0,
+  "historicalSources": "UNCHANGED",
+  "logDestination": "new forward evidence directory only",
+  "logs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "sha256": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "sha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4"
+    }
+  ],
+  "currentDBConnections": 0,
+  "productionCredentialAccess": 0
+}

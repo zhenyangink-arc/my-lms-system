@@ -1,0 +1,53 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "contract": "review-chapter-practice-binding-acl/1",
+  "migration": {
+    "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+    "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+  },
+  "target": "public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+  "action": "REVOKE EXECUTE ON FUNCTION public.review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean) FROM service_role RESTRICT",
+  "transaction": "BEGIN -> exact structural/hash/ACL/effective preconditions -> single REVOKE -> identical structural/hash/ACL/effective postconditions -> COMMIT",
+  "singleUse": "STRICT_PRECONDITION; second SQL application fails, external checksummed runner may skip installed version",
+  "shaImplementation": "pg_catalog.sha256(pg_catalog.convert_to(pg_catalog.pg_get_functiondef(oid), UTF8)); built-in confirmed on PG15 and PG17; no extension installed by000",
+  "newTables": 0,
+  "newFunctions": 0,
+  "defaultPrivilegeChanges": 0,
+  "functionReplacement": false,
+  "otherOverloadChanges": 0,
+  "migrationSeparation": "000 ACL ONLY;001 completion ONLY;002 publication ONLY",
+  "priorMigrations": [
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027"
+    }
+  ]
+}

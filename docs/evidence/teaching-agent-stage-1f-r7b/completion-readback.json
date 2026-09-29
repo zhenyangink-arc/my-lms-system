@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "submissionTimeoutMs": 10000,
+  "automaticResubmit": false,
+  "lostResponseAfterFixtureCommit": "COMPLETED via readback permits resume",
+  "unknownReadback": "holds paused; explicit read-only check allowed",
+  "missingRequestReadback": "UNKNOWN unless independent activity completion established",
+  "staleReceipt": "rejected",
+  "test": "tests/teaching-agent-r7b-execution.test.mjs"
+}

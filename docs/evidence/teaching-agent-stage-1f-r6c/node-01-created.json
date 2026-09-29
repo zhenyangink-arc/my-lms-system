@@ -1,0 +1,18 @@
+{
+  "idHash": "35eb28a7c704ee40df7526b84e03f44119e7091e28ee6983821ccc6d5d89d024",
+  "versionHash": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+  "order": 1,
+  "key": "step-1-17a967",
+  "type": "explanation",
+  "updatedAt": "2026-09-16T08:02:01.675117+00:00",
+  "createdAt": "2026-09-16T08:02:01.675117+00:00",
+  "actionType": "none",
+  "nextKey": null,
+  "observedAtUtc": "2026-09-16T08:02:08.126249+00:00",
+  "count": 1,
+  "logs": {
+    "add_node": 1,
+    "create_draft": 1
+  },
+  "draft": true
+}

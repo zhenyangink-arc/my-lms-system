@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "nodeTests": {
+    "total": 34,
+    "pass": 34,
+    "fail": 0,
+    "skip": 0,
+    "newR4ATests": 14
+  },
+  "baselineUnit": {
+    "total": 10,
+    "pass": 7,
+    "skip": 3,
+    "fail": 0
+  },
+  "generatorRegression": {
+    "total": 1,
+    "pass": 1,
+    "includesInputRaceGuard": true,
+    "schemaRestoreOnly": true
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 0,
+    "maxWarnings": 0
+  },
+  "typescript": "PASS",
+  "checks": {
+    "scoped-lint": {
+      "command": [
+        "node_modules/.bin/eslint",
+        "--max-warnings=0",
+        "src/features/digital-textbook/api/create-teaching-content.ts",
+        "src/features/digital-textbook/components/create-teaching-content-entry.tsx",
+        "src/features/digital-textbook/components/create-teaching-content-form.tsx",
+        "src/features/digital-textbook/components/digital-textbook-listing.tsx",
+        "src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx",
+        "src/features/learning-agent-script-studio/TeachingScriptStudio.tsx",
+        "src/features/teaching-agent/server/transport/rollout-policy.ts",
+        "scripts/teaching-agent-r3d/actors.mjs",
+        "scripts/teaching-agent-r3d/author-browser.mjs",
+        "scripts/teaching-agent-r3d/closing-checks.mjs",
+        "scripts/teaching-agent-r3d/project-pins.mjs",
+        "scripts/teaching-agent-r3d/refresh-auth.mjs",
+        "scripts/teaching-agent-r3d/rpc-tests.mjs",
+        "tests/teaching-agent-release-metadata.test.mjs",
+        "tests/teaching-agent-release-migrations.test.mjs",
+        "tests/teaching-agent-rls-surface.test.mjs"
+      ],
+      "exit": 0,
+      "durationSeconds": 5.633
+    },
+    "typescript": {
+      "command": [
+        "node_modules/.bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "exit": 0,
+      "durationSeconds": 44.554
+    },
+    "node-regressions": {
+      "command": [
+        "node",
+        "--test",
+        "tests/teaching-agent-release-metadata.test.mjs",
+        "tests/teaching-agent-release-migrations.test.mjs",
+        "tests/teaching-agent-rls-surface.test.mjs",
+        "tests/learning-agent-script-studio.test.mjs"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.511
+    },
+    "baseline-unit": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_supabase_baseline.py",
+        "-v"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.682
+    },
+    "generator-regression": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_supabase_baseline.BaselineTests.test_deterministic_regeneration_and_source_race_guard",
+        "-v"
+      ],
+      "exit": 0,
+      "durationSeconds": 2.516
+    },
+    "browser-syntax": {
+      "command": [
+        "node",
+        "--check",
+        "scripts/teaching-agent-r3d/author-browser.mjs"
+      ],
+      "exit": 0,
+      "durationSeconds": 0.076
+    }
+  },
+  "fullSupabaseRerun": false,
+  "freshDatabaseRehearsalRerun": false,
+  "reason": "Generator, baseline SQL, ledger and all migration SQL unchanged. R3D historical integration evidence retained."
+}

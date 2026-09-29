@@ -1,0 +1,19 @@
+{
+  "runtimeHash": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+  "flagOff": true,
+  "allowlistsEmpty": true,
+  "productionWrites": 0,
+  "liveProviderRequests": 0,
+  "ledgerBefore": 449,
+  "ledgerAfter": 449,
+  "ledgerUnchanged": true,
+  "agentTablesBefore": 0,
+  "agentTablesAfter": 0,
+  "inventoryUnchanged": true,
+  "productionCandidate": 0,
+  "productionMigration": "NOT APPLIED",
+  "productionDeploy": false,
+  "tailscaleMutation": false,
+  "observedAtStart": "2026-09-14T14:56:21.201516+00:00",
+  "observedAtEnd": "2026-09-15T02:02:12.288422+00:00"
+}

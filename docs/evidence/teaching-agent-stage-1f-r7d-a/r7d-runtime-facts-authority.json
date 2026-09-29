@@ -1,0 +1,48 @@
+{
+  "stage": "R7D-A",
+  "asOf": "2026-09-17T14:00:22.966574+00:00",
+  "kind": "AUDIT / CONTRACT DESIGN",
+  "productImplementation": "NOT STARTED",
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED",
+  "freshCurrentDbAudit": "r7d-current-db-durable-audit.json",
+  "authorityTables": [
+    "digital_textbook_attempts",
+    "digital_textbook_node_progress"
+  ],
+  "completionImplementation": "createDurableActivityCompletion / readRows / readback",
+  "receiptFamily": "activity-completion/2",
+  "currentStorage": "CURRENT_DEVELOPMENT_DB",
+  "currentFacts": {
+    "attemptCount": 2,
+    "attemptSequence": [
+      1,
+      2
+    ],
+    "latestResult": "CORRECT",
+    "progressStatus": "completed",
+    "completionPercent": 100,
+    "masteryScore": 100,
+    "progressAttemptCount": 2,
+    "activityPageProgress": 0
+  },
+  "strictCurrentTargetPolicy": "two-attempt-development; first incorrect, second correct; count/progress/mastery consistent",
+  "notAuthority": [
+    "NativeMediaController cue array",
+    "video position",
+    "layout",
+    "journal",
+    "old receipt",
+    "planning prompt",
+    "model memory"
+  ],
+  "currentPositionGap": "Node5 in client facts is manifest presentation binding; durable progress does not prove current visual/pedagogical cursor. Return unknown current position, separately expose bound Node7 source and execution node.",
+  "revisionSeparation": {
+    "contentRevision": "frozen version/binding revision",
+    "studentEvidence": "durable attempt sequence + safe state digest + observedAt + latestAttemptAt/progressUpdatedAt",
+    "runtimeGeneration": "client/runtime lease only; not student progress revision"
+  },
+  "noCasClaim": true
+}

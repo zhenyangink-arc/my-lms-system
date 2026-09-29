@@ -1,0 +1,10 @@
+{
+  "eightSourceLocksMatch": true,
+  "sensitiveLiteralMatches": [],
+  "privateAnswer": "Approved server-only module only; not an exported evidence value",
+  "testEvidence": "15/15 source/log hashes unchanged",
+  "buildEvidence": "Existing full-workspace build PASS is not the deployment artifact",
+  "candidateBuild": "After A-Environment approval; no build/deploy in this read-only preparation",
+  "scopedLint": "4 product files,0 errors/0 warnings; bytes unchanged",
+  "diffCheck": "PASS"
+}

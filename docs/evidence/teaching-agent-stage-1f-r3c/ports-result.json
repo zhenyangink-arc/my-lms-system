@@ -1,0 +1,13 @@
+{
+  "currentLesson": {
+    "status": "ok",
+    "syntheticSentencePresent": true
+  },
+  "teachingState": {
+    "status": "ok",
+    "phase": "explanation",
+    "semantic": "last_saved_teaching_position"
+  },
+  "wrongDigestRejectedByRealDatabaseManifest": true,
+  "domainUsesServiceRole": false
+}

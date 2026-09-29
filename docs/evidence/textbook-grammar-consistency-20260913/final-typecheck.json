@@ -1,0 +1,8 @@
+{
+  "mode": "typecheck",
+  "code": 0,
+  "durationSeconds": 4.004,
+  "privateConfigInjected": false,
+  "log": "/tmp/uply-grammar-final-typecheck.log",
+  "summary": []
+}

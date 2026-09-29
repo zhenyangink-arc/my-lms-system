@@ -1,0 +1,7 @@
+# Source input only: actual loader/ABI/TLS checks must precede any BUILT lock.
+# The cached runner identity is pinned by R2 public evidence; no pull allowed.
+# Exact cached base ID sha256:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029; recipe verifies/tag binds it before build.
+FROM teaching-agent-roles-exporter-pg176-base:6a097f68bae708cedbabd6188d68c7e2e7a38cedd05a176e1cc0ba29e3bbe029
+COPY runtime-rootfs/ /
+ENV LD_LIBRARY_PATH="/opt/teaching-agent/roles-exporter/pg17.6-v1/lib" PATH="/opt/teaching-agent/roles-exporter/pg17.6-v1/bin:/usr/bin:/bin"
+ENTRYPOINT ["/opt/teaching-agent/roles-exporter/pg17.6-v1/entrypoint-v1.sh"]

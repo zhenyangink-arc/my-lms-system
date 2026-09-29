@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "independentlyRecheckedPersistedText": true,
+  "items": [
+    {
+      "id": "M1",
+      "nodeNumber": 2,
+      "status": "RESOLVED",
+      "currentEvidence": "先介绍两类字母，再明确한 글자 안에 모아 써요；가是同一字形而非分开的ㄱㅏ。左右两句紧随“가”를 보세요，仅解释该例，后续Node6提供下置元音反例。删除原声音开头/延续定义，没有误导性概括或新增难术语。"
+    },
+    {
+      "id": "M2",
+      "nodeNumber": 2,
+      "status": "RESOLVED",
+      "currentEvidence": "先介绍两类字母，再明确한 글자 안에 모아 써요；가是同一字形而非分开的ㄱㅏ。左右两句紧随“가”를 보세요，仅解释该例，后续Node6提供下置元音反例。删除原声音开头/延续定义，没有误导性概括或新增难术语。"
+    },
+    {
+      "id": "M3",
+      "nodeNumber": 6,
+      "status": "RESOLVED",
+      "currentEvidence": "中声以모음角色说明，가中ㅏ在ㄱ右侧、고中ㅗ在ㄱ下方，明确位置随形态变化，原가운데定义已消失。앞可理解为音节顺序的前部而非固定左侧；终声下面可再有一个辅音限定入门单终声例子，并未宣称所有终声只能含一个字母。한=ㅎ/ㅏ/ㄴ完全正确。ㅎ在例字中直接指出，未要求提前背会它；无必要的前置知识缺口。三角色是本目标必要术语，以短句分段，不扩展받침规则。"
+    },
+    {
+      "id": "S1",
+      "nodeNumber": 1,
+      "status": "RESOLVED",
+      "currentEvidence": "存在句한글에는…있어요自然、语法正确；后续모아서 한 글자를 만들어요保留组合目标。问候和볼까요礼貌，信息量小；原不自然表述没有残留。"
+    },
+    {
+      "id": "S2",
+      "nodeNumber": 4,
+      "status": "RESOLVED",
+      "currentEvidence": "三句替代连续名词化/比较句，减轻理解负担；原八字母未增加。前后的모양을…보세요属短促复习提醒，间隔一条减压说明，没有新命题矛盾，也未达到需要再次修改的重复程度。"
+    },
+    {
+      "id": "S3",
+      "nodeNumber": 5,
+      "status": "RESOLVED",
+      "currentEvidence": "四组组合全部正确；两行가 나 다 마 / 라 바 사 아对应已展示的八个辅音与ㅏ。未把字母名称等同读音。“아”의 ㅇ无声限定该字的初声位置，不把终声ㅇ错误地说成无声。引导每个读一次，保留Exposure，未加入音变。文本包含读音示范指令，但没有证明音频正确性或学生掌握。"
+    },
+    {
+      "id": "S4",
+      "nodeNumber": 8,
+      "status": "RESOLVED",
+      "currentEvidence": "초성과 중성이 있어요与종성은 있을 수도, 없을 수도 있어요分句明确必需/可选范围。在当前가/한这类合体字形语境中准确，并非宣称每个独立字母符号都含这些部分。总结与Node6一致，最后的배워 볼게요自然礼貌。"
+    }
+  ],
+  "mustFixRemaining": 0,
+  "shouldFixRemaining": 0,
+  "r6dHistoricalProposalModified": false
+}

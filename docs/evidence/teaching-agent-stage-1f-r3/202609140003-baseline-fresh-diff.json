@@ -1,0 +1,444 @@
+{
+  "columns": {
+    "added": [
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "plan_id",
+        "notNull": true,
+        "number": 1,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "item_id",
+        "notNull": true,
+        "number": 2,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "assignment_id",
+        "notNull": true,
+        "number": 3,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": null,
+        "generated": "",
+        "identity": "",
+        "name": "created_by",
+        "notNull": true,
+        "number": 4,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "uuid"
+      },
+      {
+        "acl": null,
+        "collation": null,
+        "default": "now()",
+        "generated": "",
+        "identity": "",
+        "name": "created_at",
+        "notNull": true,
+        "number": 5,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "type": "timestamp with time zone"
+      }
+    ],
+    "removed": []
+  },
+  "constraints": {
+    "added": [
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (assignment_id) REFERENCES public.learning_assignments(id) ON DELETE RESTRICT",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_assignment_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "UNIQUE (assignment_id)",
+        "kind": "u",
+        "name": "curriculum_plan_assessments_assignment_id_key",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (created_by) REFERENCES public.profiles(id)",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_created_by_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (item_id) REFERENCES public.curriculum_plan_template_items(id) ON DELETE RESTRICT",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_item_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "PRIMARY KEY (plan_id, item_id)",
+        "kind": "p",
+        "name": "curriculum_plan_assessments_pkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "FOREIGN KEY (plan_id) REFERENCES public.institution_curriculum_plans(id) ON DELETE CASCADE",
+        "kind": "f",
+        "name": "curriculum_plan_assessments_plan_id_fkey",
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((activity_type = ANY (ARRAY['course'::text, 'listening'::text, 'speaking'::text, 'reading'::text, 'writing'::text, 'vocabulary'::text, 'grammar'::text, 'chapter_test'::text, 'stage_exam'::text, 'final_exam'::text, 'review'::text, 'chapter_practice'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_activity_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((source_type = ANY (ARRAY['lesson'::text, 'chapter'::text, 'chapter_test'::text, 'assessment_paper'::text, 'chapter_practice'::text, 'specialized_practice'::text, 'manual'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_source_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      }
+    ],
+    "removed": [
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((activity_type = ANY (ARRAY['course'::text, 'listening'::text, 'speaking'::text, 'reading'::text, 'writing'::text, 'vocabulary'::text, 'grammar'::text, 'chapter_test'::text, 'stage_exam'::text, 'final_exam'::text, 'review'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_activity_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      },
+      {
+        "deferrable": false,
+        "deferred": false,
+        "definition": "CHECK ((source_type = ANY (ARRAY['lesson'::text, 'chapter'::text, 'specialized_practice'::text, 'chapter_test'::text, 'assessment_paper'::text, 'manual'::text])))",
+        "kind": "c",
+        "name": "curriculum_plan_template_items_source_type_check",
+        "schema": "public",
+        "table": "curriculum_plan_template_items",
+        "typeName": null,
+        "validated": true
+      }
+    ]
+  },
+  "functions": {
+    "added": [
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "guard_curriculum_exam_cancellation",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "217a89fb09d92acf57355b1b707ae7f9c6ee9c96f857077321b592087ff22470"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "guard_curriculum_exam_roster",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "2ebaabe0f5ef0d49042493d5b21f139a3abdd47fe38437231ae25e6db02910be"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "guard_curriculum_learning_publication",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "456bd716c5349a14df6bb7f0faa48f2c07a88cc046e094cbb56b94a4af815253"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres"
+        ],
+        "arguments": "",
+        "identityArguments": "",
+        "name": "guard_curriculum_learning_source",
+        "owner": "postgres",
+        "result": "trigger",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "12c8de02aa586b02eed7c8b5bb347618b8365e8f2c58acd25acb1773f8ae38aa"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres"
+        ],
+        "arguments": "p_template_id uuid",
+        "identityArguments": "p_template_id uuid",
+        "name": "staff_has_curriculum_template",
+        "owner": "postgres",
+        "result": "boolean",
+        "schema": "private",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "d2e6dad3f4ec10444cbcae890efdba4bea90e604c70868e2d164327874c95455"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_plan_id uuid, p_item_id uuid",
+        "identityArguments": "p_plan_id uuid, p_item_id uuid",
+        "name": "dispatch_curriculum_plan_exam",
+        "owner": "postgres",
+        "result": "uuid",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "652016af222c64d78c7d8288daa2f992f0bde6d0951b3dea08e4fcd17929488e"
+      },
+      {
+        "acl": [
+          "authenticated=X/postgres",
+          "postgres=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "arguments": "p_plan_ids uuid[]",
+        "identityArguments": "p_plan_ids uuid[]",
+        "name": "get_curriculum_execution",
+        "owner": "postgres",
+        "result": "jsonb",
+        "schema": "public",
+        "searchPathAndConfig": [
+          "search_path=\"\""
+        ],
+        "securityDefiner": true,
+        "definitionSha256": "07d2b3d8756ce8d86eb9cc8f0dd61c5573b8b243962729959e0ced131b9dba9c"
+      }
+    ],
+    "removed": []
+  },
+  "indexes": {
+    "added": [
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX curriculum_plan_assessments_assignment_id_key ON public.curriculum_plan_assessments USING btree (assignment_id)",
+        "name": "curriculum_plan_assessments_assignment_id_key",
+        "ready": true,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "valid": true
+      },
+      {
+        "clustered": false,
+        "definition": "CREATE UNIQUE INDEX curriculum_plan_assessments_pkey ON public.curriculum_plan_assessments USING btree (plan_id, item_id)",
+        "name": "curriculum_plan_assessments_pkey",
+        "ready": true,
+        "schema": "public",
+        "table": "curriculum_plan_assessments",
+        "valid": true
+      }
+    ],
+    "removed": []
+  },
+  "policies": {
+    "added": [
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "staff read adopted curriculum items",
+        "qual": "private.staff_has_curriculum_template(template_id)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "curriculum_plan_template_items",
+        "with_check": null
+      },
+      {
+        "cmd": "SELECT",
+        "permissive": "PERMISSIVE",
+        "policyname": "staff read adopted curriculum templates",
+        "qual": "private.staff_has_curriculum_template(id)",
+        "roles": [
+          "authenticated"
+        ],
+        "schemaname": "public",
+        "tablename": "curriculum_plan_templates",
+        "with_check": null
+      }
+    ],
+    "removed": []
+  },
+  "relations": {
+    "added": [
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "service_role=arwdDxtm/postgres"
+        ],
+        "bound": null,
+        "forceRls": false,
+        "kind": "r",
+        "name": "curriculum_plan_assessments",
+        "options": null,
+        "owner": "postgres",
+        "partition": null,
+        "persistence": "p",
+        "replicaIdentity": "d",
+        "rls": true,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  },
+  "triggers": {
+    "added": [
+      {
+        "definition": "CREATE TRIGGER curriculum_learning_source_guard BEFORE INSERT OR UPDATE ON public.curriculum_plan_template_items FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_learning_source()",
+        "enabled": "O",
+        "name": "curriculum_learning_source_guard",
+        "schema": "public",
+        "table": "curriculum_plan_template_items"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_learning_publication_guard BEFORE UPDATE ON public.curriculum_plan_templates FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_learning_publication()",
+        "enabled": "O",
+        "name": "curriculum_learning_publication_guard",
+        "schema": "public",
+        "table": "curriculum_plan_templates"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_exam_roster_guard BEFORE INSERT OR UPDATE ON public.institution_curriculum_plan_students FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_exam_roster()",
+        "enabled": "O",
+        "name": "curriculum_exam_roster_guard",
+        "schema": "public",
+        "table": "institution_curriculum_plan_students"
+      },
+      {
+        "definition": "CREATE TRIGGER curriculum_exam_cancellation_guard BEFORE UPDATE ON public.institution_curriculum_plans FOR EACH ROW EXECUTE FUNCTION private.guard_curriculum_exam_cancellation()",
+        "enabled": "O",
+        "name": "curriculum_exam_cancellation_guard",
+        "schema": "public",
+        "table": "institution_curriculum_plans"
+      }
+    ],
+    "removed": []
+  },
+  "types": {
+    "added": [
+      {
+        "acl": null,
+        "base": "-",
+        "category": "A",
+        "default": null,
+        "enum": null,
+        "kind": "b",
+        "name": "_curriculum_plan_assessments",
+        "notNull": false,
+        "schema": "public"
+      },
+      {
+        "acl": null,
+        "base": "-",
+        "category": "C",
+        "default": null,
+        "enum": null,
+        "kind": "c",
+        "name": "curriculum_plan_assessments",
+        "notNull": false,
+        "schema": "public"
+      }
+    ],
+    "removed": []
+  }
+}

@@ -5,6 +5,7 @@ import {build} from 'esbuild';
 import {chromium} from '@playwright/test';
 import {manifest,compiled,source,content,context} from './runtime-4a.mjs';
 const {createLearningBoundary}=await import('../../src/features/smart-textbook-runtime/server/learning-boundary.server.ts');
+const {sceneImageBytes}=await import('../../src/features/smart-textbook-runtime/server/scene-image.server.ts');
 const {activityExecutions}=await import('../../src/features/smart-textbook-runtime/server/activity-binding.server.ts');
 const {activityPages}=await import('../../src/features/smart-textbook-runtime/server/activity-pages.server.ts');
 const {patternExecutions}=await import('../../src/features/smart-textbook-runtime/server/pattern-binding.server.ts');
@@ -20,7 +21,8 @@ export async function mountedRecordingIntegration({recording,refresh,authority})
       locale:'zh-CN',admin:authority.admin,db:authority.admin,manifest,bindings:compiled.bindings,services:compiled.services,nodes:source.nodes,
       scope:{authorized:true,actorId:authority.owner.studentId,tenantId:authority.owner.tenantId,versionId:manifest.version.id,sourceRevision:compiled.report.sourceRevision}};
   }},async()=>({
-    recording,learning:async c=>content[c],refresh:async()=> (await refresh()).server,
+    recording,learning:async c=>content[c],
+    sceneImage:(c,s)=>sceneImageBytes(manifest,compiled.bindings,source,c,s,async()=>new Response(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=','base64'),{headers:{'content-type':'image/png'}})),refresh:async()=> (await refresh()).server,
     activities:{load:async c=>activityExecutions(manifest,compiled.bindings,c,'zh-CN'),submit:async()=>{throw Error('Not a general grader test');}},
     pages:{load:async c=>activityPages(compiled.bindings,compiled.services,c,'zh-CN')},patterns:{load:async c=>patternExecutions(manifest,compiled.bindings,c,'zh-CN')},
     guidedRepeat:{load:async()=>null},learningTools:{load:async c=>learningTools(manifest,compiled.bindings,compiled.services,c,source.nodes)},
@@ -73,7 +75,7 @@ export async function mountedRecordingIntegration({recording,refresh,authority})
     assert.equal((await page.evaluate(()=>window.testServerState())).attempts.length,2);
     assert(results.every(r=>r.score===null));assert(results.some(r=>r.status==='already-completed'));assert.deepEqual(uiErrors,[]);
     // Canceled Step reads are intentionally rejected; never exempt a write or completion.
-    const cancellable=['tools','content','repeat','recording-load','recording-restore','recording-audio','refresh','activities','pages','patterns','restore'];
+    const cancellable=['scene-image','tools','content','repeat','recording-load','recording-restore','recording-audio','refresh','activities','pages','patterns','restore'];
     assert.deepEqual(errors.filter(e=>!(cancellable.includes(e.operation)&&['LEARNING_BOUNDARY_GENERATION','LEARNING_BOUNDARY_GENERATION_OR_STEP','This operation was aborted'].includes(e.message)&&e.requestGeneration<e.currentGeneration)),[]);
     for(const request of requests){const serialized=JSON.stringify(request);assert(!/tenantId|studentId|versionId|sourceRevision|snapshotId|capsuleRef|objectKey|proof/.test(serialized));for(const a of source.activities)assert(!serialized.includes(a.id),'DB activity UUID on browser wire');}
     await page.evaluate(()=>window.testUnmount());const witness={snapshotId:manifest.snapshot.id,mountedRecording:true,speaking:true,roleplay:true,reload:true,serverAuthority:true,requests:requests.length};

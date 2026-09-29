@@ -1,0 +1,13 @@
+{
+  "currentLesson": {
+    "status": "ok",
+    "originalSentence": "저는 학생입니다."
+  },
+  "teachingState": {
+    "status": "ok",
+    "phase": "explanation",
+    "semantic": "last_saved_teaching_position"
+  },
+  "wrongDigestRejectedByRealDatabaseManifest": true,
+  "domainUsesServiceRole": false
+}

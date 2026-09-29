@@ -1,0 +1,784 @@
+TAP version 13
+# Subtest: practice binding migration enforces approval, isolation, stale-write checks and frozen student content
+ok 1 - practice binding migration enforces approval, isolation, stale-write checks and frozen student content # SKIP Set LMS_PGLITE_MODULE to a local PGlite module to run the isolated PostgreSQL test.
+  ---
+  duration_ms: 1.164058
+  type: 'test'
+  ...
+# (node:16) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/lib/chapter-practice-binding.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: snapshots keep full vocabulary and grammar content in deterministic node order
+ok 2 - snapshots keep full vocabulary and grammar content in deterministic node order
+  ---
+  duration_ms: 10.541359
+  type: 'test'
+  ...
+# Subtest: unpublished book, version, chapter and unmatched IDs cannot be approved
+ok 3 - unpublished book, version, chapter and unmatched IDs cannot be approved
+  ---
+  duration_ms: 0.206208
+  type: 'test'
+  ...
+# Subtest: review detects nested audio and item ordering edits, but ignores JSON object key order
+ok 4 - review detects nested audio and item ordering edits, but ignores JSON object key order
+  ---
+  duration_ms: 1.616606
+  type: 'test'
+  ...
+# Subtest: student vocabulary excludes grammar and empty entries and deduplicates only equal teaching content
+ok 5 - student vocabulary excludes grammar and empty entries and deduplicates only equal teaching content
+  ---
+  duration_ms: 0.347613
+  type: 'test'
+  ...
+# (node:23) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/features/course-completion/policy-form.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: policy drafts, atomic replacement, immutable published versions and refresh retry require owner authorization
+ok 6 - policy drafts, atomic replacement, immutable published versions and refresh retry require owner authorization # SKIP Set LMS_PGLITE_MODULE for isolated PostgreSQL verification
+  ---
+  duration_ms: 1.253071
+  type: 'test'
+  ...
+# Subtest: canonical authoring RPC: real isolated transaction and authorization
+    # Subtest: unauthenticated and non-owner fail before writes
+    ok 1 - unauthenticated and non-owner fail before writes
+      ---
+      duration_ms: 165.753386
+      type: 'test'
+      ...
+    # Subtest: service_role and unprivileged callers have no RPC grant
+    ok 2 - service_role and unprivileged callers have no RPC grant
+      ---
+      duration_ms: 114.645083
+      type: 'test'
+      ...
+    # Subtest: inactive or provisioned owner rejected without creating auth data
+    ok 3 - inactive or provisioned owner rejected without creating auth data
+      ---
+      duration_ms: 162.914343
+      type: 'test'
+      ...
+    # Subtest: partial execution parent is rejected, never repaired
+    ok 4 - partial execution parent is rejected, never repaired
+      ---
+      duration_ms: 117.025484
+      type: 'test'
+      ...
+    # Subtest: invalid freeze and private contract fail closed
+    ok 5 - invalid freeze and private contract fail closed
+      ---
+      duration_ms: 212.011318
+      type: 'test'
+      ...
+    # Subtest: failure after digital_textbook_nodes insert rolls entire transaction back
+    ok 6 - failure after digital_textbook_nodes insert rolls entire transaction back
+      ---
+      duration_ms: 214.649304
+      type: 'test'
+      ...
+    # Subtest: failure after digital_textbook_activities insert rolls entire transaction back
+    ok 7 - failure after digital_textbook_activities insert rolls entire transaction back
+      ---
+      duration_ms: 223.219881
+      type: 'test'
+      ...
+    # Subtest: failure after digital_textbook_activity_secrets insert rolls entire transaction back
+    ok 8 - failure after digital_textbook_activity_secrets insert rolls entire transaction back
+      ---
+      duration_ms: 214.830183
+      type: 'test'
+      ...
+    # Subtest: concurrent calls create one triple, duplicate returns existing
+    ok 9 - concurrent calls create one triple, duplicate returns existing
+      ---
+      duration_ms: 123.110049
+      type: 'test'
+      ...
+    # Subtest: existing private binding mismatch is never repaired
+    ok 10 - existing private binding mismatch is never repaired
+      ---
+      duration_ms: 104.093372
+      type: 'test'
+      ...
+    1..10
+ok 7 - canonical authoring RPC: real isolated transaction and authorization
+  ---
+  duration_ms: 2998.22289
+  type: 'test'
+  ...
+# (node:575) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/yangzhen/projects/my-lms-system/src/app/dashboard/courses/%5BcategorySlug%5D/%5BsubcategorySlug%5D/%5BcourseSlug%5D/%5BlessonSlug%5D/smart-textbook-submission.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/yangzhen/projects/my-lms-system/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: legacy producer and published readers remain valid through actual latest historical chain + native migration
+    # Subtest: historical v1 document bytes and digest unchanged
+    ok 1 - historical v1 document bytes and digest unchanged
+      ---
+      duration_ms: 672.796643
+      type: 'test'
+      ...
+    # Subtest: legacy publish after forward migration and official current read still work
+    ok 2 - legacy publish after forward migration and official current read still work
+      ---
+      duration_ms: 1570.94093
+      type: 'test'
+      ...
+    # Subtest: legacy payload cannot enter native certifier
+    ok 3 - legacy payload cannot enter native certifier
+      ---
+      duration_ms: 10.766188
+      type: 'test'
+      ...
+    # Subtest: native payload cannot enter legacy-only consumer
+    ok 4 - native payload cannot enter legacy-only consumer
+      ---
+      duration_ms: 13.104351
+      type: 'test'
+      ...
+    # Subtest: current historical PT409 fence retained for legacy content
+    ok 5 - current historical PT409 fence retained for legacy content
+      ---
+      duration_ms: 103.600466
+      type: 'test'
+      ...
+    1..5
+ok 8 - legacy producer and published readers remain valid through actual latest historical chain + native migration
+  ---
+  duration_ms: 43461.734134
+  type: 'test'
+  ...
+# Subtest: completion only on historical schema
+    # Subtest: Summary definition without artifacts denied
+    ok 1 - Summary definition without artifacts denied
+      ---
+      duration_ms: 70.982702
+      type: 'test'
+      ...
+    # Subtest: Summary definition without durable requirement denied
+    ok 2 - Summary definition without durable requirement denied
+      ---
+      duration_ms: 59.126753
+      type: 'test'
+      ...
+    # Subtest: Summary definition wrong output contract denied
+    ok 3 - Summary definition wrong output contract denied
+      ---
+      duration_ms: 57.608032
+      type: 'test'
+      ...
+    # Subtest: Explain v1 lesson evidence still completes
+    ok 4 - Explain v1 lesson evidence still completes
+      ---
+      duration_ms: 427.412232
+      type: 'test'
+      ...
+    # Subtest: Explain v1 missing lesson evidence denied
+    ok 5 - Explain v1 missing lesson evidence denied
+      ---
+      duration_ms: 235.587429
+      type: 'test'
+      ...
+    # Subtest: Summary1.1 valid production evidence completes
+    ok 6 - Summary1.1 valid production evidence completes
+      ---
+      duration_ms: 441.382137
+      type: 'test'
+      ...
+    # Subtest: all multiple mandatory requirements accepted
+    ok 7 - all multiple mandatory requirements accepted
+      ---
+      duration_ms: 511.489048
+      type: 'test'
+      ...
+    # Subtest: partial mandatory collection fails
+    ok 8 - partial mandatory collection fails
+      ---
+      duration_ms: 423.635026
+      type: 'test'
+      ...
+    # Subtest: missing durable evidence fails
+    ok 9 - missing durable evidence fails
+      ---
+      duration_ms: 242.066439
+      type: 'test'
+      ...
+    # Subtest: Tool1.0 cannot satisfy1.1 fails closed
+    ok 10 - Tool1.0 cannot satisfy1.1 fails closed
+      ---
+      duration_ms: 254.473941
+      type: 'test'
+      ...
+    # Subtest: development receipt fails closed
+    ok 11 - development receipt fails closed
+      ---
+      duration_ms: 244.327772
+      type: 'test'
+      ...
+    # Subtest: development provenance fails closed
+    ok 12 - development provenance fails closed
+      ---
+      duration_ms: 238.968724
+      type: 'test'
+      ...
+    # Subtest: fixture provenance fails closed
+    ok 13 - fixture provenance fails closed
+      ---
+      duration_ms: 232.889826
+      type: 'test'
+      ...
+    # Subtest: cross-run evidence fails closed
+    ok 14 - cross-run evidence fails closed
+      ---
+      duration_ms: 449.085105
+      type: 'test'
+      ...
+    # Subtest: wrong subject fails closed
+    ok 15 - wrong subject fails closed
+      ---
+      duration_ms: 426.736555
+      type: 'test'
+      ...
+    # Subtest: wrong tenant fails closed
+    ok 16 - wrong tenant fails closed
+      ---
+      duration_ms: 439.175936
+      type: 'test'
+      ...
+    # Subtest: wrong scope fails closed
+    ok 17 - wrong scope fails closed
+      ---
+      duration_ms: 437.917501
+      type: 'test'
+      ...
+    # Subtest: wrong Skill version fails closed
+    ok 18 - wrong Skill version fails closed
+      ---
+      duration_ms: 443.803128
+      type: 'test'
+      ...
+    # Subtest: stale evidence fails closed
+    ok 19 - stale evidence fails closed
+      ---
+      duration_ms: 436.401187
+      type: 'test'
+      ...
+    # Subtest: stale deadline fails closed
+    ok 20 - stale deadline fails closed
+      ---
+      duration_ms: 446.413016
+      type: 'test'
+      ...
+    # Subtest: Activity-as-segmentRef bypass fails closed
+    ok 21 - Activity-as-segmentRef bypass fails closed
+      ---
+      duration_ms: 250.501506
+      type: 'test'
+      ...
+    # Subtest: private payload injection fails closed
+    ok 22 - private payload injection fails closed
+      ---
+      duration_ms: 243.037995
+      type: 'test'
+      ...
+    # Subtest: bounded final facts cannot differ from verified Tool trace
+    ok 23 - bounded final facts cannot differ from verified Tool trace
+      ---
+      duration_ms: 433.12493
+      type: 'test'
+      ...
+    # Subtest: final output byte/digest drift denied
+    ok 24 - final output byte/digest drift denied
+      ---
+      duration_ms: 445.436551
+      type: 'test'
+      ...
+    # Subtest: failed newer tool invalidates old success
+    ok 25 - failed newer tool invalidates old success
+      ---
+      duration_ms: 491.437667
+      type: 'test'
+      ...
+    # Subtest: cancel request cannot be completed
+    ok 26 - cancel request cannot be completed
+      ---
+      duration_ms: 521.805793
+      type: 'test'
+      ...
+    # Subtest: CAS and fence retained
+    ok 27 - CAS and fence retained
+      ---
+      duration_ms: 610.41915
+      type: 'test'
+      ...
+    # Subtest: browser and service roles cannot bypass private gate
+    ok 28 - browser and service roles cannot bypass private gate
+      ---
+      duration_ms: 160.428101
+      type: 'test'
+      ...
+    1..28
+ok 9 - completion only on historical schema
+  ---
+  duration_ms: 12922.340996
+  type: 'test'
+  ...
+# Subtest: combined publication and completion on historical schema
+    # Subtest: Summary definition without artifacts denied
+    ok 1 - Summary definition without artifacts denied
+      ---
+      duration_ms: 60.190308
+      type: 'test'
+      ...
+    # Subtest: Summary definition without durable requirement denied
+    ok 2 - Summary definition without durable requirement denied
+      ---
+      duration_ms: 65.617678
+      type: 'test'
+      ...
+    # Subtest: Summary definition wrong output contract denied
+    ok 3 - Summary definition wrong output contract denied
+      ---
+      duration_ms: 58.354333
+      type: 'test'
+      ...
+    # Subtest: Explain v1 lesson evidence still completes
+    ok 4 - Explain v1 lesson evidence still completes
+      ---
+      duration_ms: 430.843688
+      type: 'test'
+      ...
+    # Subtest: Explain v1 missing lesson evidence denied
+    ok 5 - Explain v1 missing lesson evidence denied
+      ---
+      duration_ms: 237.027425
+      type: 'test'
+      ...
+    # Subtest: Summary1.1 valid production evidence completes
+    ok 6 - Summary1.1 valid production evidence completes
+      ---
+      duration_ms: 445.631613
+      type: 'test'
+      ...
+    # Subtest: all multiple mandatory requirements accepted
+    ok 7 - all multiple mandatory requirements accepted
+      ---
+      duration_ms: 517.394269
+      type: 'test'
+      ...
+    # Subtest: partial mandatory collection fails
+    ok 8 - partial mandatory collection fails
+      ---
+      duration_ms: 444.565668
+      type: 'test'
+      ...
+    # Subtest: missing durable evidence fails
+    ok 9 - missing durable evidence fails
+      ---
+      duration_ms: 238.138865
+      type: 'test'
+      ...
+    # Subtest: Tool1.0 cannot satisfy1.1 fails closed
+    ok 10 - Tool1.0 cannot satisfy1.1 fails closed
+      ---
+      duration_ms: 247.211796
+      type: 'test'
+      ...
+    # Subtest: development receipt fails closed
+    ok 11 - development receipt fails closed
+      ---
+      duration_ms: 247.426265
+      type: 'test'
+      ...
+    # Subtest: development provenance fails closed
+    ok 12 - development provenance fails closed
+      ---
+      duration_ms: 247.389273
+      type: 'test'
+      ...
+    # Subtest: fixture provenance fails closed
+    ok 13 - fixture provenance fails closed
+      ---
+      duration_ms: 236.721578
+      type: 'test'
+      ...
+    # Subtest: cross-run evidence fails closed
+    ok 14 - cross-run evidence fails closed
+      ---
+      duration_ms: 424.104482
+      type: 'test'
+      ...
+    # Subtest: wrong subject fails closed
+    ok 15 - wrong subject fails closed
+      ---
+      duration_ms: 453.743775
+      type: 'test'
+      ...
+    # Subtest: wrong tenant fails closed
+    ok 16 - wrong tenant fails closed
+      ---
+      duration_ms: 443.575367
+      type: 'test'
+      ...
+    # Subtest: wrong scope fails closed
+    ok 17 - wrong scope fails closed
+      ---
+      duration_ms: 435.162905
+      type: 'test'
+      ...
+    # Subtest: wrong Skill version fails closed
+    ok 18 - wrong Skill version fails closed
+      ---
+      duration_ms: 431.243132
+      type: 'test'
+      ...
+    # Subtest: stale evidence fails closed
+    ok 19 - stale evidence fails closed
+      ---
+      duration_ms: 431.156649
+      type: 'test'
+      ...
+    # Subtest: stale deadline fails closed
+    ok 20 - stale deadline fails closed
+      ---
+      duration_ms: 449.34686
+      type: 'test'
+      ...
+    # Subtest: Activity-as-segmentRef bypass fails closed
+    ok 21 - Activity-as-segmentRef bypass fails closed
+      ---
+      duration_ms: 248.783747
+      type: 'test'
+      ...
+    # Subtest: private payload injection fails closed
+    ok 22 - private payload injection fails closed
+      ---
+      duration_ms: 248.760096
+      type: 'test'
+      ...
+    # Subtest: bounded final facts cannot differ from verified Tool trace
+    ok 23 - bounded final facts cannot differ from verified Tool trace
+      ---
+      duration_ms: 437.03044
+      type: 'test'
+      ...
+    # Subtest: final output byte/digest drift denied
+    ok 24 - final output byte/digest drift denied
+      ---
+      duration_ms: 439.470423
+      type: 'test'
+      ...
+    # Subtest: failed newer tool invalidates old success
+    ok 25 - failed newer tool invalidates old success
+      ---
+      duration_ms: 498.124349
+      type: 'test'
+      ...
+    # Subtest: cancel request cannot be completed
+    ok 26 - cancel request cannot be completed
+      ---
+      duration_ms: 544.645742
+      type: 'test'
+      ...
+    # Subtest: CAS and fence retained
+    ok 27 - CAS and fence retained
+      ---
+      duration_ms: 620.657828
+      type: 'test'
+      ...
+    # Subtest: browser and service roles cannot bypass private gate
+    ok 28 - browser and service roles cannot bypass private gate
+      ---
+      duration_ms: 162.965702
+      type: 'test'
+      ...
+    1..28
+ok 10 - combined publication and completion on historical schema
+  ---
+  duration_ms: 13096.431124
+  type: 'test'
+  ...
+# Subtest: publication-only migration on complete relevant historical chain
+    # Subtest: SQL unknown revision rejected
+    ok 1 - SQL unknown revision rejected
+      ---
+      duration_ms: 118.177978
+      type: 'test'
+      ...
+    # Subtest: SQL mixed kind rejected
+    ok 2 - SQL mixed kind rejected
+      ---
+      duration_ms: 121.836361
+      type: 'test'
+      ...
+    # Subtest: SQL missing native binding rejected
+    ok 3 - SQL missing native binding rejected
+      ---
+      duration_ms: 124.464841
+      type: 'test'
+      ...
+    # Subtest: SQL wrong graph binding rejected
+    ok 4 - SQL wrong graph binding rejected
+      ---
+      duration_ms: 130.514641
+      type: 'test'
+      ...
+    # Subtest: SQL compiler alias forbidden rejected
+    ok 5 - SQL compiler alias forbidden rejected
+      ---
+      duration_ms: 124.280801
+      type: 'test'
+      ...
+    # Subtest: SQL legacy pretending native rejected
+    ok 6 - SQL legacy pretending native rejected
+      ---
+      duration_ms: 120.505328
+      type: 'test'
+      ...
+    # Subtest: SQL native media marker rejected
+    ok 7 - SQL native media marker rejected
+      ---
+      duration_ms: 121.204072
+      type: 'test'
+      ...
+    # Subtest: SQL dependency mismatch rejected
+    ok 8 - SQL dependency mismatch rejected
+      ---
+      duration_ms: 123.470568
+      type: 'test'
+      ...
+    # Subtest: SQL private/public mismatch rejected
+    ok 9 - SQL private/public mismatch rejected
+      ---
+      duration_ms: 128.776666
+      type: 'test'
+      ...
+    # Subtest: Owner → native publisher → ONE capture → official CAS repository/current
+    ok 10 - Owner → native publisher → ONE capture → official CAS repository/current
+      ---
+      duration_ms: 289.433397
+      type: 'test'
+      ...
+    # Subtest: native CAS stale pointer rejected
+    ok 11 - native CAS stale pointer rejected
+      ---
+      duration_ms: 74.671914
+      type: 'test'
+      ...
+    # Subtest: concurrent native publication CAS has exactly one winner
+    ok 12 - concurrent native publication CAS has exactly one winner
+      ---
+      duration_ms: 87.549521
+      type: 'test'
+      ...
+    # Subtest: actual PostgreSQL READ ONLY snapshot never joins old publication with later facts
+    ok 13 - actual PostgreSQL READ ONLY snapshot never joins old publication with later facts
+      ---
+      duration_ms: 1181.894225
+      type: 'test'
+      ...
+    # Subtest: native same-id different payload rejected
+    ok 14 - native same-id different payload rejected
+      ---
+      duration_ms: 68.178914
+      type: 'test'
+      ...
+    # Subtest: native dependency fence remains PT409
+    ok 15 - native dependency fence remains PT409
+      ---
+      duration_ms: 62.012874
+      type: 'test'
+      ...
+    # Subtest: native published immutable snapshots unchanged
+    ok 16 - native published immutable snapshots unchanged
+      ---
+      duration_ms: 110.627084
+      type: 'test'
+      ...
+    # Subtest: outer wrapper and native fence preserved
+    ok 17 - outer wrapper and native fence preserved
+      ---
+      duration_ms: 108.564965
+      type: 'test'
+      ...
+    # Subtest: revoked and expired session locators cannot be revived
+    ok 18 - revoked and expired session locators cannot be revived
+      ---
+      duration_ms: 368.731703
+      type: 'test'
+      ...
+    # Subtest: retired native snapshot cannot be revived by rollback/session
+    ok 19 - retired native snapshot cannot be revived by rollback/session
+      ---
+      duration_ms: 227.20126
+      type: 'test'
+      ...
+    # Subtest: private/base RPC ACL remains closed
+    ok 20 - private/base RPC ACL remains closed
+      ---
+      duration_ms: 105.433539
+      type: 'test'
+      ...
+    1..20
+ok 11 - publication-only migration on complete relevant historical chain
+  ---
+  duration_ms: 7984.455956
+  type: 'test'
+  ...
+# Subtest: combined independent migrations retain wrappers, definitions and separation
+    # Subtest: both forward functions installed and public cancel/CAS wrapper retained
+    ok 1 - both forward functions installed and public cancel/CAS wrapper retained
+      ---
+      duration_ms: 101.615905
+      type: 'test'
+      ...
+    # Subtest: SQL unknown revision rejected
+    ok 2 - SQL unknown revision rejected
+      ---
+      duration_ms: 131.737584
+      type: 'test'
+      ...
+    # Subtest: SQL mixed kind rejected
+    ok 3 - SQL mixed kind rejected
+      ---
+      duration_ms: 118.272836
+      type: 'test'
+      ...
+    # Subtest: SQL missing native binding rejected
+    ok 4 - SQL missing native binding rejected
+      ---
+      duration_ms: 116.248879
+      type: 'test'
+      ...
+    # Subtest: SQL wrong graph binding rejected
+    ok 5 - SQL wrong graph binding rejected
+      ---
+      duration_ms: 118.617274
+      type: 'test'
+      ...
+    # Subtest: SQL compiler alias forbidden rejected
+    ok 6 - SQL compiler alias forbidden rejected
+      ---
+      duration_ms: 117.296225
+      type: 'test'
+      ...
+    # Subtest: SQL legacy pretending native rejected
+    ok 7 - SQL legacy pretending native rejected
+      ---
+      duration_ms: 117.871155
+      type: 'test'
+      ...
+    # Subtest: SQL native media marker rejected
+    ok 8 - SQL native media marker rejected
+      ---
+      duration_ms: 119.723965
+      type: 'test'
+      ...
+    # Subtest: SQL dependency mismatch rejected
+    ok 9 - SQL dependency mismatch rejected
+      ---
+      duration_ms: 120.847457
+      type: 'test'
+      ...
+    # Subtest: SQL private/public mismatch rejected
+    ok 10 - SQL private/public mismatch rejected
+      ---
+      duration_ms: 116.261402
+      type: 'test'
+      ...
+    # Subtest: Owner → native publisher → ONE capture → official CAS repository/current
+    ok 11 - Owner → native publisher → ONE capture → official CAS repository/current
+      ---
+      duration_ms: 234.594182
+      type: 'test'
+      ...
+    # Subtest: native CAS stale pointer rejected
+    ok 12 - native CAS stale pointer rejected
+      ---
+      duration_ms: 66.934354
+      type: 'test'
+      ...
+    # Subtest: concurrent native publication CAS has exactly one winner
+    ok 13 - concurrent native publication CAS has exactly one winner
+      ---
+      duration_ms: 83.094346
+      type: 'test'
+      ...
+    # Subtest: actual PostgreSQL READ ONLY snapshot never joins old publication with later facts
+    ok 14 - actual PostgreSQL READ ONLY snapshot never joins old publication with later facts
+      ---
+      duration_ms: 1172.074884
+      type: 'test'
+      ...
+    # Subtest: native same-id different payload rejected
+    ok 15 - native same-id different payload rejected
+      ---
+      duration_ms: 68.149152
+      type: 'test'
+      ...
+    # Subtest: native dependency fence remains PT409
+    ok 16 - native dependency fence remains PT409
+      ---
+      duration_ms: 65.713785
+      type: 'test'
+      ...
+    # Subtest: native published immutable snapshots unchanged
+    ok 17 - native published immutable snapshots unchanged
+      ---
+      duration_ms: 102.767503
+      type: 'test'
+      ...
+    # Subtest: outer wrapper and native fence preserved
+    ok 18 - outer wrapper and native fence preserved
+      ---
+      duration_ms: 113.416656
+      type: 'test'
+      ...
+    # Subtest: revoked and expired session locators cannot be revived
+    ok 19 - revoked and expired session locators cannot be revived
+      ---
+      duration_ms: 345.803562
+      type: 'test'
+      ...
+    # Subtest: retired native snapshot cannot be revived by rollback/session
+    ok 20 - retired native snapshot cannot be revived by rollback/session
+      ---
+      duration_ms: 231.13115
+      type: 'test'
+      ...
+    # Subtest: private/base RPC ACL remains closed
+    ok 21 - private/base RPC ACL remains closed
+      ---
+      duration_ms: 100.494409
+      type: 'test'
+      ...
+    1..21
+ok 12 - combined independent migrations retain wrappers, definitions and separation
+  ---
+  duration_ms: 8167.001408
+  type: 'test'
+  ...
+# Subtest: migration responsibility separation and no historical rewrites
+ok 13 - migration responsibility separation and no historical rewrites
+  ---
+  duration_ms: 0.610511
+  type: 'test'
+  ...
+# Subtest: source review tracks material, activities and scripts and gates publication without impersonation
+ok 14 - source review tracks material, activities and scripts and gates publication without impersonation # SKIP Set LMS_PGLITE_MODULE to run isolated PostgreSQL tests.
+  ---
+  duration_ms: 1.170268
+  type: 'test'
+  ...
+1..14
+# tests 126
+# suites 0
+# pass 123
+# fail 0
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 90930.742282

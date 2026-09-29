@@ -1,0 +1,45 @@
+{
+  "status": "MATCH",
+  "wrong": {
+    "transaction": "2431358",
+    "digital_textbook_attempts": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "digital_textbook_node_progress": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    }
+  },
+  "correct": {
+    "transaction": "2431359",
+    "digital_textbook_attempts": {
+      "insert": 1,
+      "update": 0,
+      "delete": 0
+    },
+    "digital_textbook_node_progress": {
+      "insert": 0,
+      "update": 1,
+      "delete": 0
+    }
+  },
+  "total": {
+    "insert": 3,
+    "update": 1,
+    "delete": 0
+  },
+  "otherBusinessTables": 0,
+  "evidence": [
+    "empty baseline",
+    "immediate wrong readback",
+    "final readback",
+    "unchanged restart/final readback",
+    "all 207 public/auth ordinary tables xmin scan",
+    "locked existing RPC/trigger definitions"
+  ],
+  "evidenceLimit": "MVCC scan proves surviving writes attributed to the two transactions; zero DELETE supported by locked source/no delete dispatch, not an installed database audit trigger",
+  "retention": "KEEP attempts/progress/journal; no cleanup"
+}

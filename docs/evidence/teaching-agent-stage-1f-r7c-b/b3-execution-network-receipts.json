@@ -1,0 +1,58 @@
+{
+  "capture": "Owner Chrome existing session; only response bodies retained; no headers/cookies/request answer payloads",
+  "records": [
+    {
+      "request": 177,
+      "operation": "activate",
+      "privateKeyLeak": false
+    },
+    {
+      "request": 179,
+      "operation": "restore",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"4a6a0735-4807-4235-adc9-e69f60933487\",\"generation\":0,\"pending\":false,\"receipt\":{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"4a6a0735-4807-4235-adc9-e69f60933487\",\"generation\":0,\"contract\":\"activity-completion/2\",\"status\":\"INCOMPLETE\",\"attemptNumber\":0,\"evidence\":{\"source\":\"activity-domain\",\"storage\":\"CURRENT_DEVELOPMENT_DB\",\"kind\":\"durable-attempt-sequence\",\"attemptSequence\":0,\"stateDigest\":\"ed0b69e501d4c729a02d4d7c26a3ac1ff0e1eb94c06a2fde7d8a0d36d2d23486\",\"observedAt\":\"2026-09-17T13:36:19.178Z\",\"latestAttemptAt\":null,\"progressUpdatedAt\":null},\"completedAt\":null}}\n"
+    },
+    {
+      "request": 182,
+      "operation": "checkpoint",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"a1f37a7f-1fe3-4256-88ae-bdbcd7eb65ef\",\"generation\":0,\"contract\":\"activity-completion/2\",\"status\":\"INCOMPLETE\",\"attemptNumber\":0,\"evidence\":{\"source\":\"activity-domain\",\"storage\":\"CURRENT_DEVELOPMENT_DB\",\"kind\":\"durable-attempt-sequence\",\"attemptSequence\":0,\"stateDigest\":\"ed0b69e501d4c729a02d4d7c26a3ac1ff0e1eb94c06a2fde7d8a0d36d2d23486\",\"observedAt\":\"2026-09-17T13:37:36.503Z\",\"latestAttemptAt\":null,\"progressUpdatedAt\":null},\"completedAt\":null}\n"
+    },
+    {
+      "request": 183,
+      "operation": "submit",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"receipt\":{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"d33a2ab8-da75-4c34-9655-0bea549a14b1\",\"generation\":0,\"contract\":\"activity-completion/2\",\"status\":\"INCOMPLETE\",\"attemptNumber\":1,\"evidence\":{\"source\":\"activity-domain\",\"storage\":\"CURRENT_DEVELOPMENT_DB\",\"kind\":\"durable-attempt-sequence\",\"attemptSequence\":1,\"stateDigest\":\"1754184a62f789313b9b4fc40ef5153c36e85dceaa30afaa90e4496fc44adbde\",\"observedAt\":\"2026-09-17T13:37:44.256Z\",\"latestAttemptAt\":\"2026-09-17T13:37:44.048635+00:00\",\"progressUpdatedAt\":\"2026-09-17T13:37:44.048635+00:00\"},\"completedAt\":null},\"result\":{\"ok\":true,\"correct\":false,\"score\":0,\"explanation\":\"è¯·å†æƒ³ä¸€æƒ³ã€‚\",\"attemptNumber\":1,\"preview\":true,\"nodeId\":null,\"nodeCompleted\":false,\"completionPercent\":0}}\n"
+    },
+    {
+      "request": 184,
+      "operation": "readback",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"d33a2ab8-da75-4c34-9655-0bea549a14b1\",\"generation\":0,\"contract\":\"activity-completion/2\",\"status\":\"INCOMPLETE\",\"attemptNumber\":1,\"evidence\":{\"source\":\"activity-domain\",\"storage\":\"CURRENT_DEVELOPMENT_DB\",\"kind\":\"durable-attempt-sequence\",\"attemptSequence\":1,\"stateDigest\":\"1754184a62f789313b9b4fc40ef5153c36e85dceaa30afaa90e4496fc44adbde\",\"observedAt\":\"2026-09-17T13:37:44.510Z\",\"latestAttemptAt\":\"2026-09-17T13:37:44.048635+00:00\",\"progressUpdatedAt\":\"2026-09-17T13:37:44.048635+00:00\"},\"completedAt\":null}\n"
+    },
+    {
+      "request": 185,
+      "operation": "submit",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:E{\"digest\":\"2215053350\"}\n"
+    },
+    {
+      "request": 186,
+      "operation": "readback",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"binding\":{\"sessionId\":\"r7cb-b3-wrong-correct-recovery-1\",\"snapshotId\":\"hangul-execution-fixture\",\"snapshotDigest\":\"sha256:e53e29ad5e0aa0a7d5daf63715c2877855dec624045ce246c557f5cd528104b3\",\"stepId\":\"hangul-prelesson\",\"sourceBlockId\":\"test-video\",\"mediaRevision\":\"development-pattern-v1\",\"cueId\":\"vowel-cue\",\"blockId\":\"test-activity\",\"activityRef\":\"hangul-introduction-vowel-recognition\"},\"requestId\":\"10ff8a0e-0229-4285-8297-5b1d01317033\",\"generation\":0,\"contract\":\"activity-completion/2\",\"status\":\"COMPLETED\",\"attemptNumber\":2,\"evidence\":{\"source\":\"activity-domain\",\"storage\":\"CURRENT_DEVELOPMENT_DB\",\"kind\":\"durable-attempt-sequence\",\"attemptSequence\":2,\"stateDigest\":\"59af26f06d205226fbabc9d26227bf9e8da3757c835cf3accd42f753b02f2dad\",\"observedAt\":\"2026-09-17T13:39:17.127Z\",\"latestAttemptAt\":\"2026-09-17T13:39:16.72588+00:00\",\"progressUpdatedAt\":\"2026-09-17T13:39:16.72588+00:00\"},\"completedAt\":\"2026-09-17T13:39:16.72588+00:00\"}\n"
+    },
+    {
+      "request": 188,
+      "operation": "restart",
+      "privateKeyLeak": false,
+      "body": "0:{\"a\":\"$@1\",\"f\":\"\",\"q\":\"\",\"i\":false,\"b\":\"KaSWaVYOIk7ZjWGpvVWIf\"}\n1:{\"ready\":true}\n"
+    },
+    {
+      "request": 190,
+      "operation": "restore",
+      "privateKeyLeak": false,
+      "body": "<not available anymore>\n### Request failed with\nnet::ERR_ABORTED"
+    }
+  ]
+}

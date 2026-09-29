@@ -1,0 +1,32 @@
+{
+  "transportAssertions": "PASS",
+  "sampleMatrix": {
+    "loopback": {
+      "curlIdentity": 5,
+      "curlCompressed": 5,
+      "nodeFetch": 5,
+      "disconnect": 1,
+      "normalControl": 1,
+      "origin": 7
+    },
+    "tailscale": {
+      "curlIdentity": 5,
+      "curlCompressed": 5,
+      "nodeFetch": 5,
+      "disconnect": 1,
+      "normalControl": 1,
+      "origin": 7
+    }
+  },
+  "serverEventsCrossChecked": 134,
+  "compressionBuffering": "PARTIAL",
+  "gzip": "NOT NEGOTIATED",
+  "uncompressedBuffering": "PASS",
+  "actualVerification": "PARTIAL",
+  "overall": "CONDITIONAL",
+  "cleanup": "PASS",
+  "productionSafety": "PASS",
+  "secretPatternScan": "PASS",
+  "markdown": "PASS",
+  "stage1G": "NOT READY"
+}

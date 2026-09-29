@@ -1,0 +1,974 @@
+{
+  "targetAlias": "hangul-introduction",
+  "target": {
+    "lessonHash": "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092",
+    "courseHash": "daf73c5033c923bc4c2754596634f6c30f051b2ee0c8574c069ca6a41f64174b",
+    "courseTitle": "韩语初级",
+    "lessonTitle": "预备课：韩文字母入门",
+    "lessonSlug": "hangul-introduction",
+    "courseSlug": "korean-beginner",
+    "appSlug": "korean",
+    "contentScope": "platform",
+    "courseScope": "platform",
+    "tenantMatches": true,
+    "publishedCatalogSlot": true,
+    "unlockMode": "immediate",
+    "updatedAt": "2026-07-10T04:22:05.262194+00:00"
+  },
+  "counts": {
+    "lessons": 1,
+    "digital_textbooks": 0,
+    "digital_textbook_versions": 0,
+    "digital_textbook_chapters": 0,
+    "digital_textbook_modules": 0,
+    "digital_textbook_nodes": 0,
+    "digital_textbook_activities": 0,
+    "learning_agent_lessons": 0,
+    "learning_agent_steps": 0,
+    "learning_agent_script_versions": 0,
+    "learning_agent_script_nodes": 0
+  },
+  "objects": [],
+  "referenceCounts": [
+    {
+      "name": "chapter_practice_units_source_textbook_chapter_id_fkey",
+      "childSchema": "public",
+      "childTable": "chapter_practice_units",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_chapters",
+      "childColumns": [
+        "source_textbook_chapter_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (source_textbook_chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "course_tests_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "chapter_tests",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE RESTRICT",
+      "matchingRows": 4,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": true
+    },
+    {
+      "name": "course_chapters_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "course_chapters",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE",
+      "matchingRows": 4,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": true
+    },
+    {
+      "name": "digital_textbook_activities_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_activities",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_activity_page_progress_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_activity_page_progress",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_activity_page_progress_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_activity_page_progress",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_versions",
+      "childColumns": [
+        "version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_activity_secrets_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_activity_secrets",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_attempts_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_attempts",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_attempts_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_attempts",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_versions",
+      "childColumns": [
+        "version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_chapters_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_chapters",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_versions",
+      "childColumns": [
+        "version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_guided_repeat_progress_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_guided_repeat_progress",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_listening_tracks_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_listening_tracks",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_media_assets_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_media_assets",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_media_assets_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_media_assets",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_modules_chapter_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_modules",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_chapters",
+      "childColumns": [
+        "chapter_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_node_progress_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_node_progress",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES digital_textbook_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_node_progress_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_node_progress",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_versions",
+      "childColumns": [
+        "version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_nodes_module_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_nodes",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_modules",
+      "childColumns": [
+        "module_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_preferences_textbook_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_preferences",
+      "parentSchema": "public",
+      "parentTable": "digital_textbooks",
+      "childColumns": [
+        "textbook_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_speaking_evidence_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_speaking_evidence",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_versions_textbook_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbook_versions",
+      "parentSchema": "public",
+      "parentTable": "digital_textbooks",
+      "childColumns": [
+        "textbook_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbooks_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "digital_textbooks",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE RESTRICT",
+      "matchingRows": 0,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "growth_toolbox_exercises_chapter_id_fkey",
+      "childSchema": "public",
+      "childTable": "growth_toolbox_exercises",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_chapters",
+      "childColumns": [
+        "chapter_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "growth_toolbox_vocabulary_source_chapter_id_fkey",
+      "childSchema": "public",
+      "childTable": "growth_toolbox_vocabulary",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_chapters",
+      "childColumns": [
+        "source_chapter_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (source_chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_teaching_lessons_module_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_lessons",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_modules",
+      "childColumns": [
+        "module_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_node_attempts_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_node_attempts",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES learning_agent_script_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_node_attempts_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_node_attempts",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_node_interaction_secrets_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_node_interaction_secrets",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES learning_agent_script_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_publish_logs_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_publish_logs",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_publish_logs_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_publish_logs",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_script_audio_assets_script_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_script_audio_assets",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_nodes",
+      "childColumns": [
+        "script_node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_node_id) REFERENCES learning_agent_script_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_script_nodes_reference_activity_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_script_nodes",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_activities",
+      "childColumns": [
+        "reference_activity_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (reference_activity_id) REFERENCES digital_textbook_activities(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_script_nodes_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_script_nodes",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_script_versions_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_script_versions",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_teaching_sessions_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_sessions",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_sessions_current_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_sessions",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_nodes",
+      "childColumns": [
+        "current_node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (current_node_id) REFERENCES learning_agent_script_nodes(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_sessions_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_sessions",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE SET NULL",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "digital_textbook_teaching_steps_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_steps",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_task_events_node_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_task_events",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_nodes",
+      "childColumns": [
+        "node_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (node_id) REFERENCES learning_agent_script_nodes(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "learning_agent_task_events_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "learning_agent_task_events",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "lesson_progress_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "lesson_progress",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE",
+      "matchingRows": 6,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": true
+    },
+    {
+      "name": "lesson_questions_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "lesson_questions",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "lesson_resources_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "lesson_resources",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "tenant_id",
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "tenant_id",
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (tenant_id, lesson_id) REFERENCES lessons(tenant_id, id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "lessons_prerequisite_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "lessons",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "prerequisite_lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "n",
+      "definition": "FOREIGN KEY (prerequisite_lesson_id) REFERENCES lessons(id) ON DELETE SET NULL",
+      "matchingRows": 1,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "library_resources_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "library_resources",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "r",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE RESTRICT",
+      "matchingRows": 0,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "live_class_sessions_lesson_id_fkey",
+      "childSchema": "public",
+      "childTable": "live_class_sessions",
+      "parentSchema": "public",
+      "parentTable": "lessons",
+      "childColumns": [
+        "lesson_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES lessons(id) ON DELETE CASCADE",
+      "matchingRows": 5,
+      "parentScope": "TARGET CATALOG SLOT",
+      "sharedOrExternalReviewRequired": true
+    },
+    {
+      "name": "teaching_script_source_reviews_script_version_id_fkey",
+      "childSchema": "public",
+      "childTable": "teaching_script_source_reviews",
+      "parentSchema": "public",
+      "parentTable": "learning_agent_script_versions",
+      "childColumns": [
+        "script_version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "c",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "authoring_control_textbook_id_fkey",
+      "childSchema": "runtime_publish_private",
+      "childTable": "authoring_control",
+      "parentSchema": "public",
+      "parentTable": "digital_textbooks",
+      "childColumns": [
+        "textbook_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "a",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "runtime_requests_textbook_id_fkey",
+      "childSchema": "runtime_publish_private",
+      "childTable": "runtime_requests",
+      "parentSchema": "public",
+      "parentTable": "digital_textbooks",
+      "childColumns": [
+        "textbook_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "a",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "snapshots_chapter_id_fkey",
+      "childSchema": "runtime_publish_private",
+      "childTable": "snapshots",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_chapters",
+      "childColumns": [
+        "chapter_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "a",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id)",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "snapshots_textbook_id_fkey",
+      "childSchema": "runtime_publish_private",
+      "childTable": "snapshots",
+      "parentSchema": "public",
+      "parentTable": "digital_textbooks",
+      "childColumns": [
+        "textbook_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "a",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    },
+    {
+      "name": "snapshots_version_id_fkey",
+      "childSchema": "runtime_publish_private",
+      "childTable": "snapshots",
+      "parentSchema": "public",
+      "parentTable": "digital_textbook_versions",
+      "childColumns": [
+        "version_id"
+      ],
+      "parentColumns": [
+        "id"
+      ],
+      "deleteAction": "a",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id)",
+      "matchingRows": 0,
+      "parentScope": "TARGET CONTENT BRANCH",
+      "sharedOrExternalReviewRequired": false
+    }
+  ],
+  "snapshotType": "SAFE METADATA ONLY; not a full data backup",
+  "fullContentSaved": false
+}

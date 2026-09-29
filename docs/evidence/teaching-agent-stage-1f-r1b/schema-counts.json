@@ -1,0 +1,38 @@
+{
+  "before": {
+    "columns": 2259,
+    "constraints": 1568,
+    "defaultGrants": 6,
+    "eventTriggers": 1,
+    "functions": 581,
+    "indexes": 600,
+    "inheritance": 0,
+    "policies": 287,
+    "publicationMemberships": 1,
+    "relations": 217,
+    "schemas": 4,
+    "sequences": 21,
+    "triggers": 280,
+    "types": 404,
+    "views": 8
+  },
+  "after": {
+    "columns": 2334,
+    "constraints": 1609,
+    "defaultGrants": 6,
+    "eventTriggers": 1,
+    "functions": 601,
+    "indexes": 620,
+    "inheritance": 0,
+    "policies": 292,
+    "publicationMemberships": 1,
+    "relations": 223,
+    "schemas": 4,
+    "sequences": 21,
+    "triggers": 287,
+    "types": 416,
+    "views": 8
+  },
+  "categoriesCompared": 15,
+  "differences": []
+}

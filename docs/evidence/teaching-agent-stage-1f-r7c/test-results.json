@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "tests": 131,
+  "passed": 131,
+  "failed": 0,
+  "skipped": 0,
+  "r7bBaselineRetained": 108,
+  "additionalIndependentReadbackRegression": 1,
+  "newR7CTestsIncludingSuiteParents": 22,
+  "command": "node --experimental-strip-types --test [7 existing R7B/runtime suites + 3 R7C suites]",
+  "logSha256": "0ab3899d1051bb66b75cf797bd6bf44998b9ace8613464642c4fa7cab962b172",
+  "exactFiles": [
+    "tests/teaching-agent-r7b-projection.test.mjs",
+    "tests/teaching-agent-r7b-execution.test.mjs",
+    "tests/teaching-agent-r7b-completion.test.mjs",
+    "tests/teaching-agent-r7b-browser.test.mjs",
+    "tests/smart-textbook-runtime-4a.test.mjs",
+    "tests/smart-textbook-runtime-4a14.test.mjs",
+    "tests/smart-textbook-runtime-4a-browser.test.mjs",
+    "tests/teaching-agent-r7c-binding.test.mjs",
+    "tests/teaching-agent-r7c-durable.test.mjs",
+    "tests/teaching-agent-r7c-browser.test.mjs"
+  ]
+}

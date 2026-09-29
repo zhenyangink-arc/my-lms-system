@@ -1,0 +1,63 @@
+{
+  "stage": "R7D-C3B-RUNNER-D1",
+  "recordedAt": "2026-09-18T13:00:23.128448+00:00",
+  "mode": "LOCAL_SOURCE_AND_HISTORICAL_EVIDENCE_AUDIT_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "migrationInstalls": 0,
+  "migrationChanges": 0,
+  "aclMutation": 0,
+  "ledgerMutation": 0,
+  "productSourceChanges": 0,
+  "operationalImplementationChanges": 0,
+  "testsImplemented": 0,
+  "testsExecuted": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "Stage1G": "NOT_READY",
+  "contract": "exact-single-maintenance-transport/1",
+  "engineSurface": "No public execute(sql) or supplied SQL CLI; session handles internal to runner and finite checks. Fixed subprocess argv, shell=False, minimal controlled environment.",
+  "profile": "uply-canonical-maintenance/1",
+  "connectionMechanism": "Existing private libpq service directory /home/yangzhen/.config/uply-first-enable-20260910/db; fixed service uply; pg_service.conf/pgpass/root.crt read at runtime only, validated regular file ownership/modes and frozen across invocation. Do not use .env copy, browser, Owner session, JWT or service-role impersonation.",
+  "profileExpected": {
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "databaseName": "postgres",
+    "serverVersion": "17.6",
+    "sslmode": "verify-full"
+  },
+  "historicalIdentityAuthority": "docs/evidence/teaching-agent-stage-1f-r5b/production-preflight.json; same target relation subsequently verified by current read-only audits; not a fresh connection this turn",
+  "identityChecks": [
+    "exact profile name from sealed registry, no --host/--dsn/--port/--target/environment override",
+    "runtime public project identifier and service host/user relation match pinned non-secret identity digests",
+    "verify-full CA/hostname verification; connection metadata expected database postgres, PG17 compatible version, expected session role postgres with maintenance privileges/expiry",
+    "pinned PG17.6 client image ID and fixed argv mount read-only private connection directory; credential values never argv/logged",
+    "function/ledger/schema fingerprints match plan; owned-isolated fixture marker/profile rejected for production even if metadata strings copied"
+  ],
+  "tlsNuance": "Existing preflight records TLS client-to-pooler but serverBackendTls.ssl=false; do not require invented backend TLS=true or weaken client verify-full. Cert/host target check applies to actual client endpoint.",
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "modes": {
+    "preflight": "Only named catalog queries; default_transaction_read_only=on; explicit REPEATABLE READ READ ONLY and ROLLBACK",
+    "backup": "Same source read-only transport; pg_dump protocol and known catalog extraction only; local restore adapter separate owned-DB type",
+    "apply": "Only after valid fresh checks/backup/window/operator authorization; one private persistent session invokes exact transaction builder once",
+    "verify": "Separate read-only connection, no retry or mutation repair API"
+  },
+  "authorization": {
+    "boundary": "Current repository has local operator JSON attestation+hash/window/UID/mode checks, not cryptographic verification of chat/user approval. State this limitation; operator is trusted OS principal.",
+    "required": "Explicit user approval reference and exact text/digest, operator identity, scope SINGLE_MIGRATION_APPLY, one planId+raw SHA, one migration version+raw SHA, source package/registry/check/transport hashes, target identity, fresh backup manifest/restore hashes, window, single-use nonce",
+    "storage": "Fixed protected migration-approvals directory beneath existing ops config; lookup by registered planId only, no arbitrary CLI path.0600/non-symlink expected UID.",
+    "neverAutomatic": "Plan READY or approval JSON approved=true alone does not authenticate approval. Runner never writes/approves its own operator attestation. Implementation creates only synthetic test attestations.",
+    "existing000Consent": "F2 user consent to000 is history, not a machine seal for a not-yet-implemented runner. Future exact engine/plan/window/backup binding must be explicitly reviewed; no manufacture of a signed approval."
+  },
+  "secrets": "Do not store secret hashes as evidence; only public target/config identity digests where already approved. Raw stderr private/redacted; no command echo with credentials."
+}

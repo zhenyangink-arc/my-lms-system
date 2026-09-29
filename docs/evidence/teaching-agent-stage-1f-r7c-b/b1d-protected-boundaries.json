@@ -1,0 +1,89 @@
+{
+  "checkedAt": "2026-09-17T07:17:37.236534+00:00",
+  "startUtc": "2026-09-17T07:13:51.661068+00:00",
+  "evidenceLevel": "Timestamp/count aggregate plus unchanged source/schema and action trace; not a WAL audit",
+  "protectedTables": {
+    "auth.users": {
+      "rows": 23,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "auth.identities": {
+      "rows": 23,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "auth.sessions": {
+      "rows": 207,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "auth.audit_log_entries": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.profiles": {
+      "rows": 23,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.account_management_audit_logs": {
+      "rows": 8,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.tenants": {
+      "rows": 2,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.tenant_memberships": {
+      "rows": 20,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.digital_textbook_attempts": {
+      "rows": 10,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.digital_textbook_node_progress": {
+      "rows": 5,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.digital_textbook_activity_page_progress": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.learning_agent_publish_logs": {
+      "rows": 103,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.agent_definition_versions": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.agent_conversations": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.agent_runs": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.agent_messages": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    },
+    "public.agent_run_events": {
+      "rows": 0,
+      "createdOrUpdatedSinceApprovalOperation": 0
+    }
+  },
+  "ledger": {
+    "ledger": 458,
+    "latest": "202609170001",
+    "rpcHash": "460027e2168e9a7713d1f837ad91a70e561a82d5cfbfa3814d00dba97f3599c8"
+  },
+  "pm2Status": "online",
+  "currentBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "runtimeConfig": "UNCHANGED",
+  "launcher": "UNCHANGED",
+  "tailscale": "UNCHANGED",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "b2": "NOT APPROVED",
+  "r7d": "NOT ENTERED"
+}

@@ -1,0 +1,103 @@
+{
+  "contract": "development-domain-execution/1",
+  "status": "PROPOSED ONLY — NOT IMPLEMENTED OR AUTHORIZED",
+  "purpose": "Reusable controlled Teaching Agent lesson domain/runtime integration tests against an explicitly approved development DB; not a Student admission path",
+  "principals": {
+    "humanOperator": "Authenticated Platform Owner authorizes provisioning/run; never used as the learner data principal",
+    "executionSubject": "Dedicated non-human development test principal, unique per run/scenario; never a real user or personal account",
+    "storageReality": "Existing attempts/progress require auth.users FK; a random UUID or process-only actor cannot satisfy current schema",
+    "recommendedRepresentation": "Provision a dedicated non-login Auth principal only via a separately authorized official Admin provisioning lifecycle; retain existing Activity/Attempt/Progress tables",
+    "tenant": "Dedicated development test tenant with explicit non-personal namespace; never select arbitrary existing tenant/user",
+    "credentials": "No browser login, no impersonation token, no magic link, no teaching-student session; principal must be sign-in disabled before run scope becomes active. Provisioning API no-login/ban behavior must be verified before approval; failure => STOP"
+  },
+  "identityRegistry": {
+    "source": "Server-controlled persistent test-run registry/receipt outside client/public manifest, plus admin-controlled Auth app_metadata test marker; user_metadata/email prefix alone is never authorization",
+    "markerFields": [
+      "contract",
+      "environmentIdentity",
+      "namespace",
+      "runAlias",
+      "scenarioAlias",
+      "purpose",
+      "expiresAt",
+      "lifecycleStatus"
+    ],
+    "namespace": "uply-domain-integration-test (PROPOSED; not an existing namespace)",
+    "ids": "Actual resource references stay private server-side; public evidence stores opaque safe resource hashes only",
+    "noNewCompletionDatabase": true,
+    "durability": "Registry survives isolated service restart to resolve exact same test subject; authoritative completion remains in existing DB attempts/progress, never registry"
+  },
+  "authorization": {
+    "gates": [
+      "deployment role must be explicitly isolated development execution; production service composition never imports or enables this issuer",
+      "pinned approved development project/database identity and fixed target binding; no arbitrary connection/actor/tenant/content ID from request",
+      "existing normal Platform Owner authorization at run issuance; operator action is audited separately from execution subject",
+      "server registry + admin-owned metadata + verified non-login status + tenant scope + expiry must all match",
+      "bounded scenario operation budget and exact activity/snapshot/generation/request correlation; no generic SQL/grade/target endpoint"
+    ],
+    "roleSeparation": "Backend may call existing service-only atomic domain RPC only after test-scope authorization. It never creates a user session or represents an actual student. This new test authorization is proposed and needs approval; service privileges alone are insufficient.",
+    "StudentPolicy": "Unchanged; real Student endpoints keep published-only checks. Test scope is rejected by production admission and Agent/tool registries.",
+    "productionFallback": false,
+    "agentFeature": "OFF; unrelated to proposed test-only gate"
+  },
+  "runScope": {
+    "versionedFields": [
+      "contract",
+      "purpose=domain-runtime-integration-test",
+      "environmentBinding",
+      "runAlias",
+      "scenarioAlias",
+      "privateSubjectRef",
+      "privateTenantRef",
+      "targetAlias",
+      "scriptVersionBinding",
+      "frozenSourceDigest",
+      "executionNodeBinding",
+      "activityBinding",
+      "snapshotDigest",
+      "expiresAt",
+      "writeBudget",
+      "cleanupPolicy"
+    ],
+    "publicFacts": "Safe completion/attempt summary, source and observed freshness only; no actual subject ID, raw answer, private key or definition digest",
+    "scenarios": "Separate owned test subjects per independent scenario when needed; reuse same subject across restart/readback for that scenario; enumerate exact count before writes"
+  },
+  "lifecycle": [
+    "PROPOSED -> APPROVED -> PROVISIONING -> VERIFIED_NONLOGIN -> ACTIVE -> CLOSED -> RETAINED_DISABLED or CLEANED",
+    "Provision via official auth/tenant APIs only after enumerating trigger-generated profiles, memberships and audits; no raw auth.users INSERT",
+    "UNKNOWN provision result stops and reconciles by server-owned run marker through read-only inspection; never blind-create duplicates",
+    "Run only approved domain actions; wrong/correct attempt via existing grader + R7C transaction seam; independent readback drives media resume",
+    "Close stops future mutation grants while allowing bounded approved verification",
+    "Cleanup first enumerates all inbound references across existing schema; deletes only approved run-owned attempt/progress children in dependency order; never canonical authoring rows; no CASCADE",
+    "If Auth deletion API would cascade unapproved records or audit retention requires principal references, do not delete; retain principal disabled and registry closed with exact residual references"
+  ],
+  "provisioningImpact": {
+    "knownAutomaticEffects": [
+      "auth.users creation invokes handle_new_user -> profiles INSERT",
+      "profile creation/change emits account_management_audit_logs",
+      "auth metadata synchronization may UPDATE profile",
+      "profile role/status changes may sync existing tenant memberships"
+    ],
+    "otherEffects": "Full FK/trigger and official API dry-run in isolated schema required before exact provisioning write approval; counts not yet locked",
+    "authorizingThisDesign": "Does NOT authorize Auth writes, tenant creation, principal creation, registry implementation or migration",
+    "migration": "Not proposed; existing schema can represent identity FKs. If lifecycle cannot safely fit existing schema, STOP with separate minimal proposal"
+  },
+  "acceptance": [
+    "real users, personal accounts and unmarked IDs rejected",
+    "production service/test scope crossover rejected",
+    "Draft remains unavailable through Student admission",
+    "expired/revoked/mismatched environment/run/snapshot rejected",
+    "dedicated principal cannot sign in or obtain learner tokens",
+    "server restart restores same subject and DB completion",
+    "wrong/UNKNOWN holds and durable COMPLETED resumes",
+    "duplicate correlation idempotent; no fallback",
+    "cleanup exact-owned references only; canonical rows unchanged",
+    "private answer and identity absent from public facts/logs/manifest/DOM"
+  ],
+  "approvalSequence": [
+    "Review identity contract proposal",
+    "Lock exact implementation files, principal/tenant/scenario counts, generated audit rows, cleanup retention and permitted Auth operations",
+    "Explicit approval before implementation or provisioning",
+    "Current-DB durable verification only after scope validation; no R7D until verified"
+  ]
+}

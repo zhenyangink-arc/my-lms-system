@@ -1,0 +1,45 @@
+{
+  "status": "VERIFIED — source / live SQL / isolated Runtime; current-DB execution NOT RUN",
+  "mainline": "TEACHING AGENT",
+  "sourceHashes": {
+    "src/features/smart-textbook-runtime/server/durable-activity-repository.server.ts": "67b0ef3b76493ab4112c41baebe3646aa031916de378bdefd3798b9531a67c93",
+    "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts": "47f71d669f6185b6d1c64db7469f79e3e04e0615d7b9be1278942b82d43e7e17",
+    "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts": "df53bfc73fa382f9a9a06122f5475be86c5017725ea5001544818326b18df83c",
+    "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts": "542403bab0b78154813ee631300ae1aa59244afa2048cb42d236754755b528a7",
+    "src/features/smart-textbook-runtime/server/progress-projection.server.ts": "f1d29b95c438cdaccf34de666de7b72299ff8daa3f954d3298c57fc68a1c958c",
+    "src/features/smart-textbook-runtime/server/learning-history.server.ts": "f2eea3c020eba9a59a3886050ff97fc4f4e2e5ecb2c040734a674786e8c34096",
+    "src/features/smart-textbook-runtime/core/native-media-controller.ts": "e0be7eb2d48d40cfb177b9b02f400016b845c5a6c254e620f9fd8905531f1bb9",
+    "src/features/smart-textbook-runtime/core/step-controller.ts": "22ef767e7eace2a8a2ee0dd800b66393905f41dd4241ad49211254a2b05d9ec0",
+    "src/features/smart-textbook-runtime/core/execution-contracts.ts": "171f94aef9728d5dd43faa4e71ff53ad9aba1b979b0b88ab55ea1105f9e8bd54",
+    "src/features/smart-textbook-runtime/core/runtime-facts.ts": "35eaf42079249fa8b9dcfa28b61429ca3f974a1d1c01e224b7e8dda1c61a7a2e",
+    "src/features/smart-textbook-runtime/components/runtime-root.tsx": "0d1b8b801d3840477352acfb9d5d6665e262e225f607cd39330d8a52b99991b8",
+    "src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts": "ffc9282ca985fc9df03b88049ff9761c1d6e1e316e7d5489a6325c8fe023edd7",
+    "src/features/development-execution/server/provisioning-contract.ts": "179430f5d6ca8357d4c76e2b7998efd8fd5df9a3e8d8fc423afd2a3bd9570a7c",
+    "src/features/development-execution/server/provisioning-readback.server.ts": "6951f0cbde04bd5f40e330dba94b2a57071833f2b0fa150c9a79a1a7caa944f8"
+  },
+  "path": [
+    "Frozen Node5/Node7 semantic projection",
+    "existing LessonManifestV1",
+    "existing LessonRuntime + StepController + NativeMediaController",
+    "existing multiple_choice renderer / native execution submit port",
+    "createDurableActivityCompletion / existing gradeSmartTextbookActivity",
+    "createDurableActivityRepository / trusted transaction / advisory locks",
+    "record_smart_textbook_attempt 7 parameters",
+    "existing digital_textbook_attempts + node_progress",
+    "independent fresh READ ONLY repository connection",
+    "activity-completion/2 receipt",
+    "NativeMediaController.readback -> acceptCompletion -> resume or hold"
+  ],
+  "excluded": [
+    "submitActivityInDomain PGRST202 fallback",
+    "legacy chapter-one adapter",
+    "StudentPolicy bypass",
+    "old Learning Agent",
+    "Provider",
+    "second Runtime/Activity/Progress"
+  ],
+  "authority": "correct attempt + scope/content-consistent progress evidence; node completion is distinct from Step/Lesson completion",
+  "currentDbTransportInstalled": false,
+  "currentReceiptStorage": "isolated-test-db literal; must be explicitly extended before current DB execution",
+  "nativeRuntimeReuse": "VERIFIED IN ISOLATED PROCESS; not yet current-DB E2E"
+}

@@ -1,0 +1,23 @@
+{
+  "receiptVersion": 1,
+  "operator": "杨震",
+  "authorization": "EXPLICIT USER APPROVAL: EXACT ONE RETIREMENT INSERT",
+  "strategy": "DEVELOPMENT_FIRST_EXACT_FENCE_RETIREMENT",
+  "targetSnapshotSha256": "6ea0da2b328782056b721bb5ecb1eec194435871d9746dcedd9bb44e8b9df6bb",
+  "expectedChanges": {
+    "insert": 1,
+    "update": 0,
+    "delete": 0
+  },
+  "sqlSha256": "487bb6b21b620e77113a6691eec6413dcdf8be8808c3da7f1d60a9cb684e868f",
+  "startedAtUtc": "2026-09-16T06:41:10.962017+00:00",
+  "commitState": "CONFIRMED",
+  "attemptCount": 1,
+  "retryAllowed": false,
+  "exitCode": 0,
+  "commitAcknowledgmentMatched": true,
+  "serverTime": "2026-09-16T06:41:11.528164+00:00",
+  "stdoutSha256": "ed27f6c8a97cb227e670e0017faa92dbefdea091176abd657110405cae503bc3",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "endedAtUtc": "2026-09-16T06:41:11.610644+00:00"
+}

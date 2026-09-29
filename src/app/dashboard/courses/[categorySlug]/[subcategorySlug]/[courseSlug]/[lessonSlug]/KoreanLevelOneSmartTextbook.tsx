@@ -133,6 +133,7 @@ function TeachingStagePortal({
 
 export type SmartTextbookShellProps = {
   backHref: string;
+  teachingAgentSlots?: Record<string, Partial<Record<SmartLocale, ReactNode>>>;
   textbook: SmartTextbookData;
   trackingDisabled: boolean;
   completionHref?: string;
@@ -4304,7 +4305,7 @@ function Activity({
   );
 }
 
-export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId, previewOpeningTeachingDisplay, previewOpeningTeachingCharacter }: SmartTextbookShellProps) {
+export function SmartTextbookShell({ backHref, textbook, teachingAgentSlots, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId, previewOpeningTeachingDisplay, previewOpeningTeachingCharacter }: SmartTextbookShellProps) {
   const isPreviewMode = Boolean(previewScriptVersionId);
   const textbookRef = useRef<HTMLDivElement>(null);
   const narrowTeacherWrapperRef = useRef<HTMLDivElement>(null);
@@ -7174,6 +7175,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           className={`smart-textbook-scroll min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--card)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${tutorUsesVideo && showTutorAnswerDialog ? "hidden" : ""}`}
         >
           <div className="w-full px-5 pb-8 pt-4 sm:px-8 sm:pb-10 sm:pt-5 lg:px-10 xl:px-12">
+            {teachingAgentSlots?.[activeModule.id]?.[locale]}
             {textbook.chapter.number === 0 ? (
               <>
                 <KoreanLevelOneCourseOverview moduleCode={activeModule.code} locale={locale} />

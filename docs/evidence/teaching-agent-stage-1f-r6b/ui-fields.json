@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "button": "新建教学脚本",
+  "buttonType": "submit",
+  "opensDialog": false,
+  "clickImmediatelySubmits": true,
+  "editableFields": [],
+  "hiddenBusinessFields": [
+    "lesson_id",
+    "return_to"
+  ],
+  "titleField": false,
+  "descriptionField": false,
+  "languageField": false,
+  "versionNameField": false,
+  "slugField": false,
+  "expectedVersionNumber": 1,
+  "expectedStatus": "draft",
+  "expectedTitle": {},
+  "expectedNodes": 0,
+  "logicalAliasOnly": "hangul-introduction-prelesson",
+  "noClickBeforeApproval": true
+}

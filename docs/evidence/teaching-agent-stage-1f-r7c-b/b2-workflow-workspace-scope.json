@@ -1,0 +1,38 @@
+{
+  "newProductFiles": {
+    "src/features/development-execution/server/provisioning-composition.server.ts": "118032c91af681ba13ccd8d52709ae23471bc6efbf78378d7380517e9188c083",
+    "src/features/development-execution/server/provisioning-contract.ts": "179430f5d6ca8357d4c76e2b7998efd8fd5df9a3e8d8fc423afd2a3bd9570a7c",
+    "src/features/development-execution/server/provisioning-journal.server.ts": "4996f6c2ba58a88ebe21c5c709f5081e58916a9338265475d1431e4914f3a21c",
+    "src/features/development-execution/server/provisioning-readback.server.ts": "6951f0cbde04bd5f40e330dba94b2a57071833f2b0fa150c9a79a1a7caa944f8",
+    "src/features/development-execution/server/provisioning.actions.ts": "81f7a09368949be1b14ce5ff8a787a74a3ff61c4b69ef75e6ad3e4dc71a7c363",
+    "src/features/development-execution/server/provisioning.service.ts": "1ae76d4cf31d5e0cd57559dc1122e70aa98fd81e8922bc2e30045bf19821c055",
+    "src/features/development-execution/server/supabase-provisioning-adapter.server.ts": "fc11bc041ddfec9e348e11a12450c3a20f85eb0d5438c914410db8687b8d325a"
+  },
+  "existingProductFilesChanged": [],
+  "tests": {
+    "tests/teaching-agent-r7cb-b2-provisioning.test.mjs": "fb4bd2ec9da1a579113897f1beba90a6752cd9614d0ffdddfa8c88cf8bc841c3",
+    "tests/teaching-agent-r7cb-b2-boundaries.test.mjs": "ca80a118861281f0152f7931fe0bdac3333752947186e3d3bfe5aa17d2d023ad",
+    "tests/fixtures/teaching-agent-r7cb/b2-workflow-isolated.mjs": "e39c3ac15e7d90c29f59b149fb7f0e21ffbbf5974a86683ed4bf5d29a76ddb26"
+  },
+  "report": "docs/teaching-agent-stage-1f-r7c-b-canonical-activity-binding.md",
+  "reportPolicy": "APPENDED; B1 and old B2 BLOCKED history retained",
+  "evidencePolicy": "Old approval/security result archived before initial-ban revision",
+  "currentDbWrites": 0,
+  "deploy": 0,
+  "migration": 0,
+  "scopeIssuerImplemented": false,
+  "productionActionExposed": false,
+  "sensitiveScan": {
+    "files": 28,
+    "hits": 0,
+    "scope": "new workflow source/tests/evidence/harness; no runtime credential/token export"
+  },
+  "diffCheck": "PASS",
+  "preExistingWorkspace": "Retained; no cleanup/reset/commit. Whole repository already contained earlier staged work.",
+  "currentBuild": "f3AMbrTZfbg0_VWwnSE6i",
+  "isolatedBuild": "cWgvIjdoChxT4NjdbwIJW",
+  "ownedIsolatedCleanup": "PASS",
+  "temporarySigningCredentialsDeleted": true,
+  "B1": "COMPLETE",
+  "B2": "READY / NOT APPROVED"
+}

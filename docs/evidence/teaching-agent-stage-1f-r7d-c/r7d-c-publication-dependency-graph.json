@@ -1,0 +1,758 @@
+{
+  "stage": "R7D-C-P1",
+  "recordedAt": "2026-09-18T03:52:22.833983+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AUDIT_AND_PROPOSED_DESIGN",
+  "implementationPerformed": false,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "testsExecuted": 0,
+  "migrationFilesCreated": 0,
+  "migrationInstall": 0,
+  "productChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED",
+  "Stage1G": "NOT READY",
+  "status": "LOCKED_FOR_PROPOSED_SCOPE",
+  "staticImportEdges": [
+    {
+      "from": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "line": 2,
+      "specifier": "../smart-textbook-legacy-adapter/identity.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/source.server.ts",
+      "line": 3,
+      "specifier": "../smart-textbook-legacy-adapter/source.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts",
+      "line": 4,
+      "specifier": "../smart-textbook-legacy-adapter/final-readiness.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "to": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-media-audit.server.ts",
+      "line": 5,
+      "specifier": "./assets/v1/chapter-one-media-audit.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "line": 3,
+      "specifier": "../smart-textbook-legacy-adapter/identity.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/source.server.ts",
+      "line": 4,
+      "specifier": "../smart-textbook-legacy-adapter/source.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/readiness-contracts.server.ts",
+      "line": 5,
+      "specifier": "../smart-textbook-legacy-adapter/readiness-contracts.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/profile.server.ts",
+      "line": 6,
+      "specifier": "../smart-textbook-legacy-adapter/profile.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "line": 7,
+      "specifier": "../smart-textbook-legacy-adapter/bindings.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "line": 8,
+      "specifier": "../smart-textbook-runtime-v1/validator"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts",
+      "line": 9,
+      "specifier": "../smart-textbook-legacy-adapter/final-readiness.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-identities.server.ts",
+      "line": 10,
+      "specifier": "./assets/v1/chapter-one-identities.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-service-identities.server.ts",
+      "line": 11,
+      "specifier": "./assets/v1/chapter-one-service-identities.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "line": 12,
+      "specifier": "./media-policy.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "to": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "line": 13,
+      "specifier": "./capture.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "to": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 3,
+      "specifier": "./artifact.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/reader.server.ts",
+      "line": 4,
+      "specifier": "../smart-textbook-legacy-adapter/reader.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/service-reader.server.ts",
+      "line": 5,
+      "specifier": "../smart-textbook-legacy-adapter/service-reader.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "to": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 6,
+      "specifier": "./artifact.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "line": 4,
+      "specifier": "../smart-textbook-legacy-adapter/identity.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "to": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 5,
+      "specifier": "./artifact.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/auth.ts",
+      "line": 2,
+      "specifier": "../auth"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/supabase/admin.ts",
+      "line": 3,
+      "specifier": "../supabase/admin"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "line": 4,
+      "specifier": "./capture.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "line": 5,
+      "specifier": "./media-policy.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "line": 6,
+      "specifier": "./loader.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts",
+      "line": 7,
+      "specifier": "../smart-textbook-legacy-adapter/final-readiness.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 8,
+      "specifier": "./artifact.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "line": 9,
+      "specifier": "./repository.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-identities.server.ts",
+      "line": 10,
+      "specifier": "./assets/v1/chapter-one-identities.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-publishing/assets/v1/chapter-one-service-identities.server.ts",
+      "line": 11,
+      "specifier": "./assets/v1/chapter-one-service-identities.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "line": 12,
+      "specifier": "../smart-textbook-legacy-adapter/identity.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/auth.ts",
+      "line": 2,
+      "specifier": "../auth"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/supabase/admin.ts",
+      "line": 3,
+      "specifier": "../supabase/admin"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/student-permissions.ts",
+      "line": 4,
+      "specifier": "../student-permissions"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "line": 5,
+      "specifier": "./repository.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/smart-textbook-publishing/artifact.server.ts",
+      "line": 6,
+      "specifier": "./artifact.server"
+    },
+    {
+      "from": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "to": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "line": 7,
+      "specifier": "./domain-guard.server"
+    },
+    {
+      "from": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "to": "src/lib/admin.ts",
+      "line": 1,
+      "specifier": "@/lib/admin"
+    },
+    {
+      "from": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "line": 2,
+      "specifier": "@/features/smart-textbook-runtime/server/audit-learning-boundary.server"
+    },
+    {
+      "from": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "to": "src/lib/admin.ts",
+      "line": 1,
+      "specifier": "@/lib/admin"
+    },
+    {
+      "from": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "line": 2,
+      "specifier": "@/features/smart-textbook-runtime/server/audit-teacher-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/lib/admin.ts",
+      "line": 4,
+      "specifier": "../../../lib/admin"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-session.server.ts",
+      "line": 5,
+      "specifier": "./audit-session.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "line": 6,
+      "specifier": "./learning-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-actions.ts",
+      "line": 7,
+      "specifier": "./audit-actions"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-flow-actions.ts",
+      "line": 8,
+      "specifier": "./audit-flow-actions"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-flow.server.ts",
+      "line": 9,
+      "specifier": "./audit-flow.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-repeat-actions.ts",
+      "line": 10,
+      "specifier": "./audit-repeat-actions"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-tool-actions.ts",
+      "line": 11,
+      "specifier": "./audit-tool-actions"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-recording.server.ts",
+      "line": 12,
+      "specifier": "./audit-recording.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/app/api/smart-textbook-runtime-audit/listening/route.ts",
+      "line": 13,
+      "specifier": "../../../app/api/smart-textbook-runtime-audit/listening/route"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/pattern-media.server.ts",
+      "line": 14,
+      "specifier": "./pattern-media.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/scene-image.server.ts",
+      "line": 15,
+      "specifier": "./scene-image.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/scene-image-storage.server.ts",
+      "line": 16,
+      "specifier": "./scene-image-storage.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/recording.ts",
+      "line": 17,
+      "specifier": "../core/recording"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/activity.ts",
+      "line": 52,
+      "specifier": "../core/activity"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/services.ts",
+      "line": 52,
+      "specifier": "../core/services"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/activity-pages.ts",
+      "line": 53,
+      "specifier": "../core/activity-pages"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/activity-pages.ts",
+      "line": 53,
+      "specifier": "../core/activity-pages"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/patterns.ts",
+      "line": 54,
+      "specifier": "../core/patterns"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/patterns.ts",
+      "line": 54,
+      "specifier": "../core/patterns"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/learning-tools.ts",
+      "line": 56,
+      "specifier": "../core/learning-tools"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/learning-tools.ts",
+      "line": 56,
+      "specifier": "../core/learning-tools"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/learning-flow.ts",
+      "line": 57,
+      "specifier": "../core/learning-flow"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/learning-flow.ts",
+      "line": 57,
+      "specifier": "../core/learning-flow"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/services.ts",
+      "line": 57,
+      "specifier": "../core/services"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/patterns.ts",
+      "line": 57,
+      "specifier": "../core/patterns"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/services.ts",
+      "line": 57,
+      "specifier": "../core/services"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "line": 2,
+      "specifier": "./learning-session.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "line": 3,
+      "specifier": "./learning-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/production-learning.server.ts",
+      "line": 4,
+      "specifier": "./production-learning.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/recording-production.server.ts",
+      "line": 5,
+      "specifier": "./recording-production.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/recording-binding.server.ts",
+      "line": 6,
+      "specifier": "./recording-binding.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/lib/recording-domain-gateway.server.ts",
+      "line": 7,
+      "specifier": "../../../lib/recording-domain-gateway.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts",
+      "line": 8,
+      "specifier": "../../../lib/smart-textbook-legacy-adapter/runtime-content.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "line": 9,
+      "specifier": "./published-teacher-scope.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/scene-image.server.ts",
+      "line": 10,
+      "specifier": "./scene-image.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/scene-image-storage.server.ts",
+      "line": 11,
+      "specifier": "./scene-image-storage.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "line": 3,
+      "specifier": "../../../lib/smart-textbook-legacy-adapter/identity.server.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/activity.ts",
+      "line": 4,
+      "specifier": "../core/activity.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/activity-pages.ts",
+      "line": 5,
+      "specifier": "../core/activity-pages.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/patterns.ts",
+      "line": 6,
+      "specifier": "../core/patterns.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/core/services.ts",
+      "line": 7,
+      "specifier": "../core/services.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "line": 8,
+      "specifier": "./learning-session.server.ts"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "line": 3,
+      "specifier": "./learning-session.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "line": 4,
+      "specifier": "./learning-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/teacher-boundary.server.ts",
+      "line": 5,
+      "specifier": "./teacher-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/production-teacher-agent.server.ts",
+      "line": 6,
+      "specifier": "./production-teacher-agent.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/lib/admin.ts",
+      "line": 4,
+      "specifier": "../../../lib/admin"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-session.server.ts",
+      "line": 5,
+      "specifier": "./audit-session.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "line": 6,
+      "specifier": "./audit-learning-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/teacher-boundary.server.ts",
+      "line": 7,
+      "specifier": "./teacher-boundary.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/features/smart-textbook-runtime/server/audit-speech.server.ts",
+      "line": 8,
+      "specifier": "./audit-speech.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/app/api/learning-agent/speech/[assetId]/route.ts",
+      "line": 9,
+      "specifier": "../../../app/api/learning-agent/speech/[assetId]/route"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "to": "src/app/api/learning-agent/characters/[pose]/route.ts",
+      "line": 10,
+      "specifier": "../../../app/api/learning-agent/characters/[pose]/route"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "to": "src/lib/auth.ts",
+      "line": 3,
+      "specifier": "../../../lib/auth"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "to": "src/lib/supabase/admin.ts",
+      "line": 4,
+      "specifier": "../../../lib/supabase/admin"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "to": "src/lib/smart-textbook-publishing/loader.server.ts",
+      "line": 5,
+      "specifier": "../../../lib/smart-textbook-publishing/loader.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "to": "src/lib/smart-textbook-publishing/repository.server.ts",
+      "line": 6,
+      "specifier": "../../../lib/smart-textbook-publishing/repository.server"
+    },
+    {
+      "from": "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+      "to": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "line": 7,
+      "specifier": "../../../lib/smart-textbook-publishing/domain-guard.server"
+    }
+  ],
+  "reverseConsumerClosure": [
+    "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+    "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+    "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+    "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+    "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+    "src/features/smart-textbook-runtime/server/learning-session.server.ts",
+    "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+    "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+    "src/lib/smart-textbook-publishing/artifact.server.ts",
+    "src/lib/smart-textbook-publishing/capture.server.ts",
+    "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+    "src/lib/smart-textbook-publishing/loader.server.ts",
+    "src/lib/smart-textbook-publishing/media-policy.server.ts",
+    "src/lib/smart-textbook-publishing/publisher.server.ts",
+    "src/lib/smart-textbook-publishing/repository.server.ts"
+  ],
+  "callChains": {
+    "producer": "Owner -> compileChapterOnePublication -> captureChapterOnePublication -> captured legacy projection -> finalizeChapterOneNonUiReadiness -> media policy -> packageSnapshot -> publicationRepository.publish -> publish_runtime_snapshot_v2",
+    "current": "authorizePublishedCourse -> publicationRepository.current -> read_runtime_publication_v1 -> assertPublishableSnapshot/validateSnapshotBundle -> assertPublishedDomainDependencies",
+    "session": "createRuntimeLearningSessionResolver.resolve -> session SQL wrapper/base -> certification -> authorizePublishedCourse -> fence -> legacy private projection",
+    "consumers": "legacy learning-session return type -> learning-boundary / production-learning-boundary / published-teacher-scope -> Owner audit type consumers; stable after explicit legacy narrowing",
+    "SQLpublish": "publish_runtime_snapshot_v2 [110002 outer] -> publish_runtime_snapshot_base_v2 [110002 fence/secret] -> publish_runtime_snapshot_v1 [100001 CAS/store]",
+    "SQLcapture": "capture_runtime_publication_v1 -> capture -> semantic_capture(capture_rows) + authoring revision",
+    "SQLliveAdmission": "assert_runtime_dependency_fence_v1 requires exact fence and non-retired/open authoring state; session wrapper retains retirement gate"
+  },
+  "producerCallSites": "Product export in publisher; local tests/fixtures use it. No new public publisher route exists in audited src. External operational callers not declared absent; exports retained.",
+  "unchangedConsumers": [
+    {
+      "path": "src/lib/smart-textbook-publishing/domain-guard.server.ts",
+      "reason": "PublicationBundle union retains common snapshotId and privatePayload.dependencies. Existing fence RPC remains kind-neutral and exact; no change required."
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/media-policy.server.ts",
+      "reason": "Historical 75-media audit / Chapter One exceptions remain legacy-only; native cannot invoke this exemption policy."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/readiness-validation.server.ts",
+      "reason": "Frozen historical validator remains intact; dispatch moves outside it, so no loosening or generalized optional fields."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/bindings.server.ts",
+      "reason": "Historical capsule/readiness bindings remain only for v1."
+    },
+    {
+      "path": "src/lib/smart-textbook-legacy-adapter/identity.server.ts",
+      "reason": "Reuse only canonical()/digest()/persistent-key identity utilities; no frozen identity map/legacy walks in native strategy."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/contracts.ts",
+      "reason": "Existing native text/multiple_choice Manifest1.0.0 and native compatibility profile suffice for the bounded first native publication contract; no new runtime DTO."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/validator.ts",
+      "reason": "Reuse published generic structural/association validation; native certificate adds source semantics instead of weakening generic validator."
+    },
+    {
+      "path": "src/lib/smart-textbook-runtime-v1/execution.ts",
+      "reason": "Fixed Node5/Node7 native-execution/1 cue fixture is not generalized or installed into production snapshot."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-execution-projection.server.ts",
+      "reason": "Frozen development preview compiler is not production authority and is not reused."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "reason": "Draft/alias-specific B1/B3 validator stays unchanged; production published policy is a separate versioned read policy in approved completion/native authority code."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/learning-boundary.server.ts",
+      "reason": "Its ReturnType-derived legacy Authority remains narrow after resolver guard; no native submission path added."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts",
+      "reason": "Capsule/recording/legacy ports see only legacy resolver output; never route native Tool facts here."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/published-teacher-scope.server.ts",
+      "reason": "Legacy source/services type remains stable; this is not a native Teaching Agent issuer."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts",
+      "reason": "Owner preview consumes unchanged legacy Authority subset; no new production adapter dependency."
+    },
+    {
+      "path": "src/features/smart-textbook-runtime/server/audit-teacher-boundary.server.ts",
+      "reason": "Owner preview remains separate; no native production capability."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/learning/route.ts",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/app/api/smart-textbook-runtime-audit/teacher/route.ts",
+      "reason": "Existing Owner preview endpoint unchanged."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/student-handlers.ts",
+      "reason": "Public summarize_execution intake deferred to separate activation approval; existing explain-only contract maintained."
+    },
+    {
+      "path": "src/features/teaching-agent/server/transport/production.ts",
+      "reason": "Existing feature/rollout/authentication wiring untouched; source-only future native factory does not enable a public intent."
+    },
+    {
+      "path": "src/features/teaching-agent/server/repositories/supabase-student-teaching-repository.ts",
+      "reason": "Existing active-self/published Student admission is retained. Publication authority uses new approved adapter after verified binding, not a replacement StudentPolicy."
+    },
+    {
+      "path": "src/features/teaching-agent/server/policies/student-teaching-policy.ts",
+      "reason": "No relaxation of active membership, tenant, published content or per-call authorization."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/verify-student-selection.ts",
+      "reason": "Opaque selection authority remains issuer-owned; native mapping uses verified scope/source node, not model UUIDs or inferred cursor."
+    },
+    {
+      "path": "src/features/teaching-agent/server/selection/selection-types.ts",
+      "reason": "Current verified selection can scope the initial summary; no new public input shape in this implementation."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-domain-runtime.ts",
+      "reason": "Existing policy/verifier composition reused by the approved runtime factory without alteration."
+    }
+  ]
+}

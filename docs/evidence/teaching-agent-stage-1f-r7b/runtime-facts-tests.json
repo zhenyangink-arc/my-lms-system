@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "beforeCue": "READY / INCOMPLETE",
+  "duringActivity": "AWAITING_ACTIVITY",
+  "afterCompletion": "COMPLETED / PLAYING or RESUME_READY",
+  "sourceSnapshotGeneration": "present",
+  "privateAnswer": "absent",
+  "readSideEffects": 0
+}

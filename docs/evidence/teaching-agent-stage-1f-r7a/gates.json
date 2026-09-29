@@ -1,0 +1,192 @@
+{
+  "overall": "GO",
+  "gates": [
+    {
+      "id": "G-R7A-1",
+      "check": "R6F Freeze Verified",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-2",
+      "check": "Teaching Agent Mainline Locked",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-3",
+      "check": "Development-First Policy Applied",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-4",
+      "check": "Agent Foundation Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-5",
+      "check": "Agent Execution Gap Defined",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-6",
+      "check": "Lesson Tool Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-7",
+      "check": "Teaching Node Role Defined",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-8",
+      "check": "Lesson Runtime Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-9",
+      "check": "Activity System Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-10",
+      "check": "Progress System Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-11",
+      "check": "Video Capability Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-12",
+      "check": "Director Runtime Audited",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-13",
+      "check": "Manifest Assessed",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-14",
+      "check": "Cue Contract Proposed",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-15",
+      "check": "Node7 Migration Assessed",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-16",
+      "check": "No Second Activity System",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-17",
+      "check": "No Second Progress System",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-18",
+      "check": "No Dual Runtime",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-19",
+      "check": "No Old Agent Fallback",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-20",
+      "check": "Legacy Candidates Classified",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-21",
+      "check": "R7B Agent MVP Defined",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-22",
+      "check": "Stage1G Gap Defined",
+      "status": "PASS",
+      "meaning": "Audit/design gate; not an implementation or production enable claim"
+    },
+    {
+      "id": "G-R7A-23",
+      "check": "Product Source Read Only",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-24",
+      "check": "DB Read Only",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-25",
+      "check": "No Migration",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-26",
+      "check": "No Deploy",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-27",
+      "check": "No Agent Run",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-28",
+      "check": "No Provider",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-29",
+      "check": "Feature OFF",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-30",
+      "check": "Content Freeze Unchanged",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    },
+    {
+      "id": "G-R7A-31",
+      "check": "Evidence Boundary",
+      "status": "PASS",
+      "meaning": "Current read-only verification / scoped action evidence"
+    }
+  ],
+  "caveat": "G18/G19 are canonical design constraints with legacy current-state risks explicitly identified; no old route deletion claimed. Production end-state and final workspace verification PASS."
+}

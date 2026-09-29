@@ -1,0 +1,261 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D3",
+  "recordedAt": "2026-09-20T03:20:18.006261+00:00",
+  "mode": "EVIDENCE_ACQUISITION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialUse": 0,
+  "passwordStoreRead": false,
+  "credentialOutput": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "tlsGuardChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "supportMessagesSent": 0,
+  "networkChanges": 0,
+  "IPv4AddonChanges": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "currentV3SourceCompatibility": true,
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "sources": [
+    {
+      "id": "DPA",
+      "url": "https://supabase.com/legal/customer-resources/data-processing-addendum",
+      "title": "Data Processing Addendum — Version 1, August 1, 2026",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "GENERAL_PROVIDER_ASSURANCE",
+      "claimSummary": "Schedule 1 describes TLS-protected communications, encryption of network traffic and separation of customer project networks from control-plane networks.",
+      "coversSessionPoolerToProjectBackend": "NOT_EXPLICITLY_MAPPED",
+      "limitation": "No explicit mapping to the present upstream connection or explanation of backend ssl=false. This is not HOP_B_PROVEN."
+    },
+    {
+      "id": "TENANT",
+      "url": "https://raw.githubusercontent.com/supabase/supavisor/main/docs/configuration/tenants.md",
+      "title": "Supavisor tenant configuration",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "AMBIGUOUS",
+      "claimSummary": "Separate controls exist for client SSL enforcement and upstream SSL, certificate verification and CA.",
+      "coversSessionPoolerToProjectBackend": "CONFIGURATION_CAPABILITY_ONLY",
+      "limitation": "Open-source fields do not establish current managed tenant values or private-network controls."
+    },
+    {
+      "id": "ENV",
+      "url": "https://supabase.github.io/supavisor/configuration/env/",
+      "title": "Supavisor environment variables",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "AMBIGUOUS",
+      "claimSummary": "Upstream CA and downstream certificate/key paths are separate configuration options.",
+      "coversSessionPoolerToProjectBackend": "CAPABILITY_ONLY",
+      "limitation": "No deployment settings or provider secrets obtained."
+    },
+    {
+      "id": "SSL",
+      "url": "https://supabase.com/docs/guides/platform/ssl-enforcement",
+      "title": "Postgres SSL Enforcement",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Incoming Postgres/pooler SSL enforcement is configurable. verify-full verifies CA and hostname; the project CA is available through Dashboard database SSL settings.",
+      "coversSessionPoolerToProjectBackend": "NO_UPSTREAM_GUARANTEE",
+      "limitation": "Applies to client policy and CA discovery; does not prove enabled project enforcement or backend-hop settings."
+    },
+    {
+      "id": "SSL-FEATURE",
+      "url": "https://supabase.com/features/ssl-enforcement",
+      "title": "SSL enforcement feature",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "AMBIGUOUS",
+      "claimSummary": "Describes protection for direct and pooler client connections.",
+      "coversSessionPoolerToProjectBackend": "NOT_EXPLICITLY_MAPPED",
+      "limitation": "Broad end-to-end wording does not identify the mechanism or explain this backend observation."
+    },
+    {
+      "id": "SESSION",
+      "url": "https://supabase.com/docs/guides/troubleshooting/supavisor-and-connection-terminology-explained-9pr_ZO",
+      "title": "Supavisor and Connection Terminology Explained",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Session mode assigns an underlying database connection exclusively to one client connection.",
+      "coversSessionPoolerToProjectBackend": "YES_FOR_CONNECTION_AFFINITY",
+      "limitation": "Affinity is not upstream encryption, authentication or isolation evidence."
+    },
+    {
+      "id": "MIGRATION",
+      "url": "https://supabase.com/docs/guides/platform/migrating-to-supabase/postgres",
+      "title": "Migrate from Postgres to Supabase",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Documents session-pooler use for pg_dump/restore and migration work.",
+      "coversSessionPoolerToProjectBackend": "YES_FOR_OPERATIONAL_PATTERN",
+      "limitation": "Does not specifically approve this multi-connection exported-snapshot and per-tool proof contract."
+    },
+    {
+      "id": "CONNECT",
+      "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+      "title": "Connect to your database",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Direct is documented for maintenance; session pooling is an IPv4 alternative. Project-specific parameters come from Connect. Direct and pooler usernames differ.",
+      "coversSessionPoolerToProjectBackend": "YES_FOR_TOPOLOGY_NOT_SECURITY",
+      "limitation": "No actual direct endpoint or network availability for this project can be inferred from templates."
+    },
+    {
+      "id": "LIMITS",
+      "url": "https://supabase.com/docs/guides/database/connecting-to-postgres/pooling-and-limits",
+      "title": "Connection pooling and limits",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Direct and pooler backend sessions share the database connection budget; services also consume slots.",
+      "coversSessionPoolerToProjectBackend": "YES_FOR_CAPACITY_MODEL",
+      "limitation": "Project compute size, configured limits and available maintenance headroom remain unknown."
+    },
+    {
+      "id": "IPV4",
+      "url": "https://supabase.com/docs/guides/platform/ipv4-address",
+      "title": "Dedicated IPv4 Address for Ingress",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Direct is normally IPv6; an IPv4 add-on is a documented alternative.",
+      "coversSessionPoolerToProjectBackend": "NOT_A_HOP_B_STATEMENT",
+      "limitation": "No evidence that this project has the add-on; no purchase/configuration action taken."
+    },
+    {
+      "id": "SELFHOST",
+      "url": "https://github.com/supabase/supabase/blob/master/docker/CONFIG.md",
+      "title": "Self-hosted Docker configuration",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_PROVIDER",
+      "classification": "NOT_APPLICABLE",
+      "claimSummary": "Self-hosted pooler/database settings exist.",
+      "coversSessionPoolerToProjectBackend": "NO_MANAGED_DEPLOYMENT_PROOF",
+      "limitation": "Self-hosted Docker defaults cannot establish hosted project trust."
+    },
+    {
+      "id": "PG-SNAPSHOT",
+      "url": "https://www.postgresql.org/docs/17/functions-admin.html#FUNCTIONS-SNAPSHOT-SYNCHRONIZATION",
+      "title": "PostgreSQL 17 snapshot synchronization",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_POSTGRESQL",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Other transactions can import a snapshot while the exporter transaction remains open.",
+      "coversSessionPoolerToProjectBackend": "DATABASE_SEMANTICS_ONLY",
+      "limitation": "Requires the relevant database instance and snapshot lifetime; not proof of provider routing or project capacity."
+    },
+    {
+      "id": "DOCKER-HOST",
+      "url": "https://docs.docker.com/engine/network/drivers/host/",
+      "title": "Docker host network driver",
+      "retrievedAt": "2026-09-20T03:20:18.006261+00:00",
+      "authority": "OFFICIAL_DOCKER",
+      "classification": "EXPLICITLY_APPLICABLE",
+      "claimSummary": "Linux host-network containers share the host network namespace.",
+      "coversSessionPoolerToProjectBackend": "NOT_APPLICABLE_TO_PROVIDER_HOP",
+      "limitation": "A bridge network IPv6 flag does not decide the route of this runner host-network container."
+    }
+  ],
+  "classificationRule": "EXPLICITLY_APPLICABLE is scoped to the stated claim, not blanket HOP B trust. Only evidence explicitly mapping upstream security could satisfy A3.",
+  "historicalObservationReconciled": true,
+  "backendTrustProven": false,
+  "reconciliation": "Client TLSv1.3 describes runner-to-pooler. Backend pg_stat_ssl=false describes the separate pooler-facing PostgreSQL connection. Both can hold simultaneously. Neither implies encryption/private isolation on the unobserved provider hop.",
+  "upstreamFacts": {
+    "transportType": "UNKNOWN_UNAPPROVED",
+    "authentication": "UNKNOWN_UNAPPROVED",
+    "encryption": "UNKNOWN_UNAPPROVED",
+    "certificateValidation": "UNKNOWN_UNAPPROVED",
+    "privateNetworkBoundary": "UNKNOWN_UNAPPROVED",
+    "tenantIsolationControls": "UNKNOWN_UNAPPROVED"
+  },
+  "supportSearch": {
+    "projectTextFilesSearched": 1702,
+    "candidatePaths": [
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-option-a-contract.json",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d2-decision.json"
+    ],
+    "actualSupportRepliesFound": 0,
+    "candidateExplanation": "Both hits are our D2 missing-evidence notes, not provider replies.",
+    "mediaExportCandidates": [],
+    "privateUnrelatedMailSearched": false,
+    "messagesSent": 0
+  },
+  "historicalEvidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-d1-historical-evidence.json",
+      "sha256": "1851b0d623115c8133e0f9e05c495b02132f52200a141a7483716a64b567dcf1"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1d-result.json",
+      "sha256": "fa8de8a42ee4dd6fcb802b05ba0d9be21954631a1245212f06b1f54c722b5128"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f"
+    }
+  ],
+  "missingEvidence": [
+    {
+      "id": "A3",
+      "exactFactNeeded": "Actual managed session-pooler upstream transport, authentication, encryption or alternative protection, private-network boundary and tenant isolation; applicability to this project/service.",
+      "whoCanSupply": "Supabase support/security/architecture owner",
+      "likelyLocation": "Attributable support answer or official managed-service architecture statement",
+      "evidenceClass": "PROVIDER_SUPPORT",
+      "futureProbeNeeded": "NO: backend SQL cannot establish hidden provider infrastructure controls."
+    },
+    {
+      "id": "A3-A4",
+      "exactFactNeeded": "Provider explanation of why client TLSv1.3 and backend ssl=false are expected or anomalous for this topology, reconciled with general transit encryption assurances.",
+      "whoCanSupply": "Supabase support/security",
+      "likelyLocation": "Same support response referencing the safe historical observations",
+      "evidenceClass": "PROVIDER_SUPPORT",
+      "futureProbeNeeded": "NO_DATABASE_PROBE_REQUIRED_FOR_THE_QUESTION"
+    },
+    {
+      "id": "A6",
+      "exactFactNeeded": "Reviewable backup policy binding TLS/identity proof to each psql, pg_dump and pg_dumpall process; accepted proof type and no substitution by a separate handshake.",
+      "whoCanSupply": "Project security/operator reviewer, informed by official libpq guarantees",
+      "likelyLocation": "Forward transport contract review",
+      "evidenceClass": "LOCAL_POLICY_AND_PUBLIC_DOCUMENTATION",
+      "futureProbeNeeded": "OWNED_VALIDATION_LATER; no production backup/probe now."
+    },
+    {
+      "id": "A5-A6-CAPACITY",
+      "exactFactNeeded": "Sufficient pool/database capacity and timeout policy for one exporter plus one sequential dump connection, including roles dump; snapshot sessions route to the same primary.",
+      "whoCanSupply": "Project operator and Supabase support",
+      "likelyLocation": "Project connection settings/metrics export and provider workflow statement",
+      "evidenceClass": "PROJECT_CONFIG_AND_PROVIDER_SUPPORT",
+      "futureProbeNeeded": "MAY_REQUIRE_SEPARATELY_APPROVED_READONLY_OBSERVATION; not inferred from historical successes."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "tool": "get_current_lesson_execution_facts@1.0.0",
+  "riskLevel": 0,
+  "permission": "teaching.execution.self.read",
+  "timeoutMs": 12000,
+  "maxResultBytes": 16384,
+  "modelInput": {},
+  "additionalProperties": false,
+  "envelope": "existing ToolResult",
+  "registry": "request-local development/test only",
+  "productionRegistryChanged": false,
+  "currentTeachingNode": null,
+  "currentPositionAvailability": "unavailable",
+  "completeness": "partial",
+  "explainMandatoryContextEvidence": "UNCHANGED",
+  "agentRuns": 0,
+  "providerRequests": 0
+}

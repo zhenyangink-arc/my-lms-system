@@ -1,0 +1,20 @@
+{
+  "before": 0,
+  "currentTextbookRoots": 1,
+  "currentCanonicalChains": 1,
+  "counts": {
+    "lessons": 1,
+    "digital_textbooks": 1,
+    "digital_textbook_versions": 1,
+    "digital_textbook_chapters": 1,
+    "digital_textbook_modules": 1,
+    "digital_textbook_nodes": 0,
+    "digital_textbook_activities": 0,
+    "learning_agent_lessons": 1,
+    "learning_agent_steps": 0,
+    "learning_agent_script_versions": 0,
+    "learning_agent_script_nodes": 0
+  },
+  "structureContractPass": true,
+  "status": "PASS"
+}

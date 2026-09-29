@@ -1,0 +1,40 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "VERIFIED DESIGN",
+  "permission": "teaching.execution.self.read",
+  "existingPolicySupport": false,
+  "requiredChecks": [
+    "Normal authenticated active student and published content via existing StudentPolicy.",
+    "Verifier-issued binding identity; structure/UUID is not authorization.",
+    "Same authority, run, skill, tenant and subject across admission, issuer, Tool and final evidence gate.",
+    "Resolve allowed Activity only from authoritative runtime snapshot for verified lesson/version; never model IDs.",
+    "Revalidate authorization/revision/deadline; fail closed on drift.",
+    "Expose only read port; no submission/Auth/admin capability."
+  ],
+  "bindingIssuance": "Use existing createLessonFactsBindingIssuer with a production-only authorize/read adapter after verified Student Run context and canonical published snapshot exist; never copy or forge VerifiedStudentBinding.",
+  "productionPrerequisites": {
+    "reader": "Current StudentTeachingReadRepository lacks execution snapshot method. Add bounded server read contract and canonical published adapter under separately scoped implementation.",
+    "runtime": "Existing createRuntimeLearningSessionResolver.issue uses chapter-one scope; activityExecutions uses legacy capsules. Neither is an approved canonical target bridge.",
+    "provenance": "Current receipt/grant permits CURRENT_DEVELOPMENT_DB and isolated-test-db only. Version production transport authority explicitly before enablement; never relabel development evidence as production.",
+    "testPolicy": "Current two-attempt B3 consistency rule remains development-target-specific; no global two-attempt policy."
+  },
+  "separation": {
+    "development": "Owner operator + fixed B2 subject + CURRENT_DEVELOPMENT_DB; retained acceptance only",
+    "production": "real verified Student subject + own tenant + published runtime context",
+    "B2Admission": "Inactive/suspended/Draft rejection is correct; do not change Auth/RLS/StudentPolicy or publish target."
+  },
+  "persona": "Kim/generic only identity/style text. Same allowlists, authority, evidence requirements and scope; persona text cannot grant permissions.",
+  "negativeErrorMapping": {
+    "identityMismatch": "not_found_or_not_visible",
+    "bindingRevisionDrift": "stale",
+    "readConflictOrUnknown": "unavailable / READ_UNAVAILABLE; never zero attempts"
+  }
+}

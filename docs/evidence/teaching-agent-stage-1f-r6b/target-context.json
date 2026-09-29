@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T07:11:09.338Z",
+  "authenticatedPlatformOwner": true,
+  "existingUserOwnedChrome": true,
+  "pagePath": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "teachingLessonHash": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+  "targetTitleVisible": true,
+  "chapterZeroVisible": true,
+  "orientationVisible": true,
+  "newScriptButtonVisible": true,
+  "buttonClicked": false,
+  "sessionSecretsReadOrExported": false,
+  "chromeLeftOpen": true
+}

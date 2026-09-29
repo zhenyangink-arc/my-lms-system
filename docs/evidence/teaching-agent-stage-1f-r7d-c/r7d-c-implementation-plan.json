@@ -1,0 +1,113 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "status": "READY FOR SCOPED C2 IMPLEMENTATION APPROVAL",
+  "scope": "Unregistered Skill, shared private ledger and deterministic contract tests; not complete production activation",
+  "modify": [
+    {
+      "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+      "change": "Extract existing private executor ledger into shared teaching helper, preserving Explain admission, exact allowlists and evidence semantics."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+      "change": "Type-only shared teaching Skill contract; retain exact ID/version/procedure/context/allowedTools/evidence requirements."
+    }
+  ],
+  "add": [
+    {
+      "path": "src/features/teaching-agent/server/skills/teaching-skill-contract.ts",
+      "change": "Name existing teaching extension of SkillDefinition; reuse requiredContext/evidenceRequirements/intent/locales."
+    },
+    {
+      "path": "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+      "change": "Single shared executor-owned private receipt mechanism extracted from current capabilities; no external receipt setter or second registry."
+    },
+    {
+      "path": "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+      "change": "Unregistered request-local composition using existing registries, policy interface, Core executor, trusted facts handle and shared private ledger. Isolated harness only until production prerequisites close."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+      "change": "Proposed exact Skill/output refs and existing teaching contract fields; not production registration."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts",
+      "change": "Read-only procedure; mandatory exact durable Tool; no current position guess."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+      "change": "Validate executor-owned receipt/context/provenance/freshness; reuse Tool facts validation, no second isCompleted algorithm."
+    },
+    {
+      "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+      "change": "Strict bounded safe summary projected from verified facts; no raw/model-authored authoritative execution fields."
+    }
+  ],
+  "productFileCount": 9,
+  "newTestsAndFixture": [
+    "tests/teaching-agent-r7d-c-skill-binding.test.mjs",
+    "tests/teaching-agent-r7d-c-evidence-gate.test.mjs",
+    "tests/teaching-agent-r7d-c-planning-boundary.test.mjs",
+    "tests/fixtures/teaching-agent-r7d-c/skill-binding-fixture.mjs"
+  ],
+  "productionRegistryChanges": 0,
+  "migrationForThisPackage": "NONE",
+  "dependenciesChanged": 0,
+  "sequence": [
+    "Read relevant installed Next/server-only guidance before implementation.",
+    "Confirm source hashes and preserve current Explain behavior.",
+    "Extract existing ledger/teaching extension; add unregistered summary Skill and bounded output.",
+    "Compose through existing Core registry/executor and trusted facts issuer using isolated read-only fixture.",
+    "Run planned C2 cases and relevant regression with no current DB/Provider/Run persistence.",
+    "TypeScript/scoped lint/diff/private-marker checks and isolated candidate build if warranted.",
+    "Report actual results; stop before production registration/deploy or current DB acceptance."
+  ],
+  "productionPrerequisiteWork": {
+    "status": "REQUIRES SEPARATE EXACT IMPLEMENTATION SCOPE BEFORE PRODUCTION BINDING",
+    "affectedExistingFiles": [
+      "src/features/teaching-agent/server/skills/student-skill-registry.ts",
+      "src/features/teaching-agent/server/tools/student-tool-registry.ts",
+      "src/features/teaching-agent/server/policies/student-tool-policy.ts",
+      "src/features/teaching-agent/profiles/student-ai-teacher.ts",
+      "src/features/teaching-agent/server/runtime/student-runtime-definition.ts",
+      "src/features/teaching-agent/server/runtime/student-run-coordinator.ts",
+      "src/features/teaching-agent/server/runtime/student-run-completion-guard.ts",
+      "src/features/teaching-agent/server/runtime/student-prompt-assembler.ts",
+      "src/features/teaching-agent/server/runtime/create-student-ai-teacher-runtime.ts",
+      "src/features/teaching-agent/server/selection/selection-types.ts",
+      "src/features/teaching-agent/server/repositories/contracts.ts",
+      "src/features/teaching-agent/server/domain-ports/lesson-execution-facts-binding.ts",
+      "src/features/agent-core/contracts/server.ts",
+      "src/features/agent-core/observability/trace.ts",
+      "src/features/agent-core/persistence/supabase/repositories.ts"
+    ],
+    "additionalRuntimeFilesToAudit": [
+      "src/features/smart-textbook-runtime/server/native-activity-binding.server.ts",
+      "src/features/smart-textbook-runtime/server/durable-activity-completion.server.ts",
+      "src/features/smart-textbook-runtime/core/execution-contracts.ts"
+    ],
+    "deliverables": [
+      "Canonical published read-only runtime binding adapter from verified Run subject; no chapter-one/Owner fallback.",
+      "Explicit real production transport provenance and receipt version strategy without relabeling development facts.",
+      "Versioned artifact/trace/SQL completion contract for durable Activity evidence and eventual mandatory evidence sets.",
+      "Skill-dispatched existing coordinator and exact new pinned Profile/policy versions; retain Explain requirement.",
+      "Permission mapping and request-local production availability only after above pass."
+    ],
+    "migration": "Required if using existing persisted Run completion path; propose new narrowly scoped function/schema-validator migration in separate package. No new tables and do not edit installed historical migration.",
+    "noInventedMigrationFilename": true,
+    "gate": "C2 isolated Skill success alone does NOT authorize C3 production binding/deployment. Close these prerequisites under explicit expanded approval first."
+  },
+  "stages": {
+    "C1": "Audit/contracts/docs only (this turn)",
+    "C2": "Scoped implementation/tests after approval; production prerequisite package remains explicit",
+    "C3": "Separately approved deploy/binding acceptance after all prerequisites; no implicit Agent or Provider authorization",
+    "later": "Provider/Agent stages only per separate roadmap approval; no automatic R7E/Stage1G"
+  }
+}

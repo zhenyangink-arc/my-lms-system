@@ -1,0 +1,17 @@
+[
+  {
+    "path": "/",
+    "http": 200,
+    "finalPath": "/"
+  },
+  {
+    "path": "/platform/dashboard",
+    "http": 200,
+    "finalPath": "/platform/dashboard"
+  },
+  {
+    "path": "/platform/dashboard/admin/apps/korean/textbooks",
+    "http": 200,
+    "finalPath": "/platform/dashboard/admin/apps/korean/textbooks"
+  }
+]

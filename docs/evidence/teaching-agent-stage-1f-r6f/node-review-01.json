@@ -1,0 +1,26 @@
+{
+  "nodeNumber": 1,
+  "title": "今天认识韩文字母",
+  "formalType": "opening",
+  "purpose": "导入两类字母和组合预期。",
+  "status": "PASS",
+  "grammarAccuracy": "PASS",
+  "naturalKorean": "PASS",
+  "simpleVocabulary": "PASS",
+  "shortSentences": "PASS",
+  "politeStyle": "PASS",
+  "beginnerComprehension": "PASS",
+  "pedagogicalClarity": "PASS",
+  "pedagogicalAccuracy": "PASS",
+  "terminology": "PASS",
+  "reason": "存在句한글에는…있어요自然、语法正确；后续모아서 한 글자를 만들어요保留组合目标。问候和볼까요礼貌，信息量小；原不自然表述没有残留。",
+  "resolvedItems": [
+    "S1"
+  ],
+  "newMustFix": 0,
+  "newShouldFix": 0,
+  "persistedRowSha256": "ad1d0d94e8c6c10daed7bd05daf1194f9b52300d8bdb87d3fa31e1a498a614b6",
+  "teacherScriptSha256": "d4a40ab6d4a0f8a0c9e5bac24e13993bab94cdeb04bc53db45d268f5e78a02bf",
+  "reviewScope": "AUTHORING TEXT; not audio/runtime/learner performance",
+  "recommendedRevision": "NONE"
+}

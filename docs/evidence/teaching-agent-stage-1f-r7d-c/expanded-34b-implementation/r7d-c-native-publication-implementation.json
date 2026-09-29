@@ -1,0 +1,52 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "contract": {
+    "revision": "publish-foundation/2",
+    "publicationKind": "canonical-native",
+    "privateContract": "canonical-native-publication/1",
+    "compilerVersion": "native-publication-1",
+    "manifestSchemaVersion": "1.0.0",
+    "runtimeContract": "uply-runtime/1",
+    "compatibilityProfile": "native"
+  },
+  "framework": "EXISTING_PUBLICATION_FRAMEWORK",
+  "capture": "One capture_runtime_publication_v1 result; native projection uses captured rows only. No Chapter One identity walk/service reader.",
+  "publisher": "Existing Owner guard, explicit native strategy, official repository and existing CAS.",
+  "association": "Exact reference_activity_id; same captured lesson/module/chapter/version/script graph; missing/duplicate/ambiguous rejected.",
+  "supported": [
+    "teaching text",
+    "single_choice",
+    "multiple supported execution nodes"
+  ],
+  "initialProjectionLimit": "At most one completion-counted Activity per execution node; not a permanent platform rule.",
+  "rejected": [
+    "required media/audio/video/speech/listening/cue",
+    "unknown/unsupported required configuration",
+    "unsupported aggregation or branching",
+    "chapter test requirements outside native v1"
+  ],
+  "developmentFixtureImported": false,
+  "legacyProducerRetired": false
+}

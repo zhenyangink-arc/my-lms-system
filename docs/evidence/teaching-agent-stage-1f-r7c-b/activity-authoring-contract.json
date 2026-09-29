@@ -1,0 +1,21 @@
+{
+  "functions": [
+    {
+      "name": "record_smart_textbook_attempt",
+      "args": "p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric, p_meets_completion_requirements boolean",
+      "bodySha256": "1cffc532df2720e957a840a66291553fc44ef61b4b7d897ef87e003299507827",
+      "authenticatedExecute": false,
+      "serviceRoleExecute": true
+    },
+    {
+      "name": "record_smart_textbook_attempt",
+      "args": "p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric",
+      "bodySha256": "b83ff2f15ec3506d877f21fba4ace98a561b351cea166f446fd4541d34effbbe",
+      "authenticatedExecute": false,
+      "serviceRoleExecute": true
+    }
+  ],
+  "sourceAudit": "IN PROGRESS",
+  "productWrites": 0,
+  "dbWrites": 0
+}

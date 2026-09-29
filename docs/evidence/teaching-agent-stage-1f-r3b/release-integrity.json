@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "releaseInputs": 1303,
+  "allInputHashesMatchR3A": true,
+  "migrationCount": 7,
+  "migrations": [
+    {
+      "filename": "202609140000_agent_core_foundation.sql",
+      "name": "agent_core_foundation",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "version": "202609140000"
+    },
+    {
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "name": "agent_runtime_completion_evidence",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "version": "202609140001"
+    },
+    {
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "name": "agent_run_cancel_request",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "version": "202609140002"
+    },
+    {
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "name": "teaching_operations_reissue",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "version": "202609140003"
+    },
+    {
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "name": "completion_policy_management_reissue",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "version": "202609140004"
+    },
+    {
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "name": "student_teaching_content_isolation",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "version": "202609140005"
+    },
+    {
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "name": "agent_run_reconciliation",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "version": "202609140006"
+    }
+  ],
+  "baselineHashMatches": true,
+  "r3aOperationalHashesMatch": true,
+  "originalCandidateArchiveMatches": true,
+  "candidateBuildId": "T45ZN3yOYh5w194F5gq8o",
+  "reconcilerContract": "deadline-terminal-v1",
+  "productionMigrationApplied": false
+}

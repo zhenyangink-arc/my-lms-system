@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "verifiedAt": "2026-09-15T06:33:18.901161+00:00",
+  "path": "/home/yangzhen/backups/uply/20260915T063124Z",
+  "directoriesMode": "0700",
+  "filesMode": "0600",
+  "coreArtifactHashesUnchanged": true,
+  "manifestAndChecksumsReverified": true,
+  "privateLogsRetained": true,
+  "historicalBackupsDeleted": false,
+  "authorizedBackupFilesystemWrites": true,
+  "productionDatabaseChanges": 0
+}

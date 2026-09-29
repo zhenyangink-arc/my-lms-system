@@ -1,0 +1,236 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "target": {
+    "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+    "owner": "postgres",
+    "config": [
+      "search_path=\"\""
+    ],
+    "schema": "public",
+    "language": "plpgsql",
+    "parallel": "u",
+    "leakproof": false,
+    "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+    "definition": "CREATE OR REPLACE FUNCTION public.review_chapter_practice_binding(p_app_id uuid, p_chapter_id uuid, p_expected_revision integer, p_expected_snapshot jsonb, p_enabled boolean)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  source_version uuid;\n  current_snapshot jsonb;\n  result_id uuid;\nbegin\n  if auth.uid() is null or not coalesce(private.is_platform_owner(), false) then\n    raise exception '没有权限维护教材练习关联';\n  end if;\n  if p_enabled is null or p_expected_revision is null or p_expected_revision < 0 then\n    raise exception '无效的复核请求';\n  end if;\n  if not p_enabled then\n    update public.chapter_practice_bindings set is_enabled = false,\n      revision = revision + 1, reviewed_at = now(), reviewed_by = auth.uid()\n    where student_app_id = p_app_id and chapter_id = p_chapter_id and revision = p_expected_revision\n    returning id into result_id;\n    if result_id is null then raise exception '关联已被修改，请刷新后重新核对'; end if;\n    return result_id;\n  end if;\n\n  perform runtime_publish_private.authoring_lock();\n  -- Lock authoring rows so an in-place edit cannot slip between comparison and approval.\n  select v.id into source_version\n  from public.digital_textbook_chapters c\n  join public.digital_textbook_versions v on v.id = c.version_id\n  join public.digital_textbooks t on t.id = v.textbook_id\n  where c.id = p_chapter_id and t.student_app_id = p_app_id\n    and c.status = 'published' and v.status = 'published' and t.status = 'published'\n  for share of c, v, t;\n  if source_version is null then raise exception '只能关联当前应用已发布的教材章节'; end if;\n  perform m.id from public.digital_textbook_modules m where m.chapter_id = p_chapter_id for share;\n  perform n.id from public.digital_textbook_nodes n\n    join public.digital_textbook_modules m on m.id = n.module_id\n    where m.chapter_id = p_chapter_id for share of n;\n\n  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id\n    where m.chapter_id=p_chapter_id and m.module_code='grammar' and n.content ? 'grammarCards'\n    and jsonb_typeof(n.content->'grammarCards') is distinct from 'array') then raise exception '语法卡格式无效，请核对教材来源'; end if;\n  if exists(select 1 from public.digital_textbook_nodes n join public.digital_textbook_modules m on m.id=n.module_id\n    cross join lateral jsonb_array_elements(case when jsonb_typeof(n.content->'grammarCards')='array' then n.content->'grammarCards' else '[]'::jsonb end)e\n    where m.chapter_id=p_chapter_id and m.module_code='grammar' and not private.valid_textbook_grammar_card(e)) then raise exception '语法卡格式无效，请核对教材来源'; end if;\n\n  select coalesce(jsonb_agg(jsonb_build_object('nodeId', items.node_id, 'kind', items.kind, 'value', items.value)\n    order by items.node_id, items.kind, items.ordinality), '[]'::jsonb) into current_snapshot\n  from (\n    select n.id as node_id, m.module_code as kind, elem.value, elem.ordinality\n    from public.digital_textbook_nodes n\n    join public.digital_textbook_modules m on m.id = n.module_id\n    cross join lateral jsonb_array_elements(\n      (case when jsonb_typeof(n.content -> m.module_code) = 'array' then n.content -> m.module_code else '[]'::jsonb end)\n      || (case when m.module_code='grammar' and jsonb_typeof(n.content->'grammarCards')='array' then n.content->'grammarCards' else '[]'::jsonb end)\n    ) with ordinality elem(value, ordinality)\n    where m.chapter_id = p_chapter_id and m.module_code in ('vocabulary', 'grammar')\n      and jsonb_typeof(elem.value) = 'object'\n      and case when m.module_code = 'vocabulary' then\n        coalesce(elem.value->>'ko', '') <> '' or coalesce(elem.value->>'zh', '') <> ''\n      else coalesce(elem.value->>'title', '') <> '' or coalesce(elem.value->>'form','') <> '' end\n  ) items;\n  if current_snapshot = '[]'::jsonb or current_snapshot is distinct from p_expected_snapshot then\n    raise exception '教材内容已变化或为空，请刷新并重新核对后再确认';\n  end if;\n  if p_expected_revision = 0 then\n    insert into public.chapter_practice_bindings (student_app_id, chapter_id, version_id, snapshot, reviewed_by)\n    values (p_app_id, p_chapter_id, source_version, current_snapshot, auth.uid())\n    on conflict (student_app_id, chapter_id) do nothing returning id into result_id;\n  else\n    update public.chapter_practice_bindings set snapshot = current_snapshot, version_id = source_version,\n      is_enabled = true, revision = revision + 1, reviewed_at = now(), reviewed_by = auth.uid()\n    where student_app_id = p_app_id and chapter_id = p_chapter_id and revision = p_expected_revision\n    returning id into result_id;\n  end if;\n  if result_id is null then raise exception '关联已被修改，请刷新后重新核对'; end if;\n  return result_id;\nend;\n$function$\n",
+    "privileges": [
+      {
+        "role": "authenticated",
+        "execute": true
+      },
+      {
+        "role": "anon",
+        "execute": false
+      },
+      {
+        "role": "service_role",
+        "execute": true
+      },
+      {
+        "role": "postgres",
+        "execute": true
+      }
+    ],
+    "volatility": "v",
+    "public_execute": false,
+    "security_definer": true,
+    "definition_sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+  },
+  "query": {
+    "at": "2026-09-18T08:25:26.467461+00:00",
+    "sqlSha256": "5f4a5ced884e9b04ed57767aed1c890a9e1c1985349344d429af5959bf1b47f3",
+    "transaction": "REPEATABLE READ READ ONLY",
+    "defaultTransactionReadOnly": true,
+    "ended": "ROLLBACK",
+    "credentialOutput": false,
+    "businessWrites": 0,
+    "authWrites": 0
+  },
+  "sqlReadOnlySource": "WITH f AS (SELECT p.*,n.nspname,l.lanname,pg_get_userbyid(p.proowner) AS owner FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace JOIN pg_language l ON l.oid=p.prolang WHERE (n.nspname='public' AND p.proname IN ('review_chapter_practice_binding','get_teaching_script_source_review','confirm_teaching_script_source_review','list_teaching_script_source_review_status','save_completion_policy_draft','publish_completion_policy_draft','create_teaching_content_skeleton','create_teaching_lesson_activity_binding')) OR (n.nspname='private' AND p.proname='is_platform_owner') OR (n.nspname='auth' AND p.proname='uid') OR (n.nspname='runtime_publish_private' AND p.proname='authoring_lock')),\n rows AS (SELECT f.oid::regprocedure::text AS signature,f.nspname AS schema,f.owner,f.lanname AS language,f.proacl::text AS acl,f.prosecdef AS security_definer,f.provolatile AS volatility,f.proleakproof AS leakproof,f.proparallel AS parallel,f.proconfig AS config,pg_get_functiondef(f.oid) AS definition,encode(sha256(convert_to(pg_get_functiondef(f.oid),'UTF8')),'hex') AS definition_sha256,\n (SELECT jsonb_agg(jsonb_build_object('role',r.rolname,'execute',has_function_privilege(r.oid,f.oid,'EXECUTE'))) FROM pg_roles r WHERE r.rolname IN ('postgres','authenticated','service_role','anon')) AS privileges,\n EXISTS(SELECT 1 FROM aclexplode(coalesce(f.proacl,acldefault('f',f.proowner))) a WHERE a.grantee=0 AND a.privilege_type='EXECUTE') AS public_execute FROM f)\nSELECT jsonb_build_object('functions',(SELECT jsonb_agg(to_jsonb(rows) ORDER BY signature) FROM rows),'readOnly',current_setting('transaction_read_only'))\n",
+  "definitionMatchesD1": true,
+  "authorizationCases": [
+    {
+      "caller": "authenticated; active Platform Owner subject",
+      "authUid": "validated request JWT subject",
+      "guard": "ALLOW_IF_OWNER",
+      "remainingRequirements": "revision/input and relevant source/published/app/snapshot consistency; SQL execution can still reject"
+    },
+    {
+      "caller": "authenticated; ordinary student/admin/inactive owner",
+      "authUid": "request subject",
+      "guard": "DENY_UNLESS_ACTIVE_PLATFORM_OWNER",
+      "note": "SQL role authenticated alone never authorizes mutation"
+    },
+    {
+      "caller": "service_role; no JWT subject",
+      "authUid": null,
+      "guard": "DENY",
+      "note": "Service database role does not synthesize auth.uid; no infrastructure bypass branch"
+    },
+    {
+      "caller": "service_role; non-owner JWT subject",
+      "authUid": "provided validated/request-context subject",
+      "guard": "DENY"
+    },
+    {
+      "caller": "service_role; active owner JWT subject or trusted SQL context able to set matching claims",
+      "authUid": "owner subject",
+      "guard": "ALLOW_IF_OWNER_AND_BUSINESS_CHECKS",
+      "note": "No explicit SQL-role exclusion currently. SECURITY DEFINER changes effective database execution user, not request claim settings. This is the additional reachable entry removed by future ACL change."
+    }
+  ],
+  "helperDefinitions": [
+    {
+      "acl": "{=X/supabase_auth_admin,supabase_auth_admin=X/supabase_auth_admin,dashboard_user=X/supabase_auth_admin}",
+      "owner": "supabase_auth_admin",
+      "config": null,
+      "schema": "auth",
+      "language": "sql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "auth.uid()",
+      "definition": "CREATE OR REPLACE FUNCTION auth.uid()\n RETURNS uuid\n LANGUAGE sql\n STABLE\nAS $function$\n  select \n  coalesce(\n    nullif(current_setting('request.jwt.claim.sub', true), ''),\n    (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')\n  )::uuid\n$function$\n",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": true
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "public_execute": true,
+      "security_definer": false,
+      "definition_sha256": "7c1ff2ecbe653c9358b3115a2607db9573f88a2944ae4eca9e296a89cc5186a7"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "private",
+      "language": "sql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "private.is_platform_owner()",
+      "definition": "CREATE OR REPLACE FUNCTION private.is_platform_owner()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\n  select exists (\n    select 1\n    from public.profiles as profile\n    where profile.id = (select auth.uid())\n      and profile.global_role = 'platform_owner'\n      and profile.role = 'platform_super_admin'\n      and coalesce(profile.status, 'active') = 'active'\n  );\n$function$\n",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": true
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": true
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "s",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "e0bf08c5f13e4ed0953bb8c89f039ddb53fdd03400823c5a966315578b517059"
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "runtime_publish_private",
+      "language": "plpgsql",
+      "parallel": "u",
+      "leakproof": false,
+      "signature": "runtime_publish_private.authoring_lock()",
+      "definition": "CREATE OR REPLACE FUNCTION runtime_publish_private.authoring_lock()\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\nbegin\n if current_setting('transaction_isolation') <> 'read committed' then\n  raise exception 'PUBLICATION_AUTHORING_ISOLATION_REQUIRED' using errcode='40001';\n end if;\n perform pg_catalog.pg_advisory_xact_lock(4171, 2);\nend $function$\n",
+      "privileges": [
+        {
+          "role": "authenticated",
+          "execute": false
+        },
+        {
+          "role": "anon",
+          "execute": false
+        },
+        {
+          "role": "service_role",
+          "execute": false
+        },
+        {
+          "role": "postgres",
+          "execute": true
+        }
+      ],
+      "volatility": "v",
+      "public_execute": false,
+      "security_definer": true,
+      "definition_sha256": "820320fcdb4b8668e48bb96c65043bfdc4e3c782758fd96981e4b533c1bbf9a7"
+    }
+  ],
+  "dynamicSql": false,
+  "callerControlledSqlIdentifiers": false,
+  "dependsOnCurrentUserOrSessionUser": false,
+  "dependsOnClaims": true,
+  "authUidMeaning": "coalesce nonempty request.jwt.claim.sub, request.jwt.claims.sub cast to uuid; empty/missing => NULL; malformed values fail rather than authorize",
+  "searchPathAssessment": "SAFE_FOR_AUDITED_BODY: empty fixed proconfig; all application relations/helpers schema-qualified; builtins resolve in pg_catalog; no user identifiers interpolated",
+  "tenantMembership": "No student tenant-membership grant path; this is platform Owner authoring. Enable uses exact textbook student_app/chapter/version graph; disable uses app/chapter/revision CAS after Owner guard.",
+  "writes": [
+    "chapter_practice_bindings INSERT on revision=0 enable",
+    "chapter_practice_bindings UPDATE on existing enable/disable",
+    "reviewed_by=auth.uid; revision updated"
+  ],
+  "reads": [
+    "profiles via private.is_platform_owner",
+    "digital_textbooks/versions/chapters/modules/nodes",
+    "chapter_practice_bindings; source and revision comparisons"
+  ],
+  "helperSecurity": [
+    "private.is_platform_owner is postgres SECURITY DEFINER with fixed empty path and active platform owner/super-admin profile checks",
+    "runtime_publish_private.authoring_lock is postgres SECURITY DEFINER, requires READ COMMITTED and takes advisory xact lock",
+    "private.valid_textbook_grammar_card validates JSON, rejects malformed data; no caller identifier interpolation"
+  ],
+  "exceptions": "Guard first; invalid inputs; revision conflict; missing/unpublished association; changed/empty source; malformed grammar; isolation error. No catch/fallback or implicit authorization on error.",
+  "functionInvocations": 0,
+  "postgresSemanticsSource": "https://www.postgresql.org/docs/17/sql-createfunction.html"
+}

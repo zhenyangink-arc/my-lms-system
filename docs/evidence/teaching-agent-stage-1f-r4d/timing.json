@@ -1,0 +1,12 @@
+{
+  "backupSeconds": 23.731800014997134,
+  "setupSeconds": 1.0322448940132745,
+  "restoreSeconds": 2.894282805005787,
+  "verificationSeconds": 1.0296449419984128,
+  "totalExerciseSeconds": 32.244288159999996,
+  "startedAt": "2026-09-15T06:31:23.632327+00:00",
+  "endedAt": "2026-09-15T06:31:55.876633+00:00",
+  "rtoTargetSeconds": 3600,
+  "rtoAssessment": "SUPPORTED BY ISOLATED EXERCISE",
+  "backupAgeSecondsAtCompletion": 30.961731
+}

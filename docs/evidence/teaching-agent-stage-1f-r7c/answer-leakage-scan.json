@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "scanned": [
+    "serialized public manifest",
+    "public HTTP /data payload",
+    "pre-submit browser DOM",
+    "client bundle dependency graph",
+    "client JavaScript markers",
+    "runtime facts",
+    "client console logs"
+  ],
+  "serverGraderInClientBundle": false,
+  "privateBindingInPublicManifest": false,
+  "privateAnswerInPublicNetworkPayload": false,
+  "optionTextMayContainCorrectOption": "Yes: all choices are public; answer designation/key must not be present",
+  "studentSubmissionResponse": "Not returned in facts",
+  "testFiles": [
+    "tests/teaching-agent-r7c-binding.test.mjs",
+    "tests/teaching-agent-r7c-browser.test.mjs"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "status": "UNCHANGED",
+  "runtime": {
+    "path": "/home/yangzhen/.config/uply-first-enable-20260910/runtime.json",
+    "sha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "mode": "0o600",
+    "featureFlag": "OFF",
+    "allowlists": {
+      "TEACHING_AGENT_ALLOWED_TENANTS": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_COURSES": "EMPTY",
+      "TEACHING_AGENT_ALLOWED_USERS": "EMPTY"
+    },
+    "necessaryVariables": {
+      "NEXT_PUBLIC_SUPABASE_URL": "SET",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "SET",
+      "SUPABASE_SERVICE_ROLE_KEY": "SET",
+      "DEEPSEEK_API_KEY": "SET"
+    }
+  },
+  "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+  "launcherPath": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs"
+}

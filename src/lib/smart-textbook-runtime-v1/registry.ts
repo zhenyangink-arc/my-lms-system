@@ -22,7 +22,7 @@ export const blockRegistryV1 = Object.freeze(Object.fromEntries(blockTypes.map(t
   targetPartsRule: composites.has(type) ? 'declared-props-identities' : 'none',
   renderer: 'unimplemented', dispose: 'unimplemented', migrationReader: 'unimplemented',
 })])) as unknown as { readonly [K in BlockTypeV1]: RegistryEntryV1 });
-export const contractCapabilitiesV1 = Object.freeze(['layout.v1','navigation.linear.v1','progress.server.v1', ...blockTypes.map(t => blockRegistryV1[t].capability)]);
+export const contractCapabilitiesV1 = Object.freeze(['layout.v1','navigation.linear.v1','progress.server.v1','timeline.cue.v1', ...blockTypes.map(t => blockRegistryV1[t].capability)]);
 /** No executable renderer is registered in Phase 3A. */
 export const executableCapabilitiesV1: readonly string[] = Object.freeze([]);
 export function declaredPartIds(block: BlockV1): string[] {

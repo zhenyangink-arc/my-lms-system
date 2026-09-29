@@ -1,0 +1,88 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1",
+  "recordedAt": "2026-09-20T05:16:20.467266+00:00",
+  "mode": "IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "IMPLEMENTED_AND_OWNED_VALIDATED_ACCEPTANCE_BLOCKED",
+  "approvalAuthority": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+    "sha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686"
+  },
+  "selectedContract": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+  "operationalModified": 5,
+  "testsModified": 3,
+  "readmeModified": 1,
+  "implementationAdded": 0,
+  "boundaries": "runner/transaction/receipts/registry/draft/fixtures/migrations/historical ops byte-identical",
+  "staticChecks": {
+    "pythonCompile": "PASS",
+    "strictJSON": "PASS",
+    "implementationPathScope": "PASS",
+    "newImplementationFiles": 0,
+    "arbitrarySQLOrCLIOverrides": "NONE",
+    "proofPathTraversal": "REJECT",
+    "secretPersistence": "NONE",
+    "historicalEvidencePreservation": "FAIL"
+  },
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+    "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae"
+  },
+  "tests": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+    "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72"
+  },
+  "regression": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+    "sha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e"
+  },
+  "incident": {
+    "code": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+    "responsibility": "Assistant-started development validation",
+    "cause": "An early test process retained the old RUNNER-D1-51 log destination in memory. Interrupting its command session did not stop the child from completing and overwriting two historical logs.",
+    "correctedTestDestination": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation",
+    "historicalLogsInitiallyOverwritten": 2,
+    "historicalLogsStillChanged": 1,
+    "remaining": [
+      {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+        "expectedSha256": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+        "actualSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a"
+      }
+    ],
+    "restored": {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "sha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "method": "Recovered byte-identical content by checking the sole variable duration field against the pre-edit SHA256; exact original hash verified."
+    },
+    "recoverySearch": {
+      "localLogFilesChecked": 149,
+      "exactNodeLogCopyFound": false
+    },
+    "requiredRecovery": "Restore the remaining Node log from an original copy matching its pre-edit SHA256. No invented replacement or historical hash update is allowed.",
+    "releaseDecision": "BLOCKED; do not generate v4 despite all code/owned validation tests passing."
+  },
+  "controlledPreflightV4Generated": false
+}

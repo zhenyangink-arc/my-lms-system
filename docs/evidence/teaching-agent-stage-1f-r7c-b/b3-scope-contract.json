@@ -1,0 +1,73 @@
+{
+  "contract": "development-domain-execution/1",
+  "extension": "scenario-scope/1",
+  "status": "DESIGNED / isolated executable reference verified; NOT installed or activated",
+  "actor": "existing stable B2 actor only",
+  "tenant": "existing dedicated B2 tenant only",
+  "scenarioId": "r7cb-b3-wrong-correct-recovery-1",
+  "target": "hangul-introduction-vowel-recognition",
+  "timeWindow": {
+    "maxTTLSeconds": 900,
+    "issuedAt": "set only on separately approved activation",
+    "noRenewal": true,
+    "banMarginSeconds": 86400
+  },
+  "binding": [
+    "canonical environment identity",
+    "DB identity",
+    "dedicated tenant",
+    "stable actor",
+    "Teaching Lesson",
+    "Activity",
+    "textbook execution version",
+    "script version 1 DRAFT",
+    "R6F full-row hashes",
+    "B1 binding hash",
+    "immutable manifest snapshot/digest",
+    "scenario id",
+    "issuedAt/expiresAt",
+    "write budget",
+    "ACTIVE/DISABLED state"
+  ],
+  "issuer": "server-only; explicit private configuration + normal Owner-authorized activation; production composition excludes issuer; not NODE_ENV alone",
+  "storage": "bounded private scope metadata; not another progress database",
+  "dispatchJournal": "two exclusive slots first/second with opaque request correlation and generation; no answer/correctness/completion truth; fsync claim before mutation; never reset UNKNOWN claim",
+  "everyMutation": [
+    "fresh actor-scoped session0/refresh0",
+    "ban horizon > expiry+24h",
+    "profile inactive, membership student/suspended/non-default",
+    "fixed environment/DB/content binding",
+    "live generation lease",
+    "expected durable attempts baseline 0 then 1",
+    "unexpired ACTIVE scope",
+    "reserved write budget",
+    "under same trusted DB transaction and locks: recheck actor/scope before existing repository/RPC; no generic SQL API"
+  ],
+  "concurrency": "single owned writer process, exclusive scenario lease; repository transaction advisory locks remain authoritative for request idempotency; duplicate dispatch does not allocate another slot",
+  "staleGeneration": "gateway rejects new submission before repository; controller ignores stale callback; independent authoritative restore only",
+  "states": [
+    "DISABLED",
+    "ACTIVE",
+    "HOLD_ON_UNKNOWN",
+    "DISABLED"
+  ],
+  "unknown": "STOP all new mutation dispatch; fresh independent readback only; unknown/noncommitted no automatic resubmit",
+  "readAfterDisable": "owner-authorized read-only verification may continue; cannot reactivate writes",
+  "initialState": "DISABLED",
+  "finalState": "DISABLED",
+  "budget": {
+    "INSERT": 3,
+    "UPDATE": 1,
+    "DELETE": 0
+  },
+  "implementationReference": "tests/fixtures/teaching-agent-r7cb/b3/scope-contract.mjs (test-only design reference, not security enforcement installed in current DB)",
+  "notStored": [
+    "answer key",
+    "selected response",
+    "correctness truth",
+    "completion truth",
+    "progress truth",
+    "service credentials",
+    "Student JWT"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "formalType": "instruction",
+  "mode": "DRAFT_TEXT_ONLY",
+  "correctnessRuntime": "DEFERRED",
+  "question1": {
+    "answer": "B. ㅏ",
+    "correct": true,
+    "taughtInNodes": [
+      3,
+      4
+    ],
+    "distractors": [
+      "ㄱ",
+      "ㄴ"
+    ]
+  },
+  "question2": {
+    "answer": "A. 가",
+    "correct": true,
+    "taughtInNodes": [
+      2,
+      5
+    ],
+    "distractors": [
+      "나",
+      "다"
+    ]
+  },
+  "feedbackGrammar": "PASS",
+  "feedbackNaturalness": "PASS",
+  "politeStyle": "PASS",
+  "difficulty": "适合Exposure后的低门槛辨认，不要求迁移到未教复杂组合。",
+  "scopeLimitation": "两题不考发音、空间布局和초성/중성/종성角色；不能据此宣布四目标掌握。",
+  "optionalIssue": "O2",
+  "localeNote": "主字段保留完整两题/答案/反馈；ko-KR字段只含两组韩语反馈，INTENDED即如此，非数据丢失；不签署学生runtime或纯韩语呈现可用结论。",
+  "automaticAssessmentMissingIsNotFailure": true
+}

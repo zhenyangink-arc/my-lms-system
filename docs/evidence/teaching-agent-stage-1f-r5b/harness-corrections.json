@@ -1,0 +1,23 @@
+{
+  "status": "RESOLVED",
+  "productOrMigrationChanged": false,
+  "items": [
+    {
+      "issue": "Restore verifier lacked expected prefix reference in new wrapper",
+      "resolution": "Added constant baseline reference; reran readonly verification; subsequent two fresh restores passed all26 checks",
+      "productionImpact": false
+    },
+    {
+      "issue": "Initial function-config assertion omitted006 lock_timeout and007 SET search_path TO syntax",
+      "resolution": "Derive configuration list from locked source including = and TO; all35 bodies/security/owner/config match; no SQL modification"
+    },
+    {
+      "issue": "Homepage assertion initially treated documented / to /login redirect as failure",
+      "resolution": "Allow only the source-defined homepage redirect; protected admin pages still must not redirect to login"
+    },
+    {
+      "issue": "Background process lifetime and sandbox PID visibility",
+      "resolution": "Kept owned tool session active for browser checks; explicitly interrupted that session at closure; removed Docker resources and all private directories. /proc absence alone not used as proof."
+    }
+  ]
+}

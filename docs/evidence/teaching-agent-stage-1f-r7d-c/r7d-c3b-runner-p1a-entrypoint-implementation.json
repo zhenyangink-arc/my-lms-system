@@ -1,0 +1,53 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1A",
+  "recordedAt": "2026-09-19T06:11:06.177033+00:00",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildReobserved": false,
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "production000Plan": "DRAFT_NOT_EXECUTABLE",
+  "historicalEvidenceModified": false,
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "Stage1G": "NOT_READY",
+  "status": "PASS",
+  "authority": "approval-r7d-c3b-runner-readonly-capture-entrypoint-implementation.json",
+  "authorizedBy": "EXPLICIT_USER_MESSAGE",
+  "scope": {
+    "operationalModified": 4,
+    "testsModified": 2,
+    "readmeModified": 1,
+    "addedImplementationFiles": 0
+  },
+  "command": "runner.py capture --plan acl-000-v1",
+  "installCommandsUnchanged": [
+    "preflight",
+    "backup",
+    "apply",
+    "verify"
+  ],
+  "noInstallEngineFromCapture": true,
+  "noPlanMutation": true,
+  "reviewNotes": [
+    "Initial new test setup used wrong SQL return type; corrected only new fixture mutation code to use real owned definition.",
+    "New privacy test initially matched the ledger descriptor column name statements; corrected to reject raw statements payload keys. No historical expected value changed.",
+    "Strict target identity comparison rejects numeric/boolean JSON type substitution."
+  ]
+}

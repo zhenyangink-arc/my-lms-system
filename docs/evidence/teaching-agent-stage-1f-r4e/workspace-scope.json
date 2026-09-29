@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "originalFilesProtected": 3187,
+  "modifiedExisting": [
+    "docs/teaching-agent-pilot-operations-roles.md"
+  ],
+  "newFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4e/access-interface.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/code-hashes.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/database-end.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/database-start.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/database-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/gates.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/operations-end.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/operations-start.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/receipt-audit.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/runtime-tests.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/temporary-test-source-hashes.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/test-attempts.json",
+    "docs/evidence/teaching-agent-stage-1f-r4e/workspace-before.json",
+    "docs/teaching-agent-pilot-operations-runbook.md",
+    "docs/teaching-agent-stage-1f-r4e-pilot-operations-reconciler-acceptance.md"
+  ],
+  "unexpectedChanges": [],
+  "gitDiffCheck": "PASS",
+  "untrackedMarkdownWhitespaceChecks": [
+    "docs/teaching-agent-pilot-operations-roles.md",
+    "docs/teaching-agent-pilot-operations-runbook.md",
+    "docs/teaching-agent-stage-1f-r4e-pilot-operations-reconciler-acceptance.md"
+  ],
+  "requiredReportSections": 19,
+  "gateRows": 30,
+  "jsonFilesParsed": 14,
+  "sensitiveEvidenceMatches": 0,
+  "productionEndChecks": {
+    "serverVersion": true,
+    "migrationLedgerCount": true,
+    "latestMigration": true,
+    "ledgerSha256": true,
+    "agentTables": true,
+    "agentPrefixedTables": true,
+    "projectIdentitySha256": true,
+    "hostIdentitySha256": true,
+    "pm2": true,
+    "runtime": true,
+    "launcherSha256": true,
+    "tailscale": true
+  },
+  "temporaryTestScriptsOutsideRepo": [
+    "/tmp/uply-r4e-db-audit.mjs",
+    "/tmp/uply-r4e-receipt-audit.py"
+  ],
+  "scope": "Only authorized documentation/evidence changed; no business source/config/migration changes; no git commit",
+  "selfExcluded": "workspace-scope.json is generated after snapshot"
+}

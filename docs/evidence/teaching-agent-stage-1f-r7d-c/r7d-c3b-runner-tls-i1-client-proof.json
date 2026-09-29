@@ -1,0 +1,81 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1",
+  "recordedAt": "2026-09-20T05:16:20.467266+00:00",
+  "mode": "IMPLEMENTATION_AND_OWNED_VALIDATION_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "productionCaptureAuthorizationCreated": false,
+  "migrationInstallCurrentDB": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "productSourceChanges": 0,
+  "migrationChanges": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "PASS",
+  "contract": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+  "scope": "R7D-C3B_ONLY",
+  "clientHop": "TLS_VERIFY_FULL_REQUIRED",
+  "providerHop": "PROVIDER_MANAGED_UNVERIFIED",
+  "permanentSecurityApproval": false,
+  "psql": {
+    "proofKind": "PSQL_SAME_SESSION_METADATA",
+    "fixedCommand": "\\conninfo",
+    "sameLiveProcessAndInvocationBinding": true,
+    "safeMetadata": [
+      "TLS enabled",
+      "TLS version",
+      "cipher",
+      "endpoint",
+      "port",
+      "CA identity hash",
+      "tool image identity",
+      "authorization identity",
+      "package identity"
+    ],
+    "tests": [
+      "TLS-D4-14",
+      "TLS-D4-15",
+      "TLS-D4-16",
+      "TLS-D4-17",
+      "TLS-D4-18",
+      "TLS-D4-19"
+    ]
+  },
+  "dumpTools": {
+    "proofKind": "REAL_INVOCATION_LIBPQ_ENFORCEMENT",
+    "independentPerInvocation": true,
+    "successfulRealDatabaseOperationRequired": true,
+    "outputHashBound": true,
+    "tlsVersion": null,
+    "cipher": null,
+    "notClaimed": "Same-session cipher or peer-certificate telemetry for dump tools"
+  },
+  "borrowedHandshake": "FORBIDDEN",
+  "fixedPort": 5432,
+  "fixedPoolMode": "SESSION",
+  "gssencmode": "disable",
+  "environment": "Pinned image; explicit libpq connection parameters; PGSERVICE and PGHOSTADDR removed with existing image env utility.",
+  "newToolchainOrImage": false,
+  "sourceLock": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+    "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae"
+  },
+  "tests": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+    "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72"
+  }
+}

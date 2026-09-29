@@ -1,0 +1,50 @@
+{
+  "status": "FULLY READ",
+  "files": [
+    {
+      "path": "docs/teaching-agent-stage-1f-r6c-teaching-script-node-authoring.md",
+      "sha256": "a294b6ecd75f3f322ce396c3025ef3a7b3d919204be3ba807bce0dc2c4ef5e30"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-plan.json",
+      "sha256": "d361102e607d85443603090ef5be0843a240e358608687dde030684208ed5614"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-01.json",
+      "sha256": "88d380f5faf65cda7fc7acd250c49c48dbf77e9692b8095907afcd3e3e02d81f"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-02.json",
+      "sha256": "4573069342b3ebc15874305ff2eec3b888ed9229f7309d6a2f17d5217654aab7"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-03.json",
+      "sha256": "96aa59b5cca0dff79f939f7f082621b4a8c64673634fe9363d134051973abb28"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-04.json",
+      "sha256": "c1974c47bf38a59d6f3b6bbd37e096d210c99719666d2ad9c5d071371d3493a9"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-05.json",
+      "sha256": "5a3a4f2083c9bd76e2c3a3a5e1be4e846802f16f89812015600c1dbc30ecbdb9"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-06.json",
+      "sha256": "6883249cbefa27d8fa09c34f0b8aee481f828b010d10fe069e76f525839a8a0a"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-07.json",
+      "sha256": "25566b6323b3273fd7ec29aa9e004c6128455df617f263be161ec333881f43ea"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r6c/node-08.json",
+      "sha256": "32a09e906804e963fb5105ec90c9cf2b3314c4fce47c928cc901df5bfe998997"
+    }
+  ],
+  "preliminaryReferenceLookups": [
+    "https://www.korean.go.kr/hangeul/principle/001.html",
+    "https://www.korean.go.kr/front/onlineQna/onlineQnaView.do?qna_seq=311593"
+  ],
+  "referenceUse": "Official linguistic definitions checked; review findings now completed after context recovery. See linguistic-references.json."
+}

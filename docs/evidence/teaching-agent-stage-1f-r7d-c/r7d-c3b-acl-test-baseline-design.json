@@ -1,0 +1,160 @@
+{
+  "stage": "R7D-C3B-ACL-D2",
+  "recordedAt": "2026-09-18T08:30:47.484136+00:00",
+  "mode": "DESIGN_AND_READ_ONLY_AUDIT",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBAclMutation": 0,
+  "businessWrites": 0,
+  "authWrites": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationsCreated": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": 0,
+  "testsExecuted": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "release": "BLOCKED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "Stage1G": "NOT_READY",
+  "testPlanOnly": true,
+  "historicalEnvironmentBaseline": {
+    "authority": [
+      "D1 historical dated preflight",
+      "Full immutable supabase/bootstrap baseline",
+      "D2 catalog ACL and body lock"
+    ],
+    "aclRoles": [
+      "postgres",
+      "authenticated",
+      "service_role"
+    ],
+    "fixturePurpose": "Reproduce actual historical precondition, not assume the old minimal harness equals current DB"
+  },
+  "desiredSecurityContract": {
+    "contract": "review-chapter-practice-binding-acl/1",
+    "aclRoles": [
+      "postgres",
+      "authenticated"
+    ],
+    "authority": "New explicit decision, only effective after future approval/install"
+  },
+  "isolatedPaths": {
+    "fullBaseline": "Existing schema-only guarded new-environment bootstrap plus reviewed post-baseline migrations in owned isolated PG17, no real business/Auth data",
+    "minimal34b": "Separate fixture explicitly models historical target/default ACL before applying000. Label modeled contract and 13-migration subset; never claim full458 replay. Do not rewrite original manifest.",
+    "lifecycle": "Original080001 ->080002 ->130002 against owned fixture with recorded postgres/public defaults; derive ACL at each step"
+  },
+  "plannedCases": [
+    {
+      "id": "ACL-D2-01",
+      "case": "Historical baseline reproduces postgres/authenticated/service_role explicit ACL; PUBLIC/anon denied"
+    },
+    {
+      "id": "ACL-D2-02",
+      "case": "Historical defaults can create service-role grant; later CREATE OR REPLACE retains it"
+    },
+    {
+      "id": "ACL-D2-03",
+      "case": "Desired contract distinguished from historical baseline metadata"
+    },
+    {
+      "id": "ACL-D2-04",
+      "case": "Before change service role with no sub denied by internal guard"
+    },
+    {
+      "id": "ACL-D2-05",
+      "case": "Before change service role with non-owner/inactive subject denied"
+    },
+    {
+      "id": "ACL-D2-06",
+      "case": "Before change service role with synthetic active owner subject can reach guarded mutation"
+    },
+    {
+      "id": "ACL-D2-07",
+      "case": "After change service role denied at privilege gate even with owner subject"
+    },
+    {
+      "id": "ACL-D2-08",
+      "case": "Authenticated active Owner successful enable/disable in owned fixture"
+    },
+    {
+      "id": "ACL-D2-09",
+      "case": "Authenticated non-owner/inactive/absent subject rejected"
+    },
+    {
+      "id": "ACL-D2-10",
+      "case": "Wrong app/chapter/published hierarchy rejected"
+    },
+    {
+      "id": "ACL-D2-11",
+      "case": "Revision/source/grammar conflicts still reject without writes"
+    },
+    {
+      "id": "ACL-D2-12",
+      "case": "Missing exact function aborts"
+    },
+    {
+      "id": "ACL-D2-13",
+      "case": "Wrong body/owner/search_path/security flags abort"
+    },
+    {
+      "id": "ACL-D2-14",
+      "case": "Unexpected ACL grantee/grantor/grant option aborts"
+    },
+    {
+      "id": "ACL-D2-15",
+      "case": "PUBLIC/anon privilege or inherited service permission drift aborts"
+    },
+    {
+      "id": "ACL-D2-16",
+      "case": "Already-desired ACL without ledger aborts; installed/checksummed version no-op skip"
+    },
+    {
+      "id": "ACL-D2-17",
+      "case": "Forced postcondition failure rolls back revoke and ledger"
+    },
+    {
+      "id": "ACL-D2-18",
+      "case": "Unrelated functions/defaults/membership/table data unchanged"
+    },
+    {
+      "id": "ACL-D2-19",
+      "case": "001 alone after000 retains desired ACL and Explain guards"
+    },
+    {
+      "id": "ACL-D2-20",
+      "case": "002 alone after000 retains desired ACL and v1/publication fences"
+    },
+    {
+      "id": "ACL-D2-21",
+      "case": "000->001->002 combined ordering/ledger exact; no third business migration"
+    },
+    {
+      "id": "ACL-D2-22",
+      "case": "Application candidate hashes and current/candidate authenticated callers unchanged"
+    },
+    {
+      "id": "ACL-D2-23",
+      "case": "Full baseline new-environment restore followed by approved incrementals and000 reaches desired contract without editing historical bootstrap"
+    }
+  ],
+  "isolatedTestCountPlanned": 23,
+  "mandatoryRegression": [
+    "chapter-practice binding guard/source/CAS tests",
+    "34b publication and persisted completion SQL checks with corrected environment",
+    "Explain v1 compatibility",
+    "001/002 standalone and combined schema deltas"
+  ],
+  "testWrites": "Only future owned isolated fixture; no current target RPC invocation",
+  "futureEvidence": "New historical-environment and desired-contract manifests, new isolated validation results, revised preflight baseline reference and install approval metadata; retain D1/34b/C3B historical files",
+  "mustRerun": true,
+  "applicationRebuildRequired": false
+}

@@ -1,0 +1,19 @@
+{
+  "B2Regression": 39,
+  "newEntrypointTests": 35,
+  "unitTotalPass": 74,
+  "unitFailures": 0,
+  "browserTests": 7,
+  "browserPass": 7,
+  "typeScript": "PASS",
+  "scopedLint": "PASS",
+  "diffCheck": "PASS",
+  "unitLogSha256": "0a9b28f9e79de3d0f095bb44e7129de7076bb21ad04b6369107348cc8a27f6fa",
+  "lintLogSha256": "3e9e632f54d971ab9bc4aaf553b44a8e13281d5336ca017bac63a29e29d87088",
+  "limitations": [
+    "Owner guard and action boundary tested with isolated fixtures; live authenticated route verification awaits deploy",
+    "Browser tests execute real React component in static harness with substituted action, not current-DB provisioning",
+    "Current DB was contacted only by the actual new READ ONLY transport"
+  ],
+  "currentDbWrites": 0
+}

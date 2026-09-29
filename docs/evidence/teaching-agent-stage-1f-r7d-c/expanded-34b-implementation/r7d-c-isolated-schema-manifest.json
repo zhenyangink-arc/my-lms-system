@@ -1,0 +1,2961 @@
+{
+  "stage": "R7D-C Expanded 34b Implementation",
+  "recordedAt": "2026-09-18T05:26:51.240830+00:00",
+  "evidenceKind": "LOCAL_SOURCE_AND_OWNED_ISOLATED_VALIDATION",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerMutation": 0,
+  "authWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "browserProductionRequests": 0,
+  "publishCurrentDB": 0,
+  "pins": 0,
+  "feature": "OFF",
+  "allowlists": [],
+  "B3Scope": "DISABLED",
+  "currentBuildRetained": "PjpaYHAz0asyvwh0G-lBo",
+  "liveBaselineRevalidated": false,
+  "Stage1G": "NOT_READY",
+  "evidence": "OWNED_ISOLATED_POSTGRESQL",
+  "historicalChain": [
+    "202609100001_runtime_publish_foundation.sql",
+    "202609100002_runtime_publication_dependency_fence.sql",
+    "202609100003_runtime_admission_control.sql",
+    "202609100004_runtime_single_version_authoring.sql",
+    "202609100005_chapter_publish_semantic_compatibility.sql",
+    "202609110001_allow_evidence_graded_roleplay_publication.sql",
+    "202609110002_restore_single_version_publish_wrapper.sql",
+    "202609130001_textbook_grammar_authoring.sql",
+    "202609130002_textbook_grammar_practice_binding.sql",
+    "202609130003_runtime_authoring_nonretryable_error.sql",
+    "202609140000_agent_core_foundation.sql",
+    "202609140001_agent_runtime_completion_evidence.sql",
+    "202609140002_agent_run_cancel_request.sql"
+  ],
+  "bootstrap": "Minimal domain dependencies; all 13 relevant historical publication/Agent migrations installed verbatim. Not an all-458-migration current-DB replica.",
+  "before": {
+    "functions": [
+      {
+        "signature": "admit_agent_run_v1(uuid,uuid,uuid,text,text,text,text,text,text,text,text,jsonb,jsonb,timestamp with time zone)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "911b210add38809d40721c95354e5294eb527f0ddfbea2ac0cbaf55eca98d340"
+      },
+      {
+        "signature": "agent_core_private.actor_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9e42a12106c0e7849438fbf8c9535daf51e9610552dd9aa62c37b97d19dfcb2a"
+      },
+      {
+        "signature": "agent_core_private.check_budget(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "6517b0d5557857c071db2ac3e3f68c58ecd59d577c54d3ac9d3fa5170ef553c7"
+      },
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "4e0c50ba5abe79b8f1d3fb16daebd81b92fa8373ae57ee57f803d2dec6cd5123"
+      },
+      {
+        "signature": "agent_core_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "fd4bf17952d91003f821ffdbb0feb4add2d498c6bb039834e6c11ed493f78611"
+      },
+      {
+        "signature": "agent_core_private.run_json(agent_runs)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "54f4f9389d1ee6482b11285b9911952762e924de5e67bbcf9eab2e1ed09e0b5f"
+      },
+      {
+        "signature": "agent_core_private.student_transport_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "2a7a056b4b5ea54d9c3fcb105dac3f3f01bb87dfd3749e86e8aea6931a6e18dd"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_base_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e8caf459c8e013905e5198fcc05cc8f459894efba799d3e496b3a2d68025f409"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e4f111f119544f54b51d11713708659267c3e221898fa389195592c08fcf5d30"
+      },
+      {
+        "signature": "append_agent_run_event_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "943a62d5a71e774214fd5eb7e8ddf5edf5a11b95e344b0588f00d5e26576a5f4"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "e21cacbf376bf18de4a49dbe3f2462ad079ac7cefdcf24b5bd607be14740fc6f"
+      },
+      {
+        "signature": "assert_runtime_dependency_fence_v1(text,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1d5556b016184617e160b7283af9fb27912db76543bb2070b7b1a4058047e7eb"
+      },
+      {
+        "signature": "begin_runtime_textbook_edit_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "6dd9c2425720cc39feac99ddb1a636fccf8f0d047c5f04a8bc552d9910138e4f"
+      },
+      {
+        "signature": "capture_runtime_publication_v1(uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3770feb63377c1858ed555f5ede1c13adaf1511b415dfb0e9a9f4fd228649a8e"
+      },
+      {
+        "signature": "check_agent_run_cancel_v1(uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "9e0968e7678b8c149f33113704290fe4c0c626e1f57613d06e322caa0c584fff"
+      },
+      {
+        "signature": "edit_runtime_chapter_activity_v1(uuid,jsonb,uuid,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b043762c815b04089a54e1af3da08642a20becf726ea6073accf9fc8d9b002e6"
+      },
+      {
+        "signature": "edit_runtime_grammar_card_v1(uuid,jsonb,uuid,jsonb,jsonb,jsonb,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3431f30c2e80f97083f0ed0a36fc9757fe3cb8f32070008940202031df3486b2"
+      },
+      {
+        "signature": "get_student_agent_run_status_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "0caf9de8b8304a253dd01b97d876e6c88d1bfdc7db887646fb7e9bd28e94b61a"
+      },
+      {
+        "signature": "publish_digital_textbook_chapter(uuid)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "6ee5ce9af3ecbb9ccfec4c0b1833a163c91f70a260e38c1a8331d5fe3e646b45"
+      },
+      {
+        "signature": "publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "1ebdb22084721a6f04ef54cdc0a100148cb9aab865f45179e6dba9a6f1288eda"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "d659881f3287254306d01a274be5aafb59d36ef4abf7eb51f7416d251d40261e"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "df8155ea26e8e7617feb3fcb1d4c55bbb5fd12524cb5ad07f9c80735b7ab2442"
+      },
+      {
+        "signature": "read_runtime_publication_v1(jsonb,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "2d28bb9eeb843e44fa9ac70308d1f60e873d078b1c15a190127bb452fe6ec2e3"
+      },
+      {
+        "signature": "read_runtime_snapshot_for_owner_v1(uuid,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "deabfeb9bc69349112c660d73c68119932d66315be43a282b0879fcd7b2f10d2"
+      },
+      {
+        "signature": "record_agent_usage_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1f3a74aeb6bc774cbc0a803af3ab2aa2e9da7f3795eef38a77162fc706c16c5b"
+      },
+      {
+        "signature": "request_agent_run_cancel_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "f4e467651241c10797ff987aaa05529c7bff16e137a9f7817a85e38776c7afc4"
+      },
+      {
+        "signature": "reserve_student_agent_event_sequence_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "75b78b094523346cda1ba9ebced3b7ad48a734abbf04d101f3efcb90e5d08dd6"
+      },
+      {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      },
+      {
+        "signature": "runtime_admission_state_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1e969ea2a8ed6e942c7a74273ef892839b073394546b01f9ace67e69c73666e5"
+      },
+      {
+        "signature": "runtime_publication_request_v1(text,uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "c6054900194704167fc6479fc578d6b11d7c0d9b58c6a4a9f3b42225cb4e8e47"
+      },
+      {
+        "signature": "runtime_publication_session_base_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e663172aaea6aced894fa74dbbd0e309fae6bb7f212a6ce46942f62f070c1047"
+      },
+      {
+        "signature": "runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1be4d0a95c4def89d598611675e644bd786ffda1eff7f92de62e756fe4dc6c07"
+      },
+      {
+        "signature": "runtime_publish_private.admission_revision()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "489ddb06c7e8910b8b3d8f169481a8d0fbaccf79db609d11be0a765e4eb29f77"
+      },
+      {
+        "signature": "runtime_publish_private.authoring_lock()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "820320fcdb4b8668e48bb96c65043bfdc4e3c782758fd96981e4b533c1bbf9a7"
+      },
+      {
+        "signature": "runtime_publish_private.capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "845432f88be6926c0e8fb217d5823b5f27d0556e3a1c273a7bf6f298bda7ad19"
+      },
+      {
+        "signature": "runtime_publish_private.capture_rows(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "357531c78777fe1a4cec821f5b64a205e1f3f1ff5c6c7a017df59d8ec586ef22"
+      },
+      {
+        "signature": "runtime_publish_private.check_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "38da16334fca9e1d6c9b5ada73eef91be4fa2cbd291a5de10dd892007a9ca770"
+      },
+      {
+        "signature": "runtime_publish_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "bdd7d6e48cf0323c3c3cbceb6f9eba04087e093decd2e5ae093d2d1e964ac067"
+      },
+      {
+        "signature": "runtime_publish_private.lock_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "04c7ab7f5dd35818a5cbb12fd40f3c63edac20209ccfc599c1e04b5c16992086"
+      },
+      {
+        "signature": "runtime_publish_private.owner_guard(uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "a4b7274abadc1ff280835fcb8393011577632ac3b1d2aef61af697558b145531"
+      },
+      {
+        "signature": "runtime_publish_private.semantic_capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "8aa92baf00e97184c3b95dfafee1b1c33cbb86b9e5ac8b3b76c969a5426d5cd1"
+      },
+      {
+        "signature": "runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "506d13d57590d5528ec5973b34b344de313fa47cca63708e85e6fe3c2099c47e"
+      },
+      {
+        "signature": "transition_agent_run_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "59f7206157085ece25c680403447bf325faf06627eecd7f18485763cf0918938"
+      }
+    ],
+    "relations": [
+      {
+        "name": "agent_conversations",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_definition_versions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=ar/postgres}"
+      },
+      {
+        "name": "agent_messages",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_run_events",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_runs",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "ai_token_usage",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "chapter_tests",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activities",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activity_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_attempts",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_chapters",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_listening_tracks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_media_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_modules",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_node_progress",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbooks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_lessons",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_node_interaction_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profile_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_audio_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.admission_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.authoring_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.bindings",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.dependency_fences",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.history",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.pointers",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.retired_snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.runtime_requests",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.sessions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenant_memberships",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenants",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      }
+    ],
+    "constraints": [
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'closed'::text])))"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_manifest_check",
+        "definition": "CHECK ((jsonb_typeof(manifest) = 'object'::text))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['published'::text, 'disabled'::text])))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_agent_code_version_key",
+        "definition": "UNIQUE (tenant_id, agent_code, version)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_id_key",
+        "definition": "UNIQUE (tenant_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_content_check",
+        "definition": "CHECK ((length(content) <= 100000))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_role_check",
+        "definition": "CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_run_id_role_key",
+        "definition": "UNIQUE (run_id, role)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['accepted'::text, 'final'::text, 'partial'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_run_id_seq_key",
+        "definition": "UNIQUE (run_id, seq)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_idempotency_key_check",
+        "definition": "CHECK (((length(idempotency_key) >= 8) AND (length(idempotency_key) <= 128)))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_input_fk",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, input_message_id) REFERENCES agent_messages(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_request_digest_check",
+        "definition": "CHECK ((request_digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key",
+        "definition": "UNIQUE (tenant_id, actor_id, conversation_id, idempotency_key)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_retry_of_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, retry_of_run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_definition_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, definition_id) REFERENCES agent_definition_versions(tenant_id, id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_run_id_fkey",
+        "definition": "FOREIGN KEY (run_id) REFERENCES agent_runs(id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_usage_status_check",
+        "definition": "CHECK ((usage_status = ANY (ARRAY['reported'::text, 'estimated'::text, 'unknown'::text])))"
+      },
+      {
+        "table": "chapter_tests",
+        "name": "chapter_tests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_activities",
+        "name": "digital_textbook_activities_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_chapters",
+        "name": "digital_textbook_chapters_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_listening_tracks",
+        "name": "digital_textbook_listening_tracks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_media_assets",
+        "name": "digital_textbook_media_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_modules",
+        "name": "digital_textbook_modules_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_authoring_grammar_identities_check",
+        "definition": "CHECK ((jsonb_typeof(authoring_grammar_identities) = 'array'::text))"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_versions",
+        "name": "digital_textbook_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbooks",
+        "name": "digital_textbooks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_lessons",
+        "name": "learning_agent_lessons_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_profiles",
+        "name": "learning_agent_profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_audio_assets",
+        "name": "learning_agent_script_audio_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_nodes",
+        "name": "learning_agent_script_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_versions",
+        "name": "learning_agent_script_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "profiles",
+        "name": "profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_cohort_check",
+        "definition": "CHECK ((jsonb_typeof(cohort) = 'array'::text))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_pkey",
+        "definition": "PRIMARY KEY (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_singleton_check",
+        "definition": "CHECK (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_pkey",
+        "definition": "PRIMARY KEY (textbook_id)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['open'::text, 'draining'::text, 'editing'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_check",
+        "definition": "CHECK (((payload #>> '{result,manifest,snapshot,id}'::text[]) = snapshot_id))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_digest_check",
+        "definition": "CHECK ((digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_payload_check",
+        "definition": "CHECK ((jsonb_typeof(payload) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_capture_check",
+        "definition": "CHECK ((jsonb_typeof(capture) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_from_snapshot_fkey",
+        "definition": "FOREIGN KEY (from_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_operation_check",
+        "definition": "CHECK ((operation = ANY (ARRAY['publish'::text, 'rollback'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_textbook_id_version_id_chapter_id_generation_key",
+        "definition": "UNIQUE (textbook_id, version_id, chapter_id, generation)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_to_snapshot_fkey",
+        "definition": "FOREIGN KEY (to_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_generation_check",
+        "definition": "CHECK ((generation > 0))"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_pkey",
+        "definition": "PRIMARY KEY (textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_snapshot_id_textbook_id_version_id_chapter_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id, textbook_id, version_id, chapter_id) REFERENCES runtime_publish_private.snapshots(id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_retired_by_fkey",
+        "definition": "FOREIGN KEY (retired_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_locale_check",
+        "definition": "CHECK ((locale = ANY (ARRAY['zh-CN'::text, 'ko-KR'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_chapter_id_fkey",
+        "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_check",
+        "definition": "CHECK ((((document ->> 'snapshotId'::text) = id) AND ((document ->> 'revision'::text) = 'publish-foundation/1'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_created_by_fkey",
+        "definition": "FOREIGN KEY (created_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check",
+        "definition": "CHECK ((jsonb_typeof(document) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check1",
+        "definition": "CHECK ((((document ->> 'schemaVersion'::text) = '1.0.0'::text) AND ((document ->> 'runtimeContract'::text) = 'uply-runtime/1'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check2",
+        "definition": "CHECK (((document #>> '{manifest,snapshot,scope}'::text[]) = 'chapter'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check3",
+        "definition": "CHECK ((NOT (document ? 'privatePayload'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_id_textbook_id_version_id_chapter_id_key",
+        "definition": "UNIQUE (id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id)"
+      },
+      {
+        "table": "tenants",
+        "name": "tenants_pkey",
+        "definition": "PRIMARY KEY (id)"
+      }
+    ]
+  },
+  "completion": {
+    "functions": [
+      {
+        "signature": "admit_agent_run_v1(uuid,uuid,uuid,text,text,text,text,text,text,text,text,jsonb,jsonb,timestamp with time zone)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "911b210add38809d40721c95354e5294eb527f0ddfbea2ac0cbaf55eca98d340"
+      },
+      {
+        "signature": "agent_core_private.actor_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9e42a12106c0e7849438fbf8c9535daf51e9610552dd9aa62c37b97d19dfcb2a"
+      },
+      {
+        "signature": "agent_core_private.check_budget(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "6517b0d5557857c071db2ac3e3f68c58ecd59d577c54d3ac9d3fa5170ef553c7"
+      },
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "5c182d2540348b933de4c5737463acff7b607d0991b4104e185b00aeb99a65a1"
+      },
+      {
+        "signature": "agent_core_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "fd4bf17952d91003f821ffdbb0feb4add2d498c6bb039834e6c11ed493f78611"
+      },
+      {
+        "signature": "agent_core_private.run_json(agent_runs)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "54f4f9389d1ee6482b11285b9911952762e924de5e67bbcf9eab2e1ed09e0b5f"
+      },
+      {
+        "signature": "agent_core_private.student_transport_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "2a7a056b4b5ea54d9c3fcb105dac3f3f01bb87dfd3749e86e8aea6931a6e18dd"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_base_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e8caf459c8e013905e5198fcc05cc8f459894efba799d3e496b3a2d68025f409"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "961f11c720644f61dab6105b6be8fc24b5ea25d5ad1cb265023bb6c41539dd99"
+      },
+      {
+        "signature": "agent_core_private.validate_artifact_v2(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "aad0bf616f5c642634bffaeafbcdd64cc8b475b864792bd023317f5fc7da3b89"
+      },
+      {
+        "signature": "agent_core_private.validate_typed_evidence(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "eabdb61d81abe02e92de89ab7b58e6ec96d610cbdc0155724f82ff7173eecf2d"
+      },
+      {
+        "signature": "append_agent_run_event_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "943a62d5a71e774214fd5eb7e8ddf5edf5a11b95e344b0588f00d5e26576a5f4"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b389166d4defea7aee230bb237eb9edb1557f5bbe69161e1b4b9d9b5dc793703"
+      },
+      {
+        "signature": "assert_runtime_dependency_fence_v1(text,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1d5556b016184617e160b7283af9fb27912db76543bb2070b7b1a4058047e7eb"
+      },
+      {
+        "signature": "begin_runtime_textbook_edit_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "6dd9c2425720cc39feac99ddb1a636fccf8f0d047c5f04a8bc552d9910138e4f"
+      },
+      {
+        "signature": "capture_runtime_publication_v1(uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3770feb63377c1858ed555f5ede1c13adaf1511b415dfb0e9a9f4fd228649a8e"
+      },
+      {
+        "signature": "check_agent_run_cancel_v1(uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "9e0968e7678b8c149f33113704290fe4c0c626e1f57613d06e322caa0c584fff"
+      },
+      {
+        "signature": "edit_runtime_chapter_activity_v1(uuid,jsonb,uuid,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b043762c815b04089a54e1af3da08642a20becf726ea6073accf9fc8d9b002e6"
+      },
+      {
+        "signature": "edit_runtime_grammar_card_v1(uuid,jsonb,uuid,jsonb,jsonb,jsonb,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3431f30c2e80f97083f0ed0a36fc9757fe3cb8f32070008940202031df3486b2"
+      },
+      {
+        "signature": "get_student_agent_run_status_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "0caf9de8b8304a253dd01b97d876e6c88d1bfdc7db887646fb7e9bd28e94b61a"
+      },
+      {
+        "signature": "publish_digital_textbook_chapter(uuid)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "6ee5ce9af3ecbb9ccfec4c0b1833a163c91f70a260e38c1a8331d5fe3e646b45"
+      },
+      {
+        "signature": "publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "1ebdb22084721a6f04ef54cdc0a100148cb9aab865f45179e6dba9a6f1288eda"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "d659881f3287254306d01a274be5aafb59d36ef4abf7eb51f7416d251d40261e"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "df8155ea26e8e7617feb3fcb1d4c55bbb5fd12524cb5ad07f9c80735b7ab2442"
+      },
+      {
+        "signature": "read_runtime_publication_v1(jsonb,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "2d28bb9eeb843e44fa9ac70308d1f60e873d078b1c15a190127bb452fe6ec2e3"
+      },
+      {
+        "signature": "read_runtime_snapshot_for_owner_v1(uuid,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "deabfeb9bc69349112c660d73c68119932d66315be43a282b0879fcd7b2f10d2"
+      },
+      {
+        "signature": "record_agent_usage_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1f3a74aeb6bc774cbc0a803af3ab2aa2e9da7f3795eef38a77162fc706c16c5b"
+      },
+      {
+        "signature": "request_agent_run_cancel_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "f4e467651241c10797ff987aaa05529c7bff16e137a9f7817a85e38776c7afc4"
+      },
+      {
+        "signature": "reserve_student_agent_event_sequence_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "75b78b094523346cda1ba9ebced3b7ad48a734abbf04d101f3efcb90e5d08dd6"
+      },
+      {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      },
+      {
+        "signature": "runtime_admission_state_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1e969ea2a8ed6e942c7a74273ef892839b073394546b01f9ace67e69c73666e5"
+      },
+      {
+        "signature": "runtime_publication_request_v1(text,uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "c6054900194704167fc6479fc578d6b11d7c0d9b58c6a4a9f3b42225cb4e8e47"
+      },
+      {
+        "signature": "runtime_publication_session_base_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e663172aaea6aced894fa74dbbd0e309fae6bb7f212a6ce46942f62f070c1047"
+      },
+      {
+        "signature": "runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1be4d0a95c4def89d598611675e644bd786ffda1eff7f92de62e756fe4dc6c07"
+      },
+      {
+        "signature": "runtime_publish_private.admission_revision()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "489ddb06c7e8910b8b3d8f169481a8d0fbaccf79db609d11be0a765e4eb29f77"
+      },
+      {
+        "signature": "runtime_publish_private.authoring_lock()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "820320fcdb4b8668e48bb96c65043bfdc4e3c782758fd96981e4b533c1bbf9a7"
+      },
+      {
+        "signature": "runtime_publish_private.capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "845432f88be6926c0e8fb217d5823b5f27d0556e3a1c273a7bf6f298bda7ad19"
+      },
+      {
+        "signature": "runtime_publish_private.capture_rows(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "357531c78777fe1a4cec821f5b64a205e1f3f1ff5c6c7a017df59d8ec586ef22"
+      },
+      {
+        "signature": "runtime_publish_private.check_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "38da16334fca9e1d6c9b5ada73eef91be4fa2cbd291a5de10dd892007a9ca770"
+      },
+      {
+        "signature": "runtime_publish_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "bdd7d6e48cf0323c3c3cbceb6f9eba04087e093decd2e5ae093d2d1e964ac067"
+      },
+      {
+        "signature": "runtime_publish_private.lock_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "04c7ab7f5dd35818a5cbb12fd40f3c63edac20209ccfc599c1e04b5c16992086"
+      },
+      {
+        "signature": "runtime_publish_private.owner_guard(uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "a4b7274abadc1ff280835fcb8393011577632ac3b1d2aef61af697558b145531"
+      },
+      {
+        "signature": "runtime_publish_private.semantic_capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "8aa92baf00e97184c3b95dfafee1b1c33cbb86b9e5ac8b3b76c969a5426d5cd1"
+      },
+      {
+        "signature": "runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "506d13d57590d5528ec5973b34b344de313fa47cca63708e85e6fe3c2099c47e"
+      },
+      {
+        "signature": "transition_agent_run_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "59f7206157085ece25c680403447bf325faf06627eecd7f18485763cf0918938"
+      }
+    ],
+    "relations": [
+      {
+        "name": "agent_conversations",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_definition_versions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=ar/postgres}"
+      },
+      {
+        "name": "agent_messages",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_run_events",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_runs",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "ai_token_usage",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "chapter_tests",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activities",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activity_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_attempts",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_chapters",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_listening_tracks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_media_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_modules",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_node_progress",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbooks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_lessons",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_node_interaction_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profile_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_audio_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.admission_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.authoring_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.bindings",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.dependency_fences",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.history",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.pointers",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.retired_snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.runtime_requests",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.sessions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenant_memberships",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenants",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      }
+    ],
+    "constraints": [
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'closed'::text])))"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_manifest_check",
+        "definition": "CHECK ((jsonb_typeof(manifest) = 'object'::text))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['published'::text, 'disabled'::text])))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_agent_code_version_key",
+        "definition": "UNIQUE (tenant_id, agent_code, version)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_id_key",
+        "definition": "UNIQUE (tenant_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_content_check",
+        "definition": "CHECK ((length(content) <= 100000))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_role_check",
+        "definition": "CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_run_id_role_key",
+        "definition": "UNIQUE (run_id, role)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['accepted'::text, 'final'::text, 'partial'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_run_id_seq_key",
+        "definition": "UNIQUE (run_id, seq)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_idempotency_key_check",
+        "definition": "CHECK (((length(idempotency_key) >= 8) AND (length(idempotency_key) <= 128)))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_input_fk",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, input_message_id) REFERENCES agent_messages(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_request_digest_check",
+        "definition": "CHECK ((request_digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key",
+        "definition": "UNIQUE (tenant_id, actor_id, conversation_id, idempotency_key)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_retry_of_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, retry_of_run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_definition_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, definition_id) REFERENCES agent_definition_versions(tenant_id, id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_run_id_fkey",
+        "definition": "FOREIGN KEY (run_id) REFERENCES agent_runs(id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_usage_status_check",
+        "definition": "CHECK ((usage_status = ANY (ARRAY['reported'::text, 'estimated'::text, 'unknown'::text])))"
+      },
+      {
+        "table": "chapter_tests",
+        "name": "chapter_tests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_activities",
+        "name": "digital_textbook_activities_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_chapters",
+        "name": "digital_textbook_chapters_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_listening_tracks",
+        "name": "digital_textbook_listening_tracks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_media_assets",
+        "name": "digital_textbook_media_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_modules",
+        "name": "digital_textbook_modules_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_authoring_grammar_identities_check",
+        "definition": "CHECK ((jsonb_typeof(authoring_grammar_identities) = 'array'::text))"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_versions",
+        "name": "digital_textbook_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbooks",
+        "name": "digital_textbooks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_lessons",
+        "name": "learning_agent_lessons_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_profiles",
+        "name": "learning_agent_profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_audio_assets",
+        "name": "learning_agent_script_audio_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_nodes",
+        "name": "learning_agent_script_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_versions",
+        "name": "learning_agent_script_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "profiles",
+        "name": "profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_cohort_check",
+        "definition": "CHECK ((jsonb_typeof(cohort) = 'array'::text))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_pkey",
+        "definition": "PRIMARY KEY (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_singleton_check",
+        "definition": "CHECK (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_pkey",
+        "definition": "PRIMARY KEY (textbook_id)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['open'::text, 'draining'::text, 'editing'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_check",
+        "definition": "CHECK (((payload #>> '{result,manifest,snapshot,id}'::text[]) = snapshot_id))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_digest_check",
+        "definition": "CHECK ((digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_payload_check",
+        "definition": "CHECK ((jsonb_typeof(payload) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_capture_check",
+        "definition": "CHECK ((jsonb_typeof(capture) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_from_snapshot_fkey",
+        "definition": "FOREIGN KEY (from_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_operation_check",
+        "definition": "CHECK ((operation = ANY (ARRAY['publish'::text, 'rollback'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_textbook_id_version_id_chapter_id_generation_key",
+        "definition": "UNIQUE (textbook_id, version_id, chapter_id, generation)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_to_snapshot_fkey",
+        "definition": "FOREIGN KEY (to_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_generation_check",
+        "definition": "CHECK ((generation > 0))"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_pkey",
+        "definition": "PRIMARY KEY (textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_snapshot_id_textbook_id_version_id_chapter_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id, textbook_id, version_id, chapter_id) REFERENCES runtime_publish_private.snapshots(id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_retired_by_fkey",
+        "definition": "FOREIGN KEY (retired_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_locale_check",
+        "definition": "CHECK ((locale = ANY (ARRAY['zh-CN'::text, 'ko-KR'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_chapter_id_fkey",
+        "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_check",
+        "definition": "CHECK ((((document ->> 'snapshotId'::text) = id) AND ((document ->> 'revision'::text) = 'publish-foundation/1'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_created_by_fkey",
+        "definition": "FOREIGN KEY (created_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check",
+        "definition": "CHECK ((jsonb_typeof(document) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check1",
+        "definition": "CHECK ((((document ->> 'schemaVersion'::text) = '1.0.0'::text) AND ((document ->> 'runtimeContract'::text) = 'uply-runtime/1'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check2",
+        "definition": "CHECK (((document #>> '{manifest,snapshot,scope}'::text[]) = 'chapter'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check3",
+        "definition": "CHECK ((NOT (document ? 'privatePayload'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_id_textbook_id_version_id_chapter_id_key",
+        "definition": "UNIQUE (id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id)"
+      },
+      {
+        "table": "tenants",
+        "name": "tenants_pkey",
+        "definition": "PRIMARY KEY (id)"
+      }
+    ]
+  },
+  "combined": {
+    "functions": [
+      {
+        "signature": "admit_agent_run_v1(uuid,uuid,uuid,text,text,text,text,text,text,text,text,jsonb,jsonb,timestamp with time zone)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "911b210add38809d40721c95354e5294eb527f0ddfbea2ac0cbaf55eca98d340"
+      },
+      {
+        "signature": "agent_core_private.actor_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9e42a12106c0e7849438fbf8c9535daf51e9610552dd9aa62c37b97d19dfcb2a"
+      },
+      {
+        "signature": "agent_core_private.check_budget(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "6517b0d5557857c071db2ac3e3f68c58ecd59d577c54d3ac9d3fa5170ef553c7"
+      },
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "5c182d2540348b933de4c5737463acff7b607d0991b4104e185b00aeb99a65a1"
+      },
+      {
+        "signature": "agent_core_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "fd4bf17952d91003f821ffdbb0feb4add2d498c6bb039834e6c11ed493f78611"
+      },
+      {
+        "signature": "agent_core_private.run_json(agent_runs)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "54f4f9389d1ee6482b11285b9911952762e924de5e67bbcf9eab2e1ed09e0b5f"
+      },
+      {
+        "signature": "agent_core_private.student_transport_guard(uuid,uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "2a7a056b4b5ea54d9c3fcb105dac3f3f01bb87dfd3749e86e8aea6931a6e18dd"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_base_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e8caf459c8e013905e5198fcc05cc8f459894efba799d3e496b3a2d68025f409"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "961f11c720644f61dab6105b6be8fc24b5ea25d5ad1cb265023bb6c41539dd99"
+      },
+      {
+        "signature": "agent_core_private.validate_artifact_v2(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "aad0bf616f5c642634bffaeafbcdd64cc8b475b864792bd023317f5fc7da3b89"
+      },
+      {
+        "signature": "agent_core_private.validate_typed_evidence(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "eabdb61d81abe02e92de89ab7b58e6ec96d610cbdc0155724f82ff7173eecf2d"
+      },
+      {
+        "signature": "append_agent_run_event_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "943a62d5a71e774214fd5eb7e8ddf5edf5a11b95e344b0588f00d5e26576a5f4"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b389166d4defea7aee230bb237eb9edb1557f5bbe69161e1b4b9d9b5dc793703"
+      },
+      {
+        "signature": "assert_runtime_dependency_fence_v1(text,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1d5556b016184617e160b7283af9fb27912db76543bb2070b7b1a4058047e7eb"
+      },
+      {
+        "signature": "begin_runtime_textbook_edit_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "6dd9c2425720cc39feac99ddb1a636fccf8f0d047c5f04a8bc552d9910138e4f"
+      },
+      {
+        "signature": "capture_runtime_publication_v1(uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3770feb63377c1858ed555f5ede1c13adaf1511b415dfb0e9a9f4fd228649a8e"
+      },
+      {
+        "signature": "check_agent_run_cancel_v1(uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "9e0968e7678b8c149f33113704290fe4c0c626e1f57613d06e322caa0c584fff"
+      },
+      {
+        "signature": "edit_runtime_chapter_activity_v1(uuid,jsonb,uuid,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b043762c815b04089a54e1af3da08642a20becf726ea6073accf9fc8d9b002e6"
+      },
+      {
+        "signature": "edit_runtime_grammar_card_v1(uuid,jsonb,uuid,jsonb,jsonb,jsonb,jsonb,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "3431f30c2e80f97083f0ed0a36fc9757fe3cb8f32070008940202031df3486b2"
+      },
+      {
+        "signature": "get_student_agent_run_status_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "0caf9de8b8304a253dd01b97d876e6c88d1bfdc7db887646fb7e9bd28e94b61a"
+      },
+      {
+        "signature": "publish_digital_textbook_chapter(uuid)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "6ee5ce9af3ecbb9ccfec4c0b1833a163c91f70a260e38c1a8331d5fe3e646b45"
+      },
+      {
+        "signature": "publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "d9525ae658fa0350b601aa13c41b43a002dd7033b76432b0ecb807e31ba637a5"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "05ace3967965e3e5bb19b5fc0484c1bff8cc468d7935c86c80a8b8ac4fd0bafc"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "df8155ea26e8e7617feb3fcb1d4c55bbb5fd12524cb5ad07f9c80735b7ab2442"
+      },
+      {
+        "signature": "read_runtime_publication_v1(jsonb,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "2d28bb9eeb843e44fa9ac70308d1f60e873d078b1c15a190127bb452fe6ec2e3"
+      },
+      {
+        "signature": "read_runtime_snapshot_for_owner_v1(uuid,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "deabfeb9bc69349112c660d73c68119932d66315be43a282b0879fcd7b2f10d2"
+      },
+      {
+        "signature": "record_agent_usage_v1(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1f3a74aeb6bc774cbc0a803af3ab2aa2e9da7f3795eef38a77162fc706c16c5b"
+      },
+      {
+        "signature": "request_agent_run_cancel_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "f4e467651241c10797ff987aaa05529c7bff16e137a9f7817a85e38776c7afc4"
+      },
+      {
+        "signature": "reserve_student_agent_event_sequence_v1(uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "75b78b094523346cda1ba9ebced3b7ad48a734abbf04d101f3efcb90e5d08dd6"
+      },
+      {
+        "signature": "review_chapter_practice_binding(uuid,uuid,integer,jsonb,boolean)",
+        "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+        "sha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941"
+      },
+      {
+        "signature": "runtime_admission_state_v1(uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1e969ea2a8ed6e942c7a74273ef892839b073394546b01f9ace67e69c73666e5"
+      },
+      {
+        "signature": "runtime_publication_request_v1(text,uuid,uuid,uuid,uuid)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "c6054900194704167fc6479fc578d6b11d7c0d9b58c6a4a9f3b42225cb4e8e47"
+      },
+      {
+        "signature": "runtime_publication_session_base_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "e663172aaea6aced894fa74dbbd0e309fae6bb7f212a6ce46942f62f070c1047"
+      },
+      {
+        "signature": "runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "1be4d0a95c4def89d598611675e644bd786ffda1eff7f92de62e756fe4dc6c07"
+      },
+      {
+        "signature": "runtime_publish_private.admission_revision()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "489ddb06c7e8910b8b3d8f169481a8d0fbaccf79db609d11be0a765e4eb29f77"
+      },
+      {
+        "signature": "runtime_publish_private.authoring_lock()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "820320fcdb4b8668e48bb96c65043bfdc4e3c782758fd96981e4b533c1bbf9a7"
+      },
+      {
+        "signature": "runtime_publish_private.capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "845432f88be6926c0e8fb217d5823b5f27d0556e3a1c273a7bf6f298bda7ad19"
+      },
+      {
+        "signature": "runtime_publish_private.capture_rows(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "357531c78777fe1a4cec821f5b64a205e1f3f1ff5c6c7a017df59d8ec586ef22"
+      },
+      {
+        "signature": "runtime_publish_private.check_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "38da16334fca9e1d6c9b5ada73eef91be4fa2cbd291a5de10dd892007a9ca770"
+      },
+      {
+        "signature": "runtime_publish_private.immutable()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "bdd7d6e48cf0323c3c3cbceb6f9eba04087e093decd2e5ae093d2d1e964ac067"
+      },
+      {
+        "signature": "runtime_publish_private.lock_authoring_statement()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "04c7ab7f5dd35818a5cbb12fd40f3c63edac20209ccfc599c1e04b5c16992086"
+      },
+      {
+        "signature": "runtime_publish_private.native_admission(jsonb,jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "30b5ad191a0a69e420d014247ebd4e7bfb0c52f856bb3cd903e797e76315d36e"
+      },
+      {
+        "signature": "runtime_publish_private.owner_guard(uuid)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "a4b7274abadc1ff280835fcb8393011577632ac3b1d2aef61af697558b145531"
+      },
+      {
+        "signature": "runtime_publish_private.publication_version_admitted(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9020153d7bacebfb374bd93a18ba2a1802ff8ed38c9d9ad98c85dec9dd993ce4"
+      },
+      {
+        "signature": "runtime_publish_private.semantic_capture(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "8aa92baf00e97184c3b95dfafee1b1c33cbb86b9e5ac8b3b76c969a5426d5cd1"
+      },
+      {
+        "signature": "runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "506d13d57590d5528ec5973b34b344de313fa47cca63708e85e6fe3c2099c47e"
+      },
+      {
+        "signature": "transition_agent_run_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "59f7206157085ece25c680403447bf325faf06627eecd7f18485763cf0918938"
+      }
+    ],
+    "relations": [
+      {
+        "name": "agent_conversations",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_definition_versions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=ar/postgres}"
+      },
+      {
+        "name": "agent_messages",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_run_events",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "agent_runs",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=r/postgres}"
+      },
+      {
+        "name": "ai_token_usage",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "chapter_tests",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activities",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_activity_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_attempts",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_chapters",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_listening_tracks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_media_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_modules",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_node_progress",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbook_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "digital_textbooks",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_lessons",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_node_interaction_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profile_secrets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_audio_assets",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_nodes",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "learning_agent_script_versions",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "profiles",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.admission_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.authoring_control",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.bindings",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.dependency_fences",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.history",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.pointers",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.retired_snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.runtime_requests",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.sessions",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "runtime_publish_private.snapshots",
+        "kind": "r",
+        "rls": true,
+        "acl": "{postgres=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenant_memberships",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      },
+      {
+        "name": "tenants",
+        "kind": "r",
+        "rls": false,
+        "acl": "{postgres=arwdDxt/postgres,service_role=arwdDxt/postgres}"
+      }
+    ],
+    "constraints": [
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'closed'::text])))"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_conversations",
+        "name": "agent_conversations_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_manifest_check",
+        "definition": "CHECK ((jsonb_typeof(manifest) = 'object'::text))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['published'::text, 'disabled'::text])))"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_agent_code_version_key",
+        "definition": "UNIQUE (tenant_id, agent_code, version)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id)"
+      },
+      {
+        "table": "agent_definition_versions",
+        "name": "agent_definition_versions_tenant_id_id_key",
+        "definition": "UNIQUE (tenant_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_content_check",
+        "definition": "CHECK ((length(content) <= 100000))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_role_check",
+        "definition": "CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_run_id_role_key",
+        "definition": "UNIQUE (run_id, role)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['accepted'::text, 'final'::text, 'partial'::text])))"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_messages",
+        "name": "agent_messages_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_run_id_seq_key",
+        "definition": "UNIQUE (run_id, seq)"
+      },
+      {
+        "table": "agent_run_events",
+        "name": "agent_run_events_tenant_id_actor_id_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_idempotency_key_check",
+        "definition": "CHECK (((length(idempotency_key) >= 8) AND (length(idempotency_key) <= 128)))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_input_fk",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, input_message_id) REFERENCES agent_messages(tenant_id, actor_id, id) DEFERRABLE INITIALLY DEFERRED"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_request_digest_check",
+        "definition": "CHECK ((request_digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_status_check",
+        "definition": "CHECK ((status = ANY (ARRAY['created'::text, 'running'::text, 'waiting_tool'::text, 'completed'::text, 'failed'::text, 'cancelled'::text])))"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, conversation_id) REFERENCES agent_conversations(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_conversation_id_idempotency_k_key",
+        "definition": "UNIQUE (tenant_id, actor_id, conversation_id, idempotency_key)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_id_key",
+        "definition": "UNIQUE (tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_actor_id_retry_of_run_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, actor_id, retry_of_run_id) REFERENCES agent_runs(tenant_id, actor_id, id)"
+      },
+      {
+        "table": "agent_runs",
+        "name": "agent_runs_tenant_id_definition_id_fkey",
+        "definition": "FOREIGN KEY (tenant_id, definition_id) REFERENCES agent_definition_versions(tenant_id, id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_run_id_fkey",
+        "definition": "FOREIGN KEY (run_id) REFERENCES agent_runs(id)"
+      },
+      {
+        "table": "ai_token_usage",
+        "name": "ai_token_usage_usage_status_check",
+        "definition": "CHECK ((usage_status = ANY (ARRAY['reported'::text, 'estimated'::text, 'unknown'::text])))"
+      },
+      {
+        "table": "chapter_tests",
+        "name": "chapter_tests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_activities",
+        "name": "digital_textbook_activities_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_chapters",
+        "name": "digital_textbook_chapters_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_listening_tracks",
+        "name": "digital_textbook_listening_tracks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_media_assets",
+        "name": "digital_textbook_media_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_modules",
+        "name": "digital_textbook_modules_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_authoring_grammar_identities_check",
+        "definition": "CHECK ((jsonb_typeof(authoring_grammar_identities) = 'array'::text))"
+      },
+      {
+        "table": "digital_textbook_nodes",
+        "name": "digital_textbook_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbook_versions",
+        "name": "digital_textbook_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "digital_textbooks",
+        "name": "digital_textbooks_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_lessons",
+        "name": "learning_agent_lessons_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_profiles",
+        "name": "learning_agent_profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_audio_assets",
+        "name": "learning_agent_script_audio_assets_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_nodes",
+        "name": "learning_agent_script_nodes_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "learning_agent_script_versions",
+        "name": "learning_agent_script_versions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "profiles",
+        "name": "profiles_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_cohort_check",
+        "definition": "CHECK ((jsonb_typeof(cohort) = 'array'::text))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_pkey",
+        "definition": "PRIMARY KEY (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.admission_control",
+        "name": "admission_control_singleton_check",
+        "definition": "CHECK (singleton)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_pkey",
+        "definition": "PRIMARY KEY (textbook_id)"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_revision_check",
+        "definition": "CHECK ((revision > 0))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_state_check",
+        "definition": "CHECK ((state = ANY (ARRAY['open'::text, 'draining'::text, 'editing'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.authoring_control",
+        "name": "authoring_control_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_check",
+        "definition": "CHECK (((payload #>> '{result,manifest,snapshot,id}'::text[]) = snapshot_id))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_digest_check",
+        "definition": "CHECK ((digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_payload_check",
+        "definition": "CHECK ((jsonb_typeof(payload) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.bindings",
+        "name": "bindings_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_capture_check",
+        "definition": "CHECK ((jsonb_typeof(capture) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.dependency_fences",
+        "name": "dependency_fences_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_from_snapshot_fkey",
+        "definition": "FOREIGN KEY (from_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_operation_check",
+        "definition": "CHECK ((operation = ANY (ARRAY['publish'::text, 'rollback'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_textbook_id_version_id_chapter_id_generation_key",
+        "definition": "UNIQUE (textbook_id, version_id, chapter_id, generation)"
+      },
+      {
+        "table": "runtime_publish_private.history",
+        "name": "history_to_snapshot_fkey",
+        "definition": "FOREIGN KEY (to_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_generation_check",
+        "definition": "CHECK ((generation > 0))"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_pkey",
+        "definition": "PRIMARY KEY (textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.pointers",
+        "name": "pointers_snapshot_id_textbook_id_version_id_chapter_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id, textbook_id, version_id, chapter_id) REFERENCES runtime_publish_private.snapshots(id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_pkey",
+        "definition": "PRIMARY KEY (snapshot_id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_retired_by_fkey",
+        "definition": "FOREIGN KEY (retired_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.retired_snapshots",
+        "name": "retired_snapshots_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.runtime_requests",
+        "name": "runtime_requests_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_actor_id_fkey",
+        "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_locale_check",
+        "definition": "CHECK ((locale = ANY (ARRAY['zh-CN'::text, 'ko-KR'::text])))"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.sessions",
+        "name": "sessions_snapshot_id_fkey",
+        "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshot_version_kind",
+        "definition": "CHECK (COALESCE((((document ->> 'snapshotId'::text) = id) AND ((((document ->> 'revision'::text) = 'publish-foundation/1'::text) AND (NOT (document ? 'publicationKind'::text))) OR (((document ->> 'revision'::text) = 'publish-foundation/2'::text) AND ((document ->> 'publicationKind'::text) = 'canonical-native'::text) AND ((document ->> 'compilerVersion'::text) = 'native-publication-1'::text) AND ((document #>> '{manifest,snapshot,compilerVersion}'::text[]) = 'native-publication-1'::text)))), false))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_chapter_id_fkey",
+        "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_created_by_fkey",
+        "definition": "FOREIGN KEY (created_by) REFERENCES profiles(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check",
+        "definition": "CHECK ((jsonb_typeof(document) = 'object'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check1",
+        "definition": "CHECK ((((document ->> 'schemaVersion'::text) = '1.0.0'::text) AND ((document ->> 'runtimeContract'::text) = 'uply-runtime/1'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check2",
+        "definition": "CHECK (((document #>> '{manifest,snapshot,scope}'::text[]) = 'chapter'::text))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_document_check3",
+        "definition": "CHECK ((NOT (document ? 'privatePayload'::text)))"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_id_textbook_id_version_id_chapter_id_key",
+        "definition": "UNIQUE (id, textbook_id, version_id, chapter_id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_pkey",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_textbook_id_fkey",
+        "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+      },
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshots_version_id_fkey",
+        "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id)"
+      },
+      {
+        "table": "tenants",
+        "name": "tenants_pkey",
+        "definition": "PRIMARY KEY (id)"
+      }
+    ]
+  },
+  "completionDelta": {
+    "addedFunctions": [
+      {
+        "signature": "agent_core_private.validate_artifact_v2(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "aad0bf616f5c642634bffaeafbcdd64cc8b475b864792bd023317f5fc7da3b89"
+      },
+      {
+        "signature": "agent_core_private.validate_typed_evidence(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "eabdb61d81abe02e92de89ab7b58e6ec96d610cbdc0155724f82ff7173eecf2d"
+      }
+    ],
+    "changedFunctions": [
+      {
+        "signature": "agent_core_private.definition_guard()",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "5c182d2540348b933de4c5737463acff7b607d0991b4104e185b00aeb99a65a1"
+      },
+      {
+        "signature": "agent_core_private.transition_agent_run_evidence_v1(uuid,uuid,uuid,text,integer,uuid,text,jsonb,text,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "961f11c720644f61dab6105b6be8fc24b5ea25d5ad1cb265023bb6c41539dd99"
+      },
+      {
+        "signature": "append_agent_run_event_v2(uuid,uuid,uuid,integer,uuid,jsonb)",
+        "acl": "{postgres=X/postgres,service_role=X/postgres}",
+        "sha256": "b389166d4defea7aee230bb237eb9edb1557f5bbe69161e1b4b9d9b5dc793703"
+      }
+    ],
+    "relationsUnchanged": true,
+    "changedConstraints": []
+  },
+  "publicationDelta": {
+    "addedFunctions": [
+      {
+        "signature": "runtime_publish_private.native_admission(jsonb,jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "30b5ad191a0a69e420d014247ebd4e7bfb0c52f856bb3cd903e797e76315d36e"
+      },
+      {
+        "signature": "runtime_publish_private.publication_version_admitted(jsonb)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "9020153d7bacebfb374bd93a18ba2a1802ff8ed38c9d9ad98c85dec9dd993ce4"
+      }
+    ],
+    "changedFunctions": [
+      {
+        "signature": "publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "d9525ae658fa0350b601aa13c41b43a002dd7033b76432b0ecb807e31ba637a5"
+      },
+      {
+        "signature": "publish_runtime_snapshot_v1(uuid,jsonb,jsonb,text,jsonb,text)",
+        "acl": "{postgres=X/postgres}",
+        "sha256": "05ace3967965e3e5bb19b5fc0484c1bff8cc468d7935c86c80a8b8ac4fd0bafc"
+      }
+    ],
+    "relationsUnchanged": true,
+    "changedConstraints": [
+      {
+        "table": "runtime_publish_private.snapshots",
+        "name": "snapshot_version_kind",
+        "definition": "CHECK (COALESCE((((document ->> 'snapshotId'::text) = id) AND ((((document ->> 'revision'::text) = 'publish-foundation/1'::text) AND (NOT (document ? 'publicationKind'::text))) OR (((document ->> 'revision'::text) = 'publish-foundation/2'::text) AND ((document ->> 'publicationKind'::text) = 'canonical-native'::text) AND ((document ->> 'compilerVersion'::text) = 'native-publication-1'::text) AND ((document #>> '{manifest,snapshot,compilerVersion}'::text[]) = 'native-publication-1'::text)))), false))"
+      }
+    ]
+  }
+}

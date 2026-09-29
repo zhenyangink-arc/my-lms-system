@@ -1,0 +1,191 @@
+{
+  "overall": "GO",
+  "postWindowFoundationAcceptance": "PASS",
+  "currentFoundationTechnicalStatus": "READY FOR CONTENT PREPARATION",
+  "r5cHistoricalStatus": "CONDITIONAL — WINDOW EXPIRED / EXECUTION INCOMPLETE",
+  "stage1g": "NOT READY",
+  "gates": [
+    {
+      "id": "G-R5D-1",
+      "name": "Read-only Authorization Scope",
+      "status": "PASS",
+      "evidence": "authorization-scope.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-2",
+      "name": "Production Identity Match",
+      "status": "PASS",
+      "evidence": "production-identity.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-3",
+      "name": "Ledger457",
+      "status": "PASS",
+      "evidence": "ledger-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-4",
+      "name": "Latest140007",
+      "status": "PASS",
+      "evidence": "ledger-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-5",
+      "name": "Old449 Prefix Preserved",
+      "status": "PASS",
+      "evidence": "ledger-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-6",
+      "name": "Eight Migration SQL Exact",
+      "status": "PASS",
+      "evidence": "ledger-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-7",
+      "name": "Foundation Objects",
+      "status": "PASS",
+      "evidence": "foundation-objects.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-8",
+      "name": "RLS/ACL",
+      "status": "PASS",
+      "evidence": "rls-acl.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-9",
+      "name": "Agent Rows Zero",
+      "status": "PASS",
+      "evidence": "agent-empty-state.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-10",
+      "name": "Approved Artifact Match",
+      "status": "PASS",
+      "evidence": "artifact-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-11",
+      "name": "Live Build Match",
+      "status": "PASS",
+      "evidence": "artifact-verification.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-12",
+      "name": "PM2 Online",
+      "status": "PASS",
+      "evidence": "pm2.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-13",
+      "name": "Feature OFF",
+      "status": "PASS",
+      "evidence": "runtime-launcher.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-14",
+      "name": "Allowlists EMPTY",
+      "status": "PASS",
+      "evidence": "runtime-launcher.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-15",
+      "name": "Runtime Match",
+      "status": "PASS",
+      "evidence": "runtime-launcher.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-16",
+      "name": "Launcher Match",
+      "status": "PASS",
+      "evidence": "runtime-launcher.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-17",
+      "name": "Tailscale Match",
+      "status": "PASS",
+      "evidence": "tailscale.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-18",
+      "name": "Basic HTTP Health",
+      "status": "PASS",
+      "evidence": "http-health.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-19",
+      "name": "Authoring Technical Foundation",
+      "status": "PASS",
+      "evidence": "authoring-foundation.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-20",
+      "name": "Authenticated Authoring UI",
+      "status": "PARTIAL",
+      "evidence": "authoring-foundation.json",
+      "note": "AUTH SESSION REQUIRED; no impersonation; not a core technical blocker"
+    },
+    {
+      "id": "G-R5D-21",
+      "name": "Provider Zero",
+      "status": "PASS",
+      "evidence": "provider-boundary.json",
+      "note": "Task-scope only"
+    },
+    {
+      "id": "G-R5D-22",
+      "name": "Content Writes Zero",
+      "status": "PASS",
+      "evidence": "production-safety.json",
+      "note": "Task-scope only"
+    },
+    {
+      "id": "G-R5D-23",
+      "name": "Production DB Writes Zero",
+      "status": "PASS",
+      "evidence": "production-safety.json",
+      "note": "Task-scope only"
+    },
+    {
+      "id": "G-R5D-24",
+      "name": "Production Mutations Zero",
+      "status": "PASS",
+      "evidence": "production-safety.json",
+      "note": "Task-scope only"
+    },
+    {
+      "id": "G-R5D-25",
+      "name": "R5C History Preserved",
+      "status": "PASS",
+      "evidence": "workspace-scope.json",
+      "note": ""
+    },
+    {
+      "id": "G-R5D-26",
+      "name": "Current Acceptance Record",
+      "status": "PASS",
+      "evidence": "private-receipt.json",
+      "note": ""
+    }
+  ]
+}

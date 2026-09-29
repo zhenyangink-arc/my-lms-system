@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "baselineFiles": 3111,
+  "modifiedExisting": [],
+  "deletedExisting": [],
+  "newFilesBeforeThisScopeRecord": [
+    "docs/evidence/teaching-agent-stage-1f-r4/authoring-targeted.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/definition-manifest.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/production-content-inventory.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/production-safety.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/reconcile-targeted.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/release-integrity.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/reviewed-inputs.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/schema-comparison.json",
+    "docs/evidence/teaching-agent-stage-1f-r4/validation-result.json",
+    "docs/teaching-agent-stage-1f-r4-production-authorization-gate.md"
+  ],
+  "gitDiffCheck": "PASS",
+  "reportSections": 23,
+  "reportLinks": "PASS",
+  "secretScan": "PASS: actual runtime private credential values compared in memory plus JWT pattern; no values printed",
+  "historicalReportsUnchanged": true,
+  "productChanges": 0,
+  "migrationsChanged": 0,
+  "dependencyOrEnvironmentChanges": 0,
+  "newFileSHA256": {
+    "docs/evidence/teaching-agent-stage-1f-r4/authoring-targeted.json": "d006ba3bbdc8c90bf2ffee018e6a334896e68145221fec6e701ee185d1abd6ca",
+    "docs/evidence/teaching-agent-stage-1f-r4/definition-manifest.json": "aa39dad355056645742fd2c51548ddfb52f0be502714af686268c2c96efb5328",
+    "docs/evidence/teaching-agent-stage-1f-r4/production-content-inventory.json": "d368be6146290b6cc1e1574c9088b23077702da55d594285579650ddf4276f9c",
+    "docs/evidence/teaching-agent-stage-1f-r4/production-safety.json": "dad8551996b505fce127c6714288457e0ae0199bb6b8a9aa81f6eea9f41999fb",
+    "docs/evidence/teaching-agent-stage-1f-r4/reconcile-targeted.json": "472f8fd0ed958dbe8a18dc62ef1841d33c5bb1694b6011897cd43780dd15ed5a",
+    "docs/evidence/teaching-agent-stage-1f-r4/release-integrity.json": "1daf6d1e6275e2d1f5e296803d73106d496b88de706d040c10e43a1ab42b22f6",
+    "docs/evidence/teaching-agent-stage-1f-r4/reviewed-inputs.json": "5299d76a5712da2734d07bd9e523b53142252fc3d948243934313cc9cfeac122",
+    "docs/evidence/teaching-agent-stage-1f-r4/schema-comparison.json": "db7fb44e249fe61d84bc623a10ba623d248d980b39f7ab839027942480684e87",
+    "docs/evidence/teaching-agent-stage-1f-r4/validation-result.json": "3918a6cdcd963e1aa4144d2634479b2d933902fdc33c45480ed2470f5bfc2ad6",
+    "docs/teaching-agent-stage-1f-r4-production-authorization-gate.md": "6d3514254b9f5cf58cf0ae9114bca46fba42c5a8c6504bfb42ba806cb6c11265"
+  },
+  "selfHashExcluded": true
+}

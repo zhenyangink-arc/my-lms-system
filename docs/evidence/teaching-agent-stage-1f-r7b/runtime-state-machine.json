@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "phases": [
+    "READY",
+    "PLAYING",
+    "CUE_PENDING",
+    "AWAITING_ACTIVITY",
+    "CHECKING_COMPLETION",
+    "RESUME_READY",
+    "ERROR"
+  ],
+  "pendingBeforeAsync": true,
+  "layoutSeparate": true,
+  "completionSeparate": true,
+  "mediaEventSeparate": true,
+  "stepProgressInferred": false
+}

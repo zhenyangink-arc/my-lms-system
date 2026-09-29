@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-09-13T02:52:53.181Z",
+  "patchSha256": "d585e004d51e7d121f4ffb3bcb1ad107300de402db2e0453a100c7f469b43057",
+  "filesVerified": 29,
+  "patchApplies": true,
+  "mainWorkspacePreserved": true,
+  "process": {
+    "uply": {
+      "name": "uply-first-enable",
+      "pid": 3338237,
+      "status": "online",
+      "cwd": "/home/yangzhen/projects/my-lms-system",
+      "script": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs"
+    },
+    "otherServiceCount": 10,
+    "uplyDevOnline": false,
+    "starterHasExpectedRelease": true,
+    "starterUsesProductionStart": true,
+    "buildId": "l9HmPxSMluZWoirjL544P"
+  },
+  "targetProjectMatched": true,
+  "dbServiceTls": "verify-full",
+  "privateConfigModesRestricted": true,
+  "remoteWrites": false
+}

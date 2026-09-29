@@ -1,0 +1,93 @@
+{
+  "stage": "R7D-C1",
+  "recordedAt": "2026-09-18T02:43:17.169299+00:00",
+  "method": "local source audit and contract design only",
+  "implementationStatus": "NOT IMPLEMENTED",
+  "runtimeValidation": "NOT EXECUTED",
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "agentRuns": 0,
+  "providerRequests": 0,
+  "approvalName": "R7D-C2 — Unregistered Skill / Evidence Contract Implementation",
+  "status": "READY — AWAITING USER APPROVAL",
+  "approvalGranted": false,
+  "exactProductFiles": {
+    "modify": [
+      {
+        "path": "src/features/teaching-agent/server/composition/create-student-ai-teacher-capabilities.ts",
+        "change": "Extract existing private executor ledger into shared teaching helper, preserving Explain admission, exact allowlists and evidence semantics."
+      },
+      {
+        "path": "src/features/teaching-agent/skills/explain-pinned-korean-segment/definition.ts",
+        "change": "Type-only shared teaching Skill contract; retain exact ID/version/procedure/context/allowedTools/evidence requirements."
+      }
+    ],
+    "add": [
+      {
+        "path": "src/features/teaching-agent/server/skills/teaching-skill-contract.ts",
+        "change": "Name existing teaching extension of SkillDefinition; reuse requiredContext/evidenceRequirements/intent/locales."
+      },
+      {
+        "path": "src/features/teaching-agent/server/skills/tool-evidence-ledger.ts",
+        "change": "Single shared executor-owned private receipt mechanism extracted from current capabilities; no external receipt setter or second registry."
+      },
+      {
+        "path": "src/features/teaching-agent/server/composition/create-lesson-execution-skill-capabilities.ts",
+        "change": "Unregistered request-local composition using existing registries, policy interface, Core executor, trusted facts handle and shared private ledger. Isolated harness only until production prerequisites close."
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/definition.ts",
+        "change": "Proposed exact Skill/output refs and existing teaching contract fields; not production registration."
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/procedure.ts",
+        "change": "Read-only procedure; mandatory exact durable Tool; no current position guess."
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/evidence.ts",
+        "change": "Validate executor-owned receipt/context/provenance/freshness; reuse Tool facts validation, no second isCompleted algorithm."
+      },
+      {
+        "path": "src/features/teaching-agent/skills/summarize-current-lesson-execution/output.ts",
+        "change": "Strict bounded safe summary projected from verified facts; no raw/model-authored authoritative execution fields."
+      }
+    ],
+    "count": 9
+  },
+  "testsAndFixture": [
+    "tests/teaching-agent-r7d-c-skill-binding.test.mjs",
+    "tests/teaching-agent-r7d-c-evidence-gate.test.mjs",
+    "tests/teaching-agent-r7d-c-planning-boundary.test.mjs",
+    "tests/fixtures/teaching-agent-r7d-c/skill-binding-fixture.mjs"
+  ],
+  "reusedFramework": "existing Skill/Tool registries, Core executor, Domain Port and LessonFacts issuer; no second router/runtime",
+  "excluded": [
+    "production registry registration",
+    "production context issuer/adapter activation",
+    "persisted completion migration",
+    "deployment/PM2",
+    "current DB Tool acceptance",
+    "Agent coordinator or Provider invocation",
+    "B3 scope activation",
+    "business/auth writes",
+    "cleanup"
+  ],
+  "writes": {
+    "currentDB": 0,
+    "agentRuns": 0,
+    "provider": 0,
+    "publish": 0,
+    "pins": 0,
+    "migrationInstall": 0
+  },
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "requiredBeforeProduction": [
+    "Canonical published read-only runtime binding adapter from verified Run subject; no chapter-one/Owner fallback.",
+    "Explicit real production transport provenance and receipt version strategy without relabeling development facts.",
+    "Versioned artifact/trace/SQL completion contract for durable Activity evidence and eventual mandatory evidence sets.",
+    "Skill-dispatched existing coordinator and exact new pinned Profile/policy versions; retain Explain requirement.",
+    "Permission mapping and request-local production availability only after above pass."
+  ],
+  "stopPoint": "C2 isolated results and explicit production-prerequisite approval package; no automatic C3."
+}

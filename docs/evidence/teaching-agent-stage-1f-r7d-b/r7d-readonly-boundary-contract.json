@@ -1,0 +1,96 @@
+{
+  "contract": "R7D_READ_ONLY_BUSINESS_DOMAIN/1",
+  "stage": "R7D-B2",
+  "establishedAt": "2026-09-18T02:30:29.731831+00:00",
+  "authorization": "explicit user boundary revision; retrospective classification only",
+  "mainGate": "R7D_READ_ONLY_BUSINESS_DOMAIN",
+  "passRule": "A AND B AND C",
+  "definitions": {
+    "TOOL_MUTATION": "State-changing capability invoked or exposed by the Tool/Domain Port/facts read path; prohibited.",
+    "BUSINESS_DOMAIN_MUTATION": "Teaching/learning/tenant/profile/membership/Agent/Provider/Publish/Pins state change attributable to acceptance; prohibited.",
+    "SUBJECT_AUTH_MUTATION": "Any development actor identity/session/refresh/login/JWT/profile/membership change attributable to acceptance; prohibited.",
+    "OPERATOR_AUTH_MAINTENANCE": "Existing normal Platform Owner browser session maintained by existing Auth infrastructure; distinct from subject learning activity."
+  },
+  "gateA": {
+    "name": "BUSINESS DOMAIN WRITE ISOLATION",
+    "requiredDelta": 0,
+    "attemptWriteDelta": 0,
+    "progressWriteDelta": 0,
+    "coverage": [
+      "attempts",
+      "node/activity-page/course/ebook/other lesson progress",
+      "Activity/secrets/execution nodes/textbook versions/textbooks",
+      "Teaching Script/version/objectives/frozen content",
+      "canonical content",
+      "tenant/profile/membership/permissions",
+      "Agent/Provider state",
+      "Publish logs/Pins",
+      "other Lesson/Runtime business tables"
+    ]
+  },
+  "gateB": {
+    "name": "DEVELOPMENT SUBJECT AUTH ISOLATION",
+    "subject": "existing stable B2 actor, not Owner",
+    "banned": true,
+    "sessions": 0,
+    "refreshTokens": 0,
+    "interactiveLogin": "NONE",
+    "jwtIssuance": "NONE",
+    "identityMutationAttributableToAcceptance": 0,
+    "profileDelta": 0,
+    "membershipDelta": 0
+  },
+  "gateC": {
+    "name": "OPERATOR AUTH MAINTENANCE BOUNDARY",
+    "allowedSubject": "existing_platform_owner",
+    "mustNotBeDevelopmentActor": true,
+    "allowedTables": [
+      "auth.refresh_tokens",
+      "auth.sessions",
+      "auth.users"
+    ],
+    "allowedCause": "existing_browser_session_maintenance",
+    "requiredChecks": [
+      "normal existing authenticated session",
+      "no explicit Tool/Auth Admin mutation",
+      "no new login flow",
+      "no impersonation",
+      "no magic-link relogin",
+      "no new test user",
+      "no profile/membership business writes",
+      "no deliberately induced refresh for acceptance",
+      "reasonable evidence attribution"
+    ],
+    "rowCountThreshold": null,
+    "failureConditions": [
+      "unknown Auth subject",
+      "development actor session/refresh/identity change",
+      "new auth.identity",
+      "new unrelated auth.user",
+      "profile/membership/tenant/permission/business write",
+      "Tool Auth Admin call",
+      "impersonation",
+      "unexpected login issuance",
+      "unattributable Auth change"
+    ]
+  },
+  "historicalGate": {
+    "name": "STRICT GLOBAL ZERO-WRITE",
+    "result": "NOT MET",
+    "blocking": false,
+    "disposition": "superseded as main acceptance gate, historical result unchanged",
+    "receipt": "r7d-current-db-zero-write-receipt.json",
+    "receiptSha256": "044d76379d23fcee25db9866bf955e6bb1c64ec29bfd7299c70be01c8fae5021"
+  },
+  "thisStageRestrictions": {
+    "toolCalls": 0,
+    "browserRequests": 0,
+    "dbQueries": 0,
+    "businessMutations": 0,
+    "productChanges": 0,
+    "deployment": 0,
+    "pm2Mutation": 0,
+    "scopeActivation": 0,
+    "cleanup": 0
+  }
+}

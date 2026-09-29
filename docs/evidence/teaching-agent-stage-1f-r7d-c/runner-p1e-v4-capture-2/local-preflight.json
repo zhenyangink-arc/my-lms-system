@@ -1,0 +1,157 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-V4-CAPTURE-2",
+  "recordedAt": "2026-09-20T07:05:42.889292+00:00",
+  "explicitSecondCaptureApproval": "RECORDED",
+  "captureAttemptsThisRound": 0,
+  "captureCommandExecuted": false,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "operatorCaptureAuthorizationCreated": false,
+  "sourceChanges": 0,
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "migrationInstall": 0,
+  "planSeal": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "nextMigrationAllowed": false,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "localLockChecks": "PASS",
+  "authorizationReadiness": "BLOCKED",
+  "blockingCode": "BLOCKED_FRESH_CAPTURE_AUTHORIZATION",
+  "v4Sha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+  "f2Sha256": "413db75399233402e29dd3d60ff742b4bc8decca32d6088fe673361165da7f07",
+  "sourceLockCount": 99,
+  "operationalPackageDigest": "6584a2f7d1be58cb065fb904fd06afa365b8c485b535afec03fcc9bbfaf417ad",
+  "receiptPaths": {
+    "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops/receipts": {
+      "realPath": "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops/receipts",
+      "uid": 1001,
+      "gid": 1001,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0700",
+      "inode": 3308691,
+      "device": 66306,
+      "isSymlink": false,
+      "directory": true,
+      "lstatEqualsStat": true
+    },
+    "/home/yangzhen/projects/my-lms-system": {
+      "realPath": "/home/yangzhen/projects/my-lms-system",
+      "uid": 1001,
+      "gid": 1001,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0775",
+      "inode": 658920,
+      "device": 66306,
+      "isSymlink": false,
+      "directory": true,
+      "lstatEqualsStat": true
+    },
+    "/home/yangzhen/projects/my-lms-system/build": {
+      "realPath": "/home/yangzhen/projects/my-lms-system/build",
+      "uid": 1001,
+      "gid": 1001,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0775",
+      "inode": 1735398,
+      "device": 66306,
+      "isSymlink": false,
+      "directory": true,
+      "lstatEqualsStat": true
+    },
+    "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops": {
+      "realPath": "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops",
+      "uid": 1001,
+      "gid": 1001,
+      "owner": "yangzhen",
+      "group": "yangzhen",
+      "mode": "0775",
+      "inode": 3308690,
+      "device": 66306,
+      "isSymlink": false,
+      "directory": true,
+      "lstatEqualsStat": true
+    }
+  },
+  "firstProofHash": "b6f1f53c611100f4edd8ac2bec03a7109e889eda99626fa31619a58e84ed12e2",
+  "stageOpen": true,
+  "revocationMarkerMatches": [],
+  "revocationSearchScope": [
+    "contract-defined receiptRoot completion/revocation marker",
+    "receipt tree filenames",
+    "stage evidence tree filenames",
+    "fixed authorization-directory filenames"
+  ],
+  "historicalLossAcceptance": "VERIFIED_V4_BINDING_NOT_NEW_EXECUTION_AUTH",
+  "transportRiskAcceptance": "VERIFIED_V4_BINDING_NOT_NEW_EXECUTION_AUTH",
+  "candidateArtifacts": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "match": true
+    }
+  ],
+  "migrationLocks": [
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "result": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "result": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "result": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "result": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "result": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "result": "MATCH"
+    }
+  ],
+  "sourceFileCount": 2231
+}

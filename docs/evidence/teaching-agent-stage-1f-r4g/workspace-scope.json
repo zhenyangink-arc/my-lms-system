@@ -1,0 +1,59 @@
+{
+  "verifiedAtUtc": "2026-09-15T08:01:22.465847+00:00",
+  "status": "PASS",
+  "baselineFileCount": 3218,
+  "changedExisting": [
+    "docs/teaching-agent-pilot-operations-roles.md",
+    "docs/teaching-agent-pilot-operations-runbook.md"
+  ],
+  "newFiles": [
+    "docs/evidence/teaching-agent-stage-1f-r4g/acceptance-summary.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/backup-freshness.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/client-environment.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/gates.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/operator-bundle.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/production-end-state.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/production-preflight.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/receipt-storage.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/workspace-before.json",
+    "docs/evidence/teaching-agent-stage-1f-r4g/workspace-scope.json",
+    "docs/teaching-agent-stage-1f-r4g-pilot-operations-acceptance-closure.md"
+  ],
+  "protectedExistingFileCount": 3216,
+  "outOfScopeChanges": [],
+  "checks": {
+    "gitDiffCheck": true,
+    "noIndexWhitespaceChecks": true,
+    "jsonParse": true,
+    "markdownFences": true,
+    "markdownTables": true,
+    "nineteenReportSections": true,
+    "thirtyOneGates": true,
+    "noStaleAcceptanceText": true,
+    "operatorBundleStillLocked": true,
+    "eightFrozenMigrationsUnchanged": true,
+    "privateAcceptanceHashUnchanged": true,
+    "privateAcceptanceStill0600": true,
+    "privateDirectoriesStill0700": true,
+    "syntheticProbeCleanup": true,
+    "privateAcceptanceNotCopied": true,
+    "sensitiveBoundary": true
+  },
+  "sensitiveMatchCount": 0,
+  "privateFilesystemScope": [
+    "/home/yangzhen/operations",
+    "/home/yangzhen/operations/uply",
+    "/home/yangzhen/operations/uply/teaching-agent",
+    "/home/yangzhen/operations/uply/teaching-agent/receipts",
+    "/home/yangzhen/operations/uply/teaching-agent/acceptance"
+  ],
+  "privateAcceptanceContentInRepository": false,
+  "temporaryHelpers": {
+    "uply-r4g-inventory.py": "fea59ea03d1a0d0cc72d094ccbabf67b71f43b0383f22ba313d9b7e6d5c2445f",
+    "uply-r4g-private-storage.py": "9270ff957932240b037232a0612f5daceb5d7c687e4a93d3e5528b230d57abda",
+    "uply-r4g-report.py": "fdaf56186b04edd915faa79dcca3a1990b716ccb141e6e858d261d8aa65342c9",
+    "uply-r4g-validate.py": "7b27c1816288de1a39dfcae624b6bc0241136f1da4beb7a40df7674cbc740787"
+  },
+  "note": "Existing dirty/untracked/deleted baseline preserved. Hash comparison covers tracked and nonignored untracked files. This evidence file is excluded from self-hashing; no product/config/release write commands were run.",
+  "gitAddCommitResetCleanCheckoutExecuted": false
+}

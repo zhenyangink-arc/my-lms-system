@@ -1,0 +1,280 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D4",
+  "recordedAt": "2026-09-20T04:35:22.532744+00:00",
+  "mode": "LOCAL_SCOPE_AUDIT_AND_CONTRACT_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": false,
+  "operationalChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "targetProfileChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "status": "PLANNED_NOT_EXECUTED",
+  "existingRequired": {
+    "historicalRunner": 51,
+    "capture": 27,
+    "queryOrder": 20,
+    "total": 98
+  },
+  "newCases": [
+    {
+      "id": "TLS-D4-01",
+      "name": "RISK_ARTIFACT_MISSING",
+      "expectation": "Missing artifact rejects before credentials",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-02",
+      "name": "RISK_HASH_DRIFT",
+      "expectation": "Wrong raw risk artifact hash rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-03",
+      "name": "RISK_SCOPE",
+      "expectation": "Wrong stage/project/provider/contract rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-04",
+      "name": "RISK_OPERATOR_BINDING",
+      "expectation": "Proposal approved=false alone cannot authorize any operation; correct short operator risk attestation required",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-05",
+      "name": "RISK_EXPIRED",
+      "expectation": "Expired or over-900-second authorization rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-06",
+      "name": "RISK_COMPLETED",
+      "expectation": "Completion/revocation marker or stageActive=false rejects; malformed marker cannot reopen scope",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-07",
+      "name": "V4_ONLY",
+      "expectation": "New v4 mock reference/hash accepted; v3 and arbitrary reference rejected",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-08",
+      "name": "READY_UNCHANGED",
+      "expectation": "DRAFT apply/backup/install-verify/preflight remain rejected",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-09",
+      "name": "FIXTURE_SEPARATION",
+      "expectation": "Owned legacy authorization cannot select production",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-10",
+      "name": "PORT_PIN",
+      "expectation": "Port 6543, missing/alternate port and profile override reject",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-11",
+      "name": "TCP_ONLY",
+      "expectation": "Socket, hostaddr override, multi-host and alternate hostname reject",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-12",
+      "name": "CA_HOST_PIN",
+      "expectation": "Wrong CA/hostname/project/username binding rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-13",
+      "name": "MODE_ENFORCEMENT",
+      "expectation": "All weaker sslmode values reject; fixed GSS-off cannot be overridden",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-14",
+      "name": "PSQL_REAL_TLS",
+      "expectation": "Owned actual pinned psql TLS metadata matches successful verify-full invocation",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-15",
+      "name": "PSQL_NO_TLS",
+      "expectation": "Owned non-TLS endpoint rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-16",
+      "name": "PSQL_BAD_CA",
+      "expectation": "Owned untrusted CA rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-17",
+      "name": "PSQL_BAD_HOST",
+      "expectation": "Owned hostname mismatch rejects before catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-18",
+      "name": "PSQL_PROOF_BINDING",
+      "expectation": "Wrong process/invocation, stale metadata or reconnect proof reuse rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-19",
+      "name": "PSQL_METADATA_MISSING",
+      "expectation": "Missing/malformed metadata rejects with safe code",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-20",
+      "name": "BACKEND_FALSE",
+      "expectation": "Valid client/risk/profiles plus backend=false records and continues; otherwise rejects",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-21",
+      "name": "BACKEND_UNAVAILABLE",
+      "expectation": "Successful null observation represented unavailable; SQL error still rolls back",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-22",
+      "name": "CAPTURE_ORDER",
+      "expectation": "Same session RR READ ONLY; ledger/function early stops and full catalog consistency remain",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-23",
+      "name": "TRANSPORT_ALL_MODES",
+      "expectation": "All production sessions receive proof before yielding, including exporter/apply/verify",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-24",
+      "name": "DUMP_FULL_REAL",
+      "expectation": "Owned actual full pg_dump under verify-full yields its own bound proof and archive",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-25",
+      "name": "DUMP_SCHEMA_REAL",
+      "expectation": "Owned schema pg_dump uses independent invocation/output proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-26",
+      "name": "DUMP_ROLES_REAL",
+      "expectation": "Owned roles pg_dumpall uses fixed initial postgres and no-role-passwords with own proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-27",
+      "name": "DUMP_NEGATIVE_TLS",
+      "expectation": "Each of the three tool profiles rejects non-TLS, wrong CA and wrong hostname; no valid manifest",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-28",
+      "name": "DUMP_OVERRIDE",
+      "expectation": "No arbitrary tool/conninfo/args/help/version/parallel/endpoint accepted",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-29",
+      "name": "DUMP_REPLAY",
+      "expectation": "Different invocation/output/package/risk proof cannot satisfy required set",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-30",
+      "name": "DUMP_EXIT",
+      "expectation": "Spawn-only, nonzero, timeout or bad output never counts as TLS proof",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-31",
+      "name": "BACKUP_MANIFEST",
+      "expectation": "Forward manifest validates full exact proof set, hashes, freshness, risk and restored catalog",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-32",
+      "name": "RECEIPT_PRIVACY",
+      "expectation": "No raw conninfo/DSN/password/stderr/env or invented cipher/cert values",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-33",
+      "name": "RECEIPT_DURABILITY",
+      "expectation": "Exclusive/fsync failure blocks progression; postcommit failure follows existing forward-fix/unknown rules",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-34",
+      "name": "SOURCE_SCOPE",
+      "expectation": "Exact 9 modifications, no source adds; all protected hashes unchanged",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-35",
+      "name": "ATOMICITY_REGRESSION",
+      "expectation": "Existing migration+ledger rollback, concurrency and unknown-commit behavior pass unchanged",
+      "safetyCritical": true
+    },
+    {
+      "id": "TLS-D4-36",
+      "name": "AUTH_RECHECK",
+      "expectation": "Risk expiry at existing precommit authorize hook stops and rolls back without engine edits",
+      "safetyCritical": true
+    }
+  ],
+  "newRequiredCount": 36,
+  "minimumRequiredCases": 134,
+  "realToolNegativeSubcases": "TLS-D4-27 includes every full/schema/roles tool against non-TLS, wrong-CA and wrong-hostname endpoints; report all subcases, not one opaque PASS.",
+  "regression": {
+    "required": 172,
+    "node": 155,
+    "historicalR5B": 17,
+    "failedAllowed": 0,
+    "skipsAllowed": 0
+  },
+  "ownedEnvironment": "Existing cached pinned PG17 image, network none, no host ports, tmpfs data. TLS loopback listener inside owned container; ephemeral self-signed test CA/cert generated with existing OpenSSL, never production CA/credentials. Existing test files contain setup; repository fixtures unchanged. No package install.",
+  "productionTransportTests": "Finite injected mock authorization/source/target controls for production branch; no real production credential path read. Real client TLS cases use explicitly owned container-only target identity, unreachable from production CLI.",
+  "expectedChangesAllowed": [
+    "CAPTURE_25 must stop equating backend false with client TLS failure; instead assert missing/invalid client proof rejects and valid risk/client proof permits false.",
+    "Production authorization helpers/schema and capture/backup receipt assertions move forward explicitly; preserve historical evidence and business/migration expected results."
+  ],
+  "skipPolicy": "Any safety-critical skip/failure blocks v4 proposal.",
+  "staticChecks": [
+    "Python syntax without production imports side effects",
+    "strict JSON",
+    "exact scope/source hash diff",
+    "secret/DSN/raw-output scan",
+    "no arbitrary SQL/path/CLI",
+    "approval v3 rejection and v4 hash binding"
+  ],
+  "v4Generation": "Only after all validation passes, generate new approved=false/executionAuthorized=false v4 proposal binding new source/test/package/risk hashes; do not execute capture."
+}

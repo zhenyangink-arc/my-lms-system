@@ -1,0 +1,445 @@
+{
+  "status": "READ ONLY",
+  "snapshotMetadata": [
+    {
+      "retired": false,
+      "snapshotHash": "2f43c82641ac92c60ee94bb25d50fd64d93ca5506a307246dae220ae5430edbf",
+      "textbookHash": "507a151eb0cf7f851d3bb2d6fd1612ffe388407b8fa9049826ae58d03d0f2904",
+      "fenceReferences": 1,
+      "bindingReferences": 1,
+      "historyReferences": 1,
+      "pointerReferences": 1,
+      "allSessionReferences": 13,
+      "activeSessionReferences": 0,
+      "unfinishedTextbookRuntimeRequests": 0
+    },
+    {
+      "retired": true,
+      "snapshotHash": "6ea0da2b328782056b721bb5ecb1eec194435871d9746dcedd9bb44e8b9df6bb",
+      "textbookHash": "507a151eb0cf7f851d3bb2d6fd1612ffe388407b8fa9049826ae58d03d0f2904",
+      "fenceReferences": 1,
+      "bindingReferences": 1,
+      "historyReferences": 2,
+      "pointerReferences": 0,
+      "allSessionReferences": 0,
+      "activeSessionReferences": 0,
+      "unfinishedTextbookRuntimeRequests": 0
+    }
+  ],
+  "foreignKeys": [
+    {
+      "name": "chapter_practice_units_source_textbook_chapter_id_fkey",
+      "source": "public.chapter_practice_units",
+      "target": "public.digital_textbook_chapters",
+      "definition": "FOREIGN KEY (source_textbook_chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "digital_textbook_activity_page_progress_activity_id_fkey",
+      "source": "public.digital_textbook_activity_page_progress",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_activity_page_progress_version_id_fkey",
+      "source": "public.digital_textbook_activity_page_progress",
+      "target": "public.digital_textbook_versions",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_activity_secrets_activity_id_fkey",
+      "source": "public.digital_textbook_activity_secrets",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_attempts_activity_id_fkey",
+      "source": "public.digital_textbook_attempts",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_attempts_version_id_fkey",
+      "source": "public.digital_textbook_attempts",
+      "target": "public.digital_textbook_versions",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "digital_textbook_chapters_version_id_fkey",
+      "source": "public.digital_textbook_chapters",
+      "target": "public.digital_textbook_versions",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_guided_repeat_progress_activity_id_fkey",
+      "source": "public.digital_textbook_guided_repeat_progress",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_listening_tracks_activity_id_fkey",
+      "source": "public.digital_textbook_listening_tracks",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_media_assets_activity_id_fkey",
+      "source": "public.digital_textbook_media_assets",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_modules_chapter_id_fkey",
+      "source": "public.digital_textbook_modules",
+      "target": "public.digital_textbook_chapters",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_node_progress_version_id_fkey",
+      "source": "public.digital_textbook_node_progress",
+      "target": "public.digital_textbook_versions",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id) ON DELETE RESTRICT"
+    },
+    {
+      "name": "digital_textbook_nodes_module_id_fkey",
+      "source": "public.digital_textbook_nodes",
+      "target": "public.digital_textbook_modules",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_preferences_textbook_id_fkey",
+      "source": "public.digital_textbook_preferences",
+      "target": "public.digital_textbooks",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_speaking_evidence_activity_id_fkey",
+      "source": "public.digital_textbook_speaking_evidence",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (activity_id) REFERENCES digital_textbook_activities(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_versions_textbook_id_fkey",
+      "source": "public.digital_textbook_versions",
+      "target": "public.digital_textbooks",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "growth_toolbox_exercises_chapter_id_fkey",
+      "source": "public.growth_toolbox_exercises",
+      "target": "public.digital_textbook_chapters",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "growth_toolbox_vocabulary_source_chapter_id_fkey",
+      "source": "public.growth_toolbox_vocabulary",
+      "target": "public.digital_textbook_chapters",
+      "definition": "FOREIGN KEY (source_chapter_id) REFERENCES digital_textbook_chapters(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "digital_textbook_teaching_lessons_module_id_fkey",
+      "source": "public.learning_agent_lessons",
+      "target": "public.digital_textbook_modules",
+      "definition": "FOREIGN KEY (module_id) REFERENCES digital_textbook_modules(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_node_attempts_script_version_id_fkey",
+      "source": "public.learning_agent_node_attempts",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_publish_logs_lesson_id_fkey",
+      "source": "public.learning_agent_publish_logs",
+      "target": "public.learning_agent_lessons",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_publish_logs_script_version_id_fkey",
+      "source": "public.learning_agent_publish_logs",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_script_nodes_reference_activity_id_fkey",
+      "source": "public.learning_agent_script_nodes",
+      "target": "public.digital_textbook_activities",
+      "definition": "FOREIGN KEY (reference_activity_id) REFERENCES digital_textbook_activities(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "learning_agent_script_nodes_script_version_id_fkey",
+      "source": "public.learning_agent_script_nodes",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_script_versions_lesson_id_fkey",
+      "source": "public.learning_agent_script_versions",
+      "target": "public.learning_agent_lessons",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "digital_textbook_teaching_sessions_lesson_id_fkey",
+      "source": "public.learning_agent_sessions",
+      "target": "public.learning_agent_lessons",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_sessions_script_version_id_fkey",
+      "source": "public.learning_agent_sessions",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE SET NULL"
+    },
+    {
+      "name": "digital_textbook_teaching_steps_lesson_id_fkey",
+      "source": "public.learning_agent_steps",
+      "target": "public.learning_agent_lessons",
+      "definition": "FOREIGN KEY (lesson_id) REFERENCES learning_agent_lessons(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "learning_agent_task_events_script_version_id_fkey",
+      "source": "public.learning_agent_task_events",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "teaching_script_source_reviews_script_version_id_fkey",
+      "source": "public.teaching_script_source_reviews",
+      "target": "public.learning_agent_script_versions",
+      "definition": "FOREIGN KEY (script_version_id) REFERENCES learning_agent_script_versions(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "authoring_control_textbook_id_fkey",
+      "source": "runtime_publish_private.authoring_control",
+      "target": "public.digital_textbooks",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+    },
+    {
+      "name": "bindings_snapshot_id_fkey",
+      "source": "runtime_publish_private.bindings",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "dependency_fences_snapshot_id_fkey",
+      "source": "runtime_publish_private.dependency_fences",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "history_actor_id_fkey",
+      "source": "runtime_publish_private.history",
+      "target": "public.profiles",
+      "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+    },
+    {
+      "name": "history_from_snapshot_fkey",
+      "source": "runtime_publish_private.history",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (from_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "history_to_snapshot_fkey",
+      "source": "runtime_publish_private.history",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (to_snapshot) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "pointers_snapshot_id_textbook_id_version_id_chapter_id_fkey",
+      "source": "runtime_publish_private.pointers",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (snapshot_id, textbook_id, version_id, chapter_id) REFERENCES runtime_publish_private.snapshots(id, textbook_id, version_id, chapter_id)"
+    },
+    {
+      "name": "retired_snapshots_retired_by_fkey",
+      "source": "runtime_publish_private.retired_snapshots",
+      "target": "public.profiles",
+      "definition": "FOREIGN KEY (retired_by) REFERENCES profiles(id)"
+    },
+    {
+      "name": "retired_snapshots_snapshot_id_fkey",
+      "source": "runtime_publish_private.retired_snapshots",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "runtime_requests_textbook_id_fkey",
+      "source": "runtime_publish_private.runtime_requests",
+      "target": "public.digital_textbooks",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+    },
+    {
+      "name": "sessions_actor_id_fkey",
+      "source": "runtime_publish_private.sessions",
+      "target": "public.profiles",
+      "definition": "FOREIGN KEY (actor_id) REFERENCES profiles(id)"
+    },
+    {
+      "name": "sessions_snapshot_id_fkey",
+      "source": "runtime_publish_private.sessions",
+      "target": "runtime_publish_private.snapshots",
+      "definition": "FOREIGN KEY (snapshot_id) REFERENCES runtime_publish_private.snapshots(id)"
+    },
+    {
+      "name": "snapshots_chapter_id_fkey",
+      "source": "runtime_publish_private.snapshots",
+      "target": "public.digital_textbook_chapters",
+      "definition": "FOREIGN KEY (chapter_id) REFERENCES digital_textbook_chapters(id)"
+    },
+    {
+      "name": "snapshots_created_by_fkey",
+      "source": "runtime_publish_private.snapshots",
+      "target": "public.profiles",
+      "definition": "FOREIGN KEY (created_by) REFERENCES profiles(id)"
+    },
+    {
+      "name": "snapshots_textbook_id_fkey",
+      "source": "runtime_publish_private.snapshots",
+      "target": "public.digital_textbooks",
+      "definition": "FOREIGN KEY (textbook_id) REFERENCES digital_textbooks(id)"
+    },
+    {
+      "name": "snapshots_version_id_fkey",
+      "source": "runtime_publish_private.snapshots",
+      "target": "public.digital_textbook_versions",
+      "definition": "FOREIGN KEY (version_id) REFERENCES digital_textbook_versions(id)"
+    }
+  ],
+  "targetCounts": {
+    "lessons": 1,
+    "digital_textbooks": 1,
+    "digital_textbook_versions": 1,
+    "digital_textbook_chapters": 1,
+    "digital_textbook_modules": 1,
+    "digital_textbook_nodes": 0,
+    "digital_textbook_activities": 0,
+    "learning_agent_lessons": 1,
+    "learning_agent_steps": 0,
+    "learning_agent_script_versions": 1,
+    "learning_agent_script_nodes": 8
+  },
+  "functions": [
+    {
+      "name": "admit_agent_run_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_conversation uuid, p_agent text, p_app text, p_scope_kind text, p_scope_ref text, p_key text, p_digest text, p_message text, p_definition_version text, p_skill jsonb, p_budget jsonb, p_deadline timestamp with time zone",
+      "securityDefiner": true,
+      "definitionSha256": "911b210add38809d40721c95354e5294eb527f0ddfbea2ac0cbaf55eca98d340"
+    },
+    {
+      "name": "append_agent_run_event_v2",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_event jsonb",
+      "securityDefiner": true,
+      "definitionSha256": "e21cacbf376bf18de4a49dbe3f2462ad079ac7cefdcf24b5bd607be14740fc6f"
+    },
+    {
+      "name": "check_agent_run_cancel_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_run uuid, p_fence uuid",
+      "securityDefiner": true,
+      "definitionSha256": "9e0968e7678b8c149f33113704290fe4c0c626e1f57613d06e322caa0c584fff"
+    },
+    {
+      "name": "create_teaching_content_skeleton",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_lesson_id uuid, p_expected_updated_at timestamp with time zone, p_chapter_title text, p_objectives text[]",
+      "securityDefiner": true,
+      "definitionSha256": "63ad985d00a437768a8aefb7a61b369faac0bafd627b4f7ad2107fa47e73d4ce"
+    },
+    {
+      "name": "reconcile_agent_run_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_run uuid, p_expected_version integer, p_fence uuid",
+      "securityDefiner": true,
+      "definitionSha256": "43216fcfc57b388003415cf2af8ba72ddb6f828d018108a636dc0ab434a29770"
+    },
+    {
+      "name": "record_agent_usage_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_run uuid, p_version integer, p_fence uuid, p_record jsonb",
+      "securityDefiner": true,
+      "definitionSha256": "1f3a74aeb6bc774cbc0a803af3ab2aa2e9da7f3795eef38a77162fc706c16c5b"
+    },
+    {
+      "name": "record_smart_textbook_attempt",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric, p_meets_completion_requirements boolean",
+      "securityDefiner": false,
+      "definitionSha256": "04d9d8182512c15c6624e15c93bd533df4bb7bbb314207b5575a9568dd748aee"
+    },
+    {
+      "name": "record_smart_textbook_attempt",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_is_correct boolean, p_score numeric",
+      "securityDefiner": false,
+      "definitionSha256": "af4511a91338e34f7febecbcf5fd77cd468da5b265408782ce2692260f584c50"
+    },
+    {
+      "name": "record_smart_textbook_speaking_attempt",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant_id uuid, p_student_id uuid, p_activity_id uuid, p_version_id uuid, p_response jsonb, p_evidence_id uuid",
+      "securityDefiner": false,
+      "definitionSha256": "c80a2d58134b1022be18132b443db3b2a1cc6110c9e0010da58d053e24edb3ac"
+    },
+    {
+      "name": "request_agent_run_cancel_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_run uuid",
+      "securityDefiner": true,
+      "definitionSha256": "f4e467651241c10797ff987aaa05529c7bff16e137a9f7817a85e38776c7afc4"
+    },
+    {
+      "name": "save_teaching_script_node_atomic",
+      "owner": "postgres",
+      "config": [
+        "search_path=public, private, auth"
+      ],
+      "signature": "p_node_id uuid, p_expected_updated_at timestamp with time zone, p_node jsonb, p_secret jsonb",
+      "securityDefiner": true,
+      "definitionSha256": "99fba1e26004cda4d39db690a85d0ea3bc2e24389af5b0909cc70ecb731d0748"
+    },
+    {
+      "name": "transition_agent_run_v1",
+      "owner": "postgres",
+      "config": [
+        "search_path=\"\""
+      ],
+      "signature": "p_tenant uuid, p_actor uuid, p_run uuid, p_expected_status text, p_expected_version integer, p_fence uuid, p_to text, p_budget jsonb, p_final text, p_reason text",
+      "securityDefiner": true,
+      "definitionSha256": "59f7206157085ece25c680403447bf325faf06627eecd7f18485763cf0918938"
+    }
+  ],
+  "businessRowsRead": false,
+  "runtimeRequestScope": "textbook; no unsupported per-snapshot attribution",
+  "deletionAuthorized": false
+}

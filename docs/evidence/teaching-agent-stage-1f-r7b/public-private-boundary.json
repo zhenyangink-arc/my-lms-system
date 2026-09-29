@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "evidenceLevel": "ISOLATED_FIXTURE",
+  "productionDurableProgress": "NOT YET VERIFIED",
+  "public": [
+    "prompt",
+    "options",
+    "safe source hashes",
+    "bound cue/media/activity identities"
+  ],
+  "private": [
+    "answer designation and grading contract in fixture.server.mjs"
+  ],
+  "clientPrivateModuleImports": 0,
+  "fullNode7BodyInManifest": false,
+  "answerOptionPresence": "ㅏ is a legitimate option, not an answer designation",
+  "gradedBy": "existing gradeSmartTextbookActivity"
+}

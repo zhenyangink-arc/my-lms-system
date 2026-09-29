@@ -1,0 +1,43 @@
+{
+  "scope": "Exact current application trigger path on schema-only isolated database",
+  "authVersion": "v2.197.0",
+  "createHttpStatus": 200,
+  "errorCode": null,
+  "usableSessionReturned": false,
+  "durableCounts": {
+    "users": 1,
+    "identities": 1,
+    "profiles": 1,
+    "accountAudit": 0,
+    "sessions": 0,
+    "refreshTokens": 0,
+    "writes": [
+      {
+        "table_name": "auth.identities",
+        "operation": "INSERT",
+        "count": 1
+      },
+      {
+        "table_name": "public.profiles",
+        "operation": "INSERT",
+        "count": 1
+      },
+      {
+        "table_name": "public.profiles",
+        "operation": "UPDATE",
+        "count": 2
+      },
+      {
+        "table_name": "auth.users",
+        "operation": "UPDATE",
+        "count": 5
+      },
+      {
+        "table_name": "auth.users",
+        "operation": "INSERT",
+        "count": 1
+      }
+    ]
+  },
+  "currentDbWrites": 0
+}

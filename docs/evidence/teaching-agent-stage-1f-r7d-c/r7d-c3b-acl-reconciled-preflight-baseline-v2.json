@@ -1,0 +1,104 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "status": "READY_AWAITING_EXPLICIT_INSTALL_AND_RELEASE_APPROVAL",
+  "approved": false,
+  "schemaBaselineVersion": 2,
+  "historicalReferences": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-completion-migration-install.json",
+      "sha256": "28d85da2e13c057cf1a369a667298ea5983ee5507a16fd400a95814245d4f4dc"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c-publication-migration-install.json",
+      "sha256": "4f467630f0c4c8ea56c4b64df8690b44cb490c697244177afbc4ab43257acbdc"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+    }
+  ],
+  "neverRewriteHistoricalBaseline": true,
+  "functionBodySha256": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+  "historicalLiveBefore000": [
+    "postgres",
+    "authenticated",
+    "service_role"
+  ],
+  "after000": [
+    "postgres",
+    "authenticated"
+  ],
+  "after001": [
+    "postgres",
+    "authenticated"
+  ],
+  "after002": [
+    "postgres",
+    "authenticated"
+  ],
+  "ledgerStages": [
+    458,
+    459,
+    460,
+    461
+  ],
+  "completionInstallMetadata": {
+    "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+    "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+    "expectedLedgerBefore": 459,
+    "expectedLedgerAfter": 460,
+    "requiredAclFixVersion": "202609180000"
+  },
+  "publicationInstallMetadata": {
+    "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+    "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+    "expectedLedgerBefore": 460,
+    "expectedLedgerAfter": 461,
+    "requiredPredecessors": [
+      "202609180000",
+      "202609180001"
+    ]
+  },
+  "otherPreflightConditions": "All original function/constraint/ACL/absence/source/artifact/package/build protections remain required; this overlay changes only target ACL stage and expected ledger ordering. Any other drift STOP.",
+  "futureReleaseOrder": [
+    "fresh historical ACL/body/roles/ledger458 preflight",
+    "backup/recovery preparation",
+    "install000 ONLY after separate approval",
+    "verify000 ACL/body/defaults/other objects andledger459",
+    "install001 after release approval",
+    "verify001 andledger460",
+    "install002 after release approval",
+    "verify002 andledger461",
+    "deploy sealed KeQ6bud_Us1ED6hnG7YB8 after release approval",
+    "safe health; STOP"
+  ],
+  "currentStateNotRequeried": true
+}

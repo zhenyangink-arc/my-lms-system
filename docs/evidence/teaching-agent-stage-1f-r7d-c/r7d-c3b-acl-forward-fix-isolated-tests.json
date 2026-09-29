@@ -1,0 +1,564 @@
+{
+  "stage": "R7D-C3B-ACL-F1",
+  "recordedAt": "2026-09-18T09:06:43.770197+00:00",
+  "authorization": "EXPLICIT_USER_AUTHORING_AND_ISOLATED_VALIDATION_ONLY",
+  "currentDBReads": 0,
+  "currentDBAclMutation": 0,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "currentDBMigrationInstall": 0,
+  "currentDBLedgerWrites": 0,
+  "productSourceChanges": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "candidateRebuild": false,
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF_RETAINED",
+  "allowlists": "EMPTY_RETAINED",
+  "B3Scope": "DISABLED_RETAINED",
+  "historicalGrantOrigin": "UNKNOWN",
+  "historicalMinimal34bBaseline": "INCOMPLETE_RETAINED",
+  "release": "BLOCKED_UNTIL_EXPLICIT_INSTALL_APPROVAL",
+  "Stage1G": "NOT_READY",
+  "result": "PASS",
+  "counts": {
+    "plannedCategories": 23,
+    "executedCategories": 23,
+    "passedCategories": 23,
+    "failedCategories": 0,
+    "skippedCategories": 0,
+    "executedLeafTests": 39,
+    "passedLeafTests": 39,
+    "failedLeafTests": 0,
+    "skippedLeafTests": 0,
+    "nodeTestRunnerTotalIncludingParent": 40,
+    "negativeLeafTests": 26
+  },
+  "planMapping": [
+    {
+      "id": "ACL-D2-01",
+      "case": "Historical baseline reproduces postgres/authenticated/service_role explicit ACL; PUBLIC/anon denied",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-01 historical precondition is explicit and exact"
+      ]
+    },
+    {
+      "id": "ACL-D2-02",
+      "case": "Historical defaults can create service-role grant; later CREATE OR REPLACE retains it",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-02 real CREATE/defaults -> anon repair -> replacement lifecycle"
+      ]
+    },
+    {
+      "id": "ACL-D2-03",
+      "case": "Desired contract distinguished from historical baseline metadata",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-03 historical and desired baseline are separate; exact only-ACL delta"
+      ]
+    },
+    {
+      "id": "ACL-D2-04",
+      "case": "Before change service role with no sub denied by internal guard",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-04 service-role without subject denied before fix"
+      ]
+    },
+    {
+      "id": "ACL-D2-05",
+      "case": "Before change service role with non-owner/inactive subject denied",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-05 non-owner/inactive subjects denied before fix"
+      ]
+    },
+    {
+      "id": "ACL-D2-06",
+      "case": "Before change service role with synthetic active owner subject can reach guarded mutation",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-06 service-role with synthetic owner claims can reach guarded writes before fix"
+      ]
+    },
+    {
+      "id": "ACL-D2-07",
+      "case": "After change service role denied at privilege gate even with owner subject",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-07 service-role denied even with owner claims after fix"
+      ]
+    },
+    {
+      "id": "ACL-D2-08",
+      "case": "Authenticated active Owner successful enable/disable in owned fixture",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-08 authenticated Owner enable/disable remains functional"
+      ]
+    },
+    {
+      "id": "ACL-D2-09",
+      "case": "Authenticated non-owner/inactive/absent subject rejected",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-09 authenticated wrong/absent/inactive subject denied"
+      ]
+    },
+    {
+      "id": "ACL-D2-10",
+      "case": "Wrong app/chapter/published hierarchy rejected",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-10 wrong application/published graph rejected"
+      ]
+    },
+    {
+      "id": "ACL-D2-11",
+      "case": "Revision/source/grammar conflicts still reject without writes",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-11 revision/source/grammar conflict does not change approved binding"
+      ]
+    },
+    {
+      "id": "ACL-D2-12",
+      "case": "Missing exact function aborts",
+      "planned": true,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-12 missing target",
+        "ACL-D2-12 wrong overload only"
+      ]
+    },
+    {
+      "id": "ACL-D2-13",
+      "case": "Wrong body/owner/search_path/security flags abort",
+      "planned": true,
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-13 wrong body",
+        "ACL-D2-13 wrong owner",
+        "ACL-D2-13 security invoker",
+        "ACL-D2-13 wrong search path",
+        "ACL-D2-13 wrong volatility",
+        "ACL-D2-13 wrong parallel",
+        "ACL-D2-13 wrong leakproof"
+      ]
+    },
+    {
+      "id": "ACL-D2-14",
+      "case": "Unexpected ACL grantee/grantor/grant option aborts",
+      "planned": true,
+      "executed": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-14 extra grantee",
+        "ACL-D2-14 grant option",
+        "ACL-D2-14 unexpected grantor",
+        "ACL-D2-14 missing authenticated"
+      ]
+    },
+    {
+      "id": "ACL-D2-15",
+      "case": "PUBLIC/anon privilege or inherited service permission drift aborts",
+      "planned": true,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-15 PUBLIC",
+        "ACL-D2-15 anon inherited"
+      ]
+    },
+    {
+      "id": "ACL-D2-16",
+      "case": "Already-desired ACL without ledger aborts; installed/checksummed version no-op skip",
+      "planned": true,
+      "executed": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-16 service-role already absent",
+        "ACL-D2-16 second application FAILS; ledger skip is external, no silent success",
+        "ACL-D2-16 installed checksum skips SQL; changed checksum fails"
+      ]
+    },
+    {
+      "id": "ACL-D2-17",
+      "case": "Forced postcondition failure rolls back revoke and ledger",
+      "planned": true,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-17 postcondition failure rolls back REVOKE (inherited service privilege)",
+        "ACL-D2-17 postcondition error rolls back runner ledger and target ACL"
+      ]
+    },
+    {
+      "id": "ACL-D2-18",
+      "case": "Unrelated functions/defaults/membership/table data unchanged",
+      "planned": true,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-18 overload/defaults/peer ACL and schema objects untouched",
+        "ACL-D2-18 public/Auth fixture table contents unchanged"
+      ]
+    },
+    {
+      "id": "ACL-D2-19",
+      "case": "001 alone after000 retains desired ACL and Explain guards",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-19 historical ->000 ->0001 compatibility"
+      ]
+    },
+    {
+      "id": "ACL-D2-20",
+      "case": "002 alone after000 retains desired ACL and v1/publication fences",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-20 historical ->000 ->0002 compatibility"
+      ]
+    },
+    {
+      "id": "ACL-D2-21",
+      "case": "000->001->002 combined ordering/ledger exact; no third business migration",
+      "planned": true,
+      "executed": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-21 exact tracked order with checksum ledger",
+        "ACL-D2-21 historical ->000 ->0001 ->0002 compatibility"
+      ]
+    },
+    {
+      "id": "ACL-D2-22",
+      "case": "Application candidate hashes and current/candidate authenticated callers unchanged",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-22 unchanged 001/002 hashes, strict order and narrow mutation"
+      ],
+      "additionalVerification": "Separate static source/artifact hash command: 3 sealed archives and 6 local/live caller hashes MATCH. No rebuild."
+    },
+    {
+      "id": "ACL-D2-23",
+      "case": "Full baseline new-environment restore followed by approved incrementals and000 reaches desired contract without editing historical bootstrap",
+      "planned": true,
+      "executed": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "ACL-D2-23 full immutable app bootstrap + incrementals ->000"
+      ]
+    }
+  ],
+  "evidenceLogs": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/acl-f1-isolated-validation/acl-contract.tap",
+      "sha256": "0c79dd915b855b24d0a2db848eff13d62cca2556a7f58fdc24174a442c8cee0b"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/acl-f1-isolated-validation/security-regression.tap",
+      "sha256": "2dfc8b6f56c09c64fa75d1b69bff340f7cba956edcdb96c89536bbbcc8e26b5e"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/acl-f1-isolated-validation/regression.tap",
+      "sha256": "207f080c0df8b852fdf4ef110a46378bb4e4107921f78543cfd8340c5338959d"
+    }
+  ],
+  "fullBootstrap": {
+    "baselineSha": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+    "historicalLedgerMetadata": 449,
+    "incrementals": 9,
+    "projectedCounts": [
+      458,
+      459,
+      460,
+      461
+    ],
+    "bodySha": "3d72415147051a92a0312f56bf6b60d81aa5e0e103aced878a20be21b5d96941",
+    "baselineAcl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+    "finalAcl": "{postgres=X/postgres,authenticated=X/postgres}",
+    "platform": "SCHEMA_ONLY_STAND_INS_NOT_AUTH_E2E",
+    "fullApplicationBaseline": true,
+    "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f"
+  },
+  "harnesses": {
+    "minimal": "PG15 + 13 real related migrations + explicit historical ACL/default fixture. Not full458 replay.",
+    "lifecycle": "080001 actual CREATE ->080002 anon repair ->130002 actual target replacement under historical defaults.",
+    "full": "Cached PG17 platform init plus schema-only Storage/Realtime/JWT stand-ins; immutable full app baseline +449 historical version metadata +9 real incrementals. Application schema fully restored; NOT full Supabase/Auth E2E. Image public defaults neutralized before restore; original baseline restores its historical DEFAULT ACLs last.",
+    "ledger": "Isolated acl_test ledger models checksum skip/transaction rollback and projected458->461. Not current Supabase ledger and not production installer."
+  },
+  "cleanup": {
+    "allOwnedContainersStoppedAndRemoved": true,
+    "remainingTaskContainers": 0,
+    "network": "none",
+    "hostPorts": 0,
+    "hostDataBinds": 0,
+    "disposableData": "tmpfs removed on container removal",
+    "recordedContainers": [
+      {
+        "container": "uply-r7dc34b-873f7ff2-973c-4afe-8d8f-8b8a480775e9",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-eadeed1e-9af6-423f-ab75-c7fc9263ada4",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-2556893c-d4b6-4130-b5a6-d689c4d1add3",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-955a44bf-150b-4501-bd3d-df876da00b79",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-375bbb9d-cbff-43a0-b2a9-41731716ce81",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-e4c28632-7707-4539-86e2-7ad67783f208",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-3af9b0df-9720-43b4-bd8c-7b898a258ca2",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-35e8760e-7c9d-4647-ae9a-c9a1e4f4210a",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-d2716185-3fcd-4335-86f2-e37a35f5ece4",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-11b223c7-230e-4ad2-a64b-3a87635866ea",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-e12e6df9-cd66-4568-8d55-d927a15fd4ff",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-5f170c27-35d8-4a2a-a33e-f12fb399bbee",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-4b044a9b-ee67-4fde-9cde-b7414d266dce",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-aefdf2c2-15f4-4d0e-822b-cc02eef6d911",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-df1e7dc7-45ea-4aee-ab4f-456850db252f",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-7dd64bb1-bbd2-4def-988b-6b5f31d6a4b7",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-887dc0af-04bc-44ed-aa1b-2b6b52b8bf70",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-623b18c8-e2fe-45a9-a44b-b1daeb3f629d",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-7000f356-8d88-4d65-8538-206829585527",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-020d8570-8967-4a3a-ab47-92a1419b4464",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-9eb5f932-204e-4670-8783-bddd3f097c1d",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-b9baeba9-96fa-4831-9b61-5fb48d23ebb7",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-60221be2-ebdd-4a09-8a54-f480e6287134",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-9901caae-29fb-474a-841e-7aa797779cf9",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-65ccbe44-40b0-49f6-a8b8-533bd33d8ed7",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-2e46a19d-9241-463c-aa58-88df0dbeb362",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-cf239dc3-4fd8-4fa1-ac02-b0a30a6bf7b1",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-r7dc34b-11d59ddd-f096-4141-b704-531470cbcb9f",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs"
+      },
+      {
+        "container": "uply-acl-f1-full-a9a8bd28-9131-4688-b103-600270d0aadf",
+        "stopped": true,
+        "network": "none",
+        "pgdata": "tmpfs",
+        "applicationBaseline": "FULL"
+      }
+    ],
+    "authoringFixtureContainers": "Additional lifecycle/authorization containers removed in finally; no task containers remain"
+  },
+  "diagnosticAttempts": {
+    "initialRun": "33 leaf PASS /1 full-bootstrap leaf FAIL (35 Node records include failing parent).",
+    "cause": "Test platform setup initially duplicated publication, then lacked Storage stand-in/extension schema placement; image creation defaults produced extra anon ACL during restore. All fixes confined to new test fixture setup; migration preconditions never weakened.",
+    "finalRun": "39 leaf PASS /0 FAIL /0 SKIP"
+  }
+}

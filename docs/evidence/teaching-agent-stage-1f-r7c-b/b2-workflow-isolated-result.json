@@ -1,0 +1,85 @@
+{
+  "contract": "development-domain-execution/1",
+  "result": {
+    "contract": "development-domain-execution/1",
+    "status": "CREATED",
+    "classification": "COMPLETE",
+    "stage": "MEMBERSHIP",
+    "scope": "DISABLED"
+  },
+  "apiCalls": [
+    {
+      "path": "/rest/v1/rpc/create_tenant",
+      "method": "POST"
+    },
+    {
+      "path": "/auth/v1/admin/users",
+      "method": "POST"
+    },
+    {
+      "path": "/rest/v1/profiles",
+      "method": "PATCH"
+    },
+    {
+      "path": "/rest/v1/tenant_memberships",
+      "method": "POST"
+    }
+  ],
+  "readCount": 7,
+  "actualSideEffects": [
+    {
+      "table_name": "auth.identities",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "auth.users",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "auth.users",
+      "operation": "UPDATE",
+      "count": 5
+    },
+    {
+      "table_name": "public.learning_grading_comments",
+      "operation": "INSERT",
+      "count": 4
+    },
+    {
+      "table_name": "public.profiles",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.profiles",
+      "operation": "UPDATE",
+      "count": 3
+    },
+    {
+      "table_name": "public.tenant_membership_audit_logs",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.tenant_memberships",
+      "operation": "INSERT",
+      "count": 1
+    },
+    {
+      "table_name": "public.tenant_student_apps",
+      "operation": "INSERT",
+      "count": 5
+    },
+    {
+      "table_name": "public.tenants",
+      "operation": "INSERT",
+      "count": 1
+    }
+  ],
+  "sideEffects": "MATCH",
+  "canonicalAttestation": "ISOLATED FIXTURE override; actual SQL rejects absent canonical content. Current DB freeze/binding independently READ ONLY verified.",
+  "ownerGuard": "Isolated operator fixture; production requirePlatformOwner separately tested",
+  "currentDbWrites": 0
+}

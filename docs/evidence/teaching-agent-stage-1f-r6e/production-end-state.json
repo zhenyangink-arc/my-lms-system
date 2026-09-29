@@ -1,0 +1,138 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T10:32:07.267416+00:00",
+  "foundation": {
+    "status": "PASS",
+    "observedAtUtc": "2026-09-16T10:32:02.449611+00:00",
+    "projectIdentitySha256": "cad8258f794d075042a59e5df2217f60173e29fbe15a2bf4b3324360d79df673",
+    "hostIdentitySha256": "33fa58605f9a47d2e80d4304fbd939405198c3be83a78743d878dd1d665041b5",
+    "postgres": "17.6",
+    "ledger": 457,
+    "latest": "202609140007",
+    "ledgerSha256": "a574e8c5b848dbc3c2b29d846ad262333b1077ccd92221a1d356932d3a804323",
+    "build": "6IhDHN8Dm1nCewiCEZnV5",
+    "pm2": {
+      "status": "online",
+      "exec_mode": "fork_mode",
+      "instances": 1,
+      "pm_cwd": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+      "pm_exec_path": "/home/yangzhen/.config/uply-first-enable-20260910/start.mjs",
+      "kill_timeout": 15000,
+      "restart_time": 0,
+      "pm_uptime": 1789529555153,
+      "name": "uply-first-enable",
+      "pid": 934715
+    },
+    "runtimeSha256": "7a4b31b099fb968dd1105f8fbc67b946ae3fa79c30873998f8864ef1578878c8",
+    "launcherSha256": "30c81ade417866170cb3c3b3dd1cf9477cb033c9c3c0be363674c0f92eed0039",
+    "tailscaleSha256": "b33a37027b06f50f17d82a983f9c89ff342ca1fc94d58d0908c4e6bbeb83d256",
+    "feature": "OFF",
+    "allowlists": "EMPTY",
+    "agentRows": {
+      "agent_definition_versions": 0,
+      "agent_conversations": 0,
+      "agent_runs": 0,
+      "agent_messages": 0,
+      "agent_run_events": 0
+    },
+    "providerRequestsInTask": 0
+  },
+  "script": {
+    "versionCount": 1,
+    "versions": [
+      {
+        "idSha256": "dd808c0ed6d816809f0a527523473c1da4021f2ece369d82efa902312ed860a8",
+        "lessonSha256": "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3",
+        "versionNumber": 1,
+        "status": "draft",
+        "title": {},
+        "publishedAt": null,
+        "createdAt": "2026-09-16T07:11:49.544966+00:00"
+      }
+    ],
+    "nodeCount": 8,
+    "logs": {
+      "add_node": 8,
+      "create_draft": 1,
+      "update_node": 30
+    },
+    "activeInconsistentFences": 0
+  },
+  "versionFingerprint": {
+    "count": 1,
+    "rowSha256": "a26aabb7dec01619d475db395f8ba628aaf48ec0da3f41c553d518b34a9da158"
+  },
+  "canonical": {
+    "lessons": {
+      "count": 1,
+      "rowSha256": "5cc6c16a227f695e913acfabf930d26ee08febb20e2251881257a89e6bd99e53",
+      "idHashes": [
+        "07798b4d4466026e93d0af97debd6371157ab5e9f57511b80fb10436fb987092"
+      ]
+    },
+    "digital_textbooks": {
+      "count": 1,
+      "rowSha256": "e5a83e4c6eae9a5467dc3b9bc0bc80661c2736f40f1966d72fa4371e6f64ee3c",
+      "idHashes": [
+        "3aeb9fc2cf209889991845f21080f8215bd6287a7de7ac50008f547c3d994525"
+      ]
+    },
+    "digital_textbook_versions": {
+      "count": 1,
+      "rowSha256": "f6e179b2be3b045efcb440219180b33c6844ecd0044f22050504756b12646232",
+      "idHashes": [
+        "61726899908c699963927e3bc92bf6f63294e6af3b432f4812f7afb8b196923b"
+      ]
+    },
+    "digital_textbook_chapters": {
+      "count": 1,
+      "rowSha256": "ab9580d2db8ca1bb91a3abcf595a213a78c5e0870f886d95505354a7485a4535",
+      "idHashes": [
+        "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d"
+      ]
+    },
+    "digital_textbook_modules": {
+      "count": 1,
+      "rowSha256": "85d9512d9a2eacb0d159f6e8b6baecbbffc6e7881f0bdf383fd7edea2d3e5d73",
+      "idHashes": [
+        "69b7e37fb79b8d92e7a9017fe6a2fe5f8b1ca811210e4d4b01731640cfb27da1"
+      ]
+    },
+    "learning_agent_lessons": {
+      "count": 1,
+      "rowSha256": "1215200610900050bb5c0ac81ea8d7d6cb11e71e897a962a10ff4a35542de953",
+      "idHashes": [
+        "870d1e4c70d884294d31fa8da3cb62d5ecadb2d050b4056c03c9ce47525497c3"
+      ]
+    }
+  },
+  "modifiedNodes": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    8
+  ],
+  "unmodifiedNodes": [
+    3,
+    7
+  ],
+  "nodeInsert": 0,
+  "nodeDelete": 0,
+  "nodeUpdateAuditDelta": 6,
+  "publish": 0,
+  "runtimeExecutions": 0,
+  "previewRuntime": 0,
+  "providerRequestsInTask": 0,
+  "agentRuns": 0,
+  "pinsCreated": 0,
+  "definitionPublication": 0,
+  "authWrites": 0,
+  "migrations": 0,
+  "deploys": 0,
+  "pm2Mutations": 0,
+  "runtimeMutations": 0,
+  "launcherMutations": 0,
+  "tailscaleMutations": 0
+}

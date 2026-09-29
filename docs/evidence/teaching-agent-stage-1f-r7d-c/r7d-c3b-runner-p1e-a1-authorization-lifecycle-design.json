@@ -1,0 +1,1731 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A1",
+  "recordedAt": "2026-09-20T07:18:01.862882+00:00",
+  "scope": "DESIGN_AND_APPROVAL_PROPOSAL_ONLY",
+  "currentBlocker": "BLOCKED_FRESH_CAPTURE_AUTHORIZATION",
+  "secondCaptureAttempts": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "captureAttempts": 0,
+  "captureRetry": 0,
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "authorizationCreated": false,
+  "oldAuthorizationModified": false,
+  "oldAuthorizationMoved": false,
+  "oldAuthorizationCopied": false,
+  "chmod": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "planSeal": 0,
+  "migrationInstall": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "testsRun": 0,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "C3BRelease": "BLOCKED_PENDING_AUTHORIZATION_LIFECYCLE",
+  "R7DC3C": "NOT_READY",
+  "firstAgentRun": "NOT_AUTHORIZED",
+  "Stage1G": "NOT_READY",
+  "contract": "capture-authorization-lifecycle-design/1",
+  "overall": "READY_FOR_AUTHORIZATION_LIFECYCLE_IMPLEMENTATION_APPROVAL",
+  "selectedOption": "FORMAL_ROTATE_AND_MINT",
+  "reason": "Meets archival, canonical-path, concurrency, crash and one-time requirements with no authorization/plan/query/transport schema changes. One local utility alone is insufficient: narrow runner authorization gates and package/source authority update are necessary. Versioned paths additionally touch transport reread identity without removing these requirements.",
+  "existingAuthorization": {
+    "path": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/acl-000-v1.capture.json",
+    "contract": "readonly-baseline-capture-authorization/2",
+    "rawSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "mode": "0600",
+    "uid": 1001,
+    "gid": 1001,
+    "inode": 3022151,
+    "device": 66306,
+    "nlink": 1,
+    "observedAt": 1789884101.4978054,
+    "expiresAt": 1789885001.4978054,
+    "expired": true,
+    "nonceSha256": "c4348c757d47e5867040ba1d8686903aaf12aa188642d0153bc893ffc87e1225",
+    "historicalStatus": "EXPIRED_CONSUMED_HISTORICAL",
+    "consumedMeaning": "Used by first capture according to preserved attempt/TLS/result evidence; NOT a claim that the old runner wrote a durable capture consumption marker.",
+    "mutated": false,
+    "reused": false,
+    "copied": false,
+    "moved": false,
+    "archivedThisRound": false,
+    "bytesPrintedOrPersistedInPublicEvidence": false
+  },
+  "secondAttemptEvidence": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-2-result.json",
+    "sha256": "0336746dc3083796990af1474a85390f511da1bc7f8b00e24fb4edfc2dbefec6",
+    "classification": "LOCAL_PREFLIGHT_BLOCK_NO_DB_ATTEMPT",
+    "approvalNotCarriedForward": true
+  },
+  "currentSchemaAudit": {
+    "contract": "readonly-baseline-capture-authorization/2",
+    "requiredFields": [
+      "bodySha256",
+      "contract",
+      "credentialIdentitySha256",
+      "expectedLedgerPrefixSha256",
+      "expiresAt",
+      "explicitCaptureAuthorization",
+      "migrationSha256",
+      "nonce",
+      "observedAt",
+      "operatorUid",
+      "packageHashes",
+      "planId",
+      "planSha256",
+      "scope",
+      "targetIdentity",
+      "targetProfile",
+      "transportRiskAcceptance",
+      "userApprovalRef",
+      "userApprovalSha256"
+    ],
+    "requiredFieldCount": 19,
+    "optionalFields": [],
+    "forbiddenExtraFields": "ALL; set(auth) must equal the exact required set. No new F2/loss/approvalId/SQL/target/DSN fields may be added.",
+    "fieldSemantics": {
+      "contract": "Exact readonly-baseline-capture-authorization/2 for production; owned fixture contract remains /1.",
+      "scope": "Exact READ_ONLY_BASELINE_CAPTURE.",
+      "planId": "Exact registered acl-000-v1 DRAFT.",
+      "planSha256": "SHA256 of exact registered draft bytes.",
+      "migrationSha256": "Exact registered migration000 raw SHA.",
+      "bodySha256": "Reviewed migration000 envelope/body SHA via plan.source().",
+      "packageHashes": "Exact current package_hashes map (currently nine operational files; future ten including new utility).",
+      "targetProfile": "Exact uply-canonical-maintenance/1 for production.",
+      "targetIdentity": "Canonical equality with fixed database/role/currentRole postgres, major17, profile, pinned imageId, fixture=false, verify-full, project/host hashes.",
+      "observedAt": "Exact int or float type; no bool; <= current time.",
+      "expiresAt": "Exact int or float type; current time < expiresAt and 0 < expiresAt-observedAt <=900 seconds.",
+      "operatorUid": "Exact int equal os.getuid(); bool rejected.",
+      "userApprovalRef": "Currently exact CAPTURE_APPROVAL path for v4; this field is a source proposal reference, not a unique chat/attempt record. Future implementation must forward solely to v5.",
+      "userApprovalSha256": "64 lowercase hex and exact SHA of the referenced fixed source approval proposal.",
+      "explicitCaptureAuthorization": "Exact true, operator attestation, not cryptographic verification of chat approval.",
+      "nonce": "32 lowercase hex format only in current validator; no capture consumption or uniqueness lookup today.",
+      "credentialIdentitySha256": "64 lowercase hex only in authorize_capture; MaintenanceTransport separately hashes canonical map of raw SHA values for pg_service.conf, pgpass, root.crt and compares before connection. Lifecycle must never read those three files.",
+      "expectedLedgerPrefixSha256": "Required field, value null or 64 lowercase hex. Null permits first successful durable baseline capture; historical458 is not a digest authority.",
+      "transportRiskAcceptance": "Exact canonical RISK_BINDING seven-key map; stage closure presence overrides time validity."
+    },
+    "riskBinding": {
+      "contractId": "maintenance-transport-security/pooled-provider-managed-risk-accepted/1",
+      "riskAcceptanceId": "r7d-c3b-pooled-transport-risk-acceptance/1",
+      "riskArtifactSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "scope": "R7D-C3B_ONLY",
+      "releaseId": "R7D-C3B",
+      "stageActive": true,
+      "completionObserved": false
+    },
+    "schemaValidator": "plan_contract.authorize_capture",
+    "fileValidator": "receipts.safe_file(private=True): regular, single hard link, operator UID,0600,no symlink in ancestor chain; fd/fstat recheck",
+    "expiryEnforcement": "At authorization checks before transport construction, runtime rechecks and before releasing capture evidence. Old expired artifact is never passed off as fresh.",
+    "captureNonceCurrentSemantics": "SYNTAX_ONLY; no durable consume Journal in runner capture branch or CaptureTransport.capture.",
+    "existingApplyConsumption": "transaction.Engine.apply creates receipts.Journal; its nonce attempt uses O_EXCL. This protection does not currently apply to capture.",
+    "lossBinding": "Exact source proposal raw hash transitively binds exact loss acceptance record; loss and transport risk remain independent exceptions.",
+    "proposalBooleans": "Historical proposal approved=false/executionAuthorized=false stay unchanged; actual operation requires new explicit operator/user attestation."
+  },
+  "options": [
+    {
+      "id": "FORMAL_ROTATE_AND_MINT",
+      "fixedCanonicalPathUnchanged": true,
+      "authorizationSchemaChange": false,
+      "planSchemaChange": false,
+      "DBLogicChange": false,
+      "sourceScope": {
+        "exactModifyPaths": [
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+            "existingSha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+            "kind": "operational",
+            "responsibility": "Capture-only integration: acquire shared lifecycle lock before reading canonical authorization; verify READY receipt and fresh explicit approval; persist one-time consume claim before CaptureTransport construction/credential access; retain lock through rollback, durable capture receipt and consumed archival/outcome. No new runner CLI flag, query, target, transaction or backup change."
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+            "existingSha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+            "kind": "operational",
+            "responsibility": "Add capture_authorization.py to package_hashes; advance sole CAPTURE_APPROVAL reference from historical v4 to future v5. Keep /2 field set, validators, risk binding, DRAFT/READY gates and 900-second rules unchanged. No v4 fallback."
+          },
+          {
+            "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+            "existingSha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+            "kind": "test",
+            "responsibility": "Lifecycle unit, multiprocess concurrency, owned filesystem crash injection, privacy and runner-before-credential tests; adapt capture runner harness to required lifecycle records and forward authority assertions, retaining existing IDs/business assertions."
+          },
+          {
+            "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+            "existingSha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+            "kind": "test",
+            "responsibility": "Owned runner integration proves consume-before-connect, one session/read-only/rollback, durable baseline/outcome and no replay after success/failure. Move regression outputs off finalized directories to new exclusive per-run directory before running any regression subprocess; preserve historical expectations and fixtures."
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/README.md",
+            "existingSha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+            "kind": "documentation",
+            "responsibility": "Document official local mint interface, fresh approval trust boundary, rotation/consumption/crash states, recovery STOP rules, immutable archives, v5 prerequisite and forward test outputs."
+          }
+        ],
+        "exactAddPaths": [
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/capture_authorization.py",
+            "kind": "operational",
+            "responsibility": "One formal local-only lifecycle utility plus runner context API: fixed plan paths, strict external single-capture approval validation, per-plan flock, durable approval/nonce claims, archival non-replacing rename, staged /2 mint, final READY receipt, consume claim, terminal archival/outcome. No DB/network/credential reads, transport imports or runner dispatch."
+          }
+        ],
+        "existingFilesModified": 5,
+        "operationalExistingModifyCount": 2,
+        "testModifyCount": 2,
+        "readmeModifyCount": 1,
+        "newImplementationFiles": 1,
+        "newTestFiles": 0,
+        "newFixtureFiles": 0,
+        "totalImplementationPaths": 6,
+        "unchangedBoundaryLocks": [
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+            "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+            "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+            "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+            "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+            "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+            "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+            "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0"
+          },
+          {
+            "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+            "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+          },
+          {
+            "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+            "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+          },
+          {
+            "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+            "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad"
+          },
+          {
+            "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+            "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027"
+          },
+          {
+            "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+            "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb"
+          },
+          {
+            "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+            "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73"
+          },
+          {
+            "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+            "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22"
+          }
+        ],
+        "allProductSourceUnchanged": true,
+        "allHistoricalToolingUnchanged": true,
+        "captureQuerySemanticsChanges": 0,
+        "databaseSchemaChanges": 0,
+        "migrationChanges": 0,
+        "productChanges": 0,
+        "dependencyPackageChanges": 0,
+        "imageToolchainChanges": 0,
+        "futureRuntimeArtifactsAreNotSourceAdditions": true,
+        "scopeExpansionStop": "Any implementation path beyond these six, any fixture/product/migration/query/DB schema change, or new package/image dependency requires STOP and separate scope approval."
+      },
+      "auditability": "Exact original raw bytes moved into immutable SHA-addressed archive plus append-only phase and READY/consume/outcome receipts.",
+      "raceSafety": "Same per-plan OS flock used by mint and runner, O_EXCL claims and non-replacing rename publication.",
+      "crashSafety": "No READY means no dispatch; consume-before-credential means no replay even if archival/outcome later fails.",
+      "backwardAmbiguity": "Canonical legacy artifact has no lifecycle READY and is rejected by new runner; only explicitly hash-pinned legacy archive is allowed during bootstrap.",
+      "releaseRisk": "Changes local authorization boundary, requires owned validation and new source authority; capture SQL/TLS/read-only transaction logic untouched."
+    },
+    {
+      "id": "VERSIONED_AUTHORIZATION_PATH",
+      "sourceChangesAtLeast": [
+        "runner.py would need exact selector/manifest resolution",
+        "maintenance_transport.py currently rereads fixed plan.capture.json and requires exact byte stability",
+        "plan_contract.py package/approval and selector binding",
+        "new lifecycle utility, tests and README"
+      ],
+      "authorizationSchemaImpact": "May preserve /2 only by introducing an external strict selector manifest; encoding a path in /2 changes schema. Neither eliminates consumption/locking requirements.",
+      "auditability": "Unique path preserves history but active selection must be durably bound and unambiguous.",
+      "raceSafety": "Still needs lock, single active selector, one-time approval/nonce claims and consume-before-credential.",
+      "crashSafety": "Still needs READY and consume markers; unique filenames alone are insufficient.",
+      "backwardAmbiguity": "Greater risk of wrong selector, stale version or fallback; no glob/latest-file selection could be allowed.",
+      "releaseRisk": "Adds transport authorization-path recheck change beyond Option A without solving a missing requirement uniquely.",
+      "rejectedForThisClosure": "No current project requirement needs multiple paths; Option A satisfies requirements with smaller verified dependency closure."
+    }
+  ],
+  "exactScope": {
+    "exactModifyPaths": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+        "existingSha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+        "kind": "operational",
+        "responsibility": "Capture-only integration: acquire shared lifecycle lock before reading canonical authorization; verify READY receipt and fresh explicit approval; persist one-time consume claim before CaptureTransport construction/credential access; retain lock through rollback, durable capture receipt and consumed archival/outcome. No new runner CLI flag, query, target, transaction or backup change."
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+        "existingSha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+        "kind": "operational",
+        "responsibility": "Add capture_authorization.py to package_hashes; advance sole CAPTURE_APPROVAL reference from historical v4 to future v5. Keep /2 field set, validators, risk binding, DRAFT/READY gates and 900-second rules unchanged. No v4 fallback."
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "existingSha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+        "kind": "test",
+        "responsibility": "Lifecycle unit, multiprocess concurrency, owned filesystem crash injection, privacy and runner-before-credential tests; adapt capture runner harness to required lifecycle records and forward authority assertions, retaining existing IDs/business assertions."
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "existingSha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+        "kind": "test",
+        "responsibility": "Owned runner integration proves consume-before-connect, one session/read-only/rollback, durable baseline/outcome and no replay after success/failure. Move regression outputs off finalized directories to new exclusive per-run directory before running any regression subprocess; preserve historical expectations and fixtures."
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/README.md",
+        "existingSha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+        "kind": "documentation",
+        "responsibility": "Document official local mint interface, fresh approval trust boundary, rotation/consumption/crash states, recovery STOP rules, immutable archives, v5 prerequisite and forward test outputs."
+      }
+    ],
+    "exactAddPaths": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/capture_authorization.py",
+        "kind": "operational",
+        "responsibility": "One formal local-only lifecycle utility plus runner context API: fixed plan paths, strict external single-capture approval validation, per-plan flock, durable approval/nonce claims, archival non-replacing rename, staged /2 mint, final READY receipt, consume claim, terminal archival/outcome. No DB/network/credential reads, transport imports or runner dispatch."
+      }
+    ],
+    "existingFilesModified": 5,
+    "operationalExistingModifyCount": 2,
+    "testModifyCount": 2,
+    "readmeModifyCount": 1,
+    "newImplementationFiles": 1,
+    "newTestFiles": 0,
+    "newFixtureFiles": 0,
+    "totalImplementationPaths": 6,
+    "unchangedBoundaryLocks": [
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+        "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+        "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+        "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+        "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+        "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+        "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+        "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0"
+      },
+      {
+        "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+        "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86"
+      },
+      {
+        "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+        "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a"
+      },
+      {
+        "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+        "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad"
+      },
+      {
+        "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+        "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027"
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+        "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb"
+      },
+      {
+        "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+        "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73"
+      },
+      {
+        "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+        "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22"
+      }
+    ],
+    "allProductSourceUnchanged": true,
+    "allHistoricalToolingUnchanged": true,
+    "captureQuerySemanticsChanges": 0,
+    "databaseSchemaChanges": 0,
+    "migrationChanges": 0,
+    "productChanges": 0,
+    "dependencyPackageChanges": 0,
+    "imageToolchainChanges": 0,
+    "futureRuntimeArtifactsAreNotSourceAdditions": true,
+    "scopeExpansionStop": "Any implementation path beyond these six, any fixture/product/migration/query/DB schema change, or new package/image dependency requires STOP and separate scope approval."
+  },
+  "runtimeLayout": {
+    "canonical": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/acl-000-v1.capture.json",
+    "lock": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-lifecycle/acl-000-v1.lock",
+    "archive": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-archive/acl-000-v1/<rawSha256>.json",
+    "pending": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-pending/acl-000-v1/<rotationId>.json",
+    "operatorApproval": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-approvals/<approvalId>.json",
+    "receiptRoot": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations",
+    "operationPhases": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/operations/<rotationId>/{PREPARED,ARCHIVED,STAGED,PUBLISHED}.json",
+    "readyReceipt": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/ready/<newRawSha256>.json",
+    "approvalClaims": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/approval-claims/<approvalId>.json",
+    "nonceClaims": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/nonce-claims/<nonceSha256>.json",
+    "consumedClaims": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/consumed/<authorizationRawSha256>.json",
+    "outcomes": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/outcomes/<authorizationRawSha256>.json",
+    "allDirectoriesMode": "0700",
+    "allFilesMode": "0600",
+    "allOwners": "current operator UID1001 for fixed production profile",
+    "fixedDirectoryDerivation": "Implementation-owned suffixes under existing fixed profile directories; no arbitrary root or target input.",
+    "createdThisRound": false,
+    "approvalReferenceClaims": "build/r7dc3b-exact-migration-ops/receipts/authorization-rotations/approval-reference-claims/<approvalReferenceSha256>.json"
+  },
+  "operatorApprovalContractDesign": {
+    "contract": "capture-execution-approval/1",
+    "kind": "Future trusted operator attestation of a NEW explicit user approval; utility validates but NEVER creates/invents the approval.",
+    "freshPerCapture": true,
+    "fixedInputPath": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-approvals/<approvalId>.json",
+    "strictRequiredFields": [
+      "contract",
+      "approvalId",
+      "scope",
+      "planId",
+      "targetProfile",
+      "sourceApprovalPath",
+      "sourceApprovalRawSha256",
+      "sourcePackageHashes",
+      "draftRawSha256",
+      "migrationRawSha256",
+      "migrationBodySha256",
+      "targetIdentity",
+      "credentialIdentitySha256",
+      "credentialIdentityEvidencePath",
+      "credentialIdentityEvidenceRawSha256",
+      "transportRiskArtifactRawSha256",
+      "lossAcceptanceRecordRawSha256",
+      "f2EvidenceRawSha256",
+      "expectedCanonicalState",
+      "explicitUserApproval",
+      "approvalReference",
+      "approvalReferenceSha256",
+      "operatorUid",
+      "observedAt",
+      "expiresAt",
+      "maximumCaptureAttempts"
+    ],
+    "requiredValues": {
+      "scope": "ONE_CONTROLLED_PRODUCTION_READ_ONLY_CAPTURE",
+      "planId": "acl-000-v1",
+      "targetProfile": "uply-canonical-maintenance/1",
+      "explicitUserApproval": true,
+      "operatorUid": 1001,
+      "maximumCaptureAttempts": 1
+    },
+    "extraFields": "REJECT",
+    "approvalId": "fresh32hex; O_EXCL claim, never reused even after aborted mint",
+    "referenceRule": "New safe immutable approval-attestation reference/path + exact SHA; cannot reuse the first or blocked second capture user approval. Local user-attestation bytes are not cryptographic proof of conversation authenticity.",
+    "freshness": "Finite numeric times, no bool, not future, unexpired, maximum window900s; authorization expiry cannot exceed this explicit approval expiry.",
+    "credentialIdentitySource": "Read only previously approved non-secret identity evidence or exact legacy authorization to extract its identity digest with provenance. Reconstruct target from fixed profile, never copy old authorization as new template. Actual credential bytes only checked by future formal runner. If no independently bound digest exists, STOP; do not read credentials to manufacture it.",
+    "noOldApprovalReuse": "Old per-attempt approval reference/ID is historical only. /2 userApprovalRef remains the fixed SOURCE proposal reference; unique fresh USER approval is separately bound by READY+consume receipts. These two concepts must not be conflated.",
+    "bootstrapExpectedOld": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "absentFileCase": "Only explicit expectedCanonicalState=ABSENT and no unfinished lifecycle records permits initial mint.",
+    "referenceUniqueness": "Reserve both approvalId and approvalReferenceSha256 in separate immutable claim namespaces; changing ID cannot reuse the same user approval evidence. Cryptographic binding is to the attestation bytes, not a claim of automatic chat authenticity verification.",
+    "credentialProvenancePathPolicy": "The evidence path is only a checked reference to a source-proposal-authorized safe evidence artifact or the exact current/archived old authorization; never an arbitrary readable path and never connectionDirectory. Reject any provenance outside that finite allowlist."
+  },
+  "concurrency": {
+    "selected": "persistent per-plan fcntl.flock(LOCK_EX|LOCK_NB) + O_EXCL durable claims",
+    "lockLifetime": "Mint holds lock for all validation/archive/stage/publication; runner holds same lock from canonical read until rollback, receipt write, consumed archival and outcome finalization.",
+    "lockFile": "0600 owner-only regular nlink1 O_NOFOLLOW O_CLOEXEC; created exclusively when absent, otherwise validated; never unlink/recreate lock inode. Validate fd identity against directory entry before action.",
+    "failure": "LOCK_BUSY stops immediately; no waiting loop, PID timeout takeover or automatic retry.",
+    "flockLimitation": "Advisory cooperating-process serialization, not defense against root or an operator editing files outside protocol. Trusted OS-operator boundary retained.",
+    "durableClaims": "ApprovalId, explicit USER approvalReferenceSha256 and new nonceSha256 each get separate permanent O_EXCL claims before publication; source proposal raw SHA is NOT used as the per-attempt approval reference. Every partial/malformed existing claim burns that identity and blocks reuse. The auth raw SHA consume claim is durable before credentials.",
+    "O_EXCLOnlyAlternative": "Can serialize but stale crash lock requires a new recovery protocol; use flock for live lock and durable phase state for crash stop.",
+    "privateDirectoryOnlyAlternative": "0700 protects ownership but does not serialize two same-UID operators.",
+    "FDInheritance": "Lock fd close-on-exec; inherited DB children must not prolong lock. Parent crash still leaves consume/incomplete phase records denying replay/new mint."
+  },
+  "atomicity": {
+    "primitive": "Linux renameat2(RENAME_NOREPLACE), via stdlib ctypes existing libc symbol; no new package/image",
+    "sameFilesystem": "Archive, pending and canonical all under fixed authorizationDirectory; validate device and mount/path identity. Receipt root can be separately synced; final READY gate coordinates rather than claiming cross-filesystem atomic transaction.",
+    "noReplace": "Collision including symlink/directory or same-hash archive path is failure; no overwrite, dedup shortcut, link/unlink workaround or copy+replace.",
+    "durability": "fsync new file plus relevant parent directories; after move fsync source+destination directories. READY is immutable and hash-bound. Runner revalidates/durably confirms readiness before writing consumed claim.",
+    "pathSafety": "Validate every existing parent, dirfd with O_DIRECTORY|O_NOFOLLOW, regular0600 nlink1 file, owner/currentUID; fixed basenames only; compare lstat/fstat identities before/after moves. No automatic chmod/chown/repair.",
+    "supportEvidence": "Read-only check: Linux, glibc2.43, libc renameat2 symbol present. No rename or filesystem capability test performed in A1. Future owned tests must prove actual filesystem support; ENOSYS/EINVAL/EXDEV or fsync errors STOP with no weaker fallback.",
+    "archiveBeforeReceiptCrash": "PREPARED includes exact old hash and destination; after crash either old canonical or archive remains, never old-byte deletion. Ambiguous/missing combinations halt.",
+    "recovery": "No automated restart-resume/rollback/fallback command in initial utility. New implementation must detect unresolved operations and STOP; separate later exact recovery approval can append resolution evidence, never erase claim or reactivate old auth.",
+    "directoryCreation": "Create missing approved private runtime directories individually with mode0700; validate every already-existing parent rather than parents=True mode assumptions. Do not fix existing directory modes or mutate umask. An unexpected parent mode/owner or wrong mount is a hard failure."
+  },
+  "mintStateMachine": [
+    {
+      "order": 1,
+      "phase": "VALIDATE_AND_LOCK",
+      "action": "Validate exact fixed paths and parent identities/modes, acquire persistent per-plan flock; load fresh operator approval and source proposal; validate source/plan/migration/risk/loss/F2/stage; refuse unexpired active auth or unresolved prior operation. No credential or DB access."
+    },
+    {
+      "order": 2,
+      "phase": "PREPARE_AND_RESERVE",
+      "action": "Generate new rotationId and fresh nonce; create exclusive operation directory and PREPARED receipt; reserve approvalId, explicit user approvalReferenceSha256 and new nonce hash in separate durable O_EXCL namespaces. Partial/malformed claims count as burned/unresolved. Bootstrap also permanently reserves the known old nonce hash as HISTORICAL_USED, explicitly bound to old raw SHA and first-capture evidence, before moving that old file. A historical reservation collision is failure, not silent reuse. All future minted nonces already have permanent reservations."
+    },
+    {
+      "order": 3,
+      "phase": "ARCHIVE_OLD",
+      "action": "If expected old exists: exact SHA, type/mode/owner/nlink, expiry or terminal-consumed status and historical linkage all match. renameat2(RENAME_NOREPLACE) canonical to SHA-addressed same-filesystem archive. Never rm/truncate/edit/copy; fsync both directory FDs, verify archived SHA/inode/content, write ARCHIVED receipt. For bootstrap old /2, use exact historical SHA/structure instead of current expiry/package validator; never authorize its execution."
+    },
+    {
+      "order": 4,
+      "phase": "STAGE_FRESH",
+      "action": "Build /2 from current fixed authorities, new timestamps and nonce, safe credential identity provenance. Use private O_EXCL pending file, fsync file+directory, verify0600/UID/nlink1, exact schema and authorize_capture. Persist STAGED record with raw/canonical hashes. Recheck time/stage/source before publish; never extend expiry."
+    },
+    {
+      "order": 5,
+      "phase": "PUBLISH_CANONICAL",
+      "action": "Require canonical absent; renameat2(RENAME_NOREPLACE) pending to canonical within authorization filesystem; no overwrite/os.replace fallback. fsync affected directories and verify exact canonical SHA/identity, write PUBLISHED phase. Runner cannot dispatch yet."
+    },
+    {
+      "order": 6,
+      "phase": "COMMIT_READY",
+      "action": "Write final capture-authorization-rotation/1 READY receipt keyed by new raw SHA, binding all phases, archive, approval, source and auth identities. File+directory fsync complete before utility reports MINTED_READY. This is sole mint commit record; no later obligatory second commit file. Missing/partial/invalid READY means blocked even if canonical exists. READY validation must verify the approval-ID claim, approval-reference claim, new nonce claim and (for legacy bootstrap) the historical nonce claim and their exact rotation/authorization bindings."
+    }
+  ],
+  "rotationReceiptContract": {
+    "contract": "capture-authorization-rotation/1",
+    "requiredFields": [
+      "contract",
+      "state",
+      "rotationId",
+      "planId",
+      "originalPath",
+      "archivePath",
+      "oldAuthorizationRawSha256",
+      "archiveRawSha256",
+      "oldObservedAt",
+      "oldExpiresAt",
+      "oldStatus",
+      "rotationReason",
+      "newAuthorizationRawSha256",
+      "newAuthorizationCanonicalSha256",
+      "sourceApprovalPath",
+      "sourceApprovalRawSha256",
+      "historicalV4RawSha256",
+      "f2EvidenceRawSha256",
+      "lossAcceptanceRecordRawSha256",
+      "transportRiskArtifactRawSha256",
+      "packageHashes",
+      "operatorUid",
+      "rotationStartedAt",
+      "rotationCompletedAt",
+      "observedAt",
+      "expiresAt",
+      "nonceSha256",
+      "explicitApprovalId",
+      "explicitApprovalRawSha256",
+      "approvalReferenceSha256",
+      "phaseFileHashes",
+      "credentialMaterialPresent"
+    ],
+    "state": "MINTED_READY",
+    "credentialMaterialPresent": false,
+    "archiveStatus": "EXPIRED_CONSUMED_HISTORICAL for first authorization; do not mutate archived JSON",
+    "credentialIdentityHashOnly": true
+  },
+  "crashWindows": [
+    {
+      "window": "A_BEFORE_ARCHIVE",
+      "durableState": "Old bytes still canonical; may have PREPARED/claims only.",
+      "failClosed": "Old authorization expired or lacks lifecycle READY; runner rejects. Any incomplete operation blocks next mint. No automatic approval/nonce reuse."
+    },
+    {
+      "window": "B_OLD_ARCHIVED_BEFORE_FRESH",
+      "durableState": "Old preserved in archive; canonical absent.",
+      "failClosed": "Runner rejects missing canonical. No old fallback, move-back or automatic mint. Incomplete phase requires separate forward recovery decision."
+    },
+    {
+      "window": "C_PENDING_BEFORE_CANONICAL",
+      "durableState": "Pending0600 file and STAGED record may exist; canonical absent.",
+      "failClosed": "Runner never scans pending/archive; no dispatch. Retain orphan pending bytes as evidence; do not publish on restart."
+    },
+    {
+      "window": "D_CANONICAL_BEFORE_READY",
+      "durableState": "New auth may occupy canonical but final rotation READY absent/partial.",
+      "failClosed": "Runner requires valid exact-hash READY under same lock before credentials; reject. Even an unexpired schema-valid canonical file is insufficient."
+    },
+    {
+      "window": "READY_DURABLE_BEFORE_UTILITY_OUTPUT",
+      "durableState": "Exactly one complete published auth and final valid READY exist.",
+      "failClosed": "Mint is committed; no duplicate mint or replay. Only a later separately invoked runner may consume that one fresh approval. Utility never dispatches."
+    },
+    {
+      "window": "CONSUME_PARTIAL_OR_BEFORE_CONNECTION",
+      "durableState": "Consumed claim exists, even if malformed; DB may never have been opened.",
+      "failClosed": "Authorization burned, second runner denied. No claim deletion/retry; state described as local dispatch claimed, not DB activity proven."
+    },
+    {
+      "window": "DURING_CAPTURE_OR_BEFORE_OUTCOME",
+      "durableState": "Consumed claim durable, canonical may remain; baseline may or may not be durable.",
+      "failClosed": "Same authorization cannot replay; unresolved outcome prevents new lifecycle mint. Preserve UNKNOWN/NOT_PERSISTED as appropriate; no recovery of memory or control-flow-only success."
+    }
+  ],
+  "oneTimeConsumption": {
+    "selected": "C_CONSUMED_CLAIM_BEFORE_CREDENTIALS_THEN_ARCHIVE_AFTER_SESSION_CLOSE",
+    "compare": {
+      "A_LEAVE_UNTIL_EXPIRY": "Unsafe by itself: current capture nonce is syntax-only and authorization could be reused within900s.",
+      "B_ARCHIVE_ONLY_AFTER_CAPTURE": "Unsafe by itself: concurrent/crashed capture can reuse before archive.",
+      "C_DURABLE_CONSUME_THEN_ARCHIVE": "Chosen: durable pre-dispatch claim rejects replay regardless of finalizer/crash."
+    },
+    "runnerGuardOrder": [
+      "Acquire shared per-plan flock",
+      "Read canonical safely; authorize_capture validates current /2",
+      "Require exact-hash READY and phase continuity, both fresh user-approval claims plus nonce reservation bound to that READY, no unresolved prior operation, stage open and all bound authorities",
+      "Check canonical hash not consumed; exclusive fsync consumed claim before constructing CaptureTransport",
+      "Call existing CaptureTransport.capture with same canonical bytes; keep canonical stable for runtime guard rereads",
+      "Existing READ ONLY/REPEATABLE READ/query order/ROLLBACK unchanged",
+      "Persist existing readonly-baseline-capture/2 receipt exclusively",
+      "After transport close, exact-hash rename canonical into archive; write exclusive outcome binding baseline receipt raw SHA or safe failure code",
+      "Release flock; print SUCCESS only when baseline receipt and lifecycle outcome both durable; failures never restore authorization"
+    ],
+    "claimContract": "capture-authorization-consumption/1",
+    "claimFields": [
+      "planId",
+      "authorizationRawSha256",
+      "authorizationCanonicalSha256",
+      "rotationReadyReceiptSha256",
+      "explicitApprovalId",
+      "explicitApprovalRawSha256",
+      "nonceSha256",
+      "packageSha256",
+      "operatorUid",
+      "claimedAt",
+      "phase=BEFORE_CREDENTIAL_ACCESS",
+      "maximumAttempts=1"
+    ],
+    "nonClaims": "Consume record proves authority reserved, not that DB connected. Capture receipt proves persisted baseline; outcome links them without changing readonly-baseline-capture/2 public schema.",
+    "finalizerFailure": "Consumed claim remains authoritative; no retry or reactivation, root result BLOCKED_LIFECYCLE_FINALIZATION even if capture receipt exists.",
+    "reuseExistingHelpers": "Reuse safe_file, strict_json, canonical, sanitized, Failure and exclusive patterns. Do not instantiate Engine or reuse migration Journal vocabulary as a capture apply attempt. receipts.py remains unchanged.",
+    "internalAPIBoundary": "Supported production authority path is formal runner CLI; lifecycle is not an OS sandbox against root or a trusted operator invoking internal Python APIs outside the approved process."
+  },
+  "archivePolicy": {
+    "mode": "IMMUTABLE_EXACT_BYTES_NO_TTL_DELETE",
+    "directoryMode": "0700",
+    "fileMode": "0600",
+    "namespace": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/capture-archive/acl-000-v1/<rawSha256>.json",
+    "singleHardLinkRequired": true,
+    "collision": "FAIL even identical bytes; no overwrite/dedup",
+    "noRunnerArchiveLookup": true,
+    "reason": "Forward lifecycle preservation, not legacy cleanup",
+    "scope": "acl-000-v1/C3B current contract only",
+    "initialObjectSha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31",
+    "canonicalAfterCompletion": "Absent after consumed archival; if crash/IO failure leaves it present, durable consumed record makes it inactive. Expired files may physically remain until approved rotation, but are never active.",
+    "firstArchiveProvenance": "SHA/inode exact rename of existing legacy raw file; known use comes from first-capture attempt and proof hashes. No fictional historical consume receipt is invented: a NEW bootstrap historical-used reservation records this provenance."
+  },
+  "cliDesign": {
+    "futureOnly": true,
+    "example": "python3 -B scripts/teaching-agent-r7d-c3b/capture_authorization.py mint --plan acl-000-v1 --approval-id <32hex> --approval-sha256 <64hex>",
+    "commands": [
+      "mint"
+    ],
+    "planChoices": [
+      "acl-000-v1"
+    ],
+    "inputRules": "No arbitrary path, SQL, DSN, host, profile, risk, force, skip or credential override. Expected old SHA or explicit ABSENT comes from bound operator approval. UUID/SHA flags only select/verify a fixed-directory approval record.",
+    "automaticallyExecutesCapture": false,
+    "newRunnerFlags": [],
+    "safeStatusCodes": [
+      "AUTH_LIFECYCLE_LOCK_BUSY",
+      "AUTH_LIFECYCLE_INCOMPLETE",
+      "AUTH_ARCHIVE_COLLISION",
+      "AUTH_OLD_HASH_MISMATCH",
+      "AUTH_PATH_UNSAFE",
+      "AUTH_EXPLICIT_APPROVAL_MISSING",
+      "AUTH_APPROVAL_ALREADY_USED",
+      "AUTH_NONCE_ALREADY_USED",
+      "AUTH_ROTATION_NOT_READY",
+      "CAPTURE_AUTHORIZATION_CONSUMED",
+      "AUTH_LIFECYCLE_FINALIZATION_FAILED",
+      "AUTH_ATOMIC_RENAME_UNSUPPORTED"
+    ]
+  },
+  "temporaryWrapperAudit": {
+    "path": "/tmp/uply-p1e-v4-once.py",
+    "sha256": "07797a142939c2ba9f08a7172c2d6f40383f96d51587be9f44ff36e6c5b11954",
+    "executed": false,
+    "usefulIdeas": [
+      "Exact old/hash/expiry checks",
+      "Fresh nonce and <=900-second time",
+      "Safe identity hashes instead of credential persistence",
+      "Validate new authorization before publication",
+      "Exclusive evidence outputs and directory fsync"
+    ],
+    "notAcceptedAsFormalMechanism": [
+      "Stage/hash hardcoded one-off script",
+      "Copy old plus os.replace permits overwrite and needs formal state model",
+      "No shared lifecycle/runner flock",
+      "No durable approval/nonce reservation for replay protection",
+      "No runner READY/consume-before-credential check",
+      "No crash-phase recovery classification",
+      "Imports production transport/dispatch path in combined preparation script; formal mint must never dispatch or read credential files"
+    ]
+  },
+  "authorityVersionImpact": {
+    "authorizationContract": "readonly-baseline-capture-authorization/2",
+    "authorizationSchemaImpact": "UNCHANGED",
+    "planSchemaImpact": "UNCHANGED",
+    "captureReceiptContract": "readonly-baseline-capture/2 UNCHANGED; new lifecycle outcome binds its exact raw SHA externally",
+    "runnerCaptureSemantics": "CHANGE_REQUIRED_AUTHORIZATION_GATE_ONLY",
+    "runnerDatabaseSemantics": "UNCHANGED",
+    "whyRunnerMustChange": "Mint-only utility cannot stop direct formal runner replay before expiry or dispatch from canonical after crash-before-READY; current capture never creates Journal/claim. Gate must run before CaptureTransport constructor because constructor reads credentials.",
+    "currentV4RawSha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+    "currentV4": "UNCHANGED_HISTORICAL_SOURCE_AUTHORITY; no future mint under changed source",
+    "futureRequiredApproval": "approval-r7d-c3b-runner-controlled-preflight-v5.json",
+    "v5Generation": "Only after implementation+owned validation+fresh package hashes; proposal approved=false executionAuthorized=false; no v5 generated in A1. Future production mint/capture needs new explicit user approval, not current implementation proposal or blocked second approval.",
+    "v4ReferenceReconciliation": "Literal v4 execution binding cannot survive source/package changes. Preserve exact v4 SHA as historical authority chain; /2 userApprovalRef forwards only to v5. Unique per-capture user approval is separately enforced via lifecycle receipts without inventing /2 fields.",
+    "dualAuthority": false,
+    "fallback": false,
+    "currentPackageDigest": "6584a2f7d1be58cb065fb904fd06afa365b8c485b535afec03fcc9bbfaf417ad",
+    "futureDigest": "TO_BE_COMPUTED_AFTER_APPROVED_IMPLEMENTATION"
+  },
+  "validationPlan": {
+    "newDesignCases": [
+      {
+        "id": "AUTH-LIFECYCLE-01",
+        "case": "fresh mint with canonical absent",
+        "acceptance": "Explicit ABSENT approval, no unresolved state -> one READY /2; runner not auto-called",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-02",
+        "case": "expired old rotation",
+        "acceptance": "Exact expired SHA moves once to immutable archive; fresh /2 publishes",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-03",
+        "case": "old bytes preservation",
+        "acceptance": "Archived raw SHA and byte comparison equal old; no old JSON reserialization",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-04",
+        "case": "archive collision",
+        "acceptance": "Any existing destination including identical hash or symlink -> deny; original untouched",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-05",
+        "case": "wrong old SHA",
+        "acceptance": "Deny before moving or minting",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-06",
+        "case": "wrong modes",
+        "acceptance": "Canonical/archive/receipt/approval parent or file mode mismatch -> deny; no chmod",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-07",
+        "case": "wrong owner",
+        "acceptance": "UID mismatch including lock file -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-08",
+        "case": "canonical symlink",
+        "acceptance": "Deny including dangling link",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-09",
+        "case": "archive symlink or unsafe parent",
+        "acceptance": "Deny before move; no path escape",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-10",
+        "case": "concurrent mint",
+        "acceptance": "Real separate processes contend one flock; at most one operation; loser performs no mint",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-11",
+        "case": "crash before archive",
+        "acceptance": "PREPARED/claims retained; no auto-resume; old unmodified",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-12",
+        "case": "crash after archive before mint",
+        "acceptance": "Old archive exact, canonical absent; runner credential sentinel untouched",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-13",
+        "case": "crash before canonical publication",
+        "acceptance": "Pending never considered active; no DB; no fallback",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-14",
+        "case": "crash after canonical before READY",
+        "acceptance": "Schema-valid current auth still rejected before credentials",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-15",
+        "case": "partial READY or fsync failure",
+        "acceptance": "Invalid/missing commit denies capture; no silent success",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-16",
+        "case": "wrong strict schema",
+        "acceptance": "Missing/extra field or wrong type -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-17",
+        "case": "expiry over900 or future/expired time",
+        "acceptance": "Deny; no expiry renewal",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-18",
+        "case": "reused nonce",
+        "acceptance": "Permanent reservation denies a new approval with old nonce, including historical nonce",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-19",
+        "case": "authorization replay",
+        "acceptance": "Second runner call with same auth denied before transport/credential sentinel",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-20",
+        "case": "missing fresh explicit approval",
+        "acceptance": "Source proposal alone or old chat approval insufficient",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-21",
+        "case": "wrong source proposal hash",
+        "acceptance": "Wrong v4 historical anchor, future v5 hash or v4 fallback -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-22",
+        "case": "stage closed",
+        "acceptance": "Valid/malformed/symlink closure presence -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-23",
+        "case": "risk expired/revoked",
+        "acceptance": "Scope inactive or expired attestation -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-24",
+        "case": "historical loss mismatch",
+        "acceptance": "Loss record hash/acceptedLoss/false restored contract mismatch -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-25",
+        "case": "permission or disk IO failure",
+        "acceptance": "Archive/pending/fsync/claim/receipt failures preserve evidence, block",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-26",
+        "case": "no credentials during mint",
+        "acceptance": "Spy safe_file/open/path and subprocess/socket APIs; connectionDirectory never read and no network/tool process",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-27",
+        "case": "per-approval replay",
+        "acceptance": "Same ID or same approval-reference hash used again after failed mint -> deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-28",
+        "case": "mint versus capture concurrency",
+        "acceptance": "Same lock prevents canonical change while runtime rechecks it",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-29",
+        "case": "pre-credential consume ordering",
+        "acceptance": "Runner durable claim observed before CaptureTransport constructor; constructor failure still burns authority",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-30",
+        "case": "success consumption finalization",
+        "acceptance": "Owned capture baseline durable, ROLLBACK, archived auth and linked outcome, replay denied",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-31",
+        "case": "capture gate failure",
+        "acceptance": "Owned mismatch ROLLBACK, failure outcome/archival, no replay",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-32",
+        "case": "kill after consume",
+        "acceptance": "Canonical surviving kill cannot be reused; no inferred successful baseline",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-33",
+        "case": "capture receipt failure",
+        "acceptance": "DB rollback may complete but no success; consumed preserved and follow-up required",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-34",
+        "case": "unexpired active authorization",
+        "acceptance": "Mint refuses replacement; no supersede command",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-35",
+        "case": "historical output immutability",
+        "acceptance": "Regression outputs only new exclusive directory; finalize collision fails BEFORE test subprocesses",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-36",
+        "case": "actual rename/fsync safety",
+        "acceptance": "Owned same-FS no-replace succeeds; collision and unsupported/cross-device simulation deny without fallback",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-37",
+        "case": "fixed CLI bounds",
+        "acceptance": "Reject plan/path/profile/SQL/host/DSN/risk/force override attempts",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-38",
+        "case": "privacy and receipt linking",
+        "acceptance": "Safe hashes only; no raw auth copies in public docs; raw/canonical SHA domains explicit; tampered READY/outcome deny",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-39",
+        "case": "single owned session/query order",
+        "acceptance": "Lifecycle integration retains one REPEATABLE READ READ ONLY snapshot, LEDGER<PRE_GATE<DEFINITION<CATALOG, ROLLBACK and writes0",
+        "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      },
+      {
+        "id": "AUTH-LIFECYCLE-40",
+        "case": "new package/source authority",
+        "acceptance": "Utility participates in hash map; new source rejects old v4 package and v4-only auth; prior guard/134-case behavior and install DRAFT rejection preserved",
+        "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+        "environment": "OWNED_ONLY",
+        "safetyCritical": true,
+        "executedThisRound": false
+      }
+    ],
+    "newCaseCount": 40,
+    "existingRunnerCases": 134,
+    "minimumFutureRequiredRunnerCases": 174,
+    "historicalRegression": {
+      "passedExpected": 172,
+      "failedRequired": 0,
+      "skippedRequired": 0
+    },
+    "actualCountsMustBeReported": true,
+    "existingTestsDeleted": 0,
+    "oldBusinessExpectationsChanged": 0,
+    "allowedTestAdaptations": [
+      "new source authority assertion v4->v5",
+      "capture runner lifecycle fixture/approval/READY preparation",
+      "new package map count",
+      "safe exclusive forward output destination"
+    ],
+    "safetyCriticalSkipsRequired": 0,
+    "noTestsRunInA1": true,
+    "outputPolicy": "Test_RUNNER_D1_51 currently writes runner-tls-i1-validation using write_text; proposed change must reserve docs/evidence/.../runner-p1e-a2-validation/<fresh-run-id>/ exclusively BEFORE child tests, use exclusive files and reject any finalized path. Other suite stdout is externally captured exclusively under same new run. No fixture or backup-test source edit needed.",
+    "concurrencyAndCrashTests": "Use owned temporary directories, multiprocess barriers and kill/fault points confined to test code; no production fault flags.",
+    "realTLSRegression": "Existing owned TLS psql/pg_dump/pg_dumpall tests rerun unchanged in their current files; no production credential use."
+  },
+  "sourceReferences": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "lines": [
+        22,
+        32
+      ],
+      "claim": "Fixed auth read/validate -> capture -> exclusive baseline receipt; no capture claim."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "lines": [
+        132,
+        248,
+        321
+      ],
+      "claim": "Package hashes, /2 field/expiry/nonce/static/v4 target/risk validation."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "lines": [
+        32,
+        54,
+        81,
+        96
+      ],
+      "claim": "Safe file, private dir, exclusive/fsync and apply Journal helpers."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "lines": [
+        185,
+        202,
+        206,
+        214,
+        235,
+        421,
+        439
+      ],
+      "claim": "Canonical auth reread and credential hashing; capture finally rollback; no consumption."
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "lines": [
+        119
+      ],
+      "claim": "Apply Journal exists independently; cannot infer capture replay protection."
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "lines": [
+        258,
+        265,
+        280,
+        319
+      ],
+      "claim": "Historical output risk and owned runner capture integration path."
+    }
+  ],
+  "publicDocumentation": [
+    {
+      "url": "https://man7.org/linux/man-pages/man2/rename.2.html",
+      "title": "Linux rename(2)",
+      "retrievedDate": "2026-09-20",
+      "authority": "Linux man-pages project",
+      "claim": "RENAME_NOREPLACE rejects an existing destination; filesystem support required; cross-mount rename can fail EXDEV.",
+      "inference": "Use same authorization tree and fail on unsupported operation; do not use overwrite rename as fallback."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/flock.2.html",
+      "title": "Linux flock(2)",
+      "retrievedDate": "2026-09-20",
+      "authority": "Linux man-pages project",
+      "claim": "Advisory lock on open file description, nonblocking LOCK_NB available; locks released when all associated descriptors close.",
+      "inference": "Shared stable lock inode must never be unlinked; durable journals needed beyond process death."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/fsync.2.html",
+      "title": "Linux fsync(2)",
+      "retrievedDate": "2026-09-20",
+      "authority": "Linux man-pages project",
+      "claim": "File fsync alone does not necessarily flush parent directory entry; directory fsync is required.",
+      "inference": "Durably sync both move parents and final READY/consume records."
+    }
+  ],
+  "inputLocks": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "status": "MATCH"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "status": "MATCH"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "sha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "sha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "sha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v4.json",
+      "sha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-historical-evidence-loss-acceptance.json",
+      "sha256": "1898ed2767ab2f750e3719d54845a1fb91dc3ed7e05a2f1f22e0107ef5071ffe",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+      "sha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+      "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "sha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-historical-evidence-loss-acceptance-record.json",
+      "sha256": "b74ee5ba2a55d5a496763ad84b64fd25b5f5d3a9b65f9a7e06d1ccdfd380bfe3",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "sha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "sha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "sha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "sha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "sha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "sha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "sha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "sha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "sha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-f1-receipt-directory-audit.json",
+      "sha256": "c9ec72c464c76ba49a4c4bbf1bfbe2c8c04fb1ea1c729ab0b648eeab13ae9ac7",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-f2-receipt-directory-fix.json",
+      "sha256": "413db75399233402e29dd3d60ff742b4bc8decca32d6088fe673361165da7f07",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-2-result.json",
+      "sha256": "0336746dc3083796990af1474a85390f511da1bc7f8b00e24fb4edfc2dbefec6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-2-review.json",
+      "sha256": "93eadf7ca71796799fc91a377db68395d40090c8dd8bcf2de6ba8ce8239a8fa5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-result.json",
+      "sha256": "e5457f9f39c245fbf2d2f9f499006bf767c3b14a60f2bd7a49837216347e49df",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-review.json",
+      "sha256": "b2dd10eeca0ab05e73b2029f9edbb4a570797131f78f4ee19ab49eda88b01c93",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-history-recovery-failed.json",
+      "sha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "sha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r2-decision.json",
+      "sha256": "353c248db045ad104026a86c5c5c007b641f3a1273fa173aa630817450811bcd",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r2-evidence-map.json",
+      "sha256": "dada36feef876eb957fdd416fc096a04cbffac521f7141194c0b9e277d61f049",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r3-lock-recheck.json",
+      "sha256": "5c6bdfa64210c656fa438ed9b34fcdf753ad14e03a6b7e07a4c2f2bac29eb33c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "sha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "sha256": "cb164753f529dfe2d0b1c87db46f66ea1efec8409f88ae467ce41f0f8628d9f6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "sha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "sha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "sha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+      "sha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+      "sha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/authorization-identity.json",
+      "sha256": "74a2d4eddcdb6d36bc16eb43ea99458526bce116524432f4014a7e9d6bfae306",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/client-tls-proof.json",
+      "sha256": "bcd53e1279a6a5efdecf3e77c102a10cbee13e446d922a037627e3c4b709b2db",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/command-result.json",
+      "sha256": "ae8dbcb6a91f74a60503e45270bfa32ccf91fcd017fd112cfdcb615f90f7acda",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/local-preflight.json",
+      "sha256": "cf8d1c01d43aea063568518f4d88908370d863f6acfd53657c3d0aad451a1c15",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/post-capture-lock-check.json",
+      "sha256": "c06cf023c56d127f5c1ad454779796f0c3cbfefb2d6178531e5ab693b451dad4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/attempt.json",
+      "sha256": "5a722fd500559d7b436e80aad87a28228e23bbbfeb753f3007c39f690da2d7a1",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/authorization-identity.json",
+      "sha256": "7adb2beedf505ba4fc00db6cb7ededd82e3125ccba95bcbfa755515f1a43db8c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/client-tls-proof.json",
+      "sha256": "57cc782664c28f3ccb4bff6ca21632244748a65cf57df0507549ce5b1a6fd331",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/command-result.json",
+      "sha256": "732ae554d5d7480c1f60b180dd2b6b3aad8c70a0992bb3b2aafded419a8d7587",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/failure-analysis.json",
+      "sha256": "f4f1edd460e8a3f78bb48b1183d4e26fb3b865e2b2af5492ea028ea281000fa5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/local-preflight.json",
+      "sha256": "052b4980ca37db219aead2329556b505bc5404d50a11730b7f35d60609e10748",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/post-capture-lock-check.json",
+      "sha256": "1737ce81eb29b39e5690248511e9d749ce60c13cd3d7e4e9da94c638895084df",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "sha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "sha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "sha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "sha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "sha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+      "sha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "sha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "sha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "sha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "sha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "sha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "sha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "sha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "sha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "sha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "sha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "sha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+      "status": "MATCH"
+    }
+  ],
+  "limitations": [
+    "Owner-only hash-bound local evidence is not cryptographically tamper-proof against root/same-UID operator outside protocol.",
+    "Linux rename/fsync/fsystem support requires future owned validation; A1 checked symbol presence only.",
+    "No fresh credential identity proof during lifecycle: only prior safe identity attestation; formal runner verifies actual credentials before connection.",
+    "Initial implementation has no automatic recovery/cleanup; incomplete journals require separate exact review."
+  ],
+  "futureEvidencePolicy": "STRICT_IMMUTABLE_RETAINED"
+}

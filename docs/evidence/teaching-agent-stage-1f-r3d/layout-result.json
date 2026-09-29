@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "formalRoute": true,
+  "realAuth": true,
+  "mobile375": true,
+  "landscape812": true,
+  "keyboardEnterEscapeFocus": true,
+  "sourceBadge": true,
+  "noHorizontalOverflow": true,
+  "reducedMotion": true,
+  "pageErrors": [],
+  "providerFixtureOnly": true,
+  "liveProviderRequests": 0
+}

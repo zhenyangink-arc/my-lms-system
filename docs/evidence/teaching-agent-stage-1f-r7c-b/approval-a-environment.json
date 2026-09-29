@@ -1,0 +1,197 @@
+{
+  "approval": "A-Environment",
+  "status": "APPROVED — MIGRATION/DEPLOYMENT COMPLETE; BINDING BLOCKED",
+  "approved": true,
+  "stage": "R7C-B1C within R7C-B1",
+  "mainline": "TEACHING AGENT",
+  "targetEnvironment": "canonical UPLY :8443",
+  "targetAlias": "hangul-introduction",
+  "currentBuild": "6IhDHN8Dm1nCewiCEZnV5",
+  "candidate": {
+    "sourceManifest": "b1c-candidate-source-manifest.json",
+    "sourceSha256": "6f0017392d5475f5dcad927235f7b9cccf74c9a6891200030c2d02c69fdb25eb",
+    "sourceFileCount": 1313,
+    "unresolvedSourceFiles": 0,
+    "buildId": "NOT YET GENERATED — build after approval from sealed manifest, never reuse full-workspace artifact",
+    "baseBuild": "6IhDHN8Dm1nCewiCEZnV5",
+    "logicalProductDelta": [
+      "src/features/digital-textbook/api/create-native-activity.ts",
+      "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "src/features/digital-textbook/components/create-native-activity-form.tsx",
+      "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx"
+    ],
+    "existingApplicationFilesModified": 0,
+    "requiredBeforeActivation": [
+      "Recheck all source bytes by SHA256, including git-sourced files",
+      "Use current installed dependencies with identical package/lock; no install/update",
+      "Build with current approved public Supabase build config, feature OFF; do not embed service credentials",
+      "Candidate build/typecheck must PASS",
+      "Seal candidate archive, Build ID and member hashes in receipt",
+      "Validate only4 application additions relative to reconstructed R3D baseline; public/config/package unchanged",
+      "Any extra required source/config/package change => STOP and amend scope"
+    ]
+  },
+  "lockedB1EightFiles": [
+    {
+      "path": "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+      "sha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c"
+    },
+    {
+      "path": "src/features/digital-textbook/api/create-native-activity.ts",
+      "sha256": "162d588e4e001f599768f3dc5e18b900fefa411ef5e3ff55ea8dcd159ac23bbc"
+    },
+    {
+      "path": "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "sha256": "2e0dc9b95e13d5ca0bfd3d98f3a003cc4313d7220833ffa17790c45fcbf4c994"
+    },
+    {
+      "path": "src/features/digital-textbook/components/create-native-activity-form.tsx",
+      "sha256": "5ae35582fce54aa82bfd87e7367f315732e89736d997610cd4fa82e7ac6d6600"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx",
+      "sha256": "9f0440f0a0a8908d6d49b90630532807f089adfb9e3cbfe3d3506268b8b5975d"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring.test.mjs",
+      "sha256": "a1e0954b53f5529ef2cf362dfb3199922669919c99f1f7f81ee0e8329fc6a969"
+    },
+    {
+      "path": "tests/teaching-agent-r7cb-authoring-db.test.mjs",
+      "sha256": "5faa177515bff29047c8167f19d963fc793795c005e56fd3bcc011c0a3447146"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7cb/authoring-fixture.mjs",
+      "sha256": "656120132a2f937b9bde6e9bce71ac45b94ba9b0a5658c8bfd833d6ebd3175a4"
+    }
+  ],
+  "changedProductFiles": [
+    "src/features/digital-textbook/api/create-native-activity.ts",
+    "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+    "src/features/digital-textbook/components/create-native-activity-form.tsx",
+    "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx"
+  ],
+  "migration": {
+    "version": "202609170001",
+    "path": "supabase/migrations/202609170001_teaching_lesson_activity_binding.sql",
+    "sha256": "6ec786c2ff4c6c4a39da297e72d20359746a4225f5ba5028ecce38253947f78c",
+    "currentLedger": 457,
+    "currentLatest": "202609140007",
+    "expectedLedger": 458,
+    "expectedLatest": "202609170001",
+    "schemaWrites": "One function definition + its ACL; exactly1 migration ledger INSERT; no tables/columns/seeds/other function changes",
+    "execution": "Single hash-locked SQL file only, install DDL and ledger in one explicit transaction; fixed TLS maintenance transport adapted to this one-version authorization; do not invoke old eight-version runner or db push",
+    "unknown": "STOP, fresh READ ONLY connection verify ledger/function/ACL; no blind retry",
+    "postMigrationBindingExpected": [
+      0,
+      0,
+      0
+    ]
+  },
+  "businessWrites": {
+    "digital_textbook_nodes": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activities": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "digital_textbook_activity_secrets": {
+      "INSERT": 1,
+      "UPDATE": 0,
+      "DELETE": 0
+    },
+    "otherBusinessTables": 0,
+    "dedicatedContentAuditRows": 0
+  },
+  "frozenContentWrites": 0,
+  "scriptVersionWrites": 0,
+  "objectiveWrites": 0,
+  "attemptWrites": 0,
+  "progressWrites": 0,
+  "authWrites": 0,
+  "agentWrites": 0,
+  "providerRequests": 0,
+  "publish": 0,
+  "pins": 0,
+  "definitionPublication": 0,
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "pm2": {
+    "target": "uply-first-enable",
+    "allowed": "Stop named process for artifact switch, start same existing PM2 entry; same target for rollback if needed",
+    "otherProcesses": "UNCHANGED",
+    "noNewApp": true,
+    "port": 3000,
+    "launcher": "UNCHANGED",
+    "runtimeConfig": "UNCHANGED",
+    "tailscale": "UNCHANGED"
+  },
+  "deployment": {
+    "operationsDirectory": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/<approval-UTC>",
+    "buildStaging": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/<approval-UTC>/candidate-source",
+    "candidateArchive": "/home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/<approval-UTC>/candidate-build.tar.gz",
+    "liveRoot": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+    "replace": [
+      ".next build artifact"
+    ],
+    "add": [
+      "src/features/digital-textbook/api/create-native-activity.ts",
+      "src/features/digital-textbook/server/native-activity-authoring.server.ts",
+      "src/features/digital-textbook/components/create-native-activity-form.tsx",
+      "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/native-activity/page.tsx"
+    ],
+    "unchanged": [
+      "public",
+      "package.json",
+      "package-lock.json",
+      "next.config.ts",
+      "node_modules",
+      "existing live src",
+      "runtime.json",
+      "start.mjs",
+      "Tailscale routes"
+    ],
+    "sourceArchive": "Retain sealed reconstructed candidate sources for subsequent reproducibility; not a second running instance",
+    "switch": "Build offline first, stop only target, preserve previous .next, install validated candidate .next plus4 exact new source files, start same target; no blue-green or standby runtime"
+  },
+  "backup": {
+    "plannedRoot": "/home/yangzhen/backups/uply/<fresh-backup-UTC>",
+    "createdNow": false,
+    "mode": "0700 directory /0600 private archives and receipts",
+    "procedure": "Reuse existing R4D snapshot pg_dump/ledger/roles-no-password backup primitives with B1C metadata and ledger457 checks; do not execute historical stage CLI",
+    "validation": "Seal hashes and restore into owned network-isolated PG17.6 to verify archive/catalog/ledger; no current-DB restore",
+    "freshness": "Recheck backup snapshot freshness before migration; if stale/failure STOP before mutation; no existing backup replacement",
+    "retention": "Keep backup and rollback artifact; no cleanup authorized"
+  },
+  "rollback": {
+    "application": "Stop only uply-first-enable; move failed .next to private failed-candidate, restore pre-switch .next from /home/yangzhen/operations/uply/teaching-agent/r7cb-b1c/<approval-UTC>/rollback/previous-next; move only4 newly added B1 source files out of live tree; start same PM2 entry and verify old Build/8443 health",
+    "knownGoodFallbackArchive": "/home/yangzhen/artifacts/uply-teaching-agent-foundation-r3d/candidate-build.tar.gz",
+    "knownGoodArchiveSha256": "1e32c6f6b402e7eb486e81dcbbad26ff18ce9a80a177a2463173276253573d28",
+    "migration": "Additive RPC may remain installed on app rollback; no automatic DROP or ledger deletion",
+    "business": "Never delete valid canonical three rows for app/identity blockage; unknown create result requires independent readback",
+    "databaseRestore": "Full current DB restore or destructive schema rollback is NOT included; separate precise approval if ever needed"
+  },
+  "order": [
+    "Fresh DB backup + isolated restore validation",
+    "R6F freeze and empty binding recheck",
+    "Install only202609170001 and independent ledger/RPC/ACL/zero-binding readback",
+    "Build and seal minimal candidate",
+    "Switch only named canonical UPLY artifact and process",
+    "Healthcheck root/app/Owner dashboard/workbench/ScriptStudio/authoring page; existing session remains",
+    "Existing Owner Chrome same8443 GET authoring page and exact context check",
+    "One logical UI create attempt only",
+    "Independent READ ONLY three-row/parent/ACL/public-private/frozen validation"
+  ],
+  "b2": "NOT INCLUDED / NOT APPROVED",
+  "currentDbDurableE2E": "BLOCKED BY TEST IDENTITY; no attempts",
+  "runtimeExecution": 0,
+  "nextStage": "Remain R7C-B; no R7D or Stage1G",
+  "operationsHelperScope": "After approval, a B1C-local orchestration helper may implement only the fixed backup/single-migration/build/artifact-switch/readback steps in the operations directory; do not modify historical runners or product files outside4 additions",
+  "currentStepActualWrites": "Local report/evidence only; no migration/deploy/PM2/backup/auth/business mutations",
+  "authorizationMessage": "User: 批准",
+  "executionResult": "b1c-execution-end-state.json"
+}

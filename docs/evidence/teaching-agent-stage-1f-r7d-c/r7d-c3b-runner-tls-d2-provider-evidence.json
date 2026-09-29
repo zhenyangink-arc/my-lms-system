@@ -1,0 +1,128 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-D2",
+  "recordedAt": "2026-09-20T02:50:36.494190+00:00",
+  "mode": "LOCAL_SOURCE_CONFIG_HISTORY_AND_PUBLIC_DOCUMENTATION_DESIGN_ONLY",
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "credentialOutput": 0,
+  "captureRetries": 0,
+  "operationalSourceChanges": 0,
+  "targetProfileChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecutionCalls": 0,
+  "publicDocumentationReview": true,
+  "publish": 0,
+  "planSeal": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateArtifactReverification": "NOT_PERFORMED_THIS_DESIGN_STAGE",
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "selectedContract": null,
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "sources": [
+    {
+      "id": "SB-CONNECTION",
+      "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+      "explicitFacts": [
+        "Direct connections are documented for maintenance, including migrations and backup/restore.",
+        "Direct endpoints normally use IPv6; an IPv4 add-on changes availability. Shared session poolers provide an IPv4 alternative on port 5432.",
+        "Obtain the project-specific connection string from Dashboard Connect. Direct username is postgres; shared pooler username includes the project suffix.",
+        "Session mode retains session features that transaction mode cannot promise."
+      ],
+      "doesNotProve": [
+        "This project has a reachable direct endpoint from this host.",
+        "This project has purchased or configured the IPv4 add-on.",
+        "The pooler upstream is encrypted or certificate-verified."
+      ]
+    },
+    {
+      "id": "SB-MIGRATION",
+      "url": "https://supabase.com/docs/guides/platform/migrating-to-supabase/postgres",
+      "explicitFacts": [
+        "The guide explicitly recommends session mode for pg_dump/restore migration tasks and lists session or direct connection in manual examples."
+      ],
+      "interpretation": "Official support for a session-pooler maintenance pattern; not proof of the exact runner snapshot pipeline, limits, or tenant transport configuration."
+    },
+    {
+      "id": "SB-SSL",
+      "url": "https://supabase.com/docs/guides/platform/ssl-enforcement",
+      "explicitFacts": [
+        "verify-full checks certificate authority and hostname. The provider documents obtaining the database CA through Dashboard SSL Configuration."
+      ],
+      "doesNotProve": [
+        "The effective upstream_ssl/upstream_verify settings of the managed pooler tenant.",
+        "The local CA file is suitable for an unobserved direct endpoint."
+      ]
+    },
+    {
+      "id": "SB-DPA",
+      "url": "https://supabase.com/legal/customer-resources/data-processing-addendum",
+      "explicitFacts": [
+        "Schedule 1 gives broad assurances of TLS-protected communications and network encryption.",
+        "Customer project networks and the internal control plane are separated with firewall restrictions."
+      ],
+      "evidenceWeight": "SUBSTANTIVE_GENERAL_PROVIDER_ASSURANCE_NOT_BRAND_ONLY",
+      "limitations": [
+        "No reviewed statement maps the present session-pooler upstream and pg_stat_ssl=false observation to a specific protection mechanism.",
+        "Applicability/version of the customer agreement and operational boundary for this endpoint were not established by this local audit."
+      ],
+      "inference": "This is a candidate provider trust basis, not deployment proof. Do not assert either plaintext over the network or an invisible encrypted tunnel."
+    },
+    {
+      "id": "SUPAVISOR-TENANT",
+      "url": "https://raw.githubusercontent.com/supabase/supavisor/main/docs/configuration/tenants.md",
+      "explicitFacts": [
+        "Tenant configuration has upstream_ssl, upstream_verify and upstream_tls_ca separately from client enforce_ssl."
+      ],
+      "limitations": [
+        "Public main-branch configuration documentation is not a lock on the managed production deployment.",
+        "No tenant values or provider secrets were fetched."
+      ]
+    },
+    {
+      "id": "PG-SSL",
+      "url": "https://www.postgresql.org/docs/17/libpq-ssl.html",
+      "explicitFacts": [
+        "verify-full verifies the CA chain and endpoint hostname; failures reject the connection."
+      ],
+      "interpretation": "A pinned libpq invocation with locked effective parameters plus same-connection TLS metadata can establish client-hop TLS; backend SQL cannot prove client certificate validation."
+    },
+    {
+      "id": "PG-STATS",
+      "url": "https://www.postgresql.org/docs/17/monitoring-stats.html#MONITORING-PG-STAT-SSL-VIEW",
+      "explicitFacts": [
+        "pg_stat_ssl reports SSL usage for the connection at each backend process."
+      ],
+      "interpretation": "For the established pooler topology, it observes the pooler-facing backend connection, not the original client-to-pooler hop."
+    },
+    {
+      "id": "PG-PSQL",
+      "url": "https://www.postgresql.org/docs/17/app-psql.html",
+      "explicitFacts": [
+        "The conninfo meta-command reports information about the current connection."
+      ],
+      "interpretation": "Use only a fixed implementation-owned command and pinned-output parser in a future transport; no arbitrary meta-command interface."
+    },
+    {
+      "id": "PG-DUMP",
+      "url": "https://www.postgresql.org/docs/17/app-pgdump.html",
+      "explicitFacts": [
+        "pg_dump accepts a synchronized snapshot identifier to coordinate with another session."
+      ],
+      "interpretation": "Exporter and dump sessions must reach the same database while the exported snapshot remains usable; TLS proof for one client process does not observe another process."
+    }
+  ],
+  "factsVsInferencesSeparated": true,
+  "hopBConclusion": "General provider assurance found; exact-hop applicability/protection remains unresolved. Neither brand trust nor source configuration options establishes effective deployed values.",
+  "documentationDoesNotAuthorizeExecution": true
+}

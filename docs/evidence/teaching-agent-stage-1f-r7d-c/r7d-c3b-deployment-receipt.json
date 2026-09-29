@@ -1,0 +1,53 @@
+{
+  "stage": "R7D-C3B",
+  "recordedAt": "2026-09-18T07:08:48.519104+00:00",
+  "authorization": "EXPLICIT_USER_APPROVAL_THIS_TURN",
+  "blockingCode": "CURRENT_DB_ACL_BASELINE_MISMATCH",
+  "currentDBReadOnlyTransactions": 1,
+  "currentDBBusinessWrites": 0,
+  "currentDBAuthWrites": 0,
+  "migrationInstalls": 0,
+  "migrationLedgerWrites": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRunsCreated": 0,
+  "providerCalls": 0,
+  "publish": 0,
+  "pins": 0,
+  "productionBrowserRequests": 0,
+  "toolCalls": 0,
+  "productChanges": 0,
+  "migrationFileChanges": 0,
+  "currentBuild": "PjpaYHAz0asyvwh0G-lBo",
+  "feature": "OFF",
+  "allowlists": "EMPTY",
+  "B3Scope": "DISABLED_RETAINED_NO_ACTIVATION",
+  "historicalApprovalsModified": false,
+  "result": "NOT_EXECUTED",
+  "candidateBuild": "KeQ6bud_Us1ED6hnG7YB8",
+  "currentBuildBefore": "PjpaYHAz0asyvwh0G-lBo",
+  "currentBuildAfter": "PjpaYHAz0asyvwh0G-lBo",
+  "buildAfterBasis": "Filesystem read after STOP; no deployment",
+  "deploymentClosureCount": 143,
+  "liveSourceDrift": [],
+  "sourceFilesInstalled": 0,
+  "artifacts": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "match": true
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "match": true
+    }
+  ],
+  "rollbackUsed": false,
+  "rebuild": 0
+}

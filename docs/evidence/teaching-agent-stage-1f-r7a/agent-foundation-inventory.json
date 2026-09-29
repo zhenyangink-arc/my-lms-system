@@ -1,0 +1,211 @@
+{
+  "status": "MAPPED",
+  "statusVocabulary": [
+    "FOUND",
+    "PARTIAL",
+    "MISSING",
+    "LEGACY",
+    "UNUSED"
+  ],
+  "items": [
+    {
+      "component": "Agent Definition",
+      "status": "FOUND",
+      "current": "Code profile, frozen artifact digests, version refs and DB definition storage; agent_definition_versions currently 0. Code published label is not a published production definition.",
+      "required": "Approved lesson-specific definition/pins only in later authorized stage",
+      "gap": "No admitted target definition/pins",
+      "stage": "After execution MVP",
+      "sources": [
+        "agent-profile",
+        "persistence"
+      ]
+    },
+    {
+      "component": "Agent Runtime / Agent Run",
+      "status": "FOUND",
+      "current": "Student run coordinator: fenced admission, idempotency, bounded model/tool steps, checkpoints and terminal persistence",
+      "required": "Consume authoritative whole-lesson facts without becoming progression authority",
+      "gap": "Only explain_segment intent today",
+      "stage": "R7B facts seam; later Agent E2E",
+      "sources": [
+        "agent-run",
+        "agent-composition"
+      ]
+    },
+    {
+      "component": "Skill Registry",
+      "status": "FOUND",
+      "current": "One selected-segment Korean explanation skill; versioned procedure, evidence and output contracts",
+      "required": "Lesson-scoped explanation/adaptive presentation skills",
+      "gap": "No execute-a-lesson skill; script is not a skill",
+      "stage": "After R7B",
+      "sources": [
+        "skill",
+        "skill-procedure",
+        "skill-registry"
+      ]
+    },
+    {
+      "component": "Tool Registry",
+      "status": "FOUND",
+      "current": "Exactly two allowlisted read-only tools for student composition",
+      "required": "Versioned lesson execution facts tool(s)",
+      "gap": "Activity/runtime allowed-action facts not exposed",
+      "stage": "R7B read-port contract; later tool version",
+      "sources": [
+        "tool-registry",
+        "tool-contract"
+      ]
+    },
+    {
+      "component": "Lesson Tool",
+      "status": "PARTIAL",
+      "current": "Published selected sentence/objectives plus optional last-saved teaching position",
+      "required": "Current bound node/activity/progress/runtime generation/allowed presentation requests",
+      "gap": "No live execution projection or authoritative activity completion context",
+      "stage": "R7B",
+      "sources": [
+        "lesson-tool",
+        "state-tool",
+        "lesson-port",
+        "state-port"
+      ]
+    },
+    {
+      "component": "Provider Adapter",
+      "status": "FOUND",
+      "current": "DeepSeek server adapter with stream parsing, usage, abort/deadline, capability gate; live capability not tested here",
+      "required": "Separately approved provider policy and live test after execution works",
+      "gap": "Existence is not live readiness",
+      "stage": "After R7B",
+      "sources": [
+        "provider",
+        "provider-capabilities"
+      ]
+    },
+    {
+      "component": "Run persistence / state",
+      "status": "FOUND",
+      "current": "agent_* tables; admit/transition/event/usage RPCs; fence plus stateVersion; terminal states completed/failed/cancelled",
+      "required": "Retain same run authority and usage integrity",
+      "gap": "No new run store required",
+      "stage": "Reuse",
+      "sources": [
+        "persistence",
+        "agent-run"
+      ]
+    },
+    {
+      "component": "Cancellation",
+      "status": "FOUND",
+      "current": "Transport persistent cancel RPC/checkpoint and active abort registry",
+      "required": "Retain bounded cancellation; lesson state not arbitrarily cancelled by Agent",
+      "gap": "No invocation authorized",
+      "stage": "Reuse",
+      "sources": [
+        "cancel",
+        "agent-run"
+      ]
+    },
+    {
+      "component": "Reconciliation",
+      "status": "FOUND",
+      "current": "006 deadline-terminal-v1 bounded tenant/fence reconciliation RPCs and operator scripts",
+      "required": "Operational authorization separately; not lesson progression",
+      "gap": "No run/reconciler execution here",
+      "stage": "Later operations",
+      "sources": [
+        "reconciler"
+      ]
+    },
+    {
+      "component": "Feature flag / Allowlists",
+      "status": "FOUND",
+      "current": "Transport admission and page projection guarded; feature OFF and all three lists empty",
+      "required": "Remain OFF through R7B",
+      "gap": "Closed by policy, not a missing implementation",
+      "stage": "Later enable authorization",
+      "sources": [
+        "rollout",
+        "agent-ui"
+      ]
+    },
+    {
+      "component": "Student policy",
+      "status": "FOUND",
+      "current": "Authenticated own student, tenant/app/enrollment/published chain/selection revision gates; no owner impersonation",
+      "required": "Future explicit eligible single-lesson published scope",
+      "gap": "Frozen version1 is draft and intentionally ineligible",
+      "stage": "Before real student Agent E2E",
+      "sources": [
+        "policy",
+        "policy-repository"
+      ]
+    },
+    {
+      "component": "Evidence persistence",
+      "status": "FOUND",
+      "current": "Versioned lesson/state evidence, trace events, mandatory lesson evidence and output guard",
+      "required": "Runtime facts evidence with snapshot/state revision and observation provenance",
+      "gap": "No runtime fact evidence kind currently",
+      "stage": "After read-port contract",
+      "sources": [
+        "agent-run",
+        "finalization",
+        "tool-contract"
+      ]
+    },
+    {
+      "component": "answer.final / finalization",
+      "status": "FOUND",
+      "current": "Validated answer only after terminal completion persistence; raw model deltas not trusted final answer",
+      "required": "Keep same ordering",
+      "gap": "No extra finalizer needed for MVP",
+      "stage": "Reuse",
+      "sources": [
+        "agent-run",
+        "finalization"
+      ]
+    },
+    {
+      "component": "Script Runtime integration",
+      "status": "PARTIAL",
+      "current": "Student Agent reads safe published selection/state; deterministic resolveScriptStep exists separately",
+      "required": "One canonical composition around deterministic domain and existing LessonRuntime",
+      "gap": "Production teacher adapter still invokes old Agent responder; do not use as new Agent fallback",
+      "stage": "R7B remove dependency from new composition",
+      "sources": [
+        "script-domain",
+        "old-backend-adapter",
+        "agent-ui"
+      ]
+    },
+    {
+      "component": "Lesson progression integration",
+      "status": "PARTIAL",
+      "current": "Script state machine and existing activity/node progress own state; AI explanation does not advance class",
+      "required": "Runtime reconciles authoritative script step and activity completion; exposes allowed actions",
+      "gap": "No whole-lesson Agent feedback loop",
+      "stage": "R7B deterministic loop; later Agent decisions",
+      "sources": [
+        "script-domain",
+        "progress",
+        "step-controller"
+      ]
+    },
+    {
+      "component": "Old Learning Agent fallback",
+      "status": "LEGACY",
+      "current": "Respond API can call old learning-agent-runtime Edge function; existing caller references remain",
+      "required": "New Teaching Agent canonical composition never calls it",
+      "gap": "Must isolate/extract deterministic domain from legacy transport",
+      "stage": "Replacement audit/R7B scope",
+      "sources": [
+        "old-agent-route",
+        "old-agent-provider",
+        "old-backend-adapter"
+      ]
+    }
+  ],
+  "noBlanketCompletionClaim": true
+}

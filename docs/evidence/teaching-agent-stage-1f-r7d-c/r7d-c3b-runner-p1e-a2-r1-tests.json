@@ -1,0 +1,1506 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A2-R1",
+  "contract": "authorization-lifecycle-clean-owned-revalidation/1",
+  "recordedAt": "2026-09-20T08:07:48.485577+00:00",
+  "overall": "PASS",
+  "validationMode": "CLEAN_FULL_REVALIDATION",
+  "oldA2Validation": "PRESERVED_BLOCKED_HISTORY",
+  "previousPassesReused": 0,
+  "validationInvocationCount": 1,
+  "validationDirectory": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b",
+  "command": "python3 -B /tmp/uply-p1e-a2-r1-validate.py",
+  "commandExitCode": 0,
+  "wrapperFix": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-r1-wrapper-fix.json",
+    "sha256": "b9928de154bbc84a16c1124b28915095a7c7b256c66b7056de69729ee1d2601d"
+  },
+  "discovery": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/discovery.json",
+    "sha256": "4ebcc14624550c2626795f98ed9ad67b7a6d79751b693922604e0ac744f80a46"
+  },
+  "requiredDiscovered": 174,
+  "existingRequiredCount": 134,
+  "existingRequiredPassed": 134,
+  "lifecycleExpected": 40,
+  "lifecyclePassed": 40,
+  "lifecycleCases": [
+    {
+      "id": "AUTH-LIFECYCLE-01",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_01_fresh",
+      "case": "fresh mint with canonical absent",
+      "acceptance": "Explicit ABSENT approval, no unresolved state -> one READY /2; runner not auto-called",
+      "elapsedSeconds": 0.059238433837890625
+    },
+    {
+      "id": "AUTH-LIFECYCLE-02",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_02_rotate",
+      "case": "expired old rotation",
+      "acceptance": "Exact expired SHA moves once to immutable archive; fresh /2 publishes",
+      "elapsedSeconds": 0.08046698570251465
+    },
+    {
+      "id": "AUTH-LIFECYCLE-03",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_03_exact_bytes",
+      "case": "old bytes preservation",
+      "acceptance": "Archived raw SHA and byte comparison equal old; no old JSON reserialization",
+      "elapsedSeconds": 0.0515749454498291
+    },
+    {
+      "id": "AUTH-LIFECYCLE-04",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_04_archive_collision",
+      "case": "archive collision",
+      "acceptance": "Any existing destination including identical hash or symlink -> deny; original untouched",
+      "elapsedSeconds": 0.03895401954650879
+    },
+    {
+      "id": "AUTH-LIFECYCLE-05",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_05_old_hash",
+      "case": "wrong old SHA",
+      "acceptance": "Deny before moving or minting",
+      "elapsedSeconds": 0.028004169464111328
+    },
+    {
+      "id": "AUTH-LIFECYCLE-06",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_06_modes",
+      "case": "wrong modes",
+      "acceptance": "Canonical/archive/receipt/approval parent or file mode mismatch -> deny; no chmod",
+      "elapsedSeconds": 0.032997846603393555
+    },
+    {
+      "id": "AUTH-LIFECYCLE-07",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_07_owner",
+      "case": "wrong owner",
+      "acceptance": "UID mismatch including lock file -> deny",
+      "elapsedSeconds": 0.009308099746704102
+    },
+    {
+      "id": "AUTH-LIFECYCLE-08",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_08_canonical_symlink",
+      "case": "canonical symlink",
+      "acceptance": "Deny including dangling link",
+      "elapsedSeconds": 0.028902292251586914
+    },
+    {
+      "id": "AUTH-LIFECYCLE-09",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_09_archive_symlink",
+      "case": "archive symlink or unsafe parent",
+      "acceptance": "Deny before move; no path escape",
+      "elapsedSeconds": 0.019582748413085938
+    },
+    {
+      "id": "AUTH-LIFECYCLE-10",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_10_concurrent",
+      "case": "concurrent mint",
+      "acceptance": "Real separate processes contend one flock; at most one operation; loser performs no mint",
+      "elapsedSeconds": 0.0806279182434082
+    },
+    {
+      "id": "AUTH-LIFECYCLE-11",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_11_crash_prepared",
+      "case": "crash before archive",
+      "acceptance": "PREPARED/claims retained; no auto-resume; old unmodified",
+      "elapsedSeconds": 0.05233025550842285
+    },
+    {
+      "id": "AUTH-LIFECYCLE-12",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_12_crash_archived",
+      "case": "crash after archive before mint",
+      "acceptance": "Old archive exact, canonical absent; runner credential sentinel untouched",
+      "elapsedSeconds": 0.051927804946899414
+    },
+    {
+      "id": "AUTH-LIFECYCLE-13",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_13_crash_staged",
+      "case": "crash before canonical publication",
+      "acceptance": "Pending never considered active; no DB; no fallback",
+      "elapsedSeconds": 0.05279731750488281
+    },
+    {
+      "id": "AUTH-LIFECYCLE-14",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_14_crash_published",
+      "case": "crash after canonical before READY",
+      "acceptance": "Schema-valid current auth still rejected before credentials",
+      "elapsedSeconds": 0.0715935230255127
+    },
+    {
+      "id": "AUTH-LIFECYCLE-15",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_15_partial_ready",
+      "case": "partial READY or fsync failure",
+      "acceptance": "Invalid/missing commit denies capture; no silent success",
+      "elapsedSeconds": 0.06938290596008301
+    },
+    {
+      "id": "AUTH-LIFECYCLE-16",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_16_schema",
+      "case": "wrong strict schema",
+      "acceptance": "Missing/extra field or wrong type -> deny",
+      "elapsedSeconds": 0.0314946174621582
+    },
+    {
+      "id": "AUTH-LIFECYCLE-17",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_17_expiry",
+      "case": "expiry over900 or future/expired time",
+      "acceptance": "Deny; no expiry renewal",
+      "elapsedSeconds": 0.0267183780670166
+    },
+    {
+      "id": "AUTH-LIFECYCLE-18",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_18_nonce",
+      "case": "reused nonce",
+      "acceptance": "Permanent reservation denies a new approval with old nonce, including historical nonce",
+      "elapsedSeconds": 0.10988402366638184
+    },
+    {
+      "id": "AUTH-LIFECYCLE-19",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_19_auth_replay",
+      "case": "authorization replay",
+      "acceptance": "Second runner call with same auth denied before transport/credential sentinel",
+      "elapsedSeconds": 0.10007119178771973
+    },
+    {
+      "id": "AUTH-LIFECYCLE-20",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_20_missing_user",
+      "case": "missing fresh explicit approval",
+      "acceptance": "Source proposal alone or old chat approval insufficient",
+      "elapsedSeconds": 0.027100324630737305
+    },
+    {
+      "id": "AUTH-LIFECYCLE-21",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_21_source_authority",
+      "case": "wrong source proposal hash",
+      "acceptance": "Wrong v4 historical anchor, future v5 hash or v4 fallback -> deny",
+      "elapsedSeconds": 0.02898383140563965
+    },
+    {
+      "id": "AUTH-LIFECYCLE-22",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_22_closed",
+      "case": "stage closed",
+      "acceptance": "Valid/malformed/symlink closure presence -> deny",
+      "elapsedSeconds": 0.013515949249267578
+    },
+    {
+      "id": "AUTH-LIFECYCLE-23",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_23_risk",
+      "case": "risk expired/revoked",
+      "acceptance": "Scope inactive or expired attestation -> deny",
+      "elapsedSeconds": 0.013744115829467773
+    },
+    {
+      "id": "AUTH-LIFECYCLE-24",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_24_loss",
+      "case": "historical loss mismatch",
+      "acceptance": "Loss record hash/acceptedLoss/false restored contract mismatch -> deny",
+      "elapsedSeconds": 0.013498306274414062
+    },
+    {
+      "id": "AUTH-LIFECYCLE-25",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_25_io_failure",
+      "case": "permission or disk IO failure",
+      "acceptance": "Archive/pending/fsync/claim/receipt failures preserve evidence, block",
+      "elapsedSeconds": 0.04014015197753906
+    },
+    {
+      "id": "AUTH-LIFECYCLE-26",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_26_no_credentials",
+      "case": "no credentials during mint",
+      "acceptance": "Spy safe_file/open/path and subprocess/socket APIs; connectionDirectory never read and no network/tool process",
+      "elapsedSeconds": 0.05291938781738281
+    },
+    {
+      "id": "AUTH-LIFECYCLE-27",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_27_approval_replay",
+      "case": "per-approval replay",
+      "acceptance": "Same ID or same approval-reference hash used again after failed mint -> deny",
+      "elapsedSeconds": 0.10325503349304199
+    },
+    {
+      "id": "AUTH-LIFECYCLE-28",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_28_mint_capture_lock",
+      "case": "mint versus capture concurrency",
+      "acceptance": "Same lock prevents canonical change while runtime rechecks it",
+      "elapsedSeconds": 0.0935678482055664
+    },
+    {
+      "id": "AUTH-LIFECYCLE-29",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_29_consume_before_constructor",
+      "case": "pre-credential consume ordering",
+      "acceptance": "Runner durable claim observed before CaptureTransport constructor; constructor failure still burns authority",
+      "elapsedSeconds": 0.08464956283569336
+    },
+    {
+      "id": "AUTH-LIFECYCLE-30",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_30_success_finalization",
+      "case": "success consumption finalization",
+      "acceptance": "Owned capture baseline durable, ROLLBACK, archived auth and linked outcome, replay denied",
+      "elapsedSeconds": 4.631321430206299
+    },
+    {
+      "id": "AUTH-LIFECYCLE-31",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_31_gate_failure",
+      "case": "capture gate failure",
+      "acceptance": "Owned mismatch ROLLBACK, failure outcome/archival, no replay",
+      "elapsedSeconds": 4.678624629974365
+    },
+    {
+      "id": "AUTH-LIFECYCLE-32",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_32_kill_consumed",
+      "case": "kill after consume",
+      "acceptance": "Canonical surviving kill cannot be reused; no inferred successful baseline",
+      "elapsedSeconds": 0.1046438217163086
+    },
+    {
+      "id": "AUTH-LIFECYCLE-33",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_33_receipt_failure",
+      "case": "capture receipt failure",
+      "acceptance": "DB rollback may complete but no success; consumed preserved and follow-up required",
+      "elapsedSeconds": 4.633333206176758
+    },
+    {
+      "id": "AUTH-LIFECYCLE-34",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_34_unexpired",
+      "case": "unexpired active authorization",
+      "acceptance": "Mint refuses replacement; no supersede command",
+      "elapsedSeconds": 0.028655290603637695
+    },
+    {
+      "id": "AUTH-LIFECYCLE-35",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_35_output_immutable",
+      "case": "historical output immutability",
+      "acceptance": "Regression outputs only new exclusive directory; finalize collision fails BEFORE test subprocesses",
+      "elapsedSeconds": 0.004279136657714844
+    },
+    {
+      "id": "AUTH-LIFECYCLE-36",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_36_rename_fsync",
+      "case": "actual rename/fsync safety",
+      "acceptance": "Owned same-FS no-replace succeeds; collision and unsupported/cross-device simulation deny without fallback",
+      "elapsedSeconds": 0.003928661346435547
+    },
+    {
+      "id": "AUTH-LIFECYCLE-37",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_37_cli",
+      "case": "fixed CLI bounds",
+      "acceptance": "Reject plan/path/profile/SQL/host/DSN/risk/force override attempts",
+      "elapsedSeconds": 0.005055427551269531
+    },
+    {
+      "id": "AUTH-LIFECYCLE-38",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_38_privacy_chain",
+      "case": "privacy and receipt linking",
+      "acceptance": "Safe hashes only; no raw auth copies in public docs; raw/canonical SHA domains explicit; tampered READY/outcome deny",
+      "elapsedSeconds": 0.06977200508117676
+    },
+    {
+      "id": "AUTH-LIFECYCLE-39",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_39_session_order",
+      "case": "single owned session/query order",
+      "acceptance": "Lifecycle integration retains one REPEATABLE READ READ ONLY snapshot, LEDGER<PRE_GATE<DEFINITION<CATALOG, ROLLBACK and writes0",
+      "elapsedSeconds": 4.7728800773620605
+    },
+    {
+      "id": "AUTH-LIFECYCLE-40",
+      "safetyCritical": true,
+      "status": "PASS",
+      "testMapping": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_40_package",
+      "case": "new package/source authority",
+      "acceptance": "Utility participates in hash map; new source rejects old v4 package and v4-only auth; prior guard/134-case behavior and install DRAFT rejection preserved",
+      "elapsedSeconds": 0.028253555297851562
+    }
+  ],
+  "AUTH-LIFECYCLE-35": {
+    "status": "PASS",
+    "originalTestSourceUnchanged": true,
+    "exclusiveFirstDirectoryCreated": true,
+    "secondSameUuidDirectoryRaisesFileExistsError": true,
+    "originalImmutabilityAssertionsExecuted": true,
+    "unknownExternalPathsAccepted": false
+  },
+  "allTests": [
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_01_fresh",
+      "status": "PASS",
+      "elapsedSeconds": 0.059238433837890625
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_02_rotate",
+      "status": "PASS",
+      "elapsedSeconds": 0.08046698570251465
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_03_exact_bytes",
+      "status": "PASS",
+      "elapsedSeconds": 0.0515749454498291
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_04_archive_collision",
+      "status": "PASS",
+      "elapsedSeconds": 0.03895401954650879
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_05_old_hash",
+      "status": "PASS",
+      "elapsedSeconds": 0.028004169464111328
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_06_modes",
+      "status": "PASS",
+      "elapsedSeconds": 0.032997846603393555
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_07_owner",
+      "status": "PASS",
+      "elapsedSeconds": 0.009308099746704102
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_08_canonical_symlink",
+      "status": "PASS",
+      "elapsedSeconds": 0.028902292251586914
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_09_archive_symlink",
+      "status": "PASS",
+      "elapsedSeconds": 0.019582748413085938
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_10_concurrent",
+      "status": "PASS",
+      "elapsedSeconds": 0.0806279182434082
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_11_crash_prepared",
+      "status": "PASS",
+      "elapsedSeconds": 0.05233025550842285
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_12_crash_archived",
+      "status": "PASS",
+      "elapsedSeconds": 0.051927804946899414
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_13_crash_staged",
+      "status": "PASS",
+      "elapsedSeconds": 0.05279731750488281
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_14_crash_published",
+      "status": "PASS",
+      "elapsedSeconds": 0.0715935230255127
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_15_partial_ready",
+      "status": "PASS",
+      "elapsedSeconds": 0.06938290596008301
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_16_schema",
+      "status": "PASS",
+      "elapsedSeconds": 0.0314946174621582
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_17_expiry",
+      "status": "PASS",
+      "elapsedSeconds": 0.0267183780670166
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_18_nonce",
+      "status": "PASS",
+      "elapsedSeconds": 0.10988402366638184
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_19_auth_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.10007119178771973
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_20_missing_user",
+      "status": "PASS",
+      "elapsedSeconds": 0.027100324630737305
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_21_source_authority",
+      "status": "PASS",
+      "elapsedSeconds": 0.02898383140563965
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_22_closed",
+      "status": "PASS",
+      "elapsedSeconds": 0.013515949249267578
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_23_risk",
+      "status": "PASS",
+      "elapsedSeconds": 0.013744115829467773
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_24_loss",
+      "status": "PASS",
+      "elapsedSeconds": 0.013498306274414062
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_25_io_failure",
+      "status": "PASS",
+      "elapsedSeconds": 0.04014015197753906
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_26_no_credentials",
+      "status": "PASS",
+      "elapsedSeconds": 0.05291938781738281
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_27_approval_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.10325503349304199
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_28_mint_capture_lock",
+      "status": "PASS",
+      "elapsedSeconds": 0.0935678482055664
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_29_consume_before_constructor",
+      "status": "PASS",
+      "elapsedSeconds": 0.08464956283569336
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_32_kill_consumed",
+      "status": "PASS",
+      "elapsedSeconds": 0.1046438217163086
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_34_unexpired",
+      "status": "PASS",
+      "elapsedSeconds": 0.028655290603637695
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_35_output_immutable",
+      "status": "PASS",
+      "elapsedSeconds": 0.004279136657714844
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_36_rename_fsync",
+      "status": "PASS",
+      "elapsedSeconds": 0.003928661346435547
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_37_cli",
+      "status": "PASS",
+      "elapsedSeconds": 0.005055427551269531
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_38_privacy_chain",
+      "status": "PASS",
+      "elapsedSeconds": 0.06977200508117676
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle.test_AUTH_LIFECYCLE_40_package",
+      "status": "PASS",
+      "elapsedSeconds": 0.028253555297851562
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_01_missing_auth_before_credentials",
+      "status": "PASS",
+      "elapsedSeconds": 0.01021575927734375
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_02_explicit_draft_authority",
+      "status": "PASS",
+      "elapsedSeconds": 0.006730794906616211
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_03_cannot_authorize_install",
+      "status": "PASS",
+      "elapsedSeconds": 0.013939619064331055
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_04_strict_schema",
+      "status": "PASS",
+      "elapsedSeconds": 0.005372047424316406
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_05_static_hashes",
+      "status": "PASS",
+      "elapsedSeconds": 0.009673595428466797
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_06_raw_file_recheck",
+      "status": "PASS",
+      "elapsedSeconds": 0.00551605224609375
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_07_freshness",
+      "status": "PASS",
+      "elapsedSeconds": 0.006449699401855469
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_08_fixed_identity_tls",
+      "status": "PASS",
+      "elapsedSeconds": 0.02113485336303711
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_09_no_mutation_or_tools",
+      "status": "PASS",
+      "elapsedSeconds": 0.005013942718505859
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_10_fixture_separation",
+      "status": "PASS",
+      "elapsedSeconds": 0.01068568229675293
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_11_cli_arbitrary_inputs",
+      "status": "PASS",
+      "elapsedSeconds": 0.47973179817199707
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_12_production_auth_without_credentials",
+      "status": "PASS",
+      "elapsedSeconds": 0.02808666229248047
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_13_ledger_first_mock",
+      "status": "PASS",
+      "elapsedSeconds": 0.006975650787353516
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_14_modes_reject_bad_session",
+      "status": "PASS",
+      "elapsedSeconds": 0.008718013763427734
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_25_production_tls_before_ledger",
+      "status": "PASS",
+      "elapsedSeconds": 0.01292109489440918
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.CaptureContract.test_CAPTURE_26_runtime_guards_preserved",
+      "status": "PASS",
+      "elapsedSeconds": 0.03740644454956055
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_01",
+      "status": "PASS",
+      "elapsedSeconds": 0.00480961799621582
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_02",
+      "status": "PASS",
+      "elapsedSeconds": 0.05041670799255371
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_03",
+      "status": "PASS",
+      "elapsedSeconds": 0.004719257354736328
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_04",
+      "status": "PASS",
+      "elapsedSeconds": 0.40947628021240234
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_05",
+      "status": "PASS",
+      "elapsedSeconds": 0.009481668472290039
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_06",
+      "status": "PASS",
+      "elapsedSeconds": 0.009924173355102539
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_07",
+      "status": "PASS",
+      "elapsedSeconds": 0.009537935256958008
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_08",
+      "status": "PASS",
+      "elapsedSeconds": 0.2888915538787842
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_09",
+      "status": "PASS",
+      "elapsedSeconds": 0.000232696533203125
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_10",
+      "status": "PASS",
+      "elapsedSeconds": 0.0014183521270751953
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_29",
+      "status": "PASS",
+      "elapsedSeconds": 0.000675201416015625
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_30",
+      "status": "PASS",
+      "elapsedSeconds": 0.007964611053466797
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_32",
+      "status": "PASS",
+      "elapsedSeconds": 0.0003311634063720703
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_33",
+      "status": "PASS",
+      "elapsedSeconds": 0.00017714500427246094
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_49",
+      "status": "PASS",
+      "elapsedSeconds": 0.007833480834960938
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.Contract.test_RUNNER_D1_50",
+      "status": "PASS",
+      "elapsedSeconds": 0.04487037658691406
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_01_missing_risk",
+      "status": "PASS",
+      "elapsedSeconds": 0.0049591064453125
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_02_risk_hash",
+      "status": "PASS",
+      "elapsedSeconds": 0.0050144195556640625
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_03_risk_scope",
+      "status": "PASS",
+      "elapsedSeconds": 0.01614832878112793
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_04_explicit_operator_binding",
+      "status": "PASS",
+      "elapsedSeconds": 0.008687973022460938
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_05_expiry",
+      "status": "PASS",
+      "elapsedSeconds": 0.013037681579589844
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_06_closure",
+      "status": "PASS",
+      "elapsedSeconds": 0.005003452301025391
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_07_v4_only",
+      "status": "PASS",
+      "elapsedSeconds": 0.01995682716369629
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_08_ready_guards",
+      "status": "PASS",
+      "elapsedSeconds": 0.004595756530761719
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_09_fixture_separation",
+      "status": "PASS",
+      "elapsedSeconds": 0.012148857116699219
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_10_port_profile",
+      "status": "PASS",
+      "elapsedSeconds": 0.0055849552154541016
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_11_tcp_only",
+      "status": "PASS",
+      "elapsedSeconds": 0.004912137985229492
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_12_identity_ca_policy",
+      "status": "PASS",
+      "elapsedSeconds": 0.005032777786254883
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_13_mode_gss",
+      "status": "PASS",
+      "elapsedSeconds": 0.005757570266723633
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_19_metadata_missing",
+      "status": "PASS",
+      "elapsedSeconds": 0.004804372787475586
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_28_tool_override",
+      "status": "PASS",
+      "elapsedSeconds": 0.004261493682861328
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_32_privacy",
+      "status": "PASS",
+      "elapsedSeconds": 0.004309892654418945
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_33_durability",
+      "status": "PASS",
+      "elapsedSeconds": 0.005003452301025391
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_contract_test.TransportRiskContract.test_TLS_D4_34_scope",
+      "status": "PASS",
+      "elapsedSeconds": 0.00561833381652832
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_14_real_psql",
+      "status": "PASS",
+      "elapsedSeconds": 0.10294628143310547
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_15_no_tls",
+      "status": "PASS",
+      "elapsedSeconds": 0.0759587287902832
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_16_bad_ca",
+      "status": "PASS",
+      "elapsedSeconds": 0.06745004653930664
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_17_bad_hostname",
+      "status": "PASS",
+      "elapsedSeconds": 0.11590147018432617
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_18_proof_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.18370962142944336
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_20_backend_false",
+      "status": "PASS",
+      "elapsedSeconds": 0.16948747634887695
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_21_backend_unavailable",
+      "status": "PASS",
+      "elapsedSeconds": 0.17896556854248047
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_22_order",
+      "status": "PASS",
+      "elapsedSeconds": 4.5432000160217285
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_23_all_modes",
+      "status": "PASS",
+      "elapsedSeconds": 0.47795915603637695
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_35_atomicity_regression",
+      "status": "PASS",
+      "elapsedSeconds": 48.42020916938782
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_36_precommit_risk_expiry",
+      "status": "PASS",
+      "elapsedSeconds": 9.511040925979614
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_01_ledger_gate",
+      "status": "PASS",
+      "elapsedSeconds": 6.599163293838501
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_02_body",
+      "status": "PASS",
+      "elapsedSeconds": 4.701373100280762
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_03_raw_definition",
+      "status": "PASS",
+      "elapsedSeconds": 4.629635810852051
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_04_owner",
+      "status": "PASS",
+      "elapsedSeconds": 4.635480880737305
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_05_definer",
+      "status": "PASS",
+      "elapsedSeconds": 4.6698150634765625
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_06_search_path",
+      "status": "PASS",
+      "elapsedSeconds": 4.66049337387085
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_07_metadata",
+      "status": "PASS",
+      "elapsedSeconds": 6.088559865951538
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_08_acl",
+      "status": "PASS",
+      "elapsedSeconds": 6.145528316497803
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_09_effective",
+      "status": "PASS",
+      "elapsedSeconds": 6.843099117279053
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_10_missing",
+      "status": "PASS",
+      "elapsedSeconds": 5.188167333602905
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_11_success_order",
+      "status": "PASS",
+      "elapsedSeconds": 4.569343328475952
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_12_metadata_consistency",
+      "status": "PASS",
+      "elapsedSeconds": 6.298672914505005
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_13_acl_effective_consistency",
+      "status": "PASS",
+      "elapsedSeconds": 5.4332435131073
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_14_ledger_consistency",
+      "status": "PASS",
+      "elapsedSeconds": 4.572017192840576
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_15_same_snapshot_readonly",
+      "status": "PASS",
+      "elapsedSeconds": 4.692415952682495
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_16_rollback_phases",
+      "status": "PASS",
+      "elapsedSeconds": 5.415930986404419
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_17_fixed_inputs",
+      "status": "PASS",
+      "elapsedSeconds": 4.390329599380493
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_18_receipt",
+      "status": "PASS",
+      "elapsedSeconds": 4.370285749435425
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_19_full_coverage",
+      "status": "PASS",
+      "elapsedSeconds": 4.507993936538696
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CaptureOrder.test_CAPTURE_ORDER_20_capture_isolation",
+      "status": "PASS",
+      "elapsedSeconds": 4.312860012054443
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_15_owned_baseline_rollback",
+      "status": "PASS",
+      "elapsedSeconds": 4.594672918319702
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_16_cli_owned_adapter",
+      "status": "PASS",
+      "elapsedSeconds": 4.594525575637817
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_17_readonly_mutation_probe",
+      "status": "PASS",
+      "elapsedSeconds": 4.411425590515137
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_18_count_mismatch_early_stop",
+      "status": "PASS",
+      "elapsedSeconds": 4.626524209976196
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_19_duplicates_early_stop",
+      "status": "PASS",
+      "elapsedSeconds": 4.669480562210083
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_20_statement_digest_and_pinned_recapture",
+      "status": "PASS",
+      "elapsedSeconds": 5.119109153747559
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_21_wrong_function_body",
+      "status": "PASS",
+      "elapsedSeconds": 4.646850347518921
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_22_wrong_owner_definer_path",
+      "status": "PASS",
+      "elapsedSeconds": 5.963281631469727
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_23_wrong_acl",
+      "status": "PASS",
+      "elapsedSeconds": 4.77912712097168
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_24_wrong_versions_same_count",
+      "status": "PASS",
+      "elapsedSeconds": 4.630434513092041
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.CapturePG.test_CAPTURE_27_actual_tls_query_and_receipt_modes",
+      "status": "PASS",
+      "elapsedSeconds": 4.587850570678711
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_30_success_finalization",
+      "status": "PASS",
+      "elapsedSeconds": 4.631321430206299
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_31_gate_failure",
+      "status": "PASS",
+      "elapsedSeconds": 4.678624629974365
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_33_receipt_failure",
+      "status": "PASS",
+      "elapsedSeconds": 4.633333206176758
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.LifecyclePG.test_AUTH_LIFECYCLE_39_session_order",
+      "status": "PASS",
+      "elapsedSeconds": 4.7728800773620605
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_11",
+      "status": "PASS",
+      "elapsedSeconds": 4.546700716018677
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_12",
+      "status": "PASS",
+      "elapsedSeconds": 5.42863917350769
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_13",
+      "status": "PASS",
+      "elapsedSeconds": 4.583317995071411
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_14",
+      "status": "PASS",
+      "elapsedSeconds": 10.326116561889648
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_15",
+      "status": "PASS",
+      "elapsedSeconds": 4.52243971824646
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_16",
+      "status": "PASS",
+      "elapsedSeconds": 5.6753458976745605
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_17",
+      "status": "PASS",
+      "elapsedSeconds": 4.940754652023315
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_18",
+      "status": "PASS",
+      "elapsedSeconds": 9.592763900756836
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_19",
+      "status": "PASS",
+      "elapsedSeconds": 4.642231464385986
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_20",
+      "status": "PASS",
+      "elapsedSeconds": 9.497748613357544
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_21",
+      "status": "PASS",
+      "elapsedSeconds": 9.494788646697998
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_22",
+      "status": "PASS",
+      "elapsedSeconds": 9.489357471466064
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_23",
+      "status": "PASS",
+      "elapsedSeconds": 9.81376051902771
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_24",
+      "status": "PASS",
+      "elapsedSeconds": 10.11559009552002
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_25",
+      "status": "PASS",
+      "elapsedSeconds": 9.490754842758179
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_26",
+      "status": "PASS",
+      "elapsedSeconds": 21.592639684677124
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_27",
+      "status": "PASS",
+      "elapsedSeconds": 4.329314231872559
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_28",
+      "status": "PASS",
+      "elapsedSeconds": 4.380352735519409
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_31",
+      "status": "PASS",
+      "elapsedSeconds": 4.59695029258728
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_43",
+      "status": "PASS",
+      "elapsedSeconds": 19.766245365142822
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_44",
+      "status": "PASS",
+      "elapsedSeconds": 9.461246728897095
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_45",
+      "status": "PASS",
+      "elapsedSeconds": 9.317194700241089
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_46",
+      "status": "PASS",
+      "elapsedSeconds": 9.909138441085815
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_47",
+      "status": "PASS",
+      "elapsedSeconds": 9.240091562271118
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_48",
+      "status": "PASS",
+      "elapsedSeconds": 9.42646336555481
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_34",
+      "status": "PASS",
+      "elapsedSeconds": 0.021622180938720703
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_35",
+      "status": "PASS",
+      "elapsedSeconds": 0.008217811584472656
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_36",
+      "status": "PASS",
+      "elapsedSeconds": 0.06249499320983887
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_37",
+      "status": "PASS",
+      "elapsedSeconds": 0.016182661056518555
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_38",
+      "status": "PASS",
+      "elapsedSeconds": 0.01497793197631836
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_39",
+      "status": "PASS",
+      "elapsedSeconds": 0.6522023677825928
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_40",
+      "status": "PASS",
+      "elapsedSeconds": 1.3519179821014404
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_41",
+      "status": "PASS",
+      "elapsedSeconds": 0.0004813671112060547
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.Backup.test_RUNNER_D1_42",
+      "status": "PASS",
+      "elapsedSeconds": 1.0635502338409424
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_24_full_dump",
+      "status": "PASS",
+      "elapsedSeconds": 0.4433014392852783
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_25_schema_dump",
+      "status": "PASS",
+      "elapsedSeconds": 0.40422773361206055
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_26_roles_dump",
+      "status": "PASS",
+      "elapsedSeconds": 0.17182612419128418
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_27_each_tool_tls_negative",
+      "status": "PASS",
+      "elapsedSeconds": 1.9070498943328857
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_29_replay",
+      "status": "PASS",
+      "elapsedSeconds": 0.3083820343017578
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_30_exit_output",
+      "status": "PASS",
+      "elapsedSeconds": 0.09868693351745605
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_31_manifest",
+      "status": "PASS",
+      "elapsedSeconds": 8.704071283340454
+    },
+    {
+      "id": "teaching_agent_single_migration_runner_postgres_test.PG.test_RUNNER_D1_51",
+      "status": "PASS",
+      "elapsedSeconds": 113.64228582382202
+    }
+  ],
+  "counts": {
+    "PASS": 174,
+    "FAIL": 0,
+    "ERROR": 0,
+    "SKIP": 0,
+    "XFAIL": 0,
+    "XPASS": 0
+  },
+  "safetyCriticalSkips": 0,
+  "safetyCriticalNotRun": 0,
+  "requiredNotRun": 0,
+  "suiteCounts": {
+    "teaching_agent_single_migration_runner_contract_test.AuthorizationLifecycle": 36,
+    "teaching_agent_single_migration_runner_contract_test.CaptureContract": 16,
+    "teaching_agent_single_migration_runner_contract_test.Contract": 16,
+    "teaching_agent_single_migration_runner_contract_test.TransportRiskContract": 18,
+    "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS": 11,
+    "teaching_agent_single_migration_runner_postgres_test.CaptureOrder": 20,
+    "teaching_agent_single_migration_runner_postgres_test.CapturePG": 11,
+    "teaching_agent_single_migration_runner_postgres_test.LifecyclePG": 4,
+    "teaching_agent_single_migration_runner_postgres_test.PG": 26,
+    "teaching_agent_single_migration_runner_backup_test.Backup": 9,
+    "teaching_agent_single_migration_runner_backup_test.BackupClientTLS": 7
+  },
+  "ownedPostgres": {
+    "status": "PASS",
+    "postgresModuleRunnerCases": 72,
+    "databaseIntegrationCasesExcludingHistoricalRegressionDriver": 71
+  },
+  "ownedTLS": {
+    "status": "PASS",
+    "caseCount": 18,
+    "cases": [
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_14_real_psql",
+        "status": "PASS",
+        "elapsedSeconds": 0.10294628143310547
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_15_no_tls",
+        "status": "PASS",
+        "elapsedSeconds": 0.0759587287902832
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_16_bad_ca",
+        "status": "PASS",
+        "elapsedSeconds": 0.06745004653930664
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_17_bad_hostname",
+        "status": "PASS",
+        "elapsedSeconds": 0.11590147018432617
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_18_proof_replay",
+        "status": "PASS",
+        "elapsedSeconds": 0.18370962142944336
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_20_backend_false",
+        "status": "PASS",
+        "elapsedSeconds": 0.16948747634887695
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_21_backend_unavailable",
+        "status": "PASS",
+        "elapsedSeconds": 0.17896556854248047
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_22_order",
+        "status": "PASS",
+        "elapsedSeconds": 4.5432000160217285
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_23_all_modes",
+        "status": "PASS",
+        "elapsedSeconds": 0.47795915603637695
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_35_atomicity_regression",
+        "status": "PASS",
+        "elapsedSeconds": 48.42020916938782
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_postgres_test.ActualClientTLS.test_TLS_D4_36_precommit_risk_expiry",
+        "status": "PASS",
+        "elapsedSeconds": 9.511040925979614
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_24_full_dump",
+        "status": "PASS",
+        "elapsedSeconds": 0.4433014392852783
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_25_schema_dump",
+        "status": "PASS",
+        "elapsedSeconds": 0.40422773361206055
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_26_roles_dump",
+        "status": "PASS",
+        "elapsedSeconds": 0.17182612419128418
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_27_each_tool_tls_negative",
+        "status": "PASS",
+        "elapsedSeconds": 1.9070498943328857
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_29_replay",
+        "status": "PASS",
+        "elapsedSeconds": 0.3083820343017578
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_30_exit_output",
+        "status": "PASS",
+        "elapsedSeconds": 0.09868693351745605
+      },
+      {
+        "id": "teaching_agent_single_migration_runner_backup_test.BackupClientTLS.test_TLS_D4_31_manifest",
+        "status": "PASS",
+        "elapsedSeconds": 8.704071283340454
+      }
+    ],
+    "tools": [
+      "psql",
+      "pg_dump",
+      "pg_dumpall"
+    ],
+    "skipped": 0
+  },
+  "ownedTestDBConnections": {
+    "observedPersistentSessionAttempts": 595,
+    "observedPersistentSessionConstructorSuccesses": 592,
+    "scope": "maintenance_transport._Session.__init__ calls in this fresh Python validation process",
+    "totalOwnedConnections": "NOT_EXHAUSTIVELY_INSTRUMENTED",
+    "limitation": "Separate one-shot psql/pg_dump/pg_dumpall and Node regression clients are not included in this counter. 592 is the observed persistent-session count, not an exhaustive all-client connection total.",
+    "productionDBConnections": 0
+  },
+  "historicalRegression": {
+    "status": "PASS",
+    "passed": 172,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "node": {
+      "metrics": {
+        "tests": 155,
+        "pass": 155,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "evidence": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression-output-root/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/cc00a0c0aa64451f9e2ff7d752b48699/existing-regression.log",
+        "sha256": "f87b72430106b90f0ff0d8208d7e9a4f6612b807d04fbf1037632388a3fc1742"
+      }
+    },
+    "r5b": {
+      "tests": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression-output-root/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/cc00a0c0aa64451f9e2ff7d752b48699/r5b-historical-unit.log",
+        "sha256": "44492a4c775a404aea85445a0ca3b337f55a593cd667a7f479546f2c15143e03"
+      }
+    }
+  },
+  "allValidationFiles": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/backup.log",
+      "sha256": "f1150ea395d2cde466fe5ecbb95d64130fdb81d5008a0003c18a97ed32dea024"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/contract.log",
+      "sha256": "007ed695478ffe599f844f3bf32df1cd78ab9664ee8e04ed187a837c6bdc597a"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/discovery.json",
+      "sha256": "4ebcc14624550c2626795f98ed9ad67b7a6d79751b693922604e0ac744f80a46"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/postgres.log",
+      "sha256": "7e5e5b0f48d916185b953622188cd600e80920b67173e5b2c6e4d4eb42721359"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression-output-root/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/cc00a0c0aa64451f9e2ff7d752b48699/existing-regression.log",
+      "sha256": "f87b72430106b90f0ff0d8208d7e9a4f6612b807d04fbf1037632388a3fc1742"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression-output-root/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/cc00a0c0aa64451f9e2ff7d752b48699/r5b-historical-unit.log",
+      "sha256": "44492a4c775a404aea85445a0ca3b337f55a593cd667a7f479546f2c15143e03"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression.log",
+      "sha256": "1882cdddb0af00278185ed262eea2aa8a2c934b4f0b39597e371ed9c697cfa1c"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/summary.json",
+      "sha256": "6f0db0312bf1fd7167f542f449aa3f535d8f3e81285f87243a5862f3afc7bf0a"
+    }
+  ],
+  "regressionReportingPaths": [
+    "OWNED_TEMP/32/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/fbf39f1e37ec496b85b33e33670bca8a",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/regression-output-root/docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-validation/cc00a0c0aa64451f9e2ff7d752b48699"
+  ],
+  "productionBoundaries": {
+    "productionAuthorizationMint": 0,
+    "productionCredentialAccess": 0,
+    "productionCredentialUse": 0,
+    "productionDBConnections": 0,
+    "productionDBReads": 0,
+    "productionDBWrites": 0,
+    "productionCapture": 0,
+    "productionBackup": 0,
+    "productionRestore": 0,
+    "planSeal": 0,
+    "migrationInstall": 0,
+    "deployment": 0,
+    "pm2Mutation": 0,
+    "providerExecution": 0,
+    "agentRuns": 0,
+    "publish": 0,
+    "repoSourceChanges": 0,
+    "testSourceChanges": 0,
+    "migrationChanges": 0,
+    "productChanges": 0,
+    "dependencyChanges": 0,
+    "legacyCleanupCandidates": 0,
+    "safeDeletions": 0
+  },
+  "postValidationLocks": {
+    "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-r1-lock-recheck.json",
+    "sha256": "dc05c8705d133ebfd3a67ef42d75dd5b0a70e9045f3091a8b61e47d4265684fe"
+  },
+  "fullDatabaseConnectionCountingIsNotClaimed": true
+}

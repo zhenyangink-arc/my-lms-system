@@ -1,0 +1,870 @@
+{
+  "stage": "R7D-C3B-RUNNER-P1E-A2-R1",
+  "contract": "authorization-lifecycle-revalidation-lock-recheck/1",
+  "recordedAt": "2026-09-20T08:06:16.974649+00:00",
+  "status": "PASS",
+  "preflightSnapshotPath": "/tmp/uply-p1e-a2-r1-preflight.json",
+  "preflightSnapshotSha256": "c3a8c9f1c56a8a5ee17a876da00bd1a28d5355d3ef14c2201f0639e4cff1a317",
+  "filesRehashed": 3824,
+  "existingHistoricalEvidenceFilesChecked": 1591,
+  "fileChanges": [],
+  "newPathsAtCheck": [
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a2-r1-wrapper-fix.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/discovery.json",
+    "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-a2-r1-validation/4705661fc6554616bc6e884cdc04e66b/summary.json"
+  ],
+  "unexpectedAddedPaths": [],
+  "implementationLocks": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "expectedSha256": "55a80580e31b76038495a23648bd1efb928de86e29aef5a18c355171ca1230af",
+      "actualSha256": "55a80580e31b76038495a23648bd1efb928de86e29aef5a18c355171ca1230af",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "expectedSha256": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+      "actualSha256": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "expectedSha256": "c70db40cc9d8322eac271f827196c56e47f63517ccd8b1df9af118937e782016",
+      "actualSha256": "c70db40cc9d8322eac271f827196c56e47f63517ccd8b1df9af118937e782016",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "expectedSha256": "4fdfa3516b451bc91ae711628314c9b45b36997c2b284862074014d400cde449",
+      "actualSha256": "4fdfa3516b451bc91ae711628314c9b45b36997c2b284862074014d400cde449",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "expectedSha256": "599acfedfaa5a9947c253b18d5e1e08127e97069a82f93f607f1b97b85266862",
+      "actualSha256": "599acfedfaa5a9947c253b18d5e1e08127e97069a82f93f607f1b97b85266862",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/capture_authorization.py",
+      "expectedSha256": "8451bc6b17c7fbc30236138e62f2fc4ac420f4cf431e518f620a7c06af311e77",
+      "actualSha256": "8451bc6b17c7fbc30236138e62f2fc4ac420f4cf431e518f620a7c06af311e77",
+      "status": "MATCH"
+    }
+  ],
+  "unchangedBoundaryLocks": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "expectedSha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "actualSha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "status": "MATCH"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "expectedSha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "actualSha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "status": "MATCH"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "expectedSha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "actualSha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "actualSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "actualSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "actualSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "actualSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "actualSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "expectedSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "actualSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "expectedSha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "actualSha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v4.json",
+      "expectedSha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+      "actualSha256": "3da6c591143c8b3d0cfcd66a01237faab7a0c0bb50ad1f33a734e28e8e9ba068",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-historical-evidence-loss-acceptance.json",
+      "expectedSha256": "1898ed2767ab2f750e3719d54845a1fb91dc3ed7e05a2f1f22e0107ef5071ffe",
+      "actualSha256": "1898ed2767ab2f750e3719d54845a1fb91dc3ed7e05a2f1f22e0107ef5071ffe",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+      "expectedSha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "actualSha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+      "expectedSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "actualSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "actualSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "actualSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "actualSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-historical-evidence-loss-acceptance-record.json",
+      "expectedSha256": "b74ee5ba2a55d5a496763ad84b64fd25b5f5d3a9b65f9a7e06d1ccdfd380bfe3",
+      "actualSha256": "b74ee5ba2a55d5a496763ad84b64fd25b5f5d3a9b65f9a7e06d1ccdfd380bfe3",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "expectedSha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "actualSha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "expectedSha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "actualSha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "expectedSha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "actualSha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "expectedSha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "actualSha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "expectedSha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "actualSha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "expectedSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "actualSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "expectedSha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "actualSha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "actualSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "expectedSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "actualSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-f1-receipt-directory-audit.json",
+      "expectedSha256": "c9ec72c464c76ba49a4c4bbf1bfbe2c8c04fb1ea1c729ab0b648eeab13ae9ac7",
+      "actualSha256": "c9ec72c464c76ba49a4c4bbf1bfbe2c8c04fb1ea1c729ab0b648eeab13ae9ac7",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-f2-receipt-directory-fix.json",
+      "expectedSha256": "413db75399233402e29dd3d60ff742b4bc8decca32d6088fe673361165da7f07",
+      "actualSha256": "413db75399233402e29dd3d60ff742b4bc8decca32d6088fe673361165da7f07",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-2-result.json",
+      "expectedSha256": "0336746dc3083796990af1474a85390f511da1bc7f8b00e24fb4edfc2dbefec6",
+      "actualSha256": "0336746dc3083796990af1474a85390f511da1bc7f8b00e24fb4edfc2dbefec6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-2-review.json",
+      "expectedSha256": "93eadf7ca71796799fc91a377db68395d40090c8dd8bcf2de6ba8ce8239a8fa5",
+      "actualSha256": "93eadf7ca71796799fc91a377db68395d40090c8dd8bcf2de6ba8ce8239a8fa5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-result.json",
+      "expectedSha256": "e5457f9f39c245fbf2d2f9f499006bf767c3b14a60f2bd7a49837216347e49df",
+      "actualSha256": "e5457f9f39c245fbf2d2f9f499006bf767c3b14a60f2bd7a49837216347e49df",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-v4-capture-review.json",
+      "expectedSha256": "b2dd10eeca0ab05e73b2029f9edbb4a570797131f78f4ee19ab49eda88b01c93",
+      "actualSha256": "b2dd10eeca0ab05e73b2029f9edbb4a570797131f78f4ee19ab49eda88b01c93",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-history-recovery-failed.json",
+      "expectedSha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72",
+      "actualSha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "expectedSha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "actualSha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r2-decision.json",
+      "expectedSha256": "353c248db045ad104026a86c5c5c007b641f3a1273fa173aa630817450811bcd",
+      "actualSha256": "353c248db045ad104026a86c5c5c007b641f3a1273fa173aa630817450811bcd",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r2-evidence-map.json",
+      "expectedSha256": "dada36feef876eb957fdd416fc096a04cbffac521f7141194c0b9e277d61f049",
+      "actualSha256": "dada36feef876eb957fdd416fc096a04cbffac521f7141194c0b9e277d61f049",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-r3-lock-recheck.json",
+      "expectedSha256": "5c6bdfa64210c656fa438ed9b34fcdf753ad14e03a6b7e07a4c2f2bac29eb33c",
+      "actualSha256": "5c6bdfa64210c656fa438ed9b34fcdf753ad14e03a6b7e07a4c2f2bac29eb33c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "expectedSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "actualSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "expectedSha256": "cb164753f529dfe2d0b1c87db46f66ea1efec8409f88ae467ce41f0f8628d9f6",
+      "actualSha256": "cb164753f529dfe2d0b1c87db46f66ea1efec8409f88ae467ce41f0f8628d9f6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "expectedSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "actualSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "expectedSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "actualSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "expectedSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "actualSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "expectedSha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "actualSha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "expectedSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "actualSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+      "expectedSha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "actualSha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+      "expectedSha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "actualSha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/authorization-identity.json",
+      "expectedSha256": "74a2d4eddcdb6d36bc16eb43ea99458526bce116524432f4014a7e9d6bfae306",
+      "actualSha256": "74a2d4eddcdb6d36bc16eb43ea99458526bce116524432f4014a7e9d6bfae306",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/client-tls-proof.json",
+      "expectedSha256": "bcd53e1279a6a5efdecf3e77c102a10cbee13e446d922a037627e3c4b709b2db",
+      "actualSha256": "bcd53e1279a6a5efdecf3e77c102a10cbee13e446d922a037627e3c4b709b2db",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/command-result.json",
+      "expectedSha256": "ae8dbcb6a91f74a60503e45270bfa32ccf91fcd017fd112cfdcb615f90f7acda",
+      "actualSha256": "ae8dbcb6a91f74a60503e45270bfa32ccf91fcd017fd112cfdcb615f90f7acda",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/local-preflight.json",
+      "expectedSha256": "cf8d1c01d43aea063568518f4d88908370d863f6acfd53657c3d0aad451a1c15",
+      "actualSha256": "cf8d1c01d43aea063568518f4d88908370d863f6acfd53657c3d0aad451a1c15",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture-2/post-capture-lock-check.json",
+      "expectedSha256": "c06cf023c56d127f5c1ad454779796f0c3cbfefb2d6178531e5ab693b451dad4",
+      "actualSha256": "c06cf023c56d127f5c1ad454779796f0c3cbfefb2d6178531e5ab693b451dad4",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/attempt.json",
+      "expectedSha256": "5a722fd500559d7b436e80aad87a28228e23bbbfeb753f3007c39f690da2d7a1",
+      "actualSha256": "5a722fd500559d7b436e80aad87a28228e23bbbfeb753f3007c39f690da2d7a1",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/authorization-identity.json",
+      "expectedSha256": "7adb2beedf505ba4fc00db6cb7ededd82e3125ccba95bcbfa755515f1a43db8c",
+      "actualSha256": "7adb2beedf505ba4fc00db6cb7ededd82e3125ccba95bcbfa755515f1a43db8c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/client-tls-proof.json",
+      "expectedSha256": "57cc782664c28f3ccb4bff6ca21632244748a65cf57df0507549ce5b1a6fd331",
+      "actualSha256": "57cc782664c28f3ccb4bff6ca21632244748a65cf57df0507549ce5b1a6fd331",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/command-result.json",
+      "expectedSha256": "732ae554d5d7480c1f60b180dd2b6b3aad8c70a0992bb3b2aafded419a8d7587",
+      "actualSha256": "732ae554d5d7480c1f60b180dd2b6b3aad8c70a0992bb3b2aafded419a8d7587",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/failure-analysis.json",
+      "expectedSha256": "f4f1edd460e8a3f78bb48b1183d4e26fb3b865e2b2af5492ea028ea281000fa5",
+      "actualSha256": "f4f1edd460e8a3f78bb48b1183d4e26fb3b865e2b2af5492ea028ea281000fa5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/local-preflight.json",
+      "expectedSha256": "052b4980ca37db219aead2329556b505bc5404d50a11730b7f35d60609e10748",
+      "actualSha256": "052b4980ca37db219aead2329556b505bc5404d50a11730b7f35d60609e10748",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1e-v4-capture/post-capture-lock-check.json",
+      "expectedSha256": "1737ce81eb29b39e5690248511e9d749ce60c13cd3d7e4e9da94c638895084df",
+      "actualSha256": "1737ce81eb29b39e5690248511e9d749ce60c13cd3d7e4e9da94c638895084df",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "expectedSha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "actualSha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "expectedSha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "actualSha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "expectedSha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "actualSha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "expectedSha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "actualSha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "expectedSha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "actualSha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+      "expectedSha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "actualSha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "expectedSha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "actualSha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "expectedSha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "actualSha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "expectedSha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "actualSha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "expectedSha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "actualSha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "expectedSha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "actualSha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "expectedSha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "actualSha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "expectedSha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "actualSha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "expectedSha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "actualSha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "expectedSha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "actualSha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "expectedSha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "actualSha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "expectedSha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "actualSha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "expectedSha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "actualSha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "expectedSha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "actualSha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "expectedSha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "actualSha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "expectedSha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "actualSha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "expectedSha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "actualSha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "expectedSha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "actualSha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "expectedSha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "actualSha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "expectedSha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "actualSha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "expectedSha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "actualSha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "status": "MATCH"
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "expectedSha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "actualSha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "expectedSha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "actualSha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "expectedSha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "actualSha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "expectedSha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "actualSha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "expectedSha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "actualSha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "expectedSha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "actualSha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "status": "MATCH"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "expectedSha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "actualSha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "expectedSha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "actualSha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "expectedSha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "actualSha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "expectedSha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "actualSha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "expectedSha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "actualSha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "expectedSha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "actualSha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "expectedSha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "actualSha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "expectedSha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "actualSha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "status": "MATCH"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "expectedSha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+      "actualSha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1e-a1-authorization-lifecycle-design.json",
+      "expectedSha256": "e7dc5fe109ad11841402288360afa12bb6f6a70fc8a471dab4c6f88c171b9f70",
+      "actualSha256": "e7dc5fe109ad11841402288360afa12bb6f6a70fc8a471dab4c6f88c171b9f70",
+      "status": "MATCH"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-authorization-lifecycle-implementation.json",
+      "expectedSha256": "8364664ed4092211b0b0a7851d48c23603e0d1d8981df96b622639f758b5a440",
+      "actualSha256": "8364664ed4092211b0b0a7851d48c23603e0d1d8981df96b622639f758b5a440",
+      "status": "MATCH"
+    }
+  ],
+  "runtimePackageHashes": {
+    "runner.py": "55a80580e31b76038495a23648bd1efb928de86e29aef5a18c355171ca1230af",
+    "plan_contract.py": "3b6d200b77463327ea5529d281d610292dfab905673abff3de6f49a063d3405e",
+    "plan_registry.json": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+    "checks.py": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+    "transaction.py": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+    "maintenance_transport.py": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+    "backup_adapter.py": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+    "receipts.py": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+    "target_profiles.json": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+    "capture_authorization.py": "8451bc6b17c7fbc30236138e62f2fc4ac420f4cf431e518f620a7c06af311e77"
+  },
+  "operationalPackageEntries": 10,
+  "operationalPackageDigest": "3a809cda82f6981302f794fc4890806a739160e82b79ee5c8c263aa81b710e30",
+  "productionRuntime": [
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/acl-000-v1.capture.json",
+      "pre": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3022151,
+        "device": 66306,
+        "mtimeNs": 1789884101520766189,
+        "ctimeNs": 1789884101522763849,
+        "symlink": false,
+        "sha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31"
+      },
+      "post": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3022151,
+        "device": 66306,
+        "mtimeNs": 1789884101520766189,
+        "ctimeNs": 1789884101522763849,
+        "symlink": false,
+        "sha256": "1056fa492a3fb08e8bb819cb98a257ec994c91adca1fa65e961f6ac28595cd31"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals",
+      "pre": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3015414,
+        "device": 66306,
+        "mtimeNs": 1789884101522763849,
+        "ctimeNs": 1789884101522763849,
+        "symlink": false,
+        "sha256": null
+      },
+      "post": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3015414,
+        "device": 66306,
+        "mtimeNs": 1789884101522763849,
+        "ctimeNs": 1789884101522763849,
+        "symlink": false,
+        "sha256": null
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops/receipts",
+      "pre": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308691,
+        "device": 66306,
+        "mtimeNs": 1789884102194976421,
+        "ctimeNs": 1789887326312683799,
+        "symlink": false,
+        "sha256": null
+      },
+      "post": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308691,
+        "device": 66306,
+        "mtimeNs": 1789884102194976421,
+        "ctimeNs": 1789887326312683799,
+        "symlink": false,
+        "sha256": null
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/home/yangzhen/.config/uply-first-enable-20260910/migration-approvals/acl-000-v1.capture.previous-f0528d99a37efeac9d4e4cc68eedd6501fbb865c1ffd4505a003e1e9812c2ce8.json",
+      "pre": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3022072,
+        "device": 66306,
+        "mtimeNs": 1789884101518525718,
+        "ctimeNs": 1789884101518525718,
+        "symlink": false,
+        "sha256": "f0528d99a37efeac9d4e4cc68eedd6501fbb865c1ffd4505a003e1e9812c2ce8"
+      },
+      "post": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3022072,
+        "device": 66306,
+        "mtimeNs": 1789884101518525718,
+        "ctimeNs": 1789884101518525718,
+        "symlink": false,
+        "sha256": "f0528d99a37efeac9d4e4cc68eedd6501fbb865c1ffd4505a003e1e9812c2ce8"
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops/receipts/transport-invocations",
+      "pre": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308692,
+        "device": 66306,
+        "mtimeNs": 1789884102195938873,
+        "ctimeNs": 1789884102195938873,
+        "symlink": false,
+        "sha256": null
+      },
+      "post": {
+        "mode": 16832,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308692,
+        "device": 66306,
+        "mtimeNs": 1789884102195938873,
+        "ctimeNs": 1789884102195938873,
+        "symlink": false,
+        "sha256": null
+      },
+      "unchanged": true
+    },
+    {
+      "path": "/home/yangzhen/projects/my-lms-system/build/r7dc3b-exact-migration-ops/receipts/transport-invocations/3a0c145192984f5f96130a968a9842ea.json",
+      "pre": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308693,
+        "device": 66306,
+        "mtimeNs": 1789884102195938873,
+        "ctimeNs": 1789884102195938873,
+        "symlink": false,
+        "sha256": "b6f1f53c611100f4edd8ac2bec03a7109e889eda99626fa31619a58e84ed12e2"
+      },
+      "post": {
+        "mode": 33152,
+        "uid": 1001,
+        "gid": 1001,
+        "inode": 3308693,
+        "device": 66306,
+        "mtimeNs": 1789884102195938873,
+        "ctimeNs": 1789884102195938873,
+        "symlink": false,
+        "sha256": "b6f1f53c611100f4edd8ac2bec03a7109e889eda99626fa31619a58e84ed12e2"
+      },
+      "unchanged": true
+    }
+  ],
+  "productionRuntimeTreeUnchanged": true,
+  "productionLifecycleStateCreated": false,
+  "productionAuthorizationUntouched": true,
+  "oldA2History": "PRESERVED_BLOCKED_HISTORY",
+  "wrapperLocks": {
+    "oldPath": "/tmp/uply-p1e-a2-validate.py",
+    "expectedOldSha256": "394ef58b96d62de18ee2632462ee91d2e36d23d8f4dc8eba58b0290b374993eb",
+    "actualOldSha256": "394ef58b96d62de18ee2632462ee91d2e36d23d8f4dc8eba58b0290b374993eb",
+    "newPath": "/tmp/uply-p1e-a2-r1-validate.py",
+    "newSha256": "c39075525d3e47ed114d3819bef8c18119080857671e3b0387778693c9df1a6a"
+  },
+  "repoSourceChanges": 0,
+  "testSourceChanges": 0,
+  "migrationChanges": 0,
+  "productChanges": 0,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "candidateContainsLifecycleSource": "NOT_CLAIMED",
+  "currentV4": "HISTORICAL_ONLY",
+  "v5Required": true,
+  "v5Generated": false,
+  "knownHistoricalLossRestored": false,
+  "productionAccess": {
+    "credentials": 0,
+    "DBConnections": 0,
+    "DBReads": 0,
+    "DBWrites": 0
+  }
+}

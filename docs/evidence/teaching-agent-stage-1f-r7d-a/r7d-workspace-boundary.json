@@ -1,0 +1,31 @@
+{
+  "stage": "R7D-A",
+  "productFilesChanged": 0,
+  "auditedWorkspaceSourceHashes": "UNCHANGED",
+  "deployedSourceHashes": "35 MATCH",
+  "currentBuild": "KaSWaVYOIk7ZjWGpvVWIf",
+  "deployment": 0,
+  "PM2Mutation": 0,
+  "migration": 0,
+  "currentDbWrites": 0,
+  "agentRuns": 0,
+  "provider": 0,
+  "scope": "DISABLED",
+  "privateB3FileHashes": {
+    "dispatch-0.json": "f271b57a82c78b10a71bbd52e92282118f5d0a94381e0de6f5a043e3cc16e3c1",
+    "dispatch-1.json": "24901b4b7f103246ce7b6f7e59256e75fe7b56da2ae667328971a8d7a7a6ca28",
+    "execution-approval.json": "4ba4e144e419e2b2176bd1f1c9922b663205d99db82c32d1f6d98b41e45f3497",
+    "disabled": "67577853f9e62465bd81604b8e26d3e06c047debf73209c53d2fad0b4f2aba01",
+    "scenario.json": "136cdbf405eb8e6b14b99b00622ec602be62e6e8a49b718ed128599fc485f326"
+  },
+  "testResults": {
+    "passed": 55,
+    "failed": 0,
+    "skipped": 1,
+    "scope": "existing Tools/Core/Domain Port synthetic read fixtures; no coordinator/provider/network",
+    "skip": "optional isolated PostgreSQL test not enabled",
+    "logSha256": "caf53bb2eaaca66f0c003357dc1288f8986cbef94c7470bc07b34e14ca279bec"
+  },
+  "newToolTests": "PLANNED; not implemented/executed",
+  "R7DADeployApproval": "NOT REQUIRED (audit/design only)"
+}

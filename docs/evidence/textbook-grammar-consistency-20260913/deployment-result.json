@@ -1,0 +1,69 @@
+{
+  "completedAt": "2026-09-13T04:30:15.862Z",
+  "entry": "https://kmgwak-system-product-name.taila18cd5.ts.net:8443",
+  "https": [
+    {
+      "path": "/",
+      "status": 200,
+      "loginGuard": null
+    },
+    {
+      "path": "/platform/dashboard/admin/apps/korean/textbooks",
+      "status": 200,
+      "loginGuard": true
+    }
+  ],
+  "buildId": "5Fa4thXL2m4EcFA5-Qx5R",
+  "candidateDirectory": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS",
+  "finalCandidateDigest": "b7c2735202d74fe8dabf3c9be0efc3e2a668dbf21e3b600aa63aae9249299bfd",
+  "backup": {
+    "directory": "/home/yangzhen/backups/uply-first-enable-20260910/grammar-2026-09-13T02-56-47-448Z.yjN7w6",
+    "snapshotTime": "2026-09-13T03:22:45.723Z",
+    "bytes": 5746105,
+    "sha256": "843a2b7e74708f2992265a963618cf69b9c4acc491ecc328ccbb4362c54a7b8a",
+    "restoreChecks": 22,
+    "restorePassed": true,
+    "tables": 230,
+    "rows": 21290,
+    "mediaObjectsBackedUp": false
+  },
+  "productionMigrations": [
+    {
+      "file": "202609130003_runtime_authoring_nonretryable_error.sql",
+      "version": "202609130003",
+      "sha256": "0c5a16609d3c7196284f86cecb96f250988d2ff78834a92d8e0cce5966edd73d"
+    },
+    {
+      "file": "202609130001_textbook_grammar_authoring.sql",
+      "version": "202609130001",
+      "sha256": "a60e244ae46099ded2547d323f0311e20a5d4c87b85c0f3b8e8d52d674e6be5a"
+    },
+    {
+      "file": "202609130002_textbook_grammar_practice_binding.sql",
+      "version": "202609130002",
+      "sha256": "cacb86eacfd3777492be47c6941456b43460d870c88c9269b735a863c82b2ed8"
+    }
+  ],
+  "atomicMigrationBatch": true,
+  "productionDeployment": true,
+  "maintenance": false,
+  "ownerBrowserE2E": false,
+  "teachingContentEdited": false,
+  "studentRecordsReset": false,
+  "mediaObjectsModified": false,
+  "mainWorkspaceBusinessFilesModified": false,
+  "otherServicesChanged": false,
+  "existingConfigAndCohortChanged": false,
+  "previousBuild": "/home/yangzhen/releases/uply-first-enable-20260910/source/.next-before-grammar-1789271693244",
+  "previousSourceFiles": "/home/yangzhen/releases/uply-first-enable-20260910/grammar-consistency-2026-09-13T02-56-47-448Z.GO1GuS/previous-source-files",
+  "temporaryContainersDisposed": [
+    {
+      "name": "uply-grammar-restore-2026-09-13t02-56-47-448z-client",
+      "kind": "private-client"
+    },
+    {
+      "name": "uply-grammar-restore-2026-09-13t02-56-47-448z",
+      "kind": "isolated-restore"
+    }
+  ]
+}

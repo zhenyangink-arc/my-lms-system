@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T08:07:32.606Z",
+  "refreshPerformed": true,
+  "nodeCount": 8,
+  "orderedTitles": [
+    "今天认识韩文字母",
+    "韩文字母怎么组成？",
+    "先认识基础元音",
+    "再认识基础辅音",
+    "把辅音和元音放在一起",
+    "一个音节里面有什么？",
+    "一起试一试",
+    "今天学了什么？"
+  ],
+  "allEightVisible": true,
+  "targetContext": "韩文字母入门 / 第0章 / 课前导航",
+  "version": 1,
+  "statusDraft": true,
+  "previewExecuted": false,
+  "publishExecuted": false,
+  "chromeLeftOpen": true,
+  "sessionSecretsReadOrExported": false
+}

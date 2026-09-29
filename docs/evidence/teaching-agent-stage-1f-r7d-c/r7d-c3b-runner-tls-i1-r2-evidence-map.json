@@ -1,0 +1,2585 @@
+{
+  "stage": "R7D-C3B-RUNNER-TLS-I1-R2",
+  "recordedAt": "2026-09-20T05:38:30.870607+00:00",
+  "mode": "DESIGN_AUDIT_APPROVAL_PROPOSAL_ONLY",
+  "scope": "R7D-C3B_ONLY",
+  "operationalSourceChanges": 0,
+  "testSourceChanges": 0,
+  "readmeChanges": 0,
+  "productChanges": 0,
+  "migrationChanges": 0,
+  "currentDBConnections": 0,
+  "currentDBReads": 0,
+  "currentDBWrites": 0,
+  "productionCredentialAccess": 0,
+  "productionCredentialUse": 0,
+  "captureRetry": 0,
+  "migrationInstall": 0,
+  "productionBackup": 0,
+  "productionRestore": 0,
+  "deployment": 0,
+  "pm2Mutation": 0,
+  "agentRuns": 0,
+  "providerExecution": 0,
+  "publish": 0,
+  "planSeal": 0,
+  "testsRerun": 0,
+  "candidate": "KeQ6bud_Us1ED6hnG7YB8",
+  "candidateRebuild": false,
+  "production000": "DRAFT_NOT_EXECUTABLE",
+  "controlledPreflightV4": "NOT_GENERATED",
+  "legacyCleanupCandidates": 0,
+  "safeDeletions": 0,
+  "contract": "historical-evidence-loss-evidence-map/1",
+  "loss": {
+    "incidentCode": "BLOCKED_HISTORICAL_EVIDENCE_OVERWRITE",
+    "classification": "HISTORICAL_VALIDATION_LOG_BYTES_LOST",
+    "lostPath": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+    "expectedOriginalSha": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+    "currentOverwrittenSha": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+    "originalBytesStatus": "ORIGINAL_BYTES_LOST",
+    "originalBytesAvailable": false,
+    "restored": false,
+    "reconstructed": false,
+    "byteExactRecovery": false,
+    "acceptedLoss": false
+  },
+  "evidence": [
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "sha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Historical READY_FOR_CONTROLLED_PRODUCTION_READONLY_CAPTURE_V3_APPROVAL decision; 98/98 and 172 PASS recorded; cross-hashes bind eight subordinate artifacts."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "sha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "sha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "98 individually mapped cases PASS, zero skips; binds surviving required-tests JSON/log and focused validation log."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "sha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Records 155 Node + 17 R5B = 172 PASS, zero failure/skip; retains original expected log SHA."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution.",
+        "155-case Node original output bytes are missing; structured PASS is not a replacement for independent raw-log verification."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+          "expectedSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "sha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Historical source identities and/or fresh current source hashes; recorded forward source transitions and immutable boundary locks."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution.",
+        "Cannot prove absence of transient changes between observations or recover all prior source bytes solely from hashes."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+          "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "sha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "sha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "sha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "sha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+          "expectedSha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "sha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Historical unapproved v3 proposal binds P1C-I2 READY result, source lock and test evidence by exact SHA; no execution authority."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "sha256": "cb164753f529dfe2d0b1c87db46f66ea1efec8409f88ae467ce41f0f8628d9f6",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserves the recorded stage-specific observations and decisions; raw file read and hashed in R2."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "sha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Owned implementation PASS and incident cause/responsibility retained, two original overwrites and one remaining loss disclosed."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+          "expectedSha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "134 individually mapped current-run cases PASS; five separate surviving log hashes, independent of lost historical raw log."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+          "expectedSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+          "expectedSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "sha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "172 current regression PASS, zero fail/skip; separately hashed current Node and R5B logs."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+          "expectedSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Historical source identities and/or fresh current source hashes; recorded forward source transitions and immutable boundary locks."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution.",
+        "Cannot prove absence of transient changes between observations or recover all prior source bytes solely from hashes."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+          "expectedSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+          "expectedSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-history-recovery-failed.json",
+      "sha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "R1 documented A–L recovery search, 19 content hits, zero exact matches, original unavailable, limitations and unresolved incident preserved."
+      ],
+      "claimsNotSupported": [
+        "A correlated local stage artifact, not an independent external witness or trusted timestamp; does not restore the lost raw regression log or authorize execution."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "sha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+          "expectedSha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "sha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+          "expectedSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+          "expectedSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+      "sha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+          "expectedSha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+      "sha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+          "expectedSha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "sha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "sha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "sha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "sha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+          "expectedSha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "sha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+      "sha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+          "expectedSha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "sha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Surviving detailed validation output or structured case record; hash agrees with its parent evidence."
+      ],
+      "claimsNotSupported": [
+        "Does not restore the missing Node historical log or prove production behavior."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+          "expectedSha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15"
+        }
+      ]
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "sha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "sha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "sha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "sha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "sha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "sha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "sha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "sha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "sha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "sha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "CURRENT_SOURCE_HASH_LOCKED",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_CANDIDATE_ARTIFACT",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_CANDIDATE_ARTIFACT",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "CURRENT",
+      "immutability": "IMMUTABLE_CANDIDATE_ARTIFACT",
+      "claimsSupported": [
+        "Fresh SHA matches current source/boundary/candidate lock."
+      ],
+      "claimsNotSupported": [
+        "Hash identity alone does not prove runtime correctness or unobserved temporal continuity."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "sha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "INCIDENT_STATE_RETAINED",
+      "claimsSupported": [
+        "Preserves exact incident-state overwritten bytes with SHA e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a"
+      ],
+      "claimsNotSupported": [
+        "NOT the original historical regression log; not accepted as proof of P1C-I2 raw execution."
+      ],
+      "hashReferences": []
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "sha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "sha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+          "expectedSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+      "sha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+          "expectedSha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+      "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "sha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4"
+        }
+      ]
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "PRESENT_HASH_VERIFIED",
+      "historicalOrCurrent": "HISTORICAL",
+      "immutability": "IMMUTABLE_EVIDENCE",
+      "claimsSupported": [
+        "Preserved dependency/review artifact matches the recorded lock; supports only its original documented scope."
+      ],
+      "claimsNotSupported": [
+        "Does not restore lost Node output, act as an external witness, or authorize production operations."
+      ],
+      "hashReferences": [
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+          "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+          "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+        },
+        {
+          "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+          "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818"
+        }
+      ]
+    }
+  ],
+  "hashReferenceAudit": [
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "expectedSha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "actualSha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "expectedSha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "actualSha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "expectedSha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "actualSha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "expectedSha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "actualSha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "expectedSha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "actualSha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "expectedSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "actualSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "expectedSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "actualSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "actualSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "actualSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+      "expectedSha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "actualSha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+      "expectedSha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "actualSha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "expectedSha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "actualSha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "expectedSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "actualSha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "expectedSha256": "788cbae18a34b8458e913329028132f1a9596048b5f9ae7457cf68f9a7eec9ff",
+      "actualSha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "status": "KNOWN_ORIGINAL_BYTES_LOST"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "expectedSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "actualSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "actualSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "actualSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "actualSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "actualSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "actualSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "actualSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "actualSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "actualSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "expectedSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "actualSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "expectedSha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "actualSha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "expectedSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "actualSha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "actualSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "actualSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "actualSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "actualSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "actualSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "actualSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "actualSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "actualSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "expectedSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "actualSha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "expectedSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "actualSha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "expectedSha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "actualSha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "expectedSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "actualSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "expectedSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "actualSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+      "expectedSha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "actualSha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "expectedSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "actualSha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "expectedSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "actualSha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "expectedSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "actualSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "expectedSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "actualSha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "expectedSha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "actualSha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "expectedSha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "actualSha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "expectedSha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "actualSha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "expectedSha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "actualSha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "expectedSha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "actualSha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "expectedSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "actualSha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "expectedSha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "actualSha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+      "expectedSha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "actualSha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "expectedSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "actualSha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "expectedSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "actualSha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "expectedSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "actualSha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "expectedSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "actualSha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "expectedSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "actualSha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "expectedSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "actualSha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "expectedSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "actualSha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "expectedSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "actualSha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+      "expectedSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "actualSha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "status": "MATCH"
+    },
+    {
+      "referencedBy": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "expectedSha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "actualSha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "status": "MATCH"
+    }
+  ],
+  "assessments": {
+    "A": {
+      "status": "PROVEN",
+      "claim": "P1C-I2 recorded READY_FOR_CONTROLLED_PRODUCTION_READONLY_CAPTURE_V3_APPROVAL",
+      "basis": "Surviving result exact-hash bound by historical v3 and subordinate artifact hashes verified.",
+      "limit": "Recorded review readiness, not executed production capture or permission."
+    },
+    "B": {
+      "status": "PARTIALLY_PROVEN",
+      "claim": "P1C-I2 98 required PASS, 172 regression PASS, zero safety-critical skips",
+      "parts": {
+        "98RequiredTests": "PROVEN_BY_SURVIVING_STRUCTURED_AND_RAW_RUNNER_OUTPUT",
+        "172RegressionRecorded": "PROVEN_AS_HISTORICAL_STRUCTURED_RECORD",
+        "172RegressionRawIndependentlyReverifiable": "PARTIALLY_PROVEN_17_R5B_PRESENT_155_NODE_ORIGINAL_LOST",
+        "safetyCriticalSkips0": "PROVEN_AS_RECORDED"
+      },
+      "limit": "Correlated structured reports preserve the result but cannot revalidate the missing original Node output."
+    },
+    "C": {
+      "status": "PARTIALLY_PROVEN",
+      "claim": "Source/package hashes were not silently rewritten later",
+      "basis": "Historical lock artifacts match cross-references; recorded pre-edit hashes bridge forward implementation; current lock and package match; preserved baseline differs only in approved nine paths and single known log.",
+      "limit": "A set of local snapshots does not establish continuous tamper-proof custody or absence of transient changes; approved forward source changes did occur."
+    },
+    "D": {
+      "status": "PROVEN",
+      "claim": "TLS-I1 134/134 and 172 regression use separately retained current outputs, not the lost raw log as sole authority",
+      "basis": "Case maps, exact current log hashes and passing summaries match; locked test source invokes Node and isolated R5B subprocesses and writes runner-tls-i1-validation.",
+      "limit": "Owned validation evidence, not production execution proof; no tests rerun in R2."
+    }
+  },
+  "sourceLineage": [
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "historicalSha256": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+      "TLSI1PreEditSha256": "1ec437876705befeb0801f1d2c6e7935cdac1831a5cb1fe2730de7aaab92e348",
+      "currentSha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "transitionRecorded": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "historicalSha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "TLSI1PreEditSha256": "f146cf66f2c3db8026220c7da8a912b8ee97767f9d07b03f864438cc3825d088",
+      "currentSha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "transitionRecorded": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "historicalSha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "TLSI1PreEditSha256": "1bc5af52cd8309c8134699b4e1a1859c6f5c65a658abda7a40b7fb1c4b46be01",
+      "currentSha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+      "transitionRecorded": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "historicalSha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "TLSI1PreEditSha256": "30b3aa0ad404cf1a509cad5b1aa5f70f8fab945bc5034f42201defee4e6b400b",
+      "currentSha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "transitionRecorded": true
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "historicalSha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "TLSI1PreEditSha256": "d77cb29006b4f324b82247c26e121af560bdcdfd2af22a09dbae64be10d30b2f",
+      "currentSha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "transitionRecorded": true
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "historicalSha256": "b87f80dfe8af51e1f77d4857399162304017fd0834ed39b1d87e2c596242707b",
+      "TLSI1PreEditSha256": "b87f80dfe8af51e1f77d4857399162304017fd0834ed39b1d87e2c596242707b",
+      "currentSha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+      "transitionRecorded": true
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "historicalSha256": "4f9484c238ae27551f3c9d288e08561b5536838ebb553b7642ad0c7f6873eca1",
+      "TLSI1PreEditSha256": "4f9484c238ae27551f3c9d288e08561b5536838ebb553b7642ad0c7f6873eca1",
+      "currentSha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+      "transitionRecorded": true
+    }
+  ],
+  "inventoryAudit": {
+    "source": "/tmp/tls-i1-preservation.json",
+    "sha256": "2abafd1fdb3ab0680f91b190e97485fef1048aff793313b1163b4532a05844d2",
+    "nonDocsCanonicalSha256": "c2168c8dfd0fabfbb92a2334fcbaecc0821ce96f1ea6d4cd352ca53839d8651a",
+    "sourceLockExpectedNonDocsCanonicalSha256": "c2168c8dfd0fabfbb92a2334fcbaecc0821ce96f1ea6d4cd352ca53839d8651a",
+    "count": 3993,
+    "differences": [
+      "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "scripts/teaching-agent-r7d-c3b/checks.py",
+      "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "scripts/teaching-agent-r7d-c3b/README.md",
+      "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log"
+    ],
+    "remainingHistoricalOverwrites": 1,
+    "limitation": "Auxiliary inventory is local. TLS-I1 source lock pins only canonical non-docs entries, not the raw inventory or its docs entries. Historical document integrity is separately cross-checked via preserved artifact references; this is not a trusted external timestamp."
+  },
+  "operationalPackageDigest": "6584a2f7d1be58cb065fb904fd06afa365b8c485b535afec03fcc9bbfaf417ad",
+  "independentP1CI2StructuredEvidence": "PARTIAL",
+  "sufficientForNarrowAcceptanceProposal": true,
+  "independenceMeaning": "Separate surviving artifacts and current-run outputs, not independent external witnesses. Correlated stage reports are not counted as multiple independent executions.",
+  "currentEvidence": {
+    "tests": {
+      "passed": 134,
+      "failed": 0,
+      "skipped": 0
+    },
+    "regression": {
+      "passed": 172,
+      "failed": 0,
+      "skipped": 0
+    },
+    "allCurrentLocks": "MATCH",
+    "candidateArtifactHashes": "ALL_MATCH",
+    "migrations000001002": "UNCHANGED",
+    "remainingHistoricalOverwrites": 1
+  },
+  "requiredLocks": [
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-build.tar.gz",
+      "sha256": "e07842159615a0cf37c3c52be72fa9495e5fce488328e22ff2408edc8c7ac746",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-deploy-source-closure.tar.gz",
+      "sha256": "abc5476de4de20aae253a2a9046419bce0b5894968d95f100cd72dab4f5690e2",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "build/r7dc3a-production-candidate/candidate-full-source.tar.gz",
+      "sha256": "2d65c3a1845991ceccc6d7a31f818cbdf1457cd95499a5eb86e4ba440e14be18",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r4d/recovery-policy.json",
+      "sha256": "9ca2e1e6586745af7f4e80149da5bfa2a2889394f4224f39ed0736c7e3546964",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r5c/fresh-backup-summary.json",
+      "sha256": "4dc91b72e968b2cf033dd5de9c33b515d373f5232e63f798b0c1f256d7ee30d7",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-backup-restore.json",
+      "sha256": "137e0acf3335d4d08437537d4b1785f13eae79d449de5e1ebda04cd73921108b",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7c-b/b1c-migration-install-receipt.json",
+      "sha256": "c0b33ce7e29f6670c69d89e3ba1676090cf77973d2c32ed766a43321d5752b2f",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-acl-forward-fix-install.json",
+      "sha256": "9cad1383cf5fed48dde2cb99d7a2598dea769dc0fe3b225b7f5b0dcfbd1d38aa",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v2.json",
+      "sha256": "2e821b2420c5accb1770e8ffa28b4e9a2553fd292696de6ae32623e52d74c003",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-controlled-preflight-v3.json",
+      "sha256": "0f239aea1d410970efbdd040f4bffe7575e2e042857cae3d0956bbdc78ffb7ee",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-risk-contract-implementation.json",
+      "sha256": "e54dec819da9a53bd99a9b3d7fd43b9debe3ac8858364c0c9ff864cd2d831686",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/approval-r7d-c3b-runner-pooled-transport-risk-acceptance.json",
+      "sha256": "280b802f02130434553a8304675858376d47fb3728691b12a98e4b469c8b3957",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/expanded-34b-implementation/r7d-c-isolated-schema-manifest.json",
+      "sha256": "8fcde2ae845dc2237783c87f62b42b234dc56bc63e792d176911d68c99fc6419",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-acl-f2-fresh-preflight.json",
+      "sha256": "837fbcb2ad0e84c734398755c8092a85408ca176238f51234c6ab3cd6e250cb4",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-release-preflight.json",
+      "sha256": "48d05a01b54de62952c07b824bd87c89a4a825a6b4b77c4669a948dda06aa818",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-approval-reference.json",
+      "sha256": "89c5e5dff52e466b45a8504c63ca5f8fb3a030e6d6c6aa763d2ce004227531cf",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-consistency.json",
+      "sha256": "399625de58abaf7ad88bddd8b3466bf141a1660e98c2a2ddaf7cf15e72cd54bb",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-implementation.json",
+      "sha256": "7dd13adbf78dbca902b3f2e2466374e24935c349a53af49d1e87323aa97c1477",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-owned-postgres.json",
+      "sha256": "3c713a6dd726a6aeaff551abaf3a96e3626f9bda1c6a5c349157e017abff57b6",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-query-order.json",
+      "sha256": "a590382318c6b6be0b60935b06ac497d4ab5231f4f8fda15d71827b07da9db1e",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-regression.json",
+      "sha256": "0fc1161e691c73707321957be64d62833c8ebe16924660073ac231ab50de8c3d",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-result.json",
+      "sha256": "2b23dc1a30c17266b3c01cac2788ad3d3c0af9074b70328b9082b8a3a254d230",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-source-lock.json",
+      "sha256": "46e8ec4ffcdc46120355c653328538dc01fd851479391536a8e62c9a13a92e68",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-p1c-i2-tests.json",
+      "sha256": "ea3d7148c60f99a2f24a7333811881ee8066f75adee17e25594c50f6201cfc70",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-history-recovery-failed.json",
+      "sha256": "9f163a29d132263a9371ae5e163f1e18b3c12f964c745c419fac077129c84b72",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-implementation.json",
+      "sha256": "f020c7f474a860fa1b46984bc6e7310a578b37c695221b55236a3402f8d78b51",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-regression.json",
+      "sha256": "78504389f98200e321b80505df628cd7e4641450ab21b2f6b99e041e5656147e",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-result.json",
+      "sha256": "cb164753f529dfe2d0b1c87db46f66ea1efec8409f88ae467ce41f0f8628d9f6",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-source-lock.json",
+      "sha256": "70ce9de65f0eaadd4fdb6eabf138256b6685241576c78e9cacdc4fdf7b0686ae",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/r7d-c3b-runner-tls-i1-tests.json",
+      "sha256": "0623c813d3b1ee174a02e70690496f78b17fc910eb9cfc503dfd13d8b0c87e72",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/existing-regression.log",
+      "sha256": "e04f0042c3133a46a3028715d0d089ecc3a2058fec9629184d196a1db7bc685a",
+      "status": "MATCH",
+      "purpose": "INCIDENT_CURRENT_BYTES_ONLY_NOT_ORIGINAL_BASELINE"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/expanded-negative-subcases.log",
+      "sha256": "e6d2e6f20634809860ef0c35e8edbfb0557b55d9d408e698a57745ef8f6f38a6",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/r5b-historical-unit.log",
+      "sha256": "480df6a65962aacd3d2adc84c4d75d6e4edc5fd6ad5a84f4700ed61b18f587d4",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.json",
+      "sha256": "d4b5ae6ad401fd8ece7c6c9a011ef9e6aace559a93d13ec17c28a7fcfa664531",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-p1c-i2-validation/required-tests.log",
+      "sha256": "e130dd08327c6b30814e76dba89536b199af90457446ee9ad901da7e1c7f68d0",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/backup.log",
+      "sha256": "8d5bca92f92ad6b46af870f9ac566cf567aa8254e7f1478f14c74ba353acae4e",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/capture.log",
+      "sha256": "88db9d0298a4de6c7e667bfcf1f2a541da685aa678750e1ea3cc390d6fb50fc3",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/contract.log",
+      "sha256": "73bdb27cdc72eb8d32d4e8957eeb86c40a8d51a1733762a6e49523bba24ff12c",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/existing-regression.log",
+      "sha256": "18607bf81242497b810e746c0eeed6bac607d2cec66726e8f0d822e03a28b28f",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/pg.log",
+      "sha256": "5e2e996112f5bdbc92f7382dd9c9bebf70d971730342d720affedbd57a07b0e5",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/r5b-historical-unit.log",
+      "sha256": "370b074f9489aa3b6a4ebacab1982a4166634581a623fcec64fc7e31ec4fb383",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "docs/evidence/teaching-agent-stage-1f-r7d-c/runner-tls-i1-validation/tls.log",
+      "sha256": "c5ade7b95538090717bcbe110773bd8799fc239f6c2d384dab79f8182774cd15",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/supabase-baseline-catalog.sql",
+      "sha256": "34dc4002b11463b833abfe367acd7238bca209579d130c534c1cce3942cba9f8",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r2/staging.py",
+      "sha256": "86e7551e84d3b64d0086fa4ac61ab332b9d28e1a00c1a2dfa6af7a3234e23b03",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r4c/inventory.py",
+      "sha256": "e087a0612fca36f3580c237ea55b7ff6288ff5e6ec407dcdf55fd1aaac43cb46",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r4d/execute.py",
+      "sha256": "75cc0ebd9de7f4509eb4614dc2f99258d14e30c136b7f110198f8599132bc5dc",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/README.md",
+      "sha256": "4cdf8548664a603c302b9a3940c894cf70799739140a4fea5d7ba2ab6489465a",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/locked-package.json",
+      "sha256": "f7b625da326413959c356228448f87044423e72959230b37b2b076066723c632",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/maintenance_transport.py",
+      "sha256": "ab77d1981dfe27c127c78320a1159059f8d6a3f81d0fa95d916ef5877d2be83f",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/runner.py",
+      "sha256": "755c8d823bfe10d82514382a090cff162003f4c8661767ef1d8ba7990446f8b9",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5b/test_runner.py",
+      "sha256": "2b380da59d952b2dc9afc27f15580024803e37d785f8c64767a8b2c88a553e07",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/catalog_contract.py",
+      "sha256": "b414b44f0c9e713fa274d47439485bcbcf71b0cc98acb70572fede0d21ce90e8",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r5d/readonly_transport.py",
+      "sha256": "eb1ba702a89db7adb11cb1094261d8a196ba7fd968579dd9509e96466e08356e",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/README.md",
+      "sha256": "ab7bf1e6aa5cc26bb425fd9870c1db42d4ad10b08082ce9e29e457415431f9e2",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/backup_adapter.py",
+      "sha256": "2d9a04af62a7612e8d51b047ea82d8120be3d355160c71ccb726640e2ea4ff9c",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/checks.py",
+      "sha256": "e49c6b7a5635b145e5a6d6f1c0d23b364fddec5ab461a2d69efe090a847367dc",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/maintenance_transport.py",
+      "sha256": "1d3622b10f0bda7ca3b932af868fa27f084cc5ce464437bb8b07b2883754bde5",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_contract.py",
+      "sha256": "a17708ccbbeaee440453123e63aa083c94d80ed49d14c7e1ba439755990ae33d",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plan_registry.json",
+      "sha256": "a3a1a9ec00d66655fbd7f4f9508a81e8e4f0d507db398e728ae414229cd99a7e",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/plans/acl-000-v1.json",
+      "sha256": "02619ee10e50232dd17574fc7235d04deeabbe39a4fe0ac1856345020cb50de2",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/receipts.py",
+      "sha256": "35c360f87d4da20536ed254cb7ece90d0cbb1722e38e2342b636a599176b6558",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/runner.py",
+      "sha256": "a60f74a3297507ab0353856111694e227324c0e61cf86c9cf2c5e70dab91e56b",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/target_profiles.json",
+      "sha256": "63182054b8f2406c046b65a79191ab55a7ca72efa10ea16a947118633fb9f0b0",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/teaching-agent-r7d-c3b/transaction.py",
+      "sha256": "67db0c3acacfd6ed5c438bcdbc4132a9a62a740028fe5c413801c6fa2697dd86",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "scripts/verify-supabase-baseline.py",
+      "sha256": "6a867287b8ed75af3564fa597199ce03342307d9c089c13ae9688df564a1b751",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/bootstrap/app-schema-baseline.sql",
+      "sha256": "e5de2f48fa40da53ebcae5353aa4907b1738e15998a304a37b3d0fc555c7bac5",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/bootstrap/baseline-manifest.json",
+      "sha256": "8a0f4cbe590eef3b5b8774af92eaaced00ca1b8d1133bde3bfbb9f825c5ac8f6",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/bootstrap/migration-ledger-baseline.json",
+      "sha256": "cf575d233822934d4f1cd51b69c1eb4c8b358cb6b35c814905fdd4555b4f63bf",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/migrations/202609180000_chapter_practice_binding_acl.sql",
+      "sha256": "cc26f7b26a0aadcfa945ccf18a23ceac42ac5d772f1a0ac3eb9f5a776773d23a",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/migrations/202609180001_agent_durable_skill_completion.sql",
+      "sha256": "60a0f6158aeb44791b18ad72f6d09b9132cb87b1a7acc46c0f7fafc4798f07ad",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "supabase/migrations/202609180002_native_publication_contract.sql",
+      "sha256": "ed0f382ad45dda046335377b83c3f8f17cd53d173a24915901e581879dc31027",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/chapter-practice-acl-contract.test.mjs",
+      "sha256": "8f49e70dbc623caf350673b335f7fc869725f1da9214045d123d523b6fe37c2f",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/fixtures/chapter-practice-acl/historical-environment.sql",
+      "sha256": "5bec77dee6d37b2e8c6d0b8269bd37390549105d34726f91756cc0c2d1fadf31",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-r7d-production/postgres.mjs",
+      "sha256": "b0cc4b36b1dcbae47ea4bc44edcbea17ad4927c5b354f006987c271e6f91d407",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/plans.json",
+      "sha256": "63e4ffdde67695f0a268cacfe2791893ccd9f5266ae951aeb7cf06fba0fbcacb",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/fixtures/teaching-agent-single-migration-runner/postgres.py",
+      "sha256": "fb9e0b6e5da24147f683142d62787a5d096d68a7dd79c99b37ad4945830e8b73",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-persisted-evidence.test.mjs",
+      "sha256": "8f163aaf3d593211f1b1ca3db2c47814cafe0f35f3c2cf9a5772e4bb6a08f07f",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/teaching-agent-r7d-publication-sql.test.mjs",
+      "sha256": "7f816334746db3173880bd9dc701144507a66f00643a29569525fcab91c2368b",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_backup_test.py",
+      "sha256": "65e5b17bca3074157705f7fcdfd76536c473e27ce5bdec08fb9aa885e0334b22",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_contract_test.py",
+      "sha256": "3584fe28a12431846ab06e287d722c6b87a916289f0a95aec13b4c866cbb925d",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    },
+    {
+      "path": "tests/teaching_agent_single_migration_runner_postgres_test.py",
+      "sha256": "25180a41bd5314e53367c3997080b5fd8df843d5fdd1d3a21e35809cc09de0b2",
+      "status": "MATCH",
+      "purpose": "PRESERVED_SUPPORT_OR_CURRENT_AUTHORITY"
+    }
+  ],
+  "recoverySearch": {
+    "status": "EXHAUSTED_WITHIN_DOCUMENTED_AUTHORIZED_ACCESSIBLE_SOURCES",
+    "largeScaleSearchRepeated": false,
+    "coverage": [
+      {
+        "order": "A",
+        "source": "Git tracked history and all refs",
+        "finding": "Target ignored by .gitignore *.log, untracked, no exact-path history or all-refs object entry"
+      },
+      {
+        "order": "B",
+        "source": "Reflog, dangling and unreachable objects",
+        "finding": "All 9118 local Git objects enumerated; 4088 blobs in 1KB–2MB content range inspected; no matching content candidate. fsck found 1780 unreachable blobs, 1763 unreachable trees, 165 dangling trees; included in all-object scan"
+      },
+      {
+        "order": "C",
+        "source": "Git stash",
+        "finding": "No stash entries"
+      },
+      {
+        "order": "D",
+        "source": "Worktrees and older workspace copies",
+        "finding": "Only current worktree. Older broken workspace Git database inspected (4438 objects, 2046 candidate-size blobs), no content candidate; older workspace files included in filesystem search"
+      },
+      {
+        "order": "E",
+        "source": "Repository-local backups",
+        "finding": "Project tree scanned including ignored/hidden evidence and backup files; no exact original"
+      },
+      {
+        "order": "F",
+        "source": "Build/evidence archives",
+        "finding": "Archive member inventory/content inspected without extracting over project; no exact original"
+      },
+      {
+        "order": "G",
+        "source": "Release archives/tarballs",
+        "finding": "/home/yangzhen/releases, artifacts and operations inspected; 18 discovered project/temp archives read in total; no exact original"
+      },
+      {
+        "order": "H",
+        "source": "Server backups",
+        "finding": "/home/yangzhen/backups inventory and non-private file search; /var/backups only system package backups. Private database dump/credential contents excluded"
+      },
+      {
+        "order": "I",
+        "source": "Temporary/editor backup files",
+        "finding": "/tmp, /var/tmp, VSCode User History inspected; VSCode/Code backup directories and Trash absent; no matching editor or compressed-log candidate"
+      },
+      {
+        "order": "J",
+        "source": "Shell-created copied logs",
+        "finding": "Content-marker and extension-independent scans of temporary/project/release/ops files found only different historical runs"
+      },
+      {
+        "order": "K",
+        "source": "Older validation directories",
+        "finding": "I1, P1A, P1C-I2, TLS-I1 and ACL-F1 logs compared; no SHA match"
+      },
+      {
+        "order": "L",
+        "source": "Existing filesystem snapshots/backup artifacts",
+        "finding": "Known .snapshots and timeshift locations absent; /mnt and /media empty; no accessible project snapshot discovered. No raw-device recovery attempted"
+      }
+    ],
+    "limitations": [
+      "System service private temp directories were inaccessible and unrelated to project validation",
+      "Production credential stores and private database backup payloads were excluded",
+      "No hypothetical, unmounted or unavailable external snapshots claimed searched",
+      "1KB–2MB marker scan plus 9KB–15KB extension-independent scan; no timing/PID synthesis or log reconstruction"
+    ]
+  }
+}

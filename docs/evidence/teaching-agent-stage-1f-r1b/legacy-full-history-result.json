@@ -1,0 +1,1168 @@
+{
+  "mode": "fresh",
+  "network": "none",
+  "container": "uply-stage1fr1-fresh-7075a346",
+  "steps": [
+    {
+      "file": "202607130000_profiles_auth_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607130010_course_catalog_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607130020_lesson_content_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607130025_platform_core_course_catalog_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607130030_lesson_activity_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607130040_auto_enable_rls_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607140001_student_planning_workspace.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607140002_registration_and_management_audit.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607140003_korean_university_library.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607140004_expand_korean_university_catalog.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150001_student_profile_details.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150002_profile_completion_date.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150003_school_management_and_membership.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150004_account_management_upgrade.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150005_application_document_review_workflow.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150006_repair_legacy_application_document_statuses.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150007_application_document_resubmission.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150008_visa_preparation_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150009_owner_account_deletion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150010_restrict_visa_student_delete.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150011_protect_profile_self_service_fields.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150012_fix_current_role_keyword_collision.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607150013_visa_type_degree_levels.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607160001_announcements_and_permissions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170001_learning_assignments_and_exams.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170002_conversation_practice_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170003_split_announcement_reader_and_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170004_help_center_and_support_tickets.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170005_grade_center_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170006_tighten_student_grade_visibility.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170007_learning_records_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607170008_resource_library_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180001_university_application_deadlines.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180002_target_application_document_checklists.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180003_admin_delete_student_service_cards.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180004_fix_university_deadline_function_volatility.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180005_owner_delete_own_service_cards.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180006_university_application_document_requirements.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180007_university_document_requirement_notes.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180008_university_document_requirements_by_stage.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180009_enforce_application_document_stage_match.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180010_simplify_application_document_checklist.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180011_add_not_needed_document_status.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180012_sync_document_due_date_from_target.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180013_application_documents_submission_lock.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180014_admin_item_controls.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180015_lock_prevents_document_delete.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180016_admin_note_and_lock_edit.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180017_admin_lock_target_documents.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607180018_lock_university_target_admin_only_unlock.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190001_courier_shipping_info.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190002_application_stage_timeline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190003_expand_application_stages.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190004_courier_requires_stage_2.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190005_auto_initialize_visa_workspace.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190006_visa_workspace_requires_stage_9.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190007_visa_case_source_target.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190008_university_visa_application_requirements.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190009_archive_visa_requirement_protection.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190010_active_visa_task_write_policies.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190011_visa_application_channels.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190012_fix_visa_channel_role_check.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190013_require_channel_before_stage_nine.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190014_lock_student_visa_application_channel.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190015_lock_student_visa_type_and_entry_date.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190016_add_admin_preparing_visa_stage.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190017_courier_no_stage_gate.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190018_courier_requires_stage_3.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190019_courier_requires_stage_2.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190020_visa_case_residence_province_city.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190021_visa_case_entry_and_airports.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190022_visa_case_accommodation_status.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607190023_visa_case_airport_pickup_service.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200001_ai_token_usage.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200002_multi_tenant_foundation.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200003_tenant_accounts_and_lifecycle.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200004_tenant_disable_and_delete_semantics.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200005_remove_confirmed_legacy_tenants.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200006_platform_deputy_tenant_operator.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200007_keep_platform_operators_out_of_tenant_members.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200008_tenant_admin_global_role.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200009_global_identity_roles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200010_account_permission_helpers_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607200011_is_owner_account_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210001_tenant_id_on_business_tables.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210002_tenant_scoped_rls.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210003_tenant_scoped_rpcs_and_lifecycle.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210004_split_platform_and_tenant_super_admin.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210005_static_tenant_permanent_deletion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210006_platform_owner_full_admin.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210007_platform_owner_tenant_bypass.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210008_remove_puffy_bootstrap_tenant.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210009_block_platform_student_activity.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210010_fix_managed_account_creation_audit.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210011_revert_managed_account_creation_audit_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210012_allow_platform_tenant_hard_delete_memberships.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210013_fix_tenant_manager_auth_creation_audit.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210014_revert_tenant_manager_auth_creation_audit_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210015_fix_tenant_manager_profile_audit_order.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210016_fix_platform_catalog_requirement_sync.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210017_restrict_requirement_sync_to_platform_catalog_managers.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210018_fix_target_lock_tenant_admin_detection.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607210019_fix_document_item_tenant_admin_detection.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607260001_korean_chapter_test_attempts.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607260002_course_test_question_bank.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607260003_secure_course_test_scoring.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607260004_platform_standard_question_bank.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270001_expand_korean_standard_question_bank.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270002_standard_assessment_papers.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270003_disable_tenant_single_question_assignment.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270004_chapter_test_random_selection.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270005_course_test_lesson_channel.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270006_normalize_hangul_chapter_test_duration.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270007_align_korean_beginner_lesson_titles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270008_vip2_korean_learning_permissions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607270009_enforce_vip2_assignment_conversation_boundaries.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607300001_overwrite_course_test_attempts.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607300002_course_question_reviews.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607300003_course_ebook_progress.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607300004_course_ebook_effective_reading.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607300005_platform_account_roles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310001_grade_items_course_link.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310002_chapter_homework_plans.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310003_chapter_homework_skill_content.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310004_chapter_homework_questions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310005_sync_chapter_titles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310006_prune_chapter_test_difficulties.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310007_language_question_banks.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310008_language_question_bank_manager_policies.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310009_korean_answer_key_validation.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310010_ebook_question_bank_sections.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310011_balance_chapter_test_ebook_coverage.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310012_unique_chapter_vocabulary_prompts.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310013_smart_digital_textbook_chapter_one.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310014_smart_digital_textbook_private_audio.sql",
+      "exit": 0
+    },
+    {
+      "file": "202607310015_platform_course_inspector_role.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608010001_student_course_category_learning_plans.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608010002_course_catalog_workspace.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020001_unified_grade_reviews.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020002_platform_grade_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020003_platform_learning_record_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020004_platform_managed_resource_library.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020005_library_resources_by_course.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020006_library_resources_by_lesson.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020007_complete_platform_lesson_catalog.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020008_restrict_university_management_to_platform.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020009_add_visa_applicable_scopes.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020010_document_review_workflow.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020011_visa_management_oversight.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020012_secure_visa_card_deletion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020013_platform_visa_case_audit.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020014_announcement_visibility_and_reads.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020015_help_center_roles_and_oversight.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608020016_unified_permission_center.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608030001_student_course_category_favorites.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608040001_reserve_platform_tenant_slug.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050001_tenant_student_learning_record_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050002_dynamic_chapter_test_slug_check.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050003_chapter_test_lesson_completion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050004_document_checklist_respects_target_lock.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050005_university_comparison_permission_whitelist.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050006_ai_token_usage_quota_index.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050007_submit_course_test_sequence_guard.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050008_grade_review_request_lock.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050009_record_ebook_progress_rpc.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050010_assignment_submit_checks_starts_at.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050011_university_assessment_dedup.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608050012_comparison_limit_ignores_unpublished.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060001_is_admin_shim.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060002_account_deletion_data_snapshot.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060003_active_account_platform_roles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060004_course_content_audit_log_tenant_scope.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060005_visa_auto_sync_system_exemption.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060006_test_and_ebook_progress_tier_check.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060007_course_favorites_plans_tenant_isolation.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060008_profile_audit_tracks_global_role.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060009_cleanup_stale_super_admin_role.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060010_digital_textbook_unpublished_content_filter.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060011_storage_policy_cleanup.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060012_growth_toolbox_items.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060013_growth_toolbox_related_course.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060014_growth_toolbox_vocabulary.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060015_growth_toolbox_grammar.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060016_growth_toolbox_grammar_v2.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608060017_ebook_progress_reading_seconds.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070001_student_teacher_assignments.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070002_staff_profile_hired_at.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070003_staff_profiles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070004_teacher_teaching_data_access.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070005_teacher_lesson_progress_access.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070006_teacher_learning_record_write.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070007_live_class_sessions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070008_live_class_events.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070009_realtime_channel_auth.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070010_group_class_members.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070011_fix_live_class_rls_recursion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070012_drop_session_student_not_null.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608070013_tighten_live_class_helper_functions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080001_student_assigned_teachers_rpc.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080002_learning_time_log.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080003_toolbox_study_time.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080004_home_tree_visibility.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080005_fix_platform_audit_tenant.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080006_course_tree_views.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080007_drop_show_on_home_tree.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080008_tighten_live_class_data_model.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080009_tighten_live_class_rls_privileges.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080010_unique_active_live_classes.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608080011_live_class_sfu_voice.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608090001_fix_tenant_visa_requirement_sync.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608140001_chapter_test_requires_ebook_completion.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608140002_reset_corrupt_ebook_reading_time.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150001_ebook_completion_uses_active_time.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150002_idempotent_ebook_reading_segments.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150003_student_grade_skill_profiles.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150004_toolbox_practice_ability.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150005_student_application_domains.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150006_tenant_scoped_ebook_progress.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150007_korean_chapter_test_app_guard.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150008_admin_application_access.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608150009_recover_korean_catalog_prerequisites.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160001_application_domain_hardening.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160002_application_access_trigger_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160003_application_access_audit_trigger_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160004_explicit_app_ownership_trigger_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160005_route_namespace_and_privilege_hardening.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160006_client_privilege_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160007_view_privilege_baseline.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160008_legacy_rpc_privilege_cleanup.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160009_student_admin_contract_alignment.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160010_library_application_scope.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160011_application_workspace_permission_alignment.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160012_expand_korean_course_catalog.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160013_chapter_aligned_skill_practice.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160014_toolbox_submission_app_scope.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160015_toolbox_course_catalog_alignment.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608160016_student_learning_activity_events.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170001_fix_ebook_progress_accumulation.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170002_platform_conversation_practice_management.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170003_tenant_admin_dashboard_aggregates.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170004_platform_management_app_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170005_platform_management_app_overview_invoker_fix.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608170006_platform_lesson_activity_app_scope.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180001_korean_level_one_course_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180002_keep_korean_level_one_intro_chapters_unlocked.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180003_unlock_korean_level_one_after_overview.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180004_prevent_smart_textbook_decorative_labels.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180005_chapter_one_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180006_chapter_one_submission_security.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180007_chapter_two_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180008_open_activity_unscored_mastery.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180009_chapter_three_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180010_chapter_four_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180011_chapter_five_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180012_chapter_six_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180013_chapter_seven_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180014_chapter_eight_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180015_chapter_nine_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180016_chapter_ten_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180017_chapter_eleven_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180018_chapter_twelve_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180019_chapter_thirteen_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180020_chapter_fourteen_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180021_chapter_fifteen_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180022_chapter_sixteen_golden_smart_textbook.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180023_speaking_recording_evidence.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180024_add_chapter_one_korean_transcriptions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180025_add_chapters_two_to_sixteen_korean_transcriptions.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180026_add_chapter_one_second_grammar_round.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180027_restore_objective_activity_recording.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180028_expand_chapter_one_vocabulary_practice.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180029_expand_chapter_one_grammar_practice.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180030_merge_chapter_one_grammar_rounds.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180031_expand_chapters_two_to_sixteen_practice.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180032_platform_owner_publish_textbook_chapter.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180033_lock_down_textbook_chapter_publish_rpc.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180034_six_skill_chapter_homework.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180035_assignment_speaking_recordings.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608180036_assignment_chapter_completion_unlock.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190000_bootstrap_assessment_seed_sources.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190001_homework_v11_grading_and_integrity.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190002_rebuild_homework_listening_from_canonical_activity.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190003_force_homework_listening_backfill.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190004_fix_listening_backfill_trigger_order.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190005_assignment_learning_loop.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190006_platform_assessment_release_governance.sql",
+      "exit": 0
+    },
+    {
+      "file": "202608190007_seed_korean_chapter_one_pilot_papers.sql",
+      "exit": 3
+    }
+  ],
+  "snapshotSha256": "8f31512aa71bd63aa33f8b5e1acd7f657b27c01981103cecc5d9498178260501",
+  "bootstrapExit": 0,
+  "storageSchemaExit": 0,
+  "realtimeSchemaExit": 0,
+  "jwtFunctionExit": 0,
+  "syntheticOwnerBootstrapExit": 0,
+  "failedMigration": "202608190007_seed_korean_chapter_one_pilot_papers.sql",
+  "errorLines": [
+    "ERROR:  \u97e9\u56fd\u8bed\u4e00\u7ea7\u7b2c\u4e00\u7ae0\u6b63\u5f0f\u9898\u5e93\u4e0d\u5b58\u5728\u6216\u5c1a\u672a\u53d1\u5e03"
+  ],
+  "agentTables": "0",
+  "success": false,
+  "legacyClassification": "LEGACY_HISTORY_NOT_SELF_CONTAINED"
+}

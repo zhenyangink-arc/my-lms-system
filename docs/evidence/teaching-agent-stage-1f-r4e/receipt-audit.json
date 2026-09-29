@@ -1,0 +1,108 @@
+{
+  "auditReproduced": true,
+  "isolatedMockOnly": true,
+  "realSubprocessCalls": 0,
+  "productionConnections": 0,
+  "sourceSha256": "de6524fe53813e64ded6c9d4844233cd0fea462170fb0261ab7d19778a5eef10",
+  "cases": [
+    {
+      "case": "valid empty result plus exit0; no explicit COMMIT acknowledgement",
+      "exit": 0,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "committed",
+      "commitState": null,
+      "reconcileError": 0
+    },
+    {
+      "case": "connection lost, valid pre-COMMIT SELECT output",
+      "exit": 1,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "failed",
+      "commitState": null,
+      "reconcileError": 1
+    },
+    {
+      "case": "timeout with unknown transaction outcome",
+      "exit": 1,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "failed",
+      "commitState": null,
+      "reconcileError": 1
+    },
+    {
+      "case": "SQL rejection",
+      "exit": 1,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "failed",
+      "commitState": null,
+      "reconcileError": 1
+    },
+    {
+      "case": "malformed JSON after possible COMMIT",
+      "exit": 1,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "failed",
+      "commitState": null,
+      "reconcileError": 1
+    },
+    {
+      "case": "non-object JSON client crash",
+      "exit": null,
+      "exception": "AttributeError",
+      "subprocessCalls": 1,
+      "receiptStatus": null,
+      "commitState": null,
+      "reconcileError": null
+    },
+    {
+      "case": "batch default",
+      "exit": 0,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "committed",
+      "commitState": null,
+      "reconcileError": 0
+    },
+    {
+      "case": "batch max100",
+      "exit": 0,
+      "exception": null,
+      "subprocessCalls": 1,
+      "receiptStatus": "committed",
+      "commitState": null,
+      "reconcileError": 0
+    },
+    {
+      "case": "invalid batch 0",
+      "exit": 2,
+      "exception": "SystemExit",
+      "subprocessCalls": 0,
+      "receiptStatus": null,
+      "commitState": null,
+      "reconcileError": null
+    },
+    {
+      "case": "invalid batch 101",
+      "exit": 2,
+      "exception": "SystemExit",
+      "subprocessCalls": 0,
+      "receiptStatus": null,
+      "commitState": null,
+      "reconcileError": null
+    }
+  ],
+  "findings": {
+    "explicitCommitAcknowledgement": "MISSING",
+    "explicitUnknownCommitState": "MISSING",
+    "genericFailedMustNotMeanRollback": true,
+    "nonObjectJsonCanExitWithoutReceipt": true,
+    "productionFalseCommitReproduced": false
+  },
+  "r4eCommitReceiptGate": "FAIL",
+  "r4eUnknownOutcomeGate": "FAIL"
+}

@@ -1,0 +1,519 @@
+{
+  "equivalence-after": {
+    "categories": 15,
+    "differences": {},
+    "status": "PASS"
+  },
+  "equivalence-before": {
+    "categories": 15,
+    "differences": {},
+    "status": "PASS"
+  },
+  "failureInjection": {
+    "applied": [
+      "202609140000",
+      "202609140001",
+      "202609140002",
+      "202609140003",
+      "202609140004",
+      "202609140005"
+    ],
+    "flag": "OFF",
+    "injectedAt": "202609140006",
+    "laterStepsAttempted": 0,
+    "ledgerCount": 455,
+    "status": "PASS",
+    "transactionRolledBack": true
+  },
+  "featureFlag": "OFF",
+  "migrations": [
+    {
+      "filename": "202609140000_agent_core_foundation.sql",
+      "name": "agent_core_foundation",
+      "sha256": "7abc5545f6cb926c37a74a890fc6fcdbad4f89a5c35474a4628af67b7e0afa8b",
+      "version": "202609140000"
+    },
+    {
+      "filename": "202609140001_agent_runtime_completion_evidence.sql",
+      "name": "agent_runtime_completion_evidence",
+      "sha256": "a0ece84b6030f029ff68781e3dcffa73e5d7ea2448c33c750ff76c1098f3456b",
+      "version": "202609140001"
+    },
+    {
+      "filename": "202609140002_agent_run_cancel_request.sql",
+      "name": "agent_run_cancel_request",
+      "sha256": "a8c0d60432a39f08dd45cea08b7ea0e6565885a8d0a65d15118c1f093dc9fb62",
+      "version": "202609140002"
+    },
+    {
+      "filename": "202609140003_teaching_operations_reissue.sql",
+      "name": "teaching_operations_reissue",
+      "sha256": "cb2a1e90011f154185f4b5695e3a14d00dce9a60e37063c1b38d2ca854fac794",
+      "version": "202609140003"
+    },
+    {
+      "filename": "202609140004_completion_policy_management_reissue.sql",
+      "name": "completion_policy_management_reissue",
+      "sha256": "20358b17f0deed997263660f15bb0e4c2551caffa6b950d09fc9d4c5d609573e",
+      "version": "202609140004"
+    },
+    {
+      "filename": "202609140005_student_teaching_content_isolation.sql",
+      "name": "student_teaching_content_isolation",
+      "sha256": "ec4454eea39f38bb9f8a7313b203cea444b831bc90cc1e7d30b070400d4c7674",
+      "version": "202609140005"
+    },
+    {
+      "filename": "202609140006_agent_run_reconciliation.sql",
+      "name": "agent_run_reconciliation",
+      "sha256": "6014fdee722b967e5264bd827d13f1e45448269f496d8d58c9a1e2ce4528e53a",
+      "version": "202609140006"
+    }
+  ],
+  "paths": [
+    {
+      "baselineApplied": false,
+      "emptyApplicationTables": 194,
+      "mode": "target-upgrade",
+      "steps": [
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140000-target-upgrade-diff.json",
+          "changedCategories": [
+            "types",
+            "columns",
+            "indexes",
+            "policies",
+            "triggers",
+            "functions",
+            "relations",
+            "constraints"
+          ],
+          "ledgerAfter": 450,
+          "ledgerBefore": 449,
+          "objectVerification": {
+            "assertions": 14,
+            "functions": [
+              "agent_core_private.actor_guard",
+              "agent_core_private.check_budget",
+              "agent_core_private.definition_guard",
+              "agent_core_private.immutable",
+              "agent_core_private.run_json",
+              "public.admit_agent_run_v1",
+              "public.append_agent_run_event_v1",
+              "public.record_agent_usage_v1",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [
+              "public.agent_conversations",
+              "public.agent_definition_versions",
+              "public.agent_messages",
+              "public.agent_run_events",
+              "public.agent_runs"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "eecc9dee3065dba9ce97b486f03d781e51fb58f4de2e086dc921f8f4c95ec77e",
+          "schemaBefore": "eebf698f74d4d076478ea07bc0d15c73b4d20e2284a028b504d14bbae68431de",
+          "verify": "PASS",
+          "version": "202609140000"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140001-target-upgrade-diff.json",
+          "changedCategories": [
+            "functions"
+          ],
+          "ledgerAfter": 451,
+          "ledgerBefore": 450,
+          "objectVerification": {
+            "assertions": 3,
+            "functions": [
+              "agent_core_private.definition_guard",
+              "public.append_agent_run_event_v2",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "0c9c79404f61891ffda769e717079af67396cea37ef355c3db92b2ca7ec9cc1f",
+          "schemaBefore": "eecc9dee3065dba9ce97b486f03d781e51fb58f4de2e086dc921f8f4c95ec77e",
+          "verify": "PASS",
+          "version": "202609140001"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140002-target-upgrade-diff.json",
+          "changedCategories": [
+            "columns",
+            "functions"
+          ],
+          "ledgerAfter": 452,
+          "ledgerBefore": 451,
+          "objectVerification": {
+            "assertions": 6,
+            "functions": [
+              "agent_core_private.student_transport_guard",
+              "public.check_agent_run_cancel_v1",
+              "public.get_student_agent_run_status_v1",
+              "public.request_agent_run_cancel_v1",
+              "public.reserve_student_agent_event_sequence_v1",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "83053d2edc3a51087018cf64229afefa0d8d3d14accae4be9ba4cbb8a00c57e2",
+          "schemaBefore": "0c9c79404f61891ffda769e717079af67396cea37ef355c3db92b2ca7ec9cc1f",
+          "verify": "PASS",
+          "version": "202609140002"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140003-target-upgrade-diff.json",
+          "changedCategories": [
+            "types",
+            "columns",
+            "indexes",
+            "policies",
+            "triggers",
+            "functions",
+            "relations",
+            "constraints"
+          ],
+          "ledgerAfter": 453,
+          "ledgerBefore": 452,
+          "objectVerification": {
+            "assertions": 8,
+            "functions": [
+              "private.guard_curriculum_exam_cancellation",
+              "private.guard_curriculum_exam_roster",
+              "private.guard_curriculum_learning_publication",
+              "private.guard_curriculum_learning_source",
+              "private.staff_has_curriculum_template",
+              "public.dispatch_curriculum_plan_exam",
+              "public.get_curriculum_execution"
+            ],
+            "relations": [
+              "public.curriculum_plan_assessments"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "933f56b395f1747dbe84f815b79c5f02bfdc038fbcfa6401bd74da2d49e7eba9",
+          "schemaBefore": "83053d2edc3a51087018cf64229afefa0d8d3d14accae4be9ba4cbb8a00c57e2",
+          "verify": "PASS",
+          "version": "202609140003"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140004-target-upgrade-diff.json",
+          "changedCategories": [
+            "functions"
+          ],
+          "ledgerAfter": 454,
+          "ledgerBefore": 453,
+          "objectVerification": {
+            "assertions": 4,
+            "functions": [
+              "public.get_completion_refresh_health",
+              "public.publish_completion_policy_draft",
+              "public.retry_failed_completion_refresh",
+              "public.save_completion_policy_draft"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "696d18645fa36198d0598de54a12cbbd33c33fd7207dc140a90ec18252855d33",
+          "schemaBefore": "933f56b395f1747dbe84f815b79c5f02bfdc038fbcfa6401bd74da2d49e7eba9",
+          "verify": "PASS",
+          "version": "202609140004"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140005-target-upgrade-diff.json",
+          "changedCategories": [
+            "types",
+            "views",
+            "columns",
+            "policies",
+            "functions",
+            "relations"
+          ],
+          "ledgerAfter": 455,
+          "ledgerBefore": 454,
+          "objectVerification": {
+            "assertions": 7,
+            "functions": [
+              "private.can_read_published_teaching_module",
+              "private.can_read_published_textbook",
+              "private.student_script_segments"
+            ],
+            "relations": [
+              "public.student_learning_agent_script_nodes"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "ffc4bcbfb9de23270bf5f4acafc07178c8f807a7433dd0e52fa6b2d757044015",
+          "schemaBefore": "696d18645fa36198d0598de54a12cbbd33c33fd7207dc140a90ec18252855d33",
+          "verify": "PASS",
+          "version": "202609140005"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140006-target-upgrade-diff.json",
+          "changedCategories": [
+            "indexes",
+            "functions"
+          ],
+          "ledgerAfter": 456,
+          "ledgerBefore": 455,
+          "objectVerification": {
+            "assertions": 3,
+            "functions": [
+              "public.find_reconcilable_agent_runs_v1",
+              "public.reconcile_agent_run_batch_v1",
+              "public.reconcile_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "9d547944de6083721a2fda92dcf43f9e0b9ea81a0a1e98926119c6cd14288f88",
+          "schemaBefore": "ffc4bcbfb9de23270bf5f4acafc07178c8f807a7433dd0e52fa6b2d757044015",
+          "verify": "PASS",
+          "version": "202609140006"
+        }
+      ]
+    },
+    {
+      "baselineApplied": true,
+      "emptyApplicationTables": 194,
+      "mode": "baseline-fresh",
+      "steps": [
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140000-baseline-fresh-diff.json",
+          "changedCategories": [
+            "types",
+            "columns",
+            "indexes",
+            "policies",
+            "triggers",
+            "functions",
+            "relations",
+            "constraints"
+          ],
+          "ledgerAfter": 450,
+          "ledgerBefore": 449,
+          "objectVerification": {
+            "assertions": 14,
+            "functions": [
+              "agent_core_private.actor_guard",
+              "agent_core_private.check_budget",
+              "agent_core_private.definition_guard",
+              "agent_core_private.immutable",
+              "agent_core_private.run_json",
+              "public.admit_agent_run_v1",
+              "public.append_agent_run_event_v1",
+              "public.record_agent_usage_v1",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [
+              "public.agent_conversations",
+              "public.agent_definition_versions",
+              "public.agent_messages",
+              "public.agent_run_events",
+              "public.agent_runs"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "eecc9dee3065dba9ce97b486f03d781e51fb58f4de2e086dc921f8f4c95ec77e",
+          "schemaBefore": "eebf698f74d4d076478ea07bc0d15c73b4d20e2284a028b504d14bbae68431de",
+          "verify": "PASS",
+          "version": "202609140000"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140001-baseline-fresh-diff.json",
+          "changedCategories": [
+            "functions"
+          ],
+          "ledgerAfter": 451,
+          "ledgerBefore": 450,
+          "objectVerification": {
+            "assertions": 3,
+            "functions": [
+              "agent_core_private.definition_guard",
+              "public.append_agent_run_event_v2",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "0c9c79404f61891ffda769e717079af67396cea37ef355c3db92b2ca7ec9cc1f",
+          "schemaBefore": "eecc9dee3065dba9ce97b486f03d781e51fb58f4de2e086dc921f8f4c95ec77e",
+          "verify": "PASS",
+          "version": "202609140001"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140002-baseline-fresh-diff.json",
+          "changedCategories": [
+            "columns",
+            "functions"
+          ],
+          "ledgerAfter": 452,
+          "ledgerBefore": 451,
+          "objectVerification": {
+            "assertions": 6,
+            "functions": [
+              "agent_core_private.student_transport_guard",
+              "public.check_agent_run_cancel_v1",
+              "public.get_student_agent_run_status_v1",
+              "public.request_agent_run_cancel_v1",
+              "public.reserve_student_agent_event_sequence_v1",
+              "public.transition_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "83053d2edc3a51087018cf64229afefa0d8d3d14accae4be9ba4cbb8a00c57e2",
+          "schemaBefore": "0c9c79404f61891ffda769e717079af67396cea37ef355c3db92b2ca7ec9cc1f",
+          "verify": "PASS",
+          "version": "202609140002"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140003-baseline-fresh-diff.json",
+          "changedCategories": [
+            "types",
+            "columns",
+            "indexes",
+            "policies",
+            "triggers",
+            "functions",
+            "relations",
+            "constraints"
+          ],
+          "ledgerAfter": 453,
+          "ledgerBefore": 452,
+          "objectVerification": {
+            "assertions": 8,
+            "functions": [
+              "private.guard_curriculum_exam_cancellation",
+              "private.guard_curriculum_exam_roster",
+              "private.guard_curriculum_learning_publication",
+              "private.guard_curriculum_learning_source",
+              "private.staff_has_curriculum_template",
+              "public.dispatch_curriculum_plan_exam",
+              "public.get_curriculum_execution"
+            ],
+            "relations": [
+              "public.curriculum_plan_assessments"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "933f56b395f1747dbe84f815b79c5f02bfdc038fbcfa6401bd74da2d49e7eba9",
+          "schemaBefore": "83053d2edc3a51087018cf64229afefa0d8d3d14accae4be9ba4cbb8a00c57e2",
+          "verify": "PASS",
+          "version": "202609140003"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140004-baseline-fresh-diff.json",
+          "changedCategories": [
+            "functions"
+          ],
+          "ledgerAfter": 454,
+          "ledgerBefore": 453,
+          "objectVerification": {
+            "assertions": 4,
+            "functions": [
+              "public.get_completion_refresh_health",
+              "public.publish_completion_policy_draft",
+              "public.retry_failed_completion_refresh",
+              "public.save_completion_policy_draft"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "696d18645fa36198d0598de54a12cbbd33c33fd7207dc140a90ec18252855d33",
+          "schemaBefore": "933f56b395f1747dbe84f815b79c5f02bfdc038fbcfa6401bd74da2d49e7eba9",
+          "verify": "PASS",
+          "version": "202609140004"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140005-baseline-fresh-diff.json",
+          "changedCategories": [
+            "types",
+            "views",
+            "columns",
+            "policies",
+            "functions",
+            "relations"
+          ],
+          "ledgerAfter": 455,
+          "ledgerBefore": 454,
+          "objectVerification": {
+            "assertions": 7,
+            "functions": [
+              "private.can_read_published_teaching_module",
+              "private.can_read_published_textbook",
+              "private.student_script_segments"
+            ],
+            "relations": [
+              "public.student_learning_agent_script_nodes"
+            ],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "ffc4bcbfb9de23270bf5f4acafc07178c8f807a7433dd0e52fa6b2d757044015",
+          "schemaBefore": "696d18645fa36198d0598de54a12cbbd33c33fd7207dc140a90ec18252855d33",
+          "verify": "PASS",
+          "version": "202609140005"
+        },
+        {
+          "apply": "PASS",
+          "catalogDiff": "202609140006-baseline-fresh-diff.json",
+          "changedCategories": [
+            "indexes",
+            "functions"
+          ],
+          "ledgerAfter": 456,
+          "ledgerBefore": 455,
+          "objectVerification": {
+            "assertions": 3,
+            "functions": [
+              "public.find_reconcilable_agent_runs_v1",
+              "public.reconcile_agent_run_batch_v1",
+              "public.reconcile_agent_run_v1"
+            ],
+            "relations": [],
+            "status": "PASS"
+          },
+          "preflight": "PASS",
+          "schemaAfter": "9d547944de6083721a2fda92dcf43f9e0b9ea81a0a1e98926119c6cd14288f88",
+          "schemaBefore": "ffc4bcbfb9de23270bf5f4acafc07178c8f807a7433dd0e52fa6b2d757044015",
+          "verify": "PASS",
+          "version": "202609140006"
+        }
+      ]
+    }
+  ],
+  "productionMigration": "NOT APPLIED",
+  "productionWrites": 0,
+  "snapshotDigest": "400050663a736a17449e6e8ee1d3ca4d521576866891fab6325299c7ee5be317",
+  "success": true
+}

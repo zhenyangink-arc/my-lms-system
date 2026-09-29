@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "liveClientJsFilesScanned": 327,
+  "privateMarkerHits": 0,
+  "publicActivityShape": "Exact prompt/options; public_config empty; no private grading key",
+  "ownerDomBeforeAndAfter": "No private-answer markers",
+  "privateAnswerValidation": "Boolean-only database check; no value or reversible answer digest saved",
+  "secretSelectAuthenticated": false,
+  "secretSelectAnon": false,
+  "runtimeFacts": "NOT RUN — B2 excluded",
+  "networkCapture": "No request headers, cookies, JWT or authentication/session data captured",
+  "evidenceScan": "Required separately below"
+}

@@ -1,0 +1,18 @@
+{
+  "container": "uply-r4d-recovery-20260916t030822z",
+  "containerId": "208b24b3fcfb910049da36470b517c0ed1b7085b427b8790af2405b5f06a90c5",
+  "volume": "uply-r4d-recovery-20260916t030822z-data",
+  "database": "uply_r4d_recovery",
+  "marker": "UPLY_R4D_ISOLATED_RECOVERY",
+  "network": "none",
+  "publishedPorts": [],
+  "productionCredentialsInjected": false,
+  "bindMounts": [],
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "labels": {
+    "purpose": "isolated-recovery",
+    "stage": "stage1f-r4d"
+  },
+  "pass": true
+}

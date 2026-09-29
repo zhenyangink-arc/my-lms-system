@@ -1,0 +1,9 @@
+{
+  "originalBrowserEvidencePreserved": true,
+  "sameRunFieldOriginallyOnlyCheckedNonemptyId": true,
+  "sameOriginalRunIdExplicitComparisonNotExecuted": true,
+  "deadlineReadCounterOriginallyExcludedLearningAgentTables": true,
+  "correctedHarnessFullStackRerun": false,
+  "gate24": "PARTIAL",
+  "gate27": "PARTIAL"
+}

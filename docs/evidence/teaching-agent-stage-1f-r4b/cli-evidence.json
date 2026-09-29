@@ -1,0 +1,22 @@
+{
+  "version": "1.102.2\n  tailscale commit: 6cac918179d4d673bfebe2fc74f81183ddd73fea\n  long version: 1.102.2-t6cac91817-g6ff0ddc72\n  other commit: 6ff0ddc7264e38276f40986706ae4607dbab57d8\n  go version: go1.26.5 (tailscale/go 63ae404c82)\n",
+  "serveHelp": "Serve content and local servers on your tailnet\n\nUSAGE\n  tailscale serve <target>\n  tailscale serve status [--json]\n  tailscale serve reset\n\nTailscale Serve enables you to share a local server securely within your tailnet.\n\nTo share a local server on the internet, use `tailscale funnel`\n\n<target> can be a file, directory, text, or most commonly the location to a service running on the\nlocal machine. The location to the location service can be expressed as a port number (e.g., 3000),\na partial URL (e.g., localhost:3000), or a full URL including a path (e.g., http://localhost:3000/foo).\nOn Unix-like systems, you can also specify a Unix domain socket (e.g., unix:/tmp/myservice.sock).\n\nEXAMPLES\n  - Expose an HTTP server running at 127.0.0.1:3000 in the foreground:\n    $ tailscale serve 3000\n\n  - Expose an HTTP server running at 127.0.0.1:3000 in the background:\n    $ tailscale serve --bg 3000\n\n  - Expose an HTTPS server with invalid or self-signed certificates at https://localhost:8443\n    $ tailscale serve https+insecure://localhost:8443\n\n  - Expose a service listening on a Unix socket (Linux/macOS/BSD only):\n    $ tailscale serve unix:/var/run/myservice.sock\n\nFor more examples and use cases visit our docs site https://tailscale.com/kb/1247/funnel-serve-use-cases\n\nSUBCOMMANDS\n  status      View current serve configuration\n  reset       Reset current serve config\n  drain       Drain a service from the current node\n  clear       Remove all config for a service\n  advertise   Advertise this node as a service proxy to the tailnet\n  get-config  Get service configuration to save to a file\n  set-config  Define service configuration from a file\n\nFLAGS\n  --accept-app-caps value\n    \tApp capabilities to forward to the server (specify multiple capabilities with a comma-separated list)\n  --bg, --bg=false\n    \tRun the command as a background process (default false, when --service is set defaults to true).\n  --http value\n    \tExpose an HTTP server at the specified port\n  --https value\n    \tExpose an HTTPS server at the specified port (default mode)\n  --proxy-protocol value\n    \tPROXY protocol version (1 or 2) for TCP forwarding\n  --service value\n    \tServe for a service with distinct virtual IP instead on node itself.\n  --set-path value\n    \tAppends the specified path to the base URL for accessing the underlying service\n  --tcp value\n    \tExpose a TCP forwarder to forward raw TCP packets at the specified port\n  --tls-terminated-tcp value\n    \tExpose a TCP forwarder to forward TLS-terminated TCP packets at the specified port\n  --tun, --tun=false\n    \tForward all traffic to the local machine (default false), only supported for services. Refer to docs for more information.\n  --yes, --yes=false\n    \tUpdate without interactive prompts (default false)\n",
+  "commands": {
+    "add": [
+      "tailscale",
+      "serve",
+      "--bg",
+      "--https=9443",
+      "http://127.0.0.1:43183"
+    ],
+    "remove": [
+      "tailscale",
+      "serve",
+      "--https=9443",
+      "off"
+    ]
+  },
+  "addExecuted": 1,
+  "removeExecuted": 1,
+  "resetExecuted": 0
+}

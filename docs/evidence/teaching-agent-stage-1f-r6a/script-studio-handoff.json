@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "observedAtUtc": "2026-09-16T06:43:59.741Z",
+  "method": "EXISTING_USER_CHROME_CDP",
+  "pagePath": "/platform/dashboard/admin/apps/korean/teaching-scripts",
+  "chapterHash": "5672961a0fc8222118a1071b0446c45c609ad320bf42983e25f3b1189d7c9f0d",
+  "chapterMatchesCreatedDraft": true,
+  "targetTitleVisible": true,
+  "chapterZeroVisible": true,
+  "orientationVisible": true,
+  "newScriptButtonVisible": true,
+  "newScriptButtonClicked": false,
+  "scriptCreated": false,
+  "savePublishRunClicked": false,
+  "chromeLeftOpen": true,
+  "sessionSecretsReadOrExported": false,
+  "readOnlyAutomationNote": "Initial post-navigation text read encountered two main elements; re-read body only. No navigation or mutation repeated."
+}

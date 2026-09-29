@@ -1,0 +1,21 @@
+{
+  "approval": "R7C-B3 CURRENT DB DURABLE E2E EXECUTION ACTIVATION",
+  "status": "USED",
+  "scenarioId": "r7cb-b3-wrong-correct-recovery-1",
+  "actor": "existing stable B2 actor",
+  "tenant": "existing dedicated B2 tenant",
+  "activityAlias": "hangul-introduction-vowel-recognition",
+  "scope": "DISABLED",
+  "mutationAdmission": "OFF",
+  "logicalActivation": 1,
+  "logicalWrongSubmission": 1,
+  "logicalCorrectSubmission": 1,
+  "resubmission": 0,
+  "ttlSeconds": 900,
+  "renewals": 0,
+  "privateApprovalPath": "/home/yangzhen/.config/uply-first-enable-20260910/development-execution/b3/execution-approval.json",
+  "budget": "3 INSERT / 1 UPDATE / 0 DELETE",
+  "noCommitFault": "DEFERRED",
+  "newDeployment": 0,
+  "productSourceChanges": 0
+}
