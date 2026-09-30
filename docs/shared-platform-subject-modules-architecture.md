@@ -124,7 +124,7 @@ app → features（平台 / subjects） → shared
 | 会话练习 AI 提示词、回答语言模式、场景内容格式（`korean` 字段） | `supabase/functions/qwen-conversation-chat`、AI 体验页面、场景数据 | 第 3 步与英语会话内容一起设计 |
 | 作答表单短答题提示写死“填写韩语答案”；投放题型只有 5 种、客观判分为字符串相等 | `AssignmentSubmissionForm.tsx`、`learning_assignment_questions` | 题型与判题器插槽，设计见 [question-type-grader-slot-design.md](./question-type-grader-slot-design.md) |
 | 英语课时完整访问 | 课时页 `korean_course` 准入（黄区） | 会员决定 + 会员开关按应用改造 |
-| 资料库分类名“韩语学习”（`language` 分类的显示名），英语学生也会看到 | `src/app/dashboard/library/config.ts` | 资料库是机构级共享资源，改名会改变韩语端文字，属于产品决定：改为“语言学习”，或让资料库按应用区分分类 |
+| ~~资料库分类名“韩语学习”，英语学生也会看到~~ | `src/app/dashboard/library/**` | 已解决（2026-10-01）：资料本来就按应用内课程筛选，只是 `language` 分类显示名写死；学科清单新增 `student.libraryLanguageCategoryLabel`，英语显示“英语学习”，韩语与管理端保持原名。留学申请、签证材料等分类在英语资料库中仍显示（只影响筛选按钮），待资料库分类按应用配置时一并处理 |
 | 门户首页、韩语首页 | `src/app/[space]/page.tsx`、`DashboardHomePage.tsx` | 按第 8 节第 1 项的决定改造（门户跨学科总览 + 平台首页框架），排在本机库同步之后 |
 | 韩语专属页面与内容 | 深化学习页、韩语章节测试、韩语教材路径判断、创建教学内容骨架等 | 第 5 步整体迁入 `subjects/korean` |
 | ~~死代码~~ | 旧后台“学生分配”整条链、`admin/growth-toolbox/page-content.tsx` | 已删除（18 个文件，旧入口重定向路由保留） |
