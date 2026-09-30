@@ -2,9 +2,8 @@
 
 import { z } from "zod";
 
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { refreshStudentHomeLearningForApp } from "@/features/student-home-learning/api/refresh-for-app";
 import { requireActiveUser } from "@/lib/auth";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { recordStudentChapterPracticeProgress } from "./student/progress-service";
 import type { StudentChapterPracticeProgress } from "./student/types";
 
@@ -68,11 +67,16 @@ export async function updateStudentChapterPracticeProgressAction(
       practiceUnitId: parsed.data.practiceUnitId,
       mutation: parsed.data,
     });
-    refreshStudentHomeLearning({
+    // 按练习单元本身所属的应用刷新首页，应用由服务端读取。
+    const { data: unit } = await supabase
+      .from("chapter_practice_units")
+      .select("student_app_id")
+      .eq("id", parsed.data.practiceUnitId)
+      .maybeSingle();
+    refreshStudentHomeLearningForApp({
       tenantId: tenant.id,
       studentId: user.id,
-      studentAppId: STUDENT_APP_IDS.korean,
-      appSlug: "korean",
+      studentAppId: unit?.student_app_id,
       space: tenant.slug,
     });
     return { ok: true, progress };

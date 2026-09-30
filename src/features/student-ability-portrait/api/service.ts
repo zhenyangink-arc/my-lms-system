@@ -8,7 +8,6 @@ import {
   type LanguageSkill,
 } from "@/components/analytics/SixDimensionRadar";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type AbilitySkillTier = "优势项" | "良好" | "中等" | "待提升";
@@ -190,11 +189,13 @@ export async function loadAbilityPortrait({
   supabase,
   tenantId,
   studentId,
+  studentAppId,
   now,
 }: {
   supabase: SupabaseClient;
   tenantId: string;
   studentId: string;
+  studentAppId: string;
   now: Date;
 }): Promise<AbilityPortraitData> {
   // 成绩六维是 service_role 专用聚合视图；页面鉴权完成后仍必须按
@@ -211,7 +212,7 @@ export async function loadAbilityPortrait({
         .from("student_toolbox_skill_profiles")
         .select("skill,ability_score,valid_sessions,valid_attempts")
         .eq("student_id", studentId)
-        .eq("student_app_id", STUDENT_APP_IDS.korean),
+        .eq("student_app_id", studentAppId),
       () =>
         supabase
           .from("student_toolbox_skill_profiles")
@@ -226,7 +227,7 @@ export async function loadAbilityPortrait({
         )
         .eq("tenant_id", tenantId)
         .eq("student_id", studentId)
-        .eq("student_app_id", STUDENT_APP_IDS.korean),
+        .eq("student_app_id", studentAppId),
       () =>
         admin
           .from("student_grade_skill_profiles")

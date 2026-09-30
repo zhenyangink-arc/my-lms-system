@@ -5,6 +5,7 @@ export default function KoreanSkillsPracticePage() {
     <ToolboxPage
       skillsBasePath="/dashboard/practice/skills"
       showHero={false}
+      studentAppSlug="korean"
     />
   );
 }

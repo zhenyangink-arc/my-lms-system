@@ -4,7 +4,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
 import { isCourseUnlocked, isLessonUnlocked } from "@/lib/course-unlocks";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 type CategoryRow = {
   id: string;
@@ -89,21 +88,29 @@ function timestamp(value: string | null | undefined) {
  * 门户只从正式发布的课程与课时中选取继续位置。
  * 专项练习、章节练习和阅读训练都不参与这里的课程判断。
  */
-export async function loadStudentCurrentKoreanCourse({
+/**
+ * 读取学生在某个学习应用中的当前课程。学科应用的一级课程分类 slug 与应用
+ * slug 一致，课程再按 student_app_id 限定在同一应用内。
+ */
+export async function loadStudentCurrentCourse({
   supabase,
   studentId,
+  studentAppId,
+  appSlug,
   space,
   now = new Date(),
 }: {
   supabase: SupabaseClient;
   studentId: string;
+  studentAppId: string;
+  appSlug: string;
   space: string;
   now?: Date;
 }): Promise<StudentCurrentCourse | null> {
   const { data: rootCategory, error: rootCategoryError } = await supabase
     .from("course_categories")
     .select("id,parent_id,slug,sort_order")
-    .eq("slug", "korean")
+    .eq("slug", appSlug)
     .is("parent_id", null)
     .eq("is_published", true)
     .maybeSingle();
@@ -133,7 +140,7 @@ export async function loadStudentCurrentKoreanCourse({
       "category_id",
       subcategories.map((subcategory) => subcategory.id),
     )
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", studentAppId)
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
   throwReadError("目录", courseError);

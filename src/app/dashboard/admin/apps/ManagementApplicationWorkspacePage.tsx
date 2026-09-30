@@ -33,7 +33,11 @@ import {
   requireManagementAppAccess,
   type ManagementAppAccess,
 } from "@/lib/management-apps";
-import type { StudentAppSlug } from "@/lib/student-apps";
+import {
+  getSubjectManifest,
+  isManagementSectionKey,
+  isSubjectSectionEnabled,
+} from "@/features/subjects";
 import { createClient } from "@/lib/supabase/server";
 
 type CountResult = { count: number | null; error: unknown };
@@ -45,7 +49,8 @@ type WorkspaceModule = {
   icon: typeof Languages;
   group: string;
   capability?: keyof ManagementAppAccess["capabilities"];
-  appSlugs?: StudentAppSlug[];
+  /** 依赖学科能力的模块：只有学科清单启用该分区时才显示。 */
+  subjectOnly?: boolean;
   platformOwnerOnly?: boolean;
   tenantTeacherOnly?: boolean;
   institutionExecutiveOnly?: boolean;
@@ -78,7 +83,7 @@ const learningModules: WorkspaceModule[] = [
     icon: CalendarRange,
     group: "教学与考核",
     capability: "manageAssessments",
-    appSlugs: ["korean"],
+    subjectOnly: true,
     platformOwnerOrTenant: true,
   },
   {
@@ -129,7 +134,7 @@ const learningModules: WorkspaceModule[] = [
     icon: Workflow,
     group: "课程内容",
     capability: "manageContent",
-    appSlugs: ["korean"],
+    subjectOnly: true,
     platformOwnerOnly: true,
   },
   {
@@ -163,7 +168,7 @@ const learningModules: WorkspaceModule[] = [
     icon: Target,
     group: "学情与设置",
     capability: "viewAnalytics",
-    appSlugs: ["korean"],
+    subjectOnly: true,
     tenantTeacherOnly: true,
   },
   {
@@ -173,7 +178,7 @@ const learningModules: WorkspaceModule[] = [
     icon: Target,
     group: "教学与考核",
     capability: "manageContent",
-    appSlugs: ["korean"],
+    subjectOnly: true,
     platformOwnerOnly: true,
   },
   {
@@ -183,7 +188,7 @@ const learningModules: WorkspaceModule[] = [
     icon: Stamp,
     group: "教学与考核",
     capability: "manageAssessments",
-    appSlugs: ["korean"],
+    subjectOnly: true,
   },
   {
     key: "conversation",
@@ -331,11 +336,17 @@ export async function ManagementApplicationWorkspacePage({
       assignmentsQuery,
       recordsQuery,
     ])) as CountResult[];
+  const subjectManifest = getSubjectManifest(access.app.slug);
   const modules = (
     access.app.kind === "service" ? serviceModules : learningModules
   ).filter(
     (module) =>
-      (!module.appSlugs || module.appSlugs.includes(access.app.slug)) &&
+      (module.subjectOnly
+        ? isManagementSectionKey(module.key) &&
+          isSubjectSectionEnabled(access.app.slug, module.key)
+        : !subjectManifest ||
+          (isManagementSectionKey(module.key) &&
+            subjectManifest.management.sections.includes(module.key))) &&
       (!module.tenantTeacherOnly ||
         (access.scope === "tenant" && access.role === "teacher")) &&
       (!module.institutionExecutiveOnly ||

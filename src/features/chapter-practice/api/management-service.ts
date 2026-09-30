@@ -3,7 +3,8 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { requirePlatformOwner } from "@/lib/admin";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { isSubjectSectionEnabled } from "@/features/subjects";
+import { getStudentAppSlugById } from "@/lib/student-app-access.server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   CHAPTER_PRACTICE_BLOCK_LABELS,
@@ -28,6 +29,12 @@ import type {
 
 type JsonObject = Record<string, unknown>;
 type AuthorityContext = Awaited<ReturnType<typeof loadAuthorityContext>>;
+
+/** 巩固中心只对启用“巩固中心管理”分区的学科开放；应用来自数据本身。 */
+function isPracticeCenterApp(studentAppId: string | null | undefined) {
+  const appSlug = getStudentAppSlugById(studentAppId);
+  return Boolean(appSlug && isSubjectSectionEnabled(appSlug, "practice-center"));
+}
 
 type GeneratedBlock = {
   block_type: ChapterPracticeBlockType;
@@ -152,12 +159,12 @@ async function loadAuthorityContext(
   } | null;
   if (
     !course ||
-    course.student_app_id !== STUDENT_APP_IDS.korean ||
+    !isPracticeCenterApp(course.student_app_id) ||
     course.content_scope !== "platform" ||
     lesson.content_scope !== "platform" ||
     chapter.content_scope !== "platform"
   ) {
-    throw new ChapterPracticeOperationError("该章节不属于韩国语平台课程");
+    throw new ChapterPracticeOperationError("该章节不属于已开放巩固中心的平台课程");
   }
 
   const textbook = assertQuery(
@@ -165,7 +172,7 @@ async function loadAuthorityContext(
     await supabase
       .from("digital_textbooks")
       .select("id,status,updated_at")
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", course.student_app_id)
       .eq("lesson_id", lesson.id)
       .eq("status", "published")
       .maybeSingle(),
@@ -299,7 +306,7 @@ async function loadAuthorityContext(
       .select(
         "id,skill,title,description,instructions,content_payload,status,updated_at",
       )
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", course.student_app_id)
       .eq("course_chapter_id", chapter.id)
       .eq("status", "published")
       .order("sort_order"),
@@ -821,18 +828,21 @@ async function requireEditableUnit(
     "读取巩固包",
     await supabase
       .from("chapter_practice_units")
-      .select("id,course_chapter_id,status,published_at,completion_rule")
+      .select("id,student_app_id,course_chapter_id,status,published_at,completion_rule")
       .eq("id", unitId)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .maybeSingle(),
   ) as {
     id: string;
+    student_app_id: string;
     course_chapter_id: string;
     status: ChapterPracticeUnitStatus;
     published_at: string | null;
     completion_rule: JsonObject;
   } | null;
   if (!unit) throw new ChapterPracticeOperationError("巩固包不存在");
+  if (!isPracticeCenterApp(unit.student_app_id)) {
+    throw new ChapterPracticeOperationError("该巩固包所属学科未开放巩固中心");
+  }
   if (unit.published_at || unit.status !== "draft") {
     throw new ChapterPracticeOperationError(
       "当前版本不可编辑",
@@ -890,7 +900,7 @@ async function createDraftVersion(
     await supabase
       .from("chapter_practice_units")
       .insert({
-        student_app_id: STUDENT_APP_IDS.korean,
+        student_app_id: context.course.student_app_id,
         course_chapter_id: courseChapterId,
         source_textbook_chapter_id: context.textbookChapter?.id ?? null,
         version: (latest?.version ?? 0) + 1,
@@ -937,7 +947,7 @@ async function markPublishedUnitNeedsUpdate(
     await supabase
       .from("chapter_practice_units")
       .select("id,source_snapshot")
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", context.course.student_app_id)
       .eq("course_chapter_id", courseChapterId)
       .eq("status", "published")
       .order("version", { ascending: false })
@@ -1015,8 +1025,8 @@ async function resolvePublishedTextbookCourseChapter(
       .eq("id", version.textbook_id)
       .maybeSingle(),
   ) as { lesson_id: string; student_app_id: string } | null;
-  if (!textbook || textbook.student_app_id !== STUDENT_APP_IDS.korean) {
-    throw new ChapterPracticeOperationError("该教材不属于韩国语应用");
+  if (!textbook || !isPracticeCenterApp(textbook.student_app_id)) {
+    throw new ChapterPracticeOperationError("该教材所属学科未开放巩固中心");
   }
 
   let chapterQuery = supabase
@@ -1053,7 +1063,7 @@ export async function synchronizeChapterPracticeAfterTextbookPublish(
     await supabase
       .from("chapter_practice_units")
       .select("id")
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", context.course.student_app_id)
       .eq("course_chapter_id", courseChapterId)
       .limit(1),
   ) ?? []) as Array<{ id: string }>;
@@ -1089,7 +1099,7 @@ export async function getChapterPracticeUnitDetail(
       .select(
         "id,student_app_id,course_chapter_id,source_textbook_chapter_id,version,status,title,completion_rule,source_snapshot,published_at,updated_at",
       )
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", context.course.student_app_id)
       .eq("course_chapter_id", courseChapterId)
       .order("version", { ascending: false })
       .limit(1)
@@ -1324,12 +1334,12 @@ async function inspectUnit(
     "读取待发布巩固包",
     await supabase
       .from("chapter_practice_units")
-      .select("id,course_chapter_id,title,completion_rule,status,published_at")
+      .select("id,student_app_id,course_chapter_id,title,completion_rule,status,published_at")
       .eq("id", unitId)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .maybeSingle(),
   ) as {
     id: string;
+    student_app_id: string;
     course_chapter_id: string;
     title: string;
     completion_rule: JsonObject;
@@ -1337,6 +1347,9 @@ async function inspectUnit(
     published_at: string | null;
   } | null;
   if (!unit) throw new ChapterPracticeOperationError("巩固包不存在");
+  if (!isPracticeCenterApp(unit.student_app_id)) {
+    throw new ChapterPracticeOperationError("该巩固包所属学科未开放巩固中心");
+  }
   const context = await loadAuthorityContext(supabase, unit.course_chapter_id);
   const blocks = ((assertQuery(
     "读取待发布内容块",
@@ -1478,11 +1491,13 @@ export async function returnChapterPracticeToDraft(unitId: string) {
     "读取巩固包",
     await supabase
       .from("chapter_practice_units")
-      .select("id,status,published_at")
+      .select("id,student_app_id,status,published_at")
       .eq("id", unitId)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .maybeSingle(),
-  ) as { id: string; status: string; published_at: string | null } | null;
+  ) as { id: string; student_app_id: string; status: string; published_at: string | null } | null;
+  if (unit && !isPracticeCenterApp(unit.student_app_id)) {
+    throw new ChapterPracticeOperationError("该巩固包所属学科未开放巩固中心");
+  }
   if (!unit || unit.published_at || unit.status !== "pending_review") {
     throw new ChapterPracticeOperationError("只有待检查版本可以退回草稿");
   }
@@ -1517,11 +1532,13 @@ export async function publishChapterPracticeUnit(unitId: string) {
     "读取待发布巩固包",
     await supabase
       .from("chapter_practice_units")
-      .select("id,status,published_at")
+      .select("id,student_app_id,status,published_at")
       .eq("id", unitId)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .maybeSingle(),
-  ) as { id: string; status: string; published_at: string | null } | null;
+  ) as { id: string; student_app_id: string; status: string; published_at: string | null } | null;
+  if (unitBefore && !isPracticeCenterApp(unitBefore.student_app_id)) {
+    throw new ChapterPracticeOperationError("该巩固包所属学科未开放巩固中心");
+  }
   if (!unitBefore || unitBefore.published_at || unitBefore.status !== "pending_review") {
     throw new ChapterPracticeOperationError("只有待检查版本可以发布");
   }

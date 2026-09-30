@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { calculatePlanEnd, seoulLocalInputToISOString } from "./time";
 import { TEMPLATE_ITEM_COLUMNS, mapTemplateItem } from "./api/service";
 import { loadPlanLearningSources } from "./api/sources";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 const uuid = z.string().uuid();
 const activityType = z.enum([
@@ -30,7 +31,7 @@ function resultPath(path: string, kind: "success" | "error", message: string) {
 
 async function requirePlatformOwner(space: string, appSlug: string) {
   const access = await requireManagementAppAccess(space, appSlug);
-  if (access.scope !== "platform" || access.globalRole !== "platform_owner" || appSlug !== "korean") {
+  if (access.scope !== "platform" || access.globalRole !== "platform_owner" || !isSubjectSectionEnabled(appSlug, "learning-plans")) {
     throw new Error("只有平台负责人可以维护标准学习计划。");
   }
   return access;
@@ -83,7 +84,7 @@ async function nextTemplateVersion(
 async function requireInstitutionPublisher(space: string, appSlug: string) {
   const access = await requireManagementAppAccess(space, appSlug);
   if (
-    access.scope !== "tenant" || !access.tenantId || appSlug !== "korean" ||
+    access.scope !== "tenant" || !access.tenantId || !isSubjectSectionEnabled(appSlug, "learning-plans") ||
     !access.capabilities.manageAssessments ||
     !["teacher", "admin", "ceo", "tenant_super_admin"].includes(access.role)
   ) {
@@ -812,7 +813,7 @@ export async function addStudentsToInstitutionPlanAction(
 
 export async function dispatchCurriculumExamAction(space: string, appSlug: string, planId: string, itemId: string) {
   const access = await requireManagementAppAccess(space, appSlug);
-  if (access.scope !== "tenant" || !access.capabilities.manageAssessments || appSlug !== "korean") throw new Error("没有布置考试权限。");
+  if (access.scope !== "tenant" || !access.capabilities.manageAssessments || !isSubjectSectionEnabled(appSlug, "learning-plans")) throw new Error("没有布置考试权限。");
   const path = `${access.appPath}/learning-plans`;
   const supabase = await createClient();
   const { error } = await supabase.rpc("dispatch_curriculum_plan_exam", { p_plan_id: uuid.parse(planId), p_item_id: uuid.parse(itemId) });

@@ -22,6 +22,8 @@ import {
   type ConversationCategory,
   type ConversationDifficulty,
 } from "./config";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
 
 type ScenarioRow = {
@@ -41,11 +43,15 @@ const difficultyTone: Record<ConversationDifficulty, { color: string; soft: stri
   advanced: { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
 };
 
-export default async function ConversationPracticePage() {
+export async function ConversationPracticePageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug: SubjectSlug;
+}) {
   const { profile, tenant } = await requireActiveUser();
   const userRole = profile?.role ?? "student";
   const tier = normalizeMembershipTier(profile?.membership_tier);
-  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null, studentAppSlug);
   if (
     userRole === "student" &&
     !canUseStudentFeature(userRole, tier, "conversation_course")
@@ -55,7 +61,7 @@ export default async function ConversationPracticePage() {
     ) {
       redirect(`${basePath}/ai-experience`);
     }
-    redirect(getStudentAppBasePath(tenant?.slug ?? "", "korean"));
+    redirect(getStudentAppBasePath(tenant?.slug ?? "", studentAppSlug));
   }
 
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
@@ -64,7 +70,7 @@ export default async function ConversationPracticePage() {
       supabase
         .from("conversation_practice_scenarios")
         .select("id,title,description,category,difficulty,duration_minutes,is_featured")
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("student_app_id", STUDENT_APP_IDS[studentAppSlug])
         .eq("status", "published")
         .order("is_featured", { ascending: false })
         .order("sort_order", { ascending: true })
@@ -102,7 +108,7 @@ export default async function ConversationPracticePage() {
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
         {canManage && (
           <div className="flex justify-end">
-            <Link href={getManagementAppPath(getDashboardBasePath(tenant?.slug), "korean", "conversation")} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={15} aria-hidden="true" /></Link>
+            <Link href={getManagementAppPath(getDashboardBasePath(tenant?.slug), studentAppSlug, "conversation")} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
         )}
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--accent), var(--card), var(--accent))" }}>
@@ -147,4 +153,9 @@ export default async function ConversationPracticePage() {
       </div>
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyConversationPracticePage() {
+  return <ConversationPracticePageContent studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

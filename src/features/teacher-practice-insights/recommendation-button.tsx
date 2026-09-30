@@ -13,17 +13,19 @@ import {
 } from "./actions";
 
 export function PracticeRecommendationButton({
+  appSlug,
   studentId,
   target,
   label,
   disabled = false,
 }: {
+  appSlug: string;
   studentId: string;
   target: PracticeRecommendationTarget;
   label: string;
   disabled?: boolean;
 }) {
-  const action = recommendStudentPracticeAction.bind(null, studentId, target);
+  const action = recommendStudentPracticeAction.bind(null, appSlug, studentId, target);
   const [state, formAction, pending] = useActionState(
     action,
     initialPracticeRecommendationActionState,

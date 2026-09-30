@@ -2,6 +2,8 @@ import { approvedVocabulary, type PracticeSnapshotItem } from "@/lib/chapter-pra
 import { requireActiveUser } from "@/lib/auth";
 import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
   VocabularyPractice,
   type Word,
@@ -18,14 +20,19 @@ type LibraryRow = {
   sort_order: number;
 };
 
-export default async function VocabularyPage() {
+export async function VocabularyPageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug: SubjectSlug;
+}) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const { supabase } = await requireActiveUser();
 
-  const { data: snapshots, error: snapshotError } = await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: STUDENT_APP_IDS.korean });
+  const { data: snapshots, error: snapshotError } = await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: studentAppId });
   const { data: rows } = await supabase
     .from("growth_toolbox_vocabulary")
     .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", studentAppId)
     .order("sort_order", { ascending: true });
 
   const library = (rows ?? []) as LibraryRow[];
@@ -46,7 +53,7 @@ export default async function VocabularyPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <ToolboxStudyTimer skill="vocabulary" />
+      <ToolboxStudyTimer appSlug={studentAppSlug} skill="vocabulary" />
       {snapshotError && !["PGRST202", "42883"].includes(snapshotError.code) && <p role="status" className="text-sm">部分教材词汇暂时无法读取，请稍后刷新。现有词库仍可练习。</p>}
       <Hero totalWords={words.length} textbookCount={textbookCount} customCount={customCount} />
       <VocabularyPractice words={words} textbookCount={textbookCount} customCount={customCount} />
@@ -112,4 +119,9 @@ function StatCard({ value, label }: { value: number; label: string }) {
       <p className="app-muted-text mt-0.5 text-[10px] font-bold">{label}</p>
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyVocabularyPage() {
+  return <VocabularyPageContent studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

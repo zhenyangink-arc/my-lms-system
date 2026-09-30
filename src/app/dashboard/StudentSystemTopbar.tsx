@@ -22,6 +22,7 @@ import {
   normalizeDashboardPathname,
   scopeDashboardPath,
 } from "@/lib/dashboard-path";
+import { getSubjectManifest } from "@/features/subjects";
 import { LogoutButton } from "./LogoutButton";
 import { ReminderDialog, type TeacherReplyReminder } from "./ReminderDialog";
 
@@ -156,6 +157,9 @@ export function StudentSystemTopbar({
   const router = useRouter();
   const pathname = normalizeDashboardPathname(usePathname());
   const indexLabel = getTopbarIndexLabel(pathname, studentAppSlug);
+  const courseSearchEnabled = studentAppSlug
+    ? getSubjectManifest(studentAppSlug)?.student.courseSearch ?? false
+    : false;
   const [reminderOpen, setReminderOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [backgroundTheme, setBackgroundTheme] =
@@ -236,7 +240,7 @@ export function StudentSystemTopbar({
           <span aria-current="page">{indexLabel}</span>
         </nav>
 
-        {studentAppSlug === "korean" &&
+        {courseSearchEnabled &&
           pathname !== "/dashboard" &&
           !pathname.startsWith("/dashboard/courses") && (
           <form

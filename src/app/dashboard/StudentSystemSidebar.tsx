@@ -57,6 +57,11 @@ import {
   getPracticeSectionFromDashboardPath,
   isPracticeSection,
 } from "@/lib/practice-navigation-memory";
+import {
+  getSubjectManifest,
+  type StudentNavKey,
+  type SubjectManifest,
+} from "@/features/subjects";
 import { LogoutButton } from "./LogoutButton";
 
 type Props = {
@@ -85,33 +90,32 @@ type NavGroup = {
   adminOnly?: boolean;
 };
 
-const learningGroups: NavGroup[] = [
-  {
-    label: "学习",
-    items: [
-      { label: "成长首页", href: "/dashboard", icon: LayoutDashboard },
-      { label: "韩语课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true },
-      { label: "巩固中心", href: "/dashboard/practice", icon: Target, requiresStudentSectionAccess: true },
-      { label: "学习任务", href: "/dashboard/assignments", icon: ClipboardList, requiresStudentSectionAccess: true, studentFeature: "learning_assignments" },
-      { label: "会话练习", href: "/dashboard/conversation-practice", icon: MessageSquare, requiresStudentSectionAccess: true, studentFeature: "conversation_course" },
-    ],
-  },
-  {
-    label: "成长记录",
-    items: [
-      { label: "我的成绩", href: "/dashboard/grades", icon: Award, requiresStudentSectionAccess: true },
-      { label: "学习记录", href: "/dashboard/records", icon: History, requiresStudentSectionAccess: true },
-      { label: "资料库", href: "/dashboard/library", icon: Library, requiresStudentSectionAccess: true },
-    ],
-  },
-  {
-    label: "消息与服务",
-    items: [
-      { label: "通知公告", href: "/dashboard/announcements", icon: Megaphone, announcementOnly: true },
-      { label: "帮助中心", href: "/dashboard/help", icon: HelpCircle },
-    ],
-  },
-];
+// 学科导航目录：链接、图标和会员开关由平台维护，学科清单只挑选和排序。
+const subjectNavItems: Record<StudentNavKey, NavItem> = {
+  home: { label: "首页", href: "/dashboard", icon: LayoutDashboard },
+  courses: { label: "课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true },
+  practice: { label: "巩固中心", href: "/dashboard/practice", icon: Target, requiresStudentSectionAccess: true },
+  assignments: { label: "学习任务", href: "/dashboard/assignments", icon: ClipboardList, requiresStudentSectionAccess: true, studentFeature: "learning_assignments" },
+  conversation: { label: "会话练习", href: "/dashboard/conversation-practice", icon: MessageSquare, requiresStudentSectionAccess: true, studentFeature: "conversation_course" },
+  grades: { label: "我的成绩", href: "/dashboard/grades", icon: Award, requiresStudentSectionAccess: true },
+  records: { label: "学习记录", href: "/dashboard/records", icon: History, requiresStudentSectionAccess: true },
+  library: { label: "资料库", href: "/dashboard/library", icon: Library, requiresStudentSectionAccess: true },
+  announcements: { label: "通知公告", href: "/dashboard/announcements", icon: Megaphone, announcementOnly: true },
+  help: { label: "帮助中心", href: "/dashboard/help", icon: HelpCircle },
+};
+
+function subjectNavItem(subject: SubjectManifest, key: StudentNavKey): NavItem {
+  const item = subjectNavItems[key];
+  const label = subject.student.navLabels?.[key];
+  return label ? { ...item, label } : item;
+}
+
+function getSubjectNavGroups(subject: SubjectManifest): NavGroup[] {
+  return subject.student.navigation.map((group) => ({
+    label: group.label,
+    items: group.items.map((key) => subjectNavItem(subject, key)),
+  }));
+}
 
 const studyAbroadGroups: NavGroup[] = [
   {
@@ -135,22 +139,18 @@ const studyAbroadGroups: NavGroup[] = [
 
 function getStudentAppGroups(studentAppSlug?: StudentAppSlug): NavGroup[] {
   if (studentAppSlug === "study-abroad") return studyAbroadGroups;
-  if (
-    studentAppSlug === "english" ||
-    studentAppSlug === "math" ||
-    studentAppSlug === "university"
-  ) {
-    return [
-      {
-        label: "应用导航",
-        items: [
-          { label: "应用首页", href: "/dashboard", icon: LayoutDashboard },
-        ],
-      },
-    ];
-  }
+  // 旧 /dashboard 入口没有应用标识时沿用韩语导航。
+  const subject = getSubjectManifest(studentAppSlug ?? "korean");
+  if (subject) return getSubjectNavGroups(subject);
 
-  return learningGroups;
+  return [
+    {
+      label: "应用导航",
+      items: [
+        { label: "应用首页", href: "/dashboard", icon: LayoutDashboard },
+      ],
+    },
+  ];
 }
 
 const adminRoles = new Set([
@@ -185,8 +185,9 @@ export function StudentSystemSidebar({
   const isAdmin = adminRoles.has(userRole);
   const isTeacher = userRole === "teacher";
   const isAudit = userRole === "platform_super_admin" || userRole === "platform_course_inspector";
+  const subject = studentAppSlug ? getSubjectManifest(studentAppSlug) : null;
   const practiceMemoryKey =
-    studentId && studentAppSlug === "korean"
+    studentId && subject?.student.practiceMemory
       ? getPracticeMemoryKey(studentId, dashboardBasePath)
       : null;
 
@@ -288,11 +289,12 @@ export function StudentSystemSidebar({
         .map(personalize),
     }));
   const visibleItems = visibleGroups.flatMap((group) => group.items);
+  const navigationSubject = getSubjectManifest(studentAppSlug ?? "korean");
   const mobilePriorityHrefs =
     studentAppSlug === "study-abroad"
       ? ["/dashboard", "/dashboard/courses", "/dashboard/universities"]
-      : studentAppSlug === "korean" || !studentAppSlug
-        ? ["/dashboard", "/dashboard/courses", "/dashboard/practice"]
+      : navigationSubject
+        ? navigationSubject.student.mobilePrimary.map((key) => subjectNavItems[key].href)
         : ["/dashboard"];
   const mobilePrimaryItems = mobilePriorityHrefs
     .map((href) => visibleItems.find((item) => item.href === href))
@@ -349,7 +351,7 @@ export function StudentSystemSidebar({
         </nav>
 
         <div className="student-system-sidebar-foot">
-          {studentAppSlug === "korean" ? (
+          {subject?.student.membershipFooter ? (
             <>
               <span className="student-system-sidebar-user-avatar" aria-hidden="true">
                 {userName.trim().slice(0, 1).toUpperCase()}

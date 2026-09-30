@@ -32,7 +32,7 @@ export default async function KoreanCoursePracticePage({
 
   const { supabase, user } = await requireActiveUser();
   const [courses, reviewResult] = await Promise.all([
-    loadCoursePracticeCatalog({ supabase, userId: user.id }),
+    loadCoursePracticeCatalog({ supabase, userId: user.id, studentAppId: STUDENT_APP_IDS.korean }),
     loadStudentReviewCenter({
       supabase,
       studentId: user.id,

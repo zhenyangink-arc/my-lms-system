@@ -8,6 +8,7 @@ import { loadCurriculumPlanWorkspace } from "@/features/curriculum-plans/api/ser
 import { CurriculumPlanWorkspace } from "@/features/curriculum-plans/components/CurriculumPlanWorkspace";
 import { loadPlanLearningSources } from "@/features/curriculum-plans/api/sources";
 import { createClient } from "@/lib/supabase/server";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export default async function CurriculumLearningPlansPage({
   const [{ space, appSlug }, query] = await Promise.all([params, searchParams]);
   const context = await requireManagementApplicationSection(space, appSlug, "learning-plans");
   const allowed =
-    appSlug === "korean" &&
+    isSubjectSectionEnabled(appSlug, "learning-plans") &&
     (context.access.scope === "tenant" || context.access.globalRole === "platform_owner");
   if (!allowed) redirect(context.access.appPath);
 

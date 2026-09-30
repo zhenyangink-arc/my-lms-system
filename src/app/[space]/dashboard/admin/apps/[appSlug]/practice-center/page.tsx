@@ -6,6 +6,7 @@ import {
 } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
 import ChapterPracticeCoverageListing from "@/features/chapter-practice/components/chapter-practice-coverage-listing";
 import { requirePlatformOwner } from "@/lib/admin";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export default async function ChapterPracticeCenterManagementRoute({
   params,
@@ -18,13 +19,13 @@ export default async function ChapterPracticeCenterManagementRoute({
     requirePlatformOwner(),
   ]);
 
-  if (context.access.scope !== "platform" || appSlug !== "korean") {
+  if (context.access.scope !== "platform" || !isSubjectSectionEnabled(appSlug, "practice-center")) {
     notFound();
   }
 
   return (
     <ManagementApplicationSectionFrame {...context}>
-      <ChapterPracticeCoverageListing space={space} />
+      <ChapterPracticeCoverageListing space={space} studentAppId={context.access.appId} />
     </ManagementApplicationSectionFrame>
   );
 }

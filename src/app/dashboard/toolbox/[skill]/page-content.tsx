@@ -35,6 +35,8 @@ import {
   getStudentAppBasePath,
   STUDENT_APP_IDS,
 } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   ToolboxPracticeRunner,
@@ -239,13 +241,16 @@ export async function ToolboxSkillPage({
   skillsBasePath = "/dashboard/toolbox",
   exerciseBasePath = "/dashboard/training",
   renderExercisePage = false,
+  studentAppSlug,
 }: {
   params: Promise<{ skill: string; space?: string }>;
   searchParams?: Promise<{ course?: string; lesson?: string; chapter?: string }>;
   skillsBasePath?: string;
   exerciseBasePath?: string;
   renderExercisePage?: boolean;
+  studentAppSlug: SubjectSlug;
 }) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const [{ skill }, selection, auth] = await Promise.all([
     params,
     searchParams ?? Promise.resolve<{ course?: string; lesson?: string; chapter?: string }>({}),
@@ -256,7 +261,7 @@ export async function ToolboxSkillPage({
   if (!entry) notFound();
 
   const dashboardBasePath = tenant?.slug
-    ? getStudentAppBasePath(tenant.slug, "korean")
+    ? getStudentAppBasePath(tenant.slug, studentAppSlug)
     : getDashboardBasePath(null);
   const toolboxHref = scopeDashboardPath(skillsBasePath, dashboardBasePath);
   const skillCatalogHref = `${toolboxHref}/${encodeURIComponent(skill)}`;
@@ -286,7 +291,7 @@ export async function ToolboxSkillPage({
     .select(
       "id,category_id,slug,title,description,level,sort_order,unlock_mode,prerequisite_course_id,available_from,is_manually_locked",
     )
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", studentAppId)
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
   const courses = (courseData ?? []) as CourseRow[];
@@ -328,7 +333,7 @@ export async function ToolboxSkillPage({
         .select(
           "id,skill,title,description,instructions,content_payload,course_id,course_chapter_id,chapter_test_id",
         )
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("student_app_id", studentAppId)
         .eq("skill", skill)
         .eq("status", "published")
         .not("course_chapter_id", "is", null)
@@ -354,7 +359,7 @@ export async function ToolboxSkillPage({
         .from("toolbox_practice_sessions")
         .select("exercise_id,status")
         .eq("student_id", user.id)
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("student_app_id", studentAppId)
         .eq("status", "completed"),
       () =>
         supabase
@@ -381,7 +386,7 @@ export async function ToolboxSkillPage({
         .from("chapter_tests")
         .select("id,slug,course_key,chapter_number,title,korean_title,skills")
         .in("id", chapterTestIds)
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("student_app_id", studentAppId)
         .eq("status", "published")
     : { data: [], error: null };
 
@@ -609,7 +614,7 @@ export async function ToolboxSkillPage({
       };
     });
 
-  const referenceResult = selectedUnit && (skill === "vocabulary" || skill === "grammar") ? await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: STUDENT_APP_IDS.korean }) : null;
+  const referenceResult = selectedUnit && (skill === "vocabulary" || skill === "grammar") ? await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: studentAppId }) : null;
   const referenceRows = (referenceResult?.data ?? []) as { lesson_id: string; chapter_test_id: string | null; snapshot: PracticeSnapshotItem[] }[];
   // Use the existing lesson + test relationship, never infer a match from a chapter number.
   const chapterSnapshots = selectedUnit?.chapter.chapter_test_id ? referenceRows
@@ -844,7 +849,7 @@ export async function ToolboxSkillPage({
   const selectedNumber = selectedUnit.test?.chapter_number ?? selectedUnit.chapter.sort_order;
   return (
     <div className="mx-auto w-full max-w-6xl space-y-5 overflow-x-clip px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      {exercise && questions.length > 0 && <ToolboxStudyTimer skill={skill} />}
+      {exercise && questions.length > 0 && <ToolboxStudyTimer appSlug={studentAppSlug} skill={skill} />}
       <Link
         href={skillCatalogHref}
         className="app-muted-text inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
@@ -938,6 +943,7 @@ export async function ToolboxSkillPage({
   );
 }
 
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
 export default function LegacyToolboxSkillPage({
   params,
   searchParams,
@@ -945,5 +951,11 @@ export default function LegacyToolboxSkillPage({
   params: Promise<{ skill: string; space?: string }>;
   searchParams?: Promise<{ course?: string; lesson?: string; chapter?: string }>;
 }) {
-  return <ToolboxSkillPage params={params} searchParams={searchParams} />;
+  return (
+    <ToolboxSkillPage
+      params={params}
+      searchParams={searchParams}
+      studentAppSlug={LEGACY_DASHBOARD_APP_SLUG}
+    />
+  );
 }

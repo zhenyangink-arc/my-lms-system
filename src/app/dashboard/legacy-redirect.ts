@@ -3,6 +3,12 @@ export type LegacyDashboardSearchParams = Record<
   string | string[] | undefined
 >;
 
+/**
+ * 旧 /dashboard 学生入口在拆分应用前只服务韩语，兼容入口统一按韩语处理。
+ * 共享页面模块的旧默认导出也引用这里，避免把“默认韩语”散落在各处。
+ */
+export const LEGACY_DASHBOARD_APP_SLUG = "korean" as const;
+
 const STUDY_ABROAD_SECTIONS = new Set(["universities", "documents", "visa"]);
 
 function appendSearchParams(
@@ -56,7 +62,7 @@ export function buildLegacyStudentAppTarget(
   const appSlug = STUDY_ABROAD_SECTIONS.has(section) ||
     (section === "courses" && rest[1] === "service")
     ? "study-abroad"
-    : "korean";
+    : LEGACY_DASHBOARD_APP_SLUG;
   const encodedRest = rest.map((segment) => encodeURIComponent(segment)).join("/");
   const appBasePath = `${portalPath}/apps/${appSlug}`;
   const pathname = encodedRest ? `${appBasePath}/${encodedRest}` : appBasePath;
@@ -72,14 +78,14 @@ export function buildLegacyStudentAppTargetFromRequestPath(
     : dashboardBasePath;
   const legacyPrefix = `${portalPath}/dashboard`;
 
-  if (!requestPath) return `${portalPath}/apps/korean`;
+  if (!requestPath) return `${portalPath}/apps/${LEGACY_DASHBOARD_APP_SLUG}`;
 
   const requestUrl = new URL(requestPath, "https://student-app.local");
   if (
     requestUrl.pathname !== legacyPrefix &&
     !requestUrl.pathname.startsWith(`${legacyPrefix}/`)
   ) {
-    return `${portalPath}/apps/korean${requestUrl.search}`;
+    return `${portalPath}/apps/${LEGACY_DASHBOARD_APP_SLUG}${requestUrl.search}`;
   }
 
   const suffix = requestUrl.pathname.slice(legacyPrefix.length);
@@ -93,7 +99,7 @@ export function buildLegacyStudentAppTargetFromRequestPath(
     const appSlug = STUDY_ABROAD_SECTIONS.has(firstSegment) ||
       (firstSegment === "courses" && suffixSegments[1] === "service")
       ? "study-abroad"
-      : "korean";
+      : LEGACY_DASHBOARD_APP_SLUG;
     pathname = `${portalPath}/apps/${appSlug}${suffix}`;
   }
 

@@ -2,9 +2,8 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { refreshStudentHomeLearningForApp } from "@/features/student-home-learning/api/refresh-for-app";
 import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learning-assignments";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   initialAssignmentRemediationState,
@@ -226,11 +225,16 @@ export async function submitLearningAssignmentAction(
   };
   refreshAssignmentPages(assignmentId);
   if (tenant?.id) {
-    refreshStudentHomeLearning({
+    // 按作业本身所属的应用刷新首页，应用由服务端读取，不接受客户端参数。
+    const { data: assignmentApp } = await supabase
+      .from("learning_assignments")
+      .select("student_app_id")
+      .eq("id", assignmentId)
+      .maybeSingle();
+    refreshStudentHomeLearningForApp({
       tenantId: tenant.id,
       studentId: user.id,
-      studentAppId: STUDENT_APP_IDS.korean,
-      appSlug: "korean",
+      studentAppId: assignmentApp?.student_app_id,
       space: tenant.slug,
     });
   }

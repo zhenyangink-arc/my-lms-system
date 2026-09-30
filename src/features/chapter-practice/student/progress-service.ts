@@ -2,7 +2,6 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   calculateStudentPracticeProgress,
   emptyStudentPracticeProgress,
@@ -147,8 +146,8 @@ export async function recordStudentChapterPracticeProgress({
     supabase
       .from("chapter_practice_units")
       .select("id,course_chapter_id,completion_rule")
+      // 练习单元自带应用归属；RLS 只允许读取学生有权使用的应用内容。
       .eq("id", practiceUnitId)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .eq("status", "published")
       .maybeSingle(),
     loadStudentChapterPracticeProgress({
@@ -332,7 +331,7 @@ export async function refreshStudentPracticeProgressForChapterTest({
 }) {
   const { data: test, error: testError } = await supabase
     .from("chapter_tests")
-    .select("id")
+    .select("id,student_app_id")
     .eq("slug", testSlug)
     .maybeSingle();
   if (testError || !test) return;
@@ -344,7 +343,7 @@ export async function refreshStudentPracticeProgressForChapterTest({
   const { data: units, error: unitError } = await supabase
     .from("chapter_practice_units")
     .select("id")
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", test.student_app_id)
     .eq("status", "published")
     .in(
       "course_chapter_id",

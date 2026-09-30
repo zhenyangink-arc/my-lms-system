@@ -33,6 +33,7 @@ import {
   requireManagementAppAccess,
   type ManagementAppAccess,
 } from "@/lib/management-apps";
+import { getSubjectManifest, isManagementSectionKey } from "@/features/subjects";
 
 export type SectionSearchParams = Record<
   string,
@@ -205,6 +206,14 @@ export async function requireManagementApplicationSection(
   const definition = definitions[section];
 
   if (!definition) notFound();
+  // 学科应用只开放清单启用的分区；没有学科清单的应用维持原有分区。
+  const subject = getSubjectManifest(access.app.slug);
+  if (
+    subject &&
+    !(isManagementSectionKey(section) && subject.management.sections.includes(section))
+  ) {
+    notFound();
+  }
   if (!access.capabilities[definition.capability]) redirect(access.appPath);
 
   return { access, definition, section };
@@ -225,7 +234,10 @@ export function ManagementApplicationSectionFrame({
   section?: string;
   chapterId?: string;
 }) {
-  const workflow = courseContentSteps(access);
+  const workflow = courseContentSteps(
+    access,
+    getSubjectManifest(access.app.slug)?.management.courseContentWorkflow ?? false,
+  );
   return (
     <ManagementPage
       title={teachingOperationsSteps(access).find(step => step.key === section)?.title ?? definition.title}

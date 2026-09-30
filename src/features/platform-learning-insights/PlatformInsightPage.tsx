@@ -4,13 +4,14 @@ import { ManagementNotice } from "@/components/layout/management-page";
 import { parseInsightFilters, type InsightMode, type SearchParams } from "./model";
 import { loadPlatformInsights } from "./service";
 import { InsightBoard } from "./InsightBoard";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export async function PlatformInsightPage({ appSlug, mode, searchParams }: { appSlug: string; mode: InsightMode; searchParams: SearchParams }) {
   const filters = parseInsightFilters(searchParams);
   const data = await loadPlatformInsights(appSlug, mode, filters);
   const unavailable = data.errors.some(error => error !== "累计六维能力");
   return <div className="space-y-4">
-    {mode === "conversation" && appSlug === "korean" && data.access.globalRole === "platform_owner" && <div className="flex justify-end"><Link href={`${data.access.appPath}/conversation/scenarios`} className="inline-flex min-h-11 items-center border px-4 text-sm font-medium">管理平台会话场景</Link></div>}
+    {mode === "conversation" && isSubjectSectionEnabled(appSlug, "conversation") && data.access.globalRole === "platform_owner" && <div className="flex justify-end"><Link href={`${data.access.appPath}/conversation/scenarios`} className="inline-flex min-h-11 items-center border px-4 text-sm font-medium">管理平台会话场景</Link></div>}
     <form method="get" className="app-card flex flex-wrap items-end gap-3 border p-4">
       <label className="flex min-w-36 flex-col gap-1 text-sm">统计时间<select name="days" defaultValue={filters.days} className="app-input h-11 border px-3"><option value="7">最近 7 天</option><option value="30">最近 30 天</option><option value="90">最近 90 天</option></select></label>
       <label className="flex min-w-44 max-w-full flex-1 flex-col gap-1 text-sm">机构范围<select name="tenant" defaultValue={filters.tenant} className="app-input h-11 min-w-0 border px-3"><option value="">全部已注册机构</option>{data.invalidTenant && <option value={filters.tenant}>机构不在当前应用范围</option>}{data.tenants.map(tenant => <option key={tenant.id} value={tenant.id}>{tenant.name}</option>)}</select></label>

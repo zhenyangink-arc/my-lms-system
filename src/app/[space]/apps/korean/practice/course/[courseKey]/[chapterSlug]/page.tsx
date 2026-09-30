@@ -7,7 +7,7 @@ import { loadPublishedChapterPracticeUnit } from "@/features/chapter-practice/ap
 import { loadStudentChapterPracticeProgress } from "@/features/chapter-practice/student/progress-service";
 import { requireActiveUser } from "@/lib/auth";
 import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
-import { getStudentAppPath } from "@/lib/student-apps";
+import { getStudentAppPath, STUDENT_APP_IDS } from "@/lib/student-apps";
 
 export default async function KoreanKnowledgeResearchLessonPage({
   params,
@@ -25,7 +25,7 @@ export default async function KoreanKnowledgeResearchLessonPage({
     "practice/course",
   );
   const { supabase, user } = await requireActiveUser();
-  const courses = await loadCoursePracticeCatalog({ supabase, userId: user.id });
+  const courses = await loadCoursePracticeCatalog({ supabase, userId: user.id, studentAppId: STUDENT_APP_IDS.korean });
   const course = courses.find((item) => item.slug === courseKey);
   const chapter = course?.chapters.find((item) => item.slug === chapterSlug);
 
@@ -61,6 +61,7 @@ export default async function KoreanKnowledgeResearchLessonPage({
   const practiceUnit = await loadPublishedChapterPracticeUnit({
     supabase,
     courseChapterId: chapter.id,
+    studentAppId: STUDENT_APP_IDS.korean,
   });
 
   // 目录状态与详情查询之间可能恰逢版本切换。此时不回退到旧硬编码内容，

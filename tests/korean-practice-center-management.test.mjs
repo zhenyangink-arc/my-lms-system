@@ -198,7 +198,7 @@ test("巩固中心路由与查询均复用平台负责人权限校验", () => {
   assert.match(route, /requirePlatformOwner\(\)/);
   assert.match(service, /requirePlatformOwner\(\)/);
   assert.match(route, /context\.access\.scope !== "platform"/);
-  assert.match(route, /appSlug !== "korean"/);
+  assert.match(route, /!isSubjectSectionEnabled\(appSlug, "practice-center"\)/);
   assert.match(workspace, /platformOwnerOnly: true/);
   assert.equal(isPlatformOwnerRole("platform_super_admin"), true);
   for (const role of [

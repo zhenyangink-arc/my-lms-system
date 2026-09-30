@@ -8,9 +8,16 @@ import { recordToolboxStudyTime } from "./actions";
  * 离开页面/切换标签页/组件卸载时把剩余秒数上报，按天写入 learning_time_log。
  * 无任何可见 UI。
  */
-export function ToolboxStudyTimer({ skill }: { skill: string }) {
+export function ToolboxStudyTimer({
+  appSlug,
+  skill,
+}: {
+  appSlug: string;
+  skill: string;
+}) {
   const secondsRef = useRef(0);
   const skillRef = useRef(skill);
+  const appSlugRef = useRef(appSlug);
 
   useEffect(() => {
     secondsRef.current = 0;
@@ -23,7 +30,7 @@ export function ToolboxStudyTimer({ skill }: { skill: string }) {
       const s = secondsRef.current;
       if (s > 0) {
         secondsRef.current = 0;
-        recordToolboxStudyTime(skillRef.current, s).catch(() => {});
+        recordToolboxStudyTime(appSlugRef.current, skillRef.current, s).catch(() => {});
       }
     };
 

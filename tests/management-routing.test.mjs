@@ -20,6 +20,7 @@ import {
   scopeDashboardPath,
 } from "../src/lib/dashboard-path.ts";
 import { getManagementAppPath } from "../src/lib/management-app-path.ts";
+import { getSubjectManifest } from "../src/features/subjects/index.ts";
 import {
   getPracticeAppPath,
   getPracticeDashboardPath,
@@ -182,9 +183,10 @@ test("成绩中心先选作业或考试并只展示当前分类六边形", () =>
   assert.doesNotMatch(gradePageSource, /GradeResultSection/);
   assert.match(gradePageSource, /预览模式/);
   assert.doesNotMatch(gradePageSource, /学生成绩页预览/);
+  assert.match(gradePageSource, /const studentAppId = STUDENT_APP_IDS\[studentAppSlug\]/);
   assert.match(
     gradePageSource,
-    /student-grade-category-v1:\$\{user\.id\}:\$\{STUDENT_APP_IDS\.korean\}/,
+    /student-grade-category-v1:\$\{user\.id\}:\$\{studentAppId\}/,
   );
   assert.doesNotMatch(gradePageSource, /\.from\("chapter_test_attempts"\)/);
   assert.match(
@@ -387,10 +389,17 @@ test("韩语学生导航合并为巩固中心并保留三类独立子路由", ()
     sidebarSource,
     /label: "专项练习", href: "\/dashboard\/toolbox"/,
   );
+  assert.deepEqual(getSubjectManifest("korean")?.student.mobilePrimary, [
+    "home",
+    "courses",
+    "practice",
+  ]);
   assert.match(
     sidebarSource,
-    /\["\/dashboard", "\/dashboard\/courses", "\/dashboard\/practice"\]/,
+    /navigationSubject\.student\.mobilePrimary\.map\(\(key\) => subjectNavItems\[key\]\.href\)/,
   );
+  assert.match(sidebarSource, /home: \{ label: "首页", href: "\/dashboard"/);
+  assert.match(sidebarSource, /courses: \{ label: "课程", href: "\/dashboard\/courses"/);
   assert.match(pageHeaderSource, /title: "巩固中心", icon: Target/);
 
   for (const section of ["course", "skills", "review"]) {
@@ -569,14 +578,16 @@ test("巩固中心继续按韩语应用隔离读取和写入", () => {
   );
 
   assert.match(koreanLayoutSource, /appSlug="korean"/);
+  assert.match(vocabularySource, /const studentAppId = STUDENT_APP_IDS\[studentAppSlug\]/);
+  assert.match(vocabularySource, /\.eq\("student_app_id", studentAppId\)/);
+  assert.match(vocabularySource, /p_app_id: studentAppId/);
   assert.match(
     vocabularySource,
-    /\.eq\("student_app_id", STUDENT_APP_IDS\.korean\)/,
+    /<VocabularyPageContent studentAppSlug=\{LEGACY_DASHBOARD_APP_SLUG\} \/>/,
   );
-  assert.match(
-    toolboxActionsSource,
-    /student_app_id: STUDENT_APP_IDS\.korean/,
-  );
+  assert.match(toolboxActionsSource, /if \(!isSubjectSlug\(appSlug\)\) return;/);
+  assert.match(toolboxActionsSource, /hasActiveStudentAppAccess\(\{/);
+  assert.match(toolboxActionsSource, /student_app_id: studentAppId,/);
   assert.match(
     coursePracticeSource,
     /\.select\("test_id,test_slug,score,passed"\)/,

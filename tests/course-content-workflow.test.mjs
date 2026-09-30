@@ -2,19 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { courseContentSteps, practiceSourceLabel, practiceSourceNotice, selectTextbookVersion } from '../src/lib/course-content-workflow.ts';
 
-const access = { app: { slug: 'korean' }, scope: 'platform', globalRole: 'platform_owner', capabilities: { manageContent: true } };
+const access = { scope: 'platform', globalRole: 'platform_owner', capabilities: { manageContent: true } };
 
 test('course content navigation keeps the four responsibilities in order', () => {
-  assert.deepEqual(courseContentSteps(access).map(s => s.key), ['content', 'textbooks', 'teaching-scripts', 'toolbox']);
+  assert.deepEqual(courseContentSteps(access, true).map(s => s.key), ['content', 'textbooks', 'teaching-scripts', 'toolbox']);
 });
 test('navigation does not expose owner-only script entry to other roles', () => {
   for (const override of [{ globalRole: 'platform_admin' }, { scope: 'tenant' }, { globalRole: null }]) {
-    assert.equal(courseContentSteps({ ...access, ...override }).some(s => s.key === 'teaching-scripts'), false);
+    assert.equal(courseContentSteps({ ...access, ...override }, true).some(s => s.key === 'teaching-scripts'), false);
   }
 });
-test('unrelated apps and unavailable content permissions get no workflow', () => {
-  assert.deepEqual(courseContentSteps({ ...access, app: { slug: 'study-abroad' } }), []);
-  assert.deepEqual(courseContentSteps({ ...access, capabilities: { manageContent: false } }), []);
+test('apps without the subject workflow and unavailable content permissions get no workflow', () => {
+  assert.deepEqual(courseContentSteps(access, false), []);
+  assert.deepEqual(courseContentSteps({ ...access, capabilities: { manageContent: false } }, true), []);
 });
 test('practice labels distinguish imported copies from live textbook references', () => {
   assert.equal(practiceSourceLabel('textbook'), '教材导入副本');

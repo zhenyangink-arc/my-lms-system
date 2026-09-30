@@ -5,14 +5,20 @@ const steps = [
   { key: "toolbox", title: "练习工具" },
 ] as const;
 
-/** Navigation only; destination pages retain their own authorization checks. */
-export function courseContentSteps(access: {
-  app: { slug: string };
-  scope: string;
-  globalRole: string | null;
-  capabilities: { manageContent: boolean };
-}) {
-  if (access.app.slug !== "korean" || !access.capabilities.manageContent) return [];
+/**
+ * Navigation only; destination pages retain their own authorization checks.
+ * `workflowEnabled` comes from the subject manifest so this shared module does
+ * not depend on any specific subject.
+ */
+export function courseContentSteps(
+  access: {
+    scope: string;
+    globalRole: string | null;
+    capabilities: { manageContent: boolean };
+  },
+  workflowEnabled: boolean,
+) {
+  if (!workflowEnabled || !access.capabilities.manageContent) return [];
   return steps.filter((step) => step.key !== "teaching-scripts" || (
     access.scope === "platform" && access.globalRole === "platform_owner"
   ));

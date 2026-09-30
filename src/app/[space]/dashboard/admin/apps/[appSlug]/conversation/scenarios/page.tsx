@@ -3,11 +3,12 @@ import { notFound } from "next/navigation";
 import { ConversationPracticeManagementContent } from "@/app/dashboard/admin/conversation-practice/page-content";
 import { ManagementApplicationSectionFrame, requireManagementApplicationSection, firstSectionParam, type SectionSearchParams } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export default async function PlatformConversationScenarios({ params, searchParams }: { params: Promise<{ space: string; appSlug: string }>; searchParams: Promise<SectionSearchParams> }) {
   const { space, appSlug } = await params;
   const context = await requireManagementApplicationSection(space, appSlug, "conversation");
-  if (context.access.scope !== "platform" || context.access.globalRole !== "platform_owner" || appSlug !== "korean") notFound();
+  if (context.access.scope !== "platform" || context.access.globalRole !== "platform_owner" || !isSubjectSectionEnabled(appSlug, "conversation")) notFound();
   const query = await searchParams;
   return <ManagementApplicationSectionFrame {...context}>
     <div className="mb-4 flex flex-wrap items-center justify-between gap-3">

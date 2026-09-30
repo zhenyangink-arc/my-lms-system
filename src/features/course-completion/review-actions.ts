@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireManagementAppAccess } from "@/lib/management-apps";
 import { createClient } from "@/lib/supabase/server";
 import type { CompletionCertificateActionState } from "./review-types";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 const uuidSchema = z.string().uuid();
 const reasonSchema = z.string().trim().min(2).max(1000);
@@ -15,7 +16,7 @@ async function requireCompletionCertificateManager(space: string, appSlug: strin
   const access = await requireManagementAppAccess(space, appSlug);
   const allowed =
     access.scope === "tenant" &&
-    access.app.slug === "korean" &&
+    isSubjectSectionEnabled(access.app.slug, "completion-review") &&
     Boolean(access.tenantId) &&
     (access.role === "tenant_super_admin" || access.role === "ceo");
 
@@ -27,7 +28,7 @@ async function requireCompletionRetakeManager(space: string, appSlug: string) {
   const access = await requireManagementAppAccess(space, appSlug);
   const allowed =
     access.scope === "tenant" &&
-    access.app.slug === "korean" &&
+    isSubjectSectionEnabled(access.app.slug, "completion-review") &&
     Boolean(access.tenantId) &&
     access.capabilities.manageAssessments &&
     ["teacher", "tenant_super_admin", "ceo"].includes(access.role);

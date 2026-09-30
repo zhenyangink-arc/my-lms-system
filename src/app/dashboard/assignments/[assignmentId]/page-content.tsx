@@ -17,6 +17,8 @@ import {
 } from "@/lib/assignment-detail-data";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
 function AssignmentDate({ value }: { value: string | null }) {
   return <LocalDateTime value={value} options={ASSIGNMENT_DATE_OPTIONS} fallback="时间待定" />;
@@ -31,7 +33,9 @@ type DraftRow = { answers: unknown; active_step: number; updated_at: string };
 type AssignmentWindowRow = { chapter_completed: boolean; unlocked_at: string | null; effective_due_at: string | null; due_days_after_unlock: number | null };
 type AssignmentAttemptRow = { startedAt: string; expiresAt: string; serverNow: string };
 
-export default async function AssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string; space?: string }> }) {
+type AssignmentDetailPageParams = Promise<{ assignmentId: string; space?: string }>;
+
+export async function AssignmentDetailPageContent({ params, studentAppSlug }: { params: AssignmentDetailPageParams; studentAppSlug: SubjectSlug }) {
   const { assignmentId, space } = await params;
   const { supabase, user, isManager } = await requireAssignmentViewer();
   if (!isManager) {
@@ -43,7 +47,7 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
         return getAssignmentDetail(
           access.auth.supabase,
           access.tenantSlug ?? space,
-          STUDENT_APP_IDS.korean,
+          STUDENT_APP_IDS[studentAppSlug],
           assignmentId,
         );
       })()
@@ -188,4 +192,9 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
       {submissions.length > 0 && <section className="app-card rounded-3xl border p-5"><h2 className="flex items-center gap-2 font-bold"><History size={17} style={{ color: "var(--support)" }} />提交记录</h2><div className="mt-4 space-y-2">{submissions.map((submission) => <div key={submission.id} className="app-soft-card flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-xs"><span className="font-bold">第 {submission.attempt_number} 次</span><span className="rounded-full px-2 py-1 text-xs font-bold" style={{ color: submission.submission_state === "grade_released" ? "var(--status-success)" : submission.submission_state === "revision_required" ? "#c94f45" : "var(--status-warning)", backgroundColor: submission.submission_state === "grade_released" ? "var(--status-success-surface)" : submission.submission_state === "revision_required" ? "#fff0ed" : "var(--status-warning-surface)" }}>{SUBMISSION_WORKFLOW_STATE_LABELS[submission.submission_state]}</span><span className="app-muted-text ml-auto"><AssignmentDate value={submission.submitted_at} /></span>{submission.submission_state === "grade_released" && <strong style={{ color: "var(--status-success)" }}>{submission.score ?? 0} 分</strong>}</div>)}</div></section>}
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyAssignmentDetailPage({ params }: { params: AssignmentDetailPageParams }) {
+  return <AssignmentDetailPageContent params={params} studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { ManagementAppAccess } from "@/lib/management-apps";
+import { getSubjectManifest } from "@/features/subjects";
 
 export function teachingOperationsSteps(access: ManagementAppAccess) {
-  if (access.app.slug !== "korean") return [];
+  if (!getSubjectManifest(access.app.slug)?.management.teachingOperations) return [];
   const platform = access.scope === "platform";
   return [
     { key: "students", title: platform ? "机构教学概况" : "学生与教学分配", allowed: access.capabilities.manageStudents },

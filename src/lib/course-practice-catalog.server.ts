@@ -2,7 +2,6 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   buildCoursePracticeCatalog,
   type CoursePracticeAttemptRow,
@@ -17,10 +16,12 @@ import {
 export async function loadCoursePracticeCatalog({
   supabase,
   userId,
+  studentAppId,
   now = new Date(),
 }: {
   supabase: SupabaseClient;
   userId: string;
+  studentAppId: string;
   now?: Date;
 }) {
   const { data: courseData, error: courseError } = await supabase
@@ -28,7 +29,7 @@ export async function loadCoursePracticeCatalog({
     .select(
       "id,category_id,slug,title,sort_order,unlock_mode,prerequisite_course_id,available_from,is_manually_locked",
     )
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", studentAppId)
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
   if (courseError) throw new Error("课程巩固目录中的课程读取失败", { cause: courseError });
@@ -69,7 +70,7 @@ export async function loadCoursePracticeCatalog({
         ? supabase
             .from("chapter_practice_units")
             .select("id,course_chapter_id,version")
-            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .eq("student_app_id", studentAppId)
             .eq("status", "published")
             .in("course_chapter_id", chapterIds)
             .order("version", { ascending: false })
@@ -89,7 +90,7 @@ export async function loadCoursePracticeCatalog({
         .from("course_ebook_progress")
         .select("test_slug,progress_percent")
         .eq("student_id", userId)
-        .eq("student_app_id", STUDENT_APP_IDS.korean),
+        .eq("student_app_id", studentAppId),
     ]);
 
   const firstError = [

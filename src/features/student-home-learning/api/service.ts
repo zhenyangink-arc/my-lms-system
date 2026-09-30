@@ -180,7 +180,7 @@ export async function loadHomeLearningTasks({
   // 课程巩固目录本身要串行查好几轮（课程→课时→章节→…），
   // chapterPractice/specializedPractice/review 三个来源都要用它——
   // 这里只发起一次，其余三个来源共享同一个 promise，避免各自重复查一遍。
-  const catalogPromise = loadCoursePracticeCatalog({ supabase, userId: studentId, now });
+  const catalogPromise = loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now });
   const taskGroups = await Promise.all([
     loadAssignmentExamTasks({ ...commonInput, tenantId }),
     loadCourseContinuationTasks(commonInput),

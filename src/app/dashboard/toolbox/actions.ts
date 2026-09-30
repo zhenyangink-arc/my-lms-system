@@ -1,8 +1,10 @@
 "use server";
 
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { refreshStudentHomeLearningForApp } from "@/features/student-home-learning/api/refresh-for-app";
+import { isSubjectSlug } from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { hasActiveStudentAppAccess } from "@/lib/student-app-access.server";
 
 const TOOLBOX_SKILLS = [
   "vocabulary",
@@ -38,22 +40,38 @@ const UUID_PATTERN =
 /**
  * 记录成长工具箱练习时长（增量秒数）到 learning_time_log（source='toolbox'）。
  * 由练习页的计时组件周期上报；单次上限 1 小时，防异常数据。
+ * 学科来自页面，服务端必须核对它是学科应用且学生当前有权使用；
+ * 数据库写入策略同样要求学生拥有该应用权限。
  */
 export async function recordToolboxStudyTime(
+  appSlug: string,
   skill: string,
   seconds: number
 ): Promise<void> {
   const s = Math.floor(Number(seconds) || 0);
+  if (!isSubjectSlug(appSlug)) return;
   if (!TOOLBOX_SKILLS.includes(skill)) return;
   if (s < 1 || s > 3600) return;
 
   const { supabase, user, tenant } = await requireActiveUser();
   if (!tenant?.id) return;
 
+  const studentAppId = STUDENT_APP_IDS[appSlug];
+  if (
+    !(await hasActiveStudentAppAccess({
+      supabase,
+      tenantId: tenant.id,
+      studentId: user.id,
+      appId: studentAppId,
+    }))
+  ) {
+    return;
+  }
+
   await supabase.from("learning_time_log").insert({
     tenant_id: tenant.id,
     student_id: user.id,
-    student_app_id: STUDENT_APP_IDS.korean,
+    student_app_id: studentAppId,
     test_slug: `toolbox-${skill}`,
     source: "toolbox",
     seconds: s,
@@ -118,11 +136,16 @@ export async function submitToolboxPractice(input: {
   }
 
   const result = data as Record<string, unknown>;
-  refreshStudentHomeLearning({
+  // 按练习本身所属的应用刷新首页，应用由服务端读取。
+  const { data: exercise } = await supabase
+    .from("growth_toolbox_exercises")
+    .select("student_app_id")
+    .eq("id", input.exerciseId)
+    .maybeSingle();
+  refreshStudentHomeLearningForApp({
     tenantId: tenant.id,
     studentId: user.id,
-    studentAppId: STUDENT_APP_IDS.korean,
-    appSlug: "korean",
+    studentAppId: exercise?.student_app_id,
     space: tenant.slug,
   });
   return {

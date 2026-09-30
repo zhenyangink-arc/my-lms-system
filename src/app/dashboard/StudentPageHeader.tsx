@@ -25,6 +25,7 @@ import {
   getStudentAppDefinition,
   type StudentAppSlug,
 } from "@/lib/student-apps";
+import { getSubjectManifest } from "@/features/subjects";
 
 type HeaderConfig = {
   title: string;
@@ -59,7 +60,10 @@ function resolveHeaderConfig(
   }
 
   if (pathname.startsWith("/dashboard/courses")) {
-    return { title: studentAppSlug === "korean" ? "韩语课程" : "我的课程", icon: BookOpen };
+    const subjectTitle = studentAppSlug
+      ? getSubjectManifest(studentAppSlug)?.student.navLabels?.courses
+      : undefined;
+    return { title: subjectTitle ?? "我的课程", icon: BookOpen };
   }
   if (pathname.startsWith("/dashboard/practice")) {
     return { title: "巩固中心", icon: Target };

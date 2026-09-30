@@ -7,10 +7,11 @@ import { requireManagementAppAccess } from "@/lib/management-apps";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parsePolicyRequirements } from "./policy-form";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 async function owner(space: string, appSlug: string) {
   const access = await requireManagementAppAccess(space, appSlug);
-  if (access.scope !== "platform" || access.globalRole !== "platform_owner" || appSlug !== "korean") throw new Error("只有平台负责人可以管理结课政策和刷新任务。");
+  if (access.scope !== "platform" || access.globalRole !== "platform_owner" || !isSubjectSectionEnabled(appSlug, "completion-review")) throw new Error("只有平台负责人可以管理结课政策和刷新任务。");
   return `${access.appPath}/completion-review`;
 }
 

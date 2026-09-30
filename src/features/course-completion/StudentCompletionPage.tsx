@@ -14,6 +14,7 @@ import {
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import type { CourseCompletionCertificate } from "./types";
 import { PrintCertificateButton } from "./PrintCertificateButton";
+import type { SubjectSlug } from "@/features/subjects";
 import {
   completionHrefForSpace,
   type StudentCompletionData,
@@ -197,10 +198,12 @@ function CertificatePrintView({
 export function StudentCompletionPage({
   data,
   space,
+  studentAppSlug,
   institutionName,
 }: {
   data: StudentCompletionData;
   space: string;
+  studentAppSlug: SubjectSlug;
   institutionName: string;
 }) {
   const activeCertificate = data.certificates.find(
@@ -253,7 +256,7 @@ export function StudentCompletionPage({
                 </p>
                 {conclusion === "not_met" && firstActionableGap ? (
                   <Link
-                    href={completionHrefForSpace(space, firstActionableGap.href!)}
+                    href={completionHrefForSpace(space, studentAppSlug, firstActionableGap.href!)}
                     className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 text-sm font-semibold text-white outline-none transition hover:bg-[var(--primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 sm:w-auto"
                   >
                     下一步：{firstActionableGap.title}
@@ -409,7 +412,7 @@ export function StudentCompletionPage({
                               </p>
                             ) : gap.href ? (
                               <Link
-                                href={completionHrefForSpace(space, gap.href)}
+                                href={completionHrefForSpace(space, studentAppSlug, gap.href)}
                                 className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-semibold text-[var(--primary)] outline-none transition hover:bg-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                               >
                                 去完成

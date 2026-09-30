@@ -5,6 +5,7 @@ import {
   requireManagementApplicationSection,
 } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
 import { TeacherPracticeInsights } from "@/features/teacher-practice-insights/teacher-practice-insights";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export default async function TeacherPracticeInsightsRoute({
   );
 
   if (
-    appSlug !== "korean" ||
+    !isSubjectSectionEnabled(appSlug, "practice-insights") ||
     context.access.scope !== "tenant" ||
     context.access.role !== "teacher"
   ) {

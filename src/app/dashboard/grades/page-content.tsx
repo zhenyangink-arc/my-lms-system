@@ -14,6 +14,8 @@ import {
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
   GradeBoard,
   type GradeCategory,
@@ -126,7 +128,12 @@ function normalizeLanguageSkill(
   return null;
 }
 
-export default async function GradesPage() {
+export async function GradesPageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug: SubjectSlug;
+}) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const { supabase, user, role, canManage, membershipTier, tenantId } =
     await getGradeCenterAccess();
   const isStudent = role === "student";
@@ -139,7 +146,7 @@ export default async function GradesPage() {
   }
 
   const admin = createAdminClient();
-  const koreanScope = await getStudentAppCourseScope(supabase, "korean");
+  const appScope = await getStudentAppCourseScope(supabase, studentAppSlug);
 
   const [
     assignmentsResult,
@@ -154,7 +161,7 @@ export default async function GradesPage() {
             .select(
               "id,title,description,assignment_type,total_points,course_id,source_paper_id",
             )
-            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .eq("student_app_id", studentAppId)
             .in("status", ["published", "closed"]),
           () =>
             supabase
@@ -189,13 +196,13 @@ export default async function GradesPage() {
       ? supabase
           .from("courses")
           .select("id,title")
-          .in("id", koreanScope.courseIds)
+          .in("id", appScope.courseIds)
       : Promise.resolve({ data: [] as CourseRow[], error: null }),
   ]);
 
-  const koreanCourseIds = new Set(koreanScope.courseIds);
+  const appCourseIds = new Set(appScope.courseIds);
   const assignments = ((assignmentsResult.data ?? []) as AssignmentRow[]).filter(
-    (assignment) => !assignment.course_id || koreanCourseIds.has(assignment.course_id),
+    (assignment) => !assignment.course_id || appCourseIds.has(assignment.course_id),
   );
   const submissions = (submissionsResult.data ?? []) as SubmissionRow[];
   const reviews = (reviewsResult.data ?? []) as ReviewRow[];
@@ -260,7 +267,7 @@ export default async function GradesPage() {
               )
               .eq("tenant_id", tenantId!)
               .eq("student_id", user.id)
-              .eq("student_app_id", STUDENT_APP_IDS.korean),
+              .eq("student_app_id", studentAppId),
             () =>
               admin
                 .from("student_grade_skill_profiles")
@@ -535,9 +542,14 @@ export default async function GradesPage() {
           skillProfiles={skillProfiles}
           isStudent={isStudent}
           dataError={Boolean(dataError)}
-          memoryKey={`student-grade-category-v1:${user.id}:${STUDENT_APP_IDS.korean}`}
+          memoryKey={`student-grade-category-v1:${user.id}:${studentAppId}`}
         />
       </div>
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyGradesPage() {
+  return <GradesPageContent studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

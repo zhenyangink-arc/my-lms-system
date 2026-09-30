@@ -109,8 +109,9 @@ test("能力画像使用受控聚合读取，局部失败不会触发开发错�
   assert.match(abilityService, /createAdminClient/);
   assert.match(
     abilityService,
-    /admin[\s\S]+from\("student_grade_skill_profiles"\)[\s\S]+eq\("tenant_id", tenantId\)[\s\S]+eq\("student_id", studentId\)[\s\S]+eq\("student_app_id", STUDENT_APP_IDS\.korean\)/,
+    /admin[\s\S]+from\("student_grade_skill_profiles"\)[\s\S]+eq\("tenant_id", tenantId\)[\s\S]+eq\("student_id", studentId\)[\s\S]+eq\("student_app_id", studentAppId\)/,
   );
+  assert.match(portal, /loadAbilityPortrait\(\{[\s\S]*?studentAppId: STUDENT_APP_IDS\.korean,/);
   assert.match(portal, /能力数据暂时无法读取/);
   assert.doesNotMatch(portal, /console\.error/);
 });

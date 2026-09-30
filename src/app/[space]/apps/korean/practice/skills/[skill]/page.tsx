@@ -9,6 +9,7 @@ export default function KoreanSkillPracticePage({
 }) {
   return (
     <ToolboxSkillPage
+      studentAppSlug="korean"
       params={params}
       searchParams={searchParams}
       skillsBasePath="/dashboard/practice/skills"

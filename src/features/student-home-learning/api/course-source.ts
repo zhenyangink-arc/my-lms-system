@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { loadStudentCurrentKoreanCourse } from "@/features/student-current-course/api/service";
+import { loadStudentCurrentCourse } from "@/features/student-current-course/api/service";
 import { createHomeLearningTaskKey } from "../priority.ts";
 import type { HomeLearningTask } from "./types.ts";
 
@@ -25,9 +25,11 @@ export async function loadCourseContinuationTasks({
   space,
   now = new Date(),
 }: LoadCourseContinuationTaskInput): Promise<HomeLearningTask[]> {
-  const currentCourse = await loadStudentCurrentKoreanCourse({
+  const currentCourse = await loadStudentCurrentCourse({
     supabase,
     studentId,
+    studentAppId,
+    appSlug,
     space,
     now,
   });

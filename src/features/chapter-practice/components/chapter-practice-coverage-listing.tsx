@@ -304,10 +304,12 @@ function CoverageCard({ row, space }: { row: ChapterPracticeCoverageRow; space: 
 
 export default async function ChapterPracticeCoverageListing({
   space,
+  studentAppId,
 }: {
   space: string;
+  studentAppId: string;
 }) {
-  const result = await getChapterPracticeCoverage();
+  const result = await getChapterPracticeCoverage(studentAppId);
 
   return (
     <div className="space-y-6">

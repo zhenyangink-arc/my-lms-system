@@ -13,6 +13,7 @@ export default function KoreanDedicatedSkillTrainingPage({
 }) {
   return (
     <ToolboxSkillPage
+      studentAppSlug="korean"
       params={params.then(({ space, skill }) => ({ space, skill }))}
       searchParams={params.then(({ courseSlug, lessonSlug, chapterSlug }) => ({
         course: courseSlug,

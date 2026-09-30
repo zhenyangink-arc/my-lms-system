@@ -31,6 +31,8 @@ import {
   type KeyExpression,
 } from "../config";
 import { PracticeReflectionForm } from "../PracticeReflectionForm";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
 type ScenarioRow = {
   id: string;
@@ -87,13 +89,17 @@ function expressionArray(value: unknown): KeyExpression[] {
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
 
-export default async function ConversationScenarioPage({
+type ConversationScenarioParams = Promise<{ scenarioId: string }>;
+
+export async function ConversationScenarioPageContent({
   params,
+  studentAppSlug,
 }: {
-  params: Promise<{ scenarioId: string }>;
+  params: ConversationScenarioParams;
+  studentAppSlug: SubjectSlug;
 }) {
   const { tenant } = await requireStudentPageFeature("conversation_course");
-  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null, studentAppSlug);
   const { scenarioId } = await params;
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenarioResult, progressResult] = await Promise.all([
@@ -104,7 +110,7 @@ export default async function ConversationScenarioPage({
           "id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes",
         )
         .eq("id", scenarioId)
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("student_app_id", STUDENT_APP_IDS[studentAppSlug])
         .eq("status", "published")
         .maybeSingle(),
       () =>
@@ -211,7 +217,7 @@ export default async function ConversationScenarioPage({
               <DashboardTitleWithHint headingLevel={2} titleClassName="font-bold" title="学生端只读预览" description="这里显示学生看到的已发布内容，不会写入练习记录。" />
             </div>
             <Link
-              href={getManagementAppPath(getDashboardBasePath(tenant?.slug), "korean", "conversation")}
+              href={getManagementAppPath(getDashboardBasePath(tenant?.slug), studentAppSlug, "conversation")}
               className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold ${focusRing}`}
               style={{ color: "var(--primary-foreground)", backgroundColor: "var(--support)" }}
             >
@@ -315,4 +321,9 @@ export default async function ConversationScenarioPage({
       </div>
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyConversationScenarioPage({ params }: { params: ConversationScenarioParams }) {
+  return <ConversationScenarioPageContent params={params} studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

@@ -3,6 +3,7 @@
 import { requireActiveUser } from "@/lib/auth";
 import { getTeacherAssignedStudentIds } from "@/lib/student-assignments";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { isSubjectSectionEnabled, isSubjectSlug } from "@/features/subjects";
 import {
   PRACTICE_SKILLS,
   PRACTICE_SKILL_LABELS,
@@ -23,7 +24,12 @@ function result(
   return { status, message };
 }
 
+/**
+ * 学科由页面绑定传入，服务端必须重新核对：该学科开启了巩固学情分区，
+ * 且学生在当前老师该应用的负责名单中。
+ */
 export async function recommendStudentPracticeAction(
+  appSlug: string,
   studentId: string,
   target: PracticeRecommendationTarget,
   _state: PracticeRecommendationActionState,
@@ -32,13 +38,16 @@ export async function recommendStudentPracticeAction(
   void _state;
   void _formData;
   if (!UUID_PATTERN.test(studentId)) return result("error", "学生编号不正确。");
+  if (!isSubjectSlug(appSlug) || !isSubjectSectionEnabled(appSlug, "practice-insights")) {
+    return result("error", "当前应用没有开放巩固推荐。");
+  }
 
   const { supabase, user, profile, tenant } = await requireActiveUser();
   if (profile?.role !== "teacher" || !tenant) {
     return result("error", "只有机构老师可以发送巩固推荐。");
   }
 
-  const appId = STUDENT_APP_IDS.korean;
+  const appId = STUDENT_APP_IDS[appSlug];
   const assignedIds = await getTeacherAssignedStudentIds(
     supabase,
     tenant.id,
@@ -77,7 +86,7 @@ export async function recommendStudentPracticeAction(
     const label = PRACTICE_SKILL_LABELS[target.id];
     title = `巩固推荐：${label}专项训练`;
     content = `依据该生统一复习中心的真实记录，${label}仍有 ${errorCount} 次未掌握错误。`;
-    nextAction = `请进入${label}专项训练完成针对性练习：/${tenant.slug}/apps/korean/practice/skills/${target.id}`;
+    nextAction = `请进入${label}专项训练完成针对性练习：/${tenant.slug}/apps/${appSlug}/practice/skills/${target.id}`;
   } else {
     if (!UUID_PATTERN.test(target.id)) return result("error", "章节编号不正确。");
     const [chapterResult, reviewResult, progressResult] = await Promise.all([
@@ -150,7 +159,7 @@ export async function recommendStudentPracticeAction(
       : `该章节当前掌握度为 ${Math.round(mastery ?? 0)}%`;
     title = `巩固推荐：复习「${chapter.title}」`;
     content = `依据该生的真实巩固与复习记录，${evidence}。`;
-    nextAction = `请进入「${course.title}」的「${chapter.title}」完成巩固：/${tenant.slug}/apps/korean/practice/course/${course.slug}/${chapter.slug}`;
+    nextAction = `请进入「${course.title}」的「${chapter.title}」完成巩固：/${tenant.slug}/apps/${appSlug}/practice/course/${course.slug}/${chapter.slug}`;
   }
 
   const { error: saveError } = await supabase.rpc("save_learning_record_note", {

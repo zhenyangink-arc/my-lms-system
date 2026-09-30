@@ -9,6 +9,7 @@ import { CompletionReviewWorkspace } from "@/features/course-completion/Completi
 import { CompletionStatisticsPanel } from "@/features/course-completion/CompletionStatisticsPanel";
 import { getCompletionReviewData } from "@/features/course-completion/review-service";
 import { getCompletionStatistics } from "@/features/course-completion/statistics-service";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export const dynamic = "force-dynamic";
 
@@ -28,11 +29,11 @@ export default async function CompletionReviewPage({
   );
   const canReviewInstitution =
     context.access.scope === "tenant" &&
-    context.access.app.slug === "korean" &&
+    isSubjectSectionEnabled(context.access.app.slug, "completion-review") &&
     ["teacher", "tenant_super_admin", "ceo"].includes(context.access.role);
   const canViewPlatformStatistics =
     context.access.scope === "platform" &&
-    context.access.app.slug === "korean" &&
+    isSubjectSectionEnabled(context.access.app.slug, "completion-review") &&
     context.access.globalRole === "platform_owner";
 
   if (!canReviewInstitution && !canViewPlatformStatistics) {

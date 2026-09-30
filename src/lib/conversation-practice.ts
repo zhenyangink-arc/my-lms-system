@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { hasExplicitPermission } from "@/lib/permissions/access";
-import { getStudentAppPath } from "@/lib/student-apps";
+import { getStudentAppPath, type StudentAppSlug } from "@/lib/student-apps";
 import { getTenantAppCapabilityContext } from "@/lib/tenant-app-capabilities";
 
 export type ConversationPracticeAccess = {
@@ -21,9 +21,12 @@ export type ConversationPracticeAccess = {
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
 };
 
-/** 会话练习功能固定挂在韩语应用下，租户内学生端页面都从这里拼接跳转路径。 */
-export function getConversationPracticeBasePath(tenantSlug: string | null) {
-  return getStudentAppPath(tenantSlug ?? "", "korean", "conversation-practice");
+/** 租户内学生端会话练习页面的基础路径，由调用方所在的学习应用决定。 */
+export function getConversationPracticeBasePath(
+  tenantSlug: string | null,
+  appSlug: StudentAppSlug,
+) {
+  return getStudentAppPath(tenantSlug ?? "", appSlug, "conversation-practice");
 }
 
 export async function getConversationPracticeAccess(

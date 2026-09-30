@@ -14,6 +14,8 @@ import {
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
   type AssignmentType,
   type SubmissionWorkflowState,
@@ -109,11 +111,14 @@ function normalizeTaskTypeFilter(value: string | string[] | undefined): TaskType
     : "all";
 }
 
-export default async function AssignmentsPage({
+export async function AssignmentsPageContent({
   searchParams,
+  studentAppSlug,
 }: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  studentAppSlug: SubjectSlug;
 }) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const query = searchParams ? await searchParams : {};
   const initialTaskTypeFilter = normalizeTaskTypeFilter(query.type);
   const { supabase, user, tenant, isManager } = await requireAssignmentViewer();
@@ -121,7 +126,7 @@ export default async function AssignmentsPage({
     await supabase.rpc("release_current_user_due_assignment_grades");
   }
   const admin = createAdminClient();
-  const koreanScope = await getStudentAppCourseScope(supabase, "korean");
+  const appScope = await getStudentAppCourseScope(supabase, studentAppSlug);
   // Request-time snapshot keeps all deadline labels consistent for this render.
   // eslint-disable-next-line react-hooks/purity
   const currentTime = Date.now();
@@ -143,7 +148,7 @@ export default async function AssignmentsPage({
           .select(
             "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission,unlock_after_chapter_completion,unlock_test_slug,due_days_after_unlock"
           )
-          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .eq("student_app_id", studentAppId)
           .eq("status", "published")
           .order("due_at", { ascending: true }),
         () =>
@@ -174,7 +179,7 @@ export default async function AssignmentsPage({
           .select(
             "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
           )
-          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .eq("student_app_id", studentAppId)
           .in("course_key", ["hangul-introduction", "korean-level-one"])
           .eq("status", "published")
           .order("chapter_number", { ascending: true }),
@@ -200,7 +205,7 @@ export default async function AssignmentsPage({
           .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source,completed_at")
           .eq("student_id", user.id)
           .eq("tenant_id", tenant?.id ?? "")
-          .eq("student_app_id", STUDENT_APP_IDS.korean),
+          .eq("student_app_id", studentAppId),
         () =>
           admin
             .from("course_ebook_progress")
@@ -368,14 +373,14 @@ export default async function AssignmentsPage({
       .filter(isStudyAbroadServiceCourse)
       .map((course) => course.id)
   );
-  const koreanCourseIds = new Set(koreanScope.courseIds);
+  const appCourseIds = new Set(appScope.courseIds);
 
   // 学生任务区只接收老师发布的作业和考试。
   // 历史 quiz 数据由课程测试中心承接，不再混入老师任务清单。
   const assignments = allAssignments.filter(
     (assignment) =>
       assignment.assignment_type !== "quiz" &&
-      (!assignment.course_id || koreanCourseIds.has(assignment.course_id)) &&
+      (!assignment.course_id || appCourseIds.has(assignment.course_id)) &&
       (!assignment.course_id || !serviceCourseIds.has(assignment.course_id))
   );
 
@@ -483,5 +488,19 @@ export default async function AssignmentsPage({
         />
       </div>
     </div>
+  );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyAssignmentsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  return (
+    <AssignmentsPageContent
+      searchParams={searchParams}
+      studentAppSlug={LEGACY_DASHBOARD_APP_SLUG}
+    />
   );
 }

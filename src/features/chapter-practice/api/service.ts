@@ -1,7 +1,6 @@
 import "server-only";
 
 import { requirePlatformOwner } from "@/lib/admin";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildChapterPracticeCoverage } from "./coverage";
 import type {
@@ -28,16 +27,17 @@ function failOnQueryError(label: string, error: QueryFailure | null) {
   }
 }
 
-export async function getChapterPracticeCoverage(): Promise<ChapterPracticeCoverageResult> {
+export async function getChapterPracticeCoverage(
+  studentAppId: string,
+): Promise<ChapterPracticeCoverageResult> {
   // 数据访问层再次鉴权，不能依赖工作台卡片或路由层的可见性判断。
   await requirePlatformOwner();
   const supabase = createAdminClient();
-  const koreanAppId = STUDENT_APP_IDS.korean;
 
   const courseResult = await supabase
     .from("courses")
     .select("id,slug,title,is_published,sort_order")
-    .eq("student_app_id", koreanAppId)
+    .eq("student_app_id", studentAppId)
     .eq("content_scope", "platform")
     .order("sort_order", { ascending: true });
   failOnQueryError("课程", courseResult.error);
@@ -90,14 +90,14 @@ export async function getChapterPracticeCoverage(): Promise<ChapterPracticeCover
       ? supabase
           .from("digital_textbooks")
           .select("id,lesson_id,status")
-          .eq("student_app_id", koreanAppId)
+          .eq("student_app_id", studentAppId)
           .in("lesson_id", lessonIds)
       : Promise.resolve({ data: [], error: null }),
     chapterTestIds.length
       ? supabase
           .from("growth_toolbox_exercises")
           .select("chapter_test_id,skill,status")
-          .eq("student_app_id", koreanAppId)
+          .eq("student_app_id", studentAppId)
           .in("chapter_test_id", chapterTestIds)
       : Promise.resolve({ data: [], error: null }),
     chapterTestIds.length
@@ -110,7 +110,7 @@ export async function getChapterPracticeCoverage(): Promise<ChapterPracticeCover
       ? supabase
           .from("chapter_practice_units")
           .select("id,course_chapter_id,version,status,updated_at")
-          .eq("student_app_id", koreanAppId)
+          .eq("student_app_id", studentAppId)
           .in("course_chapter_id", chapterIds)
       : Promise.resolve({ data: [], error: null }),
   ]);

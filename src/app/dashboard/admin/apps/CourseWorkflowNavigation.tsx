@@ -3,11 +3,15 @@ import { getDigitalTextbookManagementData } from "@/features/digital-textbook/ap
 import { courseContentSteps } from "@/lib/course-content-workflow";
 import { workflowChapters, workflowHref } from "@/lib/course-workflow-context";
 import type { ManagementAppAccess } from "@/lib/management-apps";
+import { getSubjectManifest } from "@/features/subjects";
 
 export async function CourseWorkflowNavigation({ access, section, chapterId }: {
   access: ManagementAppAccess; section: string; chapterId?: string;
 }) {
-  const steps = courseContentSteps(access);
+  const steps = courseContentSteps(
+    access,
+    getSubjectManifest(access.app.slug)?.management.courseContentWorkflow ?? false,
+  );
   // The context selector must not introduce a stricter authorization gate on the catalog.
   const canReadTextbooks = access.scope !== "platform" || access.globalRole === "platform_owner" || access.globalRole === "platform_admin";
   const data = canReadTextbooks ? await getDigitalTextbookManagementData(access.appId) : null;

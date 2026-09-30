@@ -9,6 +9,7 @@ export default function KoreanVocabularyPracticePage({
 }) {
   return (
     <ToolboxSkillPage
+      studentAppSlug="korean"
       params={params.then(({ space }) => ({ space, skill: "vocabulary" }))}
       searchParams={searchParams}
       skillsBasePath="/dashboard/practice/skills"

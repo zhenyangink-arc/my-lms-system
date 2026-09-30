@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 import { ProfileContent } from "@/app/dashboard/profile/page-content";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
-  loadStudentCurrentKoreanCourse,
+  loadStudentCurrentCourse,
   type StudentCurrentCourse,
 } from "@/features/student-current-course/api/service";
 import {
@@ -400,9 +400,11 @@ export default async function StudentPortalPage({
   if (koreanApp) {
     const [currentCourseResult, learningSummaryResult, loadedAbilityPortrait] =
       await Promise.all([
-        loadStudentCurrentKoreanCourse({
+        loadStudentCurrentCourse({
           supabase,
           studentId: user.id,
+          studentAppId: STUDENT_APP_IDS.korean,
+          appSlug: "korean",
           space,
           now: portalNow,
         })
@@ -433,6 +435,7 @@ export default async function StudentPortalPage({
           supabase,
           tenantId: tenant.id,
           studentId: user.id,
+          studentAppId: STUDENT_APP_IDS.korean,
           now: portalNow,
         })
           .then((portrait) => ({ portrait, failed: false }))

@@ -2,7 +2,6 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import type {
   PublishedChapterPracticeBlock,
   PublishedChapterPracticeUnit,
@@ -29,16 +28,18 @@ function objectValue(value: unknown): Record<string, unknown> {
 export async function loadPublishedChapterPracticeUnit({
   supabase,
   courseChapterId,
+  studentAppId,
 }: {
   supabase: SupabaseClient;
   courseChapterId: string;
+  studentAppId: string;
 }): Promise<PublishedChapterPracticeUnit | null> {
   const unitResult = await supabase
     .from("chapter_practice_units")
     .select(
       "id,course_chapter_id,version,title,completion_rule,published_at",
     )
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
+    .eq("student_app_id", studentAppId)
     .eq("course_chapter_id", courseChapterId)
     .eq("status", "published")
     .order("version", { ascending: false })

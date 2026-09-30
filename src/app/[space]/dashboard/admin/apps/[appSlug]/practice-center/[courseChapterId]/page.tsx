@@ -10,6 +10,7 @@ import {
 } from "@/features/chapter-practice/api/management-service";
 import { ChapterPracticeEditor } from "@/features/chapter-practice/components/chapter-practice-editor";
 import { requirePlatformOwner } from "@/lib/admin";
+import { isSubjectSectionEnabled } from "@/features/subjects";
 
 export default async function ChapterPracticeEditorRoute({
   params,
@@ -25,7 +26,7 @@ export default async function ChapterPracticeEditorRoute({
     requireManagementApplicationSection(space, appSlug, "practice-center"),
     requirePlatformOwner(),
   ]);
-  if (context.access.scope !== "platform" || appSlug !== "korean") notFound();
+  if (context.access.scope !== "platform" || !isSubjectSectionEnabled(appSlug, "practice-center")) notFound();
 
   const unit = await getChapterPracticeUnitDetail(courseChapterId);
   if (!unit) notFound();

@@ -29,6 +29,8 @@ import {
   getStudentAppBasePath,
   STUDENT_APP_IDS,
 } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
 type ToolEntry = {
   id: string;
@@ -83,13 +85,16 @@ const iconMap: Record<string, LucideIcon> = {
 export async function ToolboxPage({
   skillsBasePath,
   showHero = true,
+  studentAppSlug,
 }: {
   skillsBasePath?: string;
   showHero?: boolean;
-} = {}) {
+  studentAppSlug: SubjectSlug;
+}) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const { supabase, tenant, user } = await requireActiveUser();
   const dashboardBasePath = tenant?.slug
-    ? getStudentAppBasePath(tenant.slug, "korean")
+    ? getStudentAppBasePath(tenant.slug, studentAppSlug)
     : getDashboardBasePath(null);
   const showCrossModuleNavigation = Boolean(skillsBasePath);
 
@@ -101,14 +106,14 @@ export async function ToolboxPage({
     supabase
       .from("growth_toolbox_items")
       .select("id,slug,title,description,href,icon_name,accent,soft,sort_order,is_enabled")
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", studentAppId)
       .order("sort_order", { ascending: true }),
     withStudentAppSchemaFallback(
       supabase
         .from("student_toolbox_skill_profiles")
         .select("skill,ability_score,valid_sessions,valid_attempts")
         .eq("student_id", user.id)
-        .eq("student_app_id", STUDENT_APP_IDS.korean),
+        .eq("student_app_id", studentAppId),
       () =>
         supabase
           .from("student_toolbox_skill_profiles")
@@ -118,7 +123,7 @@ export async function ToolboxPage({
     supabase
       .from("growth_toolbox_exercises")
       .select("skill,course_id,course_chapter_id")
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("student_app_id", studentAppId)
       .eq("status", "published")
       .not("course_chapter_id", "is", null),
   ]);
@@ -394,6 +399,7 @@ export async function ToolboxPage({
   );
 }
 
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
 export default function LegacyToolboxPage() {
-  return <ToolboxPage />;
+  return <ToolboxPage studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

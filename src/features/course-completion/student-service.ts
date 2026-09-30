@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
 import type {
   CompletionRequirementGap,
   CourseCompletionCertificate,
@@ -52,8 +52,12 @@ function numberValue(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-export function completionHrefForSpace(space: string, href: string) {
-  const portalBase = `/${encodeURIComponent(space)}/apps/korean`;
+export function completionHrefForSpace(
+  space: string,
+  appSlug: SubjectSlug,
+  href: string,
+) {
+  const portalBase = `/${encodeURIComponent(space)}/apps/${appSlug}`;
   if (!href.startsWith("/")) return `${portalBase}/grades`;
   if (href === "/dashboard") return portalBase;
   if (href.startsWith("/dashboard/")) {
@@ -136,12 +140,16 @@ export async function getStudentCompletionData({
   supabase,
   tenantId,
   studentId,
+  appId,
+  fallbackCourseTitle,
 }: {
   supabase: SupabaseClient;
   tenantId: string;
   studentId: string;
+  appId: string;
+  /** 还没有结课评估或证书时显示的课程名，由学科路由提供。 */
+  fallbackCourseTitle: string;
 }): Promise<StudentCompletionData> {
-  const appId = STUDENT_APP_IDS.korean;
   const [evaluationResult, certificateResult] = await Promise.all([
     supabase
       .from("student_course_completion_evaluations")
@@ -174,7 +182,7 @@ export async function getStudentCompletionData({
   const certificates =
     (certificateResult.data ?? []) as CourseCompletionCertificate[];
   const courseId = evaluation?.course_id ?? certificates[0]?.course_id;
-  let courseTitle = certificates[0]?.course_title_snapshot ?? "韩语一级课程";
+  let courseTitle = certificates[0]?.course_title_snapshot ?? fallbackCourseTitle;
 
   if (courseId) {
     const courseResult = await supabase

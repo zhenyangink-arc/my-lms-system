@@ -2,8 +2,8 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { requireActiveUser } from "@/lib/auth";
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { refreshStudentHomeLearningForApp } from "@/features/student-home-learning/api/refresh-for-app";
+import { getStudentAppSlugById } from "@/lib/student-app-access.server";
 
 export type MasterReviewItemActionState = {
   status: "idle" | "success" | "error";
@@ -37,19 +37,22 @@ export async function markStudentReviewItemMasteredAction(
     })
     .eq("id", itemId)
     .eq("student_id", user.id)
-    .select("id,status,mastered_at")
+    .select("id,status,mastered_at,student_app_id")
     .maybeSingle();
   if (error || !data || data.status !== "mastered" || !data.mastered_at) {
     return { status: "error", message: "掌握状态保存失败，请稍后重试。" };
   }
   revalidateDashboard("/dashboard/progress");
-  revalidateDashboard("/[space]/apps/korean/practice/review", "page");
+  // 按错题记录本身所属的应用刷新，应用由服务端读取。
+  const appSlug = getStudentAppSlugById(data.student_app_id);
+  if (appSlug) {
+    revalidateDashboard(`/[space]/apps/${appSlug}/practice/review`, "page");
+  }
   if (tenant?.id) {
-    refreshStudentHomeLearning({
+    refreshStudentHomeLearningForApp({
       tenantId: tenant.id,
       studentId: user.id,
-      studentAppId: STUDENT_APP_IDS.korean,
-      appSlug: "korean",
+      studentAppId: data.student_app_id,
       space: tenant.slug,
     });
   }

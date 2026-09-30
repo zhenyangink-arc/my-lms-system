@@ -8,6 +8,8 @@ import {
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import { hangulIntroductionChapters } from "@/lib/korean-curriculum";
 import {
   LearningRecordBoard,
@@ -123,12 +125,17 @@ function metadataNumber(
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-export default async function LearningRecordsPage() {
+export async function LearningRecordsPageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug: SubjectSlug;
+}) {
+  const studentAppId = STUDENT_APP_IDS[studentAppSlug];
   const { supabase, user, role, canManage, dashboardBasePath } =
     await getLearningRecordAccess();
   const isStudent = role === "student";
   const studentAppBasePath = isStudent
-    ? dashboardBasePath.replace(/\/dashboard$/, "/apps/korean")
+    ? dashboardBasePath.replace(/\/dashboard$/, `/apps/${studentAppSlug}`)
     : dashboardBasePath;
   const recordOldestDate = new Date();
   recordOldestDate.setDate(recordOldestDate.getDate() - 364);
@@ -139,14 +146,14 @@ export default async function LearningRecordsPage() {
   activityOldestDate.setHours(0, 0, 0, 0);
   const activityOldestIso = activityOldestDate.toISOString();
 
-  const [koreanScope, assignmentScopeResult] = isStudent
+  const [appScope, assignmentScopeResult] = isStudent
     ? await Promise.all([
-        getStudentAppCourseScope(supabase, "korean"),
+        getStudentAppCourseScope(supabase, studentAppSlug),
         withStudentAppSchemaFallback(
           supabase
             .from("learning_assignments")
             .select("id,course_id")
-            .eq("student_app_id", STUDENT_APP_IDS.korean),
+            .eq("student_app_id", studentAppId),
           () =>
             supabase
               .from("learning_assignments")
@@ -154,12 +161,12 @@ export default async function LearningRecordsPage() {
         ),
       ])
     : [
-        { appId: STUDENT_APP_IDS.korean, categoryIds: [], courseIds: [], lessonIds: [] },
+        { appId: studentAppId, categoryIds: [], courseIds: [], lessonIds: [] },
         { data: [] as { id: string; course_id: string | null }[], error: null },
       ];
-  const koreanCourseIds = new Set(koreanScope.courseIds);
+  const appCourseIds = new Set(appScope.courseIds);
   const scopedAssignmentIds = (assignmentScopeResult.data ?? [])
-    .filter((row) => !row.course_id || koreanCourseIds.has(row.course_id))
+    .filter((row) => !row.course_id || appCourseIds.has(row.course_id))
     .map((row) => row.id);
   const [
     progressResult,
@@ -168,14 +175,14 @@ export default async function LearningRecordsPage() {
     timeLogResult,
     activityEventResult,
   ] = await Promise.all([
-    isStudent && koreanScope.lessonIds.length > 0
+    isStudent && appScope.lessonIds.length > 0
       ? supabase
           .from("lesson_progress")
           .select(
             "lesson_id,status,progress_percent,completed_at,last_viewed_at",
           )
           .eq("user_id", user.id)
-          .in("lesson_id", koreanScope.lessonIds)
+          .in("lesson_id", appScope.lessonIds)
       : Promise.resolve({ data: [] as ProgressRow[], error: null }),
     isStudent && scopedAssignmentIds.length > 0
       ? supabase
@@ -193,7 +200,7 @@ export default async function LearningRecordsPage() {
               "id,record_type,title,content,next_action,occurred_at",
             )
             .eq("student_id", user.id)
-            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .eq("student_app_id", studentAppId)
             .eq("status", "active")
             .eq("visibility", "student_visible"),
           () =>
@@ -213,7 +220,7 @@ export default async function LearningRecordsPage() {
             .from("learning_time_log")
             .select("test_slug,source,seconds,recorded_at")
             .eq("student_id", user.id)
-            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .eq("student_app_id", studentAppId)
             .gte("recorded_at", activityOldestIso)
             .order("recorded_at", { ascending: false }),
           () =>
@@ -230,7 +237,7 @@ export default async function LearningRecordsPage() {
           .from("student_learning_activity_events")
           .select("id,event_type,source_id,occurred_at,metadata")
           .eq("student_id", user.id)
-          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .eq("student_app_id", studentAppId)
           .in("event_type", [
             "conversation_practiced",
             "chapter_test_completed",
@@ -274,7 +281,7 @@ export default async function LearningRecordsPage() {
             supabase
               .from("chapter_tests")
               .select("slug,course_key,chapter_number,title")
-              .eq("student_app_id", STUDENT_APP_IDS.korean)
+              .eq("student_app_id", studentAppId)
               .in("slug", testSlugs),
             () =>
               supabase
@@ -574,4 +581,9 @@ export default async function LearningRecordsPage() {
       </div>
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyLearningRecordsPage() {
+  return <LearningRecordsPageContent studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

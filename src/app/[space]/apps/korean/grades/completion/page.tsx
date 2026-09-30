@@ -4,6 +4,7 @@ import { StudentCompletionPage } from "@/features/course-completion/StudentCompl
 import { getStudentCompletionData } from "@/features/course-completion/student-service";
 import { requireActiveUser } from "@/lib/auth";
 import { getGradeCenterAccess } from "@/lib/grade-center";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 export default async function KoreanCompletionPage({
   params,
@@ -24,12 +25,15 @@ export default async function KoreanCompletionPage({
     supabase: access.supabase,
     tenantId: access.tenantId,
     studentId: access.user.id,
+    appId: STUDENT_APP_IDS.korean,
+    fallbackCourseTitle: "韩语一级课程",
   });
 
   return (
     <StudentCompletionPage
       data={data}
       space={space}
+      studentAppSlug="korean"
       institutionName={auth.tenant?.name ?? "所属机构"}
     />
   );

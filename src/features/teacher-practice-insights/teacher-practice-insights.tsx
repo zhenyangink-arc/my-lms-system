@@ -494,6 +494,7 @@ export async function TeacherPracticeInsights({
                               </dl>
                               <div className="mt-3">
                                 <PracticeRecommendationButton
+                                  appSlug={access.app.slug}
                                   studentId={student.id}
                                   target={{ type: "chapter", id: item.courseChapterId }}
                                   label={`推荐复习「${item.chapterTitle}」`}
@@ -521,6 +522,7 @@ export async function TeacherPracticeInsights({
                       <div className="mt-3 flex flex-wrap gap-2">
                         {suggestion.skill && (
                           <PracticeRecommendationButton
+                            appSlug={access.app.slug}
                             studentId={student.id}
                             target={{ type: "skill", id: suggestion.skill }}
                             label={`推荐${PRACTICE_SKILL_LABELS[suggestion.skill]}专项训练`}
@@ -531,6 +533,7 @@ export async function TeacherPracticeInsights({
                           (item) => item.courseChapterId === suggestion.chapterId,
                         ) && (
                           <PracticeRecommendationButton
+                            appSlug={access.app.slug}
                             studentId={student.id}
                             target={{ type: "chapter", id: suggestion.chapterId }}
                             label={`推荐复习「${suggestion.chapterTitle}」`}

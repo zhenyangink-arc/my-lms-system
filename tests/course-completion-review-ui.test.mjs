@@ -25,12 +25,12 @@ test("结课审核复用韩国语应用工作区并按范围开放审核或统�
   const source = await sources();
 
   assert.match(source.workspace, /key: "completion-review"/);
-  assert.match(source.workspace, /appSlugs: \["korean"\]/);
+  assert.match(source.workspace.match(/key: "completion-review"[\s\S]*?\n  },/)?.[0] ?? "", /subjectOnly: true/);
   assert.match(source.workspace, /capability: "manageAssessments"/);
   assert.doesNotMatch(source.workspace.match(/key: "completion-review"[\s\S]*?\n  },/)?.[0] ?? "", /institutionExecutiveOnly/);
   assert.match(source.route, /canReviewInstitution/);
   assert.match(source.route, /context\.access\.scope === "tenant"/);
-  assert.match(source.route, /context\.access\.app\.slug === "korean"/);
+  assert.match(source.route, /isSubjectSectionEnabled\(context\.access\.app\.slug, "completion-review"\)/);
   assert.match(source.route, /\["teacher", "tenant_super_admin", "ceo"\]\.includes/);
   assert.match(source.route, /canViewPlatformStatistics/);
   assert.match(source.route, /context\.access\.globalRole === "platform_owner"/);

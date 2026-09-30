@@ -5,10 +5,16 @@ import { getConversationPracticeBasePath } from "@/lib/conversation-practice";
 import { requireStudentPageFeature } from "@/lib/student-permissions-server";
 import { FormalConversationPractice } from "../FormalConversationPractice";
 import styles from "../ai-experience.module.css";
+import type { SubjectSlug } from "@/features/subjects";
+import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
-export default async function FormalAiPracticePage() {
+export async function FormalAiPracticePageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug: SubjectSlug;
+}) {
   const { tenant } = await requireStudentPageFeature("ai_conversation_experience");
-  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null, studentAppSlug);
 
   return (
     <div className={`${styles.pageShell} min-h-[calc(100vh-76px)] pb-12`}>
@@ -23,4 +29,9 @@ export default async function FormalAiPracticePage() {
       <FormalConversationPractice basePath={basePath} />
     </div>
   );
+}
+
+/** 旧 /dashboard 入口(仅教职人员可见)沿用韩语应用。 */
+export default function LegacyFormalAiPracticePage() {
+  return <FormalAiPracticePageContent studentAppSlug={LEGACY_DASHBOARD_APP_SLUG} />;
 }

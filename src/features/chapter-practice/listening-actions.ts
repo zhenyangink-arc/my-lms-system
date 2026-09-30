@@ -1,9 +1,9 @@
 "use server";
 
 import { requireActiveUser } from "@/lib/auth";
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { refreshStudentHomeLearningForApp } from "@/features/student-home-learning/api/refresh-for-app";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { hasActiveStudentAppAccess } from "@/lib/student-app-access.server";
 import { recordStudentChapterPracticeProgress } from "./student/progress-service";
 import type { StudentChapterPracticeProgress } from "./student/types";
 
@@ -69,41 +69,6 @@ export async function evaluateChapterPracticeListening(input: {
     return { ok: false, message: "只有当前机构的学生账号可以核验听辨题。" };
   }
 
-  const [tenantAppResult, enrollmentResult] = await Promise.all([
-    supabase
-      .from("tenant_student_apps")
-      .select("is_enabled,status")
-      .eq("tenant_id", tenant.id)
-      .eq("app_id", STUDENT_APP_IDS.korean)
-      .maybeSingle(),
-    supabase
-      .from("student_app_enrollments")
-      .select("status,starts_at,ends_at")
-      .eq("tenant_id", tenant.id)
-      .eq("student_id", user.id)
-      .eq("app_id", STUDENT_APP_IDS.korean)
-      .maybeSingle(),
-  ]);
-  const tenantApp = tenantAppResult.data;
-  const enrollment = enrollmentResult.data;
-  const now = Date.now();
-  const startsAt = enrollment?.starts_at
-    ? Date.parse(enrollment.starts_at)
-    : null;
-  const endsAt = enrollment?.ends_at ? Date.parse(enrollment.ends_at) : null;
-  if (
-    tenantAppResult.error ||
-    !tenantApp?.is_enabled ||
-    tenantApp.status !== "active" ||
-    enrollmentResult.error ||
-    !enrollment ||
-    enrollment.status !== "active" ||
-    (startsAt !== null && Number.isFinite(startsAt) && startsAt > now) ||
-    (endsAt !== null && Number.isFinite(endsAt) && endsAt <= now)
-  ) {
-    return { ok: false, message: "当前账号没有可用的韩国语听音训练权限。" };
-  }
-
   const { data: block, error: blockError } = await supabase
     .from("chapter_practice_blocks")
     .select("practice_unit_id,source_type,source_id")
@@ -117,9 +82,8 @@ export async function evaluateChapterPracticeListening(input: {
 
   const { data: unit, error: unitError } = await supabase
     .from("chapter_practice_units")
-    .select("id")
+    .select("id,student_app_id")
     .eq("id", block.practice_unit_id)
-    .eq("student_app_id", STUDENT_APP_IDS.korean)
     .eq("status", "published")
     .maybeSingle();
   if (
@@ -128,6 +92,18 @@ export async function evaluateChapterPracticeListening(input: {
     block.source_type !== "growth_toolbox_exercise"
   ) {
     return { ok: false, message: "当前听辨题没有可用的判定来源。" };
+  }
+
+  // 应用来自练习单元本身；读取私有答案前必须确认学生当前能使用该应用。
+  if (
+    !(await hasActiveStudentAppAccess({
+      supabase,
+      tenantId: tenant.id,
+      studentId: user.id,
+      appId: unit.student_app_id,
+    }))
+  ) {
+    return { ok: false, message: "当前账号没有可用的听音训练权限。" };
   }
 
   const admin = createAdminClient();
@@ -203,11 +179,10 @@ export async function evaluateChapterPracticeListening(input: {
   } catch (reviewError) {
     console.warn("听辨进度已保存，但错题归集失败", reviewError);
   }
-  refreshStudentHomeLearning({
+  refreshStudentHomeLearningForApp({
     tenantId: tenant.id,
     studentId: user.id,
-    studentAppId: STUDENT_APP_IDS.korean,
-    appSlug: "korean",
+    studentAppId: unit.student_app_id,
     space: tenant.slug,
   });
   return {
