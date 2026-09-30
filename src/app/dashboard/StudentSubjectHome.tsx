@@ -3,61 +3,29 @@ import { ArrowRight, BookOpen, CalendarClock, CircleAlert } from "lucide-react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
-  loadAbilityPortrait,
-  type AbilityPortraitData,
-} from "@/features/student-ability-portrait/api/service";
-import {
   AbilityPortrait,
   AbilityPortraitLoadFailed,
 } from "@/features/student-ability-portrait/components/AbilityPortrait";
-import {
-  loadStudentCurrentCourse,
-  type StudentCurrentCourse,
-} from "@/features/student-current-course/api/service";
-import {
-  loadHomeLearningTasks,
-  selectRequiredTodayTasks,
-} from "@/features/student-home-learning/api/service";
+import type { StudentCurrentCourse } from "@/features/student-current-course/api/service";
+import { selectRequiredTodayTasks } from "@/features/student-home-learning/api/service";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import {
   getLessonDisplayTitle,
   getTaskTiming,
 } from "@/features/student-home-learning/presentation";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
-import {
-  getSubjectManifest,
-  type StudentHomeBlockKey,
-  type SubjectSlug,
-} from "@/features/subjects";
+import { loadStudentHomeBlocks } from "@/features/student-subject-home/api/load-home-blocks";
+import { getSubjectManifest, type SubjectSlug } from "@/features/subjects";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import {
   getStudentAppBasePath,
   getStudentAppDefinition,
-  STUDENT_APP_IDS,
 } from "@/lib/student-apps";
 
 const TASK_LIMIT = 5;
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
-
-type Loaded<T> = { value: T; failed: boolean };
-
-/** 区块各自读取；单个区块失败只影响该区块。未启用的区块不读取。 */
-async function loadBlock<T>(
-  enabled: boolean,
-  label: string,
-  fallback: T,
-  load: () => Promise<T>,
-): Promise<Loaded<T>> {
-  if (!enabled) return { value: fallback, failed: false };
-  try {
-    return { value: await load(), failed: false };
-  } catch (error) {
-    console.warn(`[subject-home] ${label}读取失败`, error);
-    return { value: fallback, failed: true };
-  }
-}
 
 function BlockLoadFailed({ message, reloadHref }: { message: string; reloadHref: string }) {
   return (
@@ -221,49 +189,27 @@ export async function StudentSubjectHome({
   appSlug: SubjectSlug;
 }) {
   const blocks = getSubjectManifest(appSlug)?.student.homeBlocks ?? [];
-  const has = (block: StudentHomeBlockKey) => blocks.includes(block);
 
   const access = await requireDashboardAccess("tenant", space);
   const { supabase, user, tenant } = access.auth;
   const app = getStudentAppDefinition(appSlug);
-  const studentAppId = STUDENT_APP_IDS[appSlug];
   const homeHref = getStudentAppBasePath(space, appSlug);
   const coursesHref = getCourseLearningPath(space, null, appSlug);
   const now = new Date();
 
-  const [tasks, currentCourse, portrait] = await Promise.all([
-    loadBlock<HomeLearningTask[]>(has("today-tasks") && Boolean(tenant), "今日任务", [], () =>
-      loadHomeLearningTasks({
+  const empty = { value: null, failed: false };
+  const { tasks, currentCourse, abilityPortrait: portrait } = tenant
+    ? await loadStudentHomeBlocks({
         supabase,
-        tenantId: tenant!.id,
+        tenantId: tenant.id,
         studentId: user.id,
-        studentAppId,
         appSlug,
         appLabel: app.title,
         space,
+        blocks,
         now,
-      }),
-    ),
-    loadBlock<StudentCurrentCourse | null>(has("continue-learning"), "当前课程", null, () =>
-      loadStudentCurrentCourse({
-        supabase,
-        studentId: user.id,
-        studentAppId,
-        appSlug,
-        space,
-        now,
-      }),
-    ),
-    loadBlock<AbilityPortraitData | null>(has("ability-portrait") && Boolean(tenant), "能力画像", null, () =>
-      loadAbilityPortrait({
-        supabase,
-        tenantId: tenant!.id,
-        studentId: user.id,
-        studentAppId,
-        now,
-      }),
-    ),
-  ]);
+      })
+    : { tasks: { value: [], failed: false }, currentCourse: empty, abilityPortrait: empty };
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">

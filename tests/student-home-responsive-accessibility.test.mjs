@@ -102,11 +102,12 @@ test("状态同时使用图标和文字，摘要加载失败提供恢复入口",
 
 test("能力画像使用受控聚合读取，局部失败不会触发开发错误层", async () => {
   // 能力画像已从门户移到学科首页（韩语首页与平台首页框架）。
-  const [abilityService, portal, koreanHome, portraitComponent] = await Promise.all([
+  const [abilityService, portal, koreanHome, portraitComponent, homeBlocks] = await Promise.all([
     source("src/features/student-ability-portrait/api/service.ts"),
     source("src/app/[space]/page.tsx"),
     source("src/app/dashboard/DashboardHomePage.tsx"),
     source("src/features/student-ability-portrait/components/AbilityPortrait.tsx"),
+    source("src/features/student-subject-home/api/load-home-blocks.ts"),
   ]);
 
   assert.match(abilityService, /createAdminClient/);
@@ -115,8 +116,12 @@ test("能力画像使用受控聚合读取，局部失败不会触发开发错�
     /admin[\s\S]+from\("student_grade_skill_profiles"\)[\s\S]+eq\("tenant_id", tenantId\)[\s\S]+eq\("student_id", studentId\)[\s\S]+eq\("student_app_id", studentAppId\)/,
   );
   assert.doesNotMatch(portal, /loadAbilityPortrait|AbilityPortrait/);
-  assert.match(koreanHome, /loadAbilityPortrait\(\{[\s\S]*?studentAppId: STUDENT_APP_IDS\.korean,/);
-  assert.match(koreanHome, /console\.warn\("\[student-home\] 能力画像读取失败"/);
+  // 韩语首页与平台首页框架通过同一个区块取数函数读取能力画像。
+  assert.match(koreanHome, /loadStudentHomeBlocks\(\{[\s\S]*?appSlug: "korean",[\s\S]*?blocks: koreanHomeBlocks,/);
+  assert.match(koreanHome, /block === "ability-portrait" && userRole === "student"/);
+  assert.match(homeBlocks, /loadAbilityPortrait\(\{ supabase, tenantId, studentId, studentAppId, now \}\)/);
+  assert.match(homeBlocks, /console\.warn\(`\[student-home\] \$\{label\}读取失败`/);
+  assert.doesNotMatch(homeBlocks, /console\.error/);
   assert.match(koreanHome, /<AbilityPortraitLoadFailed sourceLabel="韩语学习"/);
   assert.match(portraitComponent, /能力数据暂时无法读取/);
   assert.doesNotMatch(portal, /console\.error/);

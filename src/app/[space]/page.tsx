@@ -31,7 +31,11 @@ import {
   getTaskTiming,
 } from "@/features/student-home-learning/presentation";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
-import { isStudentHomeBlockEnabled, isSubjectSlug } from "@/features/subjects";
+import {
+  isStudentHomeBlockEnabled,
+  isStudentNavItemEnabled,
+  isSubjectSlug,
+} from "@/features/subjects";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
@@ -402,11 +406,17 @@ export default async function StudentPortalPage({
   const showTaskAppLabels = summaryApps.length > 1;
   const primaryApp =
     portalApps.find((app) => app.portalStatus === "active") ?? portalApps[0];
+  // 学习助手目前只服务韩语（是否扩展到其他学科待决定），入口仍指向韩语应用。
   const koreanAppPath = koreanApp
     ? getStudentAppBasePath(space, "korean")
     : portalPath;
-  const announcementHref = koreanApp
-    ? getStudentAppPath(space, "korean", "/announcements")
+  // 机构公告在每个学科应用中内容相同；链接到第一个提供公告栏目的已开放学科应用，
+  // 避免只报名其他学科的学生被带到无法进入的应用。
+  const announcementApp = summaryApps.find(
+    (app) => isStudentNavItemEnabled(app.slug, "announcements"),
+  );
+  const announcementHref = announcementApp
+    ? getStudentAppPath(space, announcementApp.slug, "/announcements")
     : `${access.dashboardBasePath}/announcements`;
   const portalNow = new Date();
   let learningSummaryLoadFailed = false;

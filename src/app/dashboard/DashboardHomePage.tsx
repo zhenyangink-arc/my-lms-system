@@ -7,21 +7,16 @@ import {
   type GrowthReminderItem as ReminderItem,
   type GrowthWeekActivityDay as WeekActivityDay,
 } from "@/app/dashboard/SystemGrowthHomeView";
-import {
-  loadHomeLearningTasks,
-  selectRequiredTodayTasks,
-} from "@/features/student-home-learning/api/service";
+import { selectRequiredTodayTasks } from "@/features/student-home-learning/api/service";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { loadPublishedStudentCurriculumTasks } from "@/features/curriculum-plans/api/service";
-import {
-  loadAbilityPortrait,
-  type AbilityPortraitData,
-} from "@/features/student-ability-portrait/api/service";
+import type { AbilityPortraitData } from "@/features/student-ability-portrait/api/service";
 import {
   AbilityPortrait,
   AbilityPortraitLoadFailed,
 } from "@/features/student-ability-portrait/components/AbilityPortrait";
-import { isStudentHomeBlockEnabled } from "@/features/subjects";
+import { loadStudentHomeBlocks } from "@/features/student-subject-home/api/load-home-blocks";
+import { getSubjectManifest } from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
@@ -204,23 +199,25 @@ export default async function DashboardHomePage() {
     studentName =
       profile?.full_name || user.user_metadata?.name || user.email || "同学";
 
-    const dailyLearningTasksPromise = auth.tenant
-      ? loadHomeLearningTasks({
+    // 平台区块（今日任务、能力画像）与平台首页框架共用同一取数；
+    // “继续学习”由韩语首页自己的继续学习卡片呈现，这里不重复读取。
+    const koreanHomeBlocks = (getSubjectManifest("korean")?.student.homeBlocks ?? []).filter(
+      (block) =>
+        block === "today-tasks" ||
+        (block === "ability-portrait" && userRole === "student"),
+    );
+    const homeBlocksPromise = auth.tenant
+      ? loadStudentHomeBlocks({
           supabase,
           tenantId: auth.tenant.id,
           studentId: user.id,
-          studentAppId: STUDENT_APP_IDS.korean,
           appSlug: "korean",
           appLabel: "韩语学习",
           space: auth.tenant.slug,
+          blocks: koreanHomeBlocks,
           now: requestNow,
         })
-          .then((tasks) => ({ tasks, failed: false }))
-          .catch((error: unknown) => {
-            console.error("[student-home] 今日学习任务读取失败", error);
-            return { tasks: [] as HomeLearningTask[], failed: true };
-          })
-      : Promise.resolve({ tasks: [] as HomeLearningTask[], failed: false });
+      : null;
     const weeklyPlanTasksPromise = auth.tenant
       ? loadPublishedStudentCurriculumTasks({
           supabase,
@@ -234,35 +231,18 @@ export default async function DashboardHomePage() {
           return [] as HomeLearningTask[];
         })
       : Promise.resolve([] as HomeLearningTask[]);
-    // 能力画像从门户移到学科首页（门户只做跨学科总览）。
-    const abilityPortraitPromise =
-      auth.tenant &&
-      userRole === "student" &&
-      isStudentHomeBlockEnabled("korean", "ability-portrait")
-        ? loadAbilityPortrait({
-            supabase,
-            tenantId: auth.tenant.id,
-            studentId: user.id,
-            studentAppId: STUDENT_APP_IDS.korean,
-            now: requestNow,
-          })
-            .then((portrait) => ({ portrait, failed: false }))
-            .catch((error: unknown) => {
-              console.warn("[student-home] 能力画像读取失败", error);
-              return { portrait: null, failed: true };
-            })
-        : Promise.resolve({ portrait: null, failed: false });
-    const [koreanScope, dailyLearningResult, formalPlanTasks, abilityPortraitResult] = await Promise.all([
+    const [koreanScope, homeBlocks, formalPlanTasks] = await Promise.all([
       getStudentAppCourseScope(supabase, "korean"),
-      dailyLearningTasksPromise,
+      homeBlocksPromise,
       weeklyPlanTasksPromise,
-      abilityPortraitPromise,
     ]);
-    abilityPortrait = abilityPortraitResult.portrait;
-    abilityPortraitLoadFailed = abilityPortraitResult.failed;
-    dailyLearningTasks = dailyLearningResult.tasks;
+    if (homeBlocks) {
+      dailyLearningTasks = homeBlocks.tasks.value;
+      dailyLearningLoadFailed = homeBlocks.tasks.failed;
+      abilityPortrait = homeBlocks.abilityPortrait.value;
+      abilityPortraitLoadFailed = homeBlocks.abilityPortrait.failed;
+    }
     weeklyPlanTasks = formalPlanTasks;
-    dailyLearningLoadFailed = dailyLearningResult.failed;
     const weekStart = getWeekStartISOString();
     const seoulTodayString = toSeoulDateString(new Date());
     const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);

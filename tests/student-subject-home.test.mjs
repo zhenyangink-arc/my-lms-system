@@ -35,13 +35,17 @@ test("英语首页使用平台首页框架，数学课程接入前仍显示建�
 });
 
 test("首页框架按清单顺序渲染区块，未启用的区块不读取数据", async () => {
-  const home = await source("src/app/dashboard/StudentSubjectHome.tsx");
+  const [home, loader] = await Promise.all([
+    source("src/app/dashboard/StudentSubjectHome.tsx"),
+    source("src/features/student-subject-home/api/load-home-blocks.ts"),
+  ]);
   assert.match(home, /getSubjectManifest\(appSlug\)\?\.student\.homeBlocks/);
   assert.match(home, /blocks\.map\(\(block\) =>/);
-  assert.match(home, /if \(!enabled\) return \{ value: fallback, failed: false \}/);
-  assert.match(home, /loadBlock<HomeLearningTask\[\]>\(has\("today-tasks"\)/);
-  assert.match(home, /loadBlock<StudentCurrentCourse \| null>\(has\("continue-learning"\)/);
-  assert.match(home, /loadBlock<AbilityPortraitData \| null>\(has\("ability-portrait"\)/);
+  assert.match(home, /loadStudentHomeBlocks\(\{[\s\S]*?blocks,/);
+  assert.match(loader, /if \(!enabled\) return \{ value: fallback, failed: false \}/);
+  assert.match(loader, /loadBlock<HomeLearningTask\[\]>\(blocks\.includes\("today-tasks"\)/);
+  assert.match(loader, /loadBlock<StudentCurrentCourse \| null>\(blocks\.includes\("continue-learning"\)/);
+  assert.match(loader, /loadBlock<AbilityPortraitData \| null>\(blocks\.includes\("ability-portrait"\)/);
   // 链接与数据都按当前学科取，不固定任何学科。
   assert.match(home, /getCourseLearningPath\(space, null, appSlug\)/);
   assert.doesNotMatch(home, /korean|韩语/);
@@ -67,4 +71,10 @@ test("任务时间与课时标题格式", () => {
   assert.match(getTaskTiming({ ...base, dueAt: "2026-10-01T10:00:00.000Z" }), /10\/1 19:00 截止/);
   assert.equal(getLessonDisplayTitle("第 3 课：自我介绍"), "自我介绍");
   assert.equal(getLessonDisplayTitle("Unit 1"), "Unit 1");
+});
+
+test("门户公告链接指向第一个提供公告栏目的已开放学科应用", async () => {
+  const portal = await source("src/app/[space]/page.tsx");
+  assert.match(portal, /summaryApps\.find\(\s*\(app\) => isStudentNavItemEnabled\(app\.slug, "announcements"\)/);
+  assert.match(portal, /getStudentAppPath\(space, announcementApp\.slug, "\/announcements"\)/);
 });
