@@ -140,7 +140,7 @@ app → features（平台 / subjects） → shared
 2. **会员与收费**：新学科沿用 vip2/vip3 档位，还是按应用单独设置档位（`student_app_enrollments.access_tier`）？
 3. **英语 AI 陪练定位**：只做口语陪练，还是包含写作批改？回答语言模式（全英文 / 中英辅助）如何设定？是否需要英语版教师形象？
 4. **金老师（教学 Agent）是否扩展到英语、数学**：还是只服务韩语，英语、数学各自新建？
-5. **EduMath 的对接边界**：数学模块按计划书以 iframe + postMessage + Launch Token 嵌入；LMS 服务端能否复用 `@edumath/math-core` 做数学判题？
+5. **EduMath 的对接边界**：数学模块按计划书以 iframe + postMessage + Launch Token 嵌入；LMS 服务端能否复用 `@edumath/math-core` 做数学判题？ 对接设计见 [edumath-integration-design.md](./edumath-integration-design.md)。
 6. **大学课程应用**：保留给以后的专业课，还是先隐藏？
 
 ## 9. 下一步
