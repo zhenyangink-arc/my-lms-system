@@ -73,9 +73,31 @@
 - 策略的具体规则取决于收费决定（暂缓）。实现时默认规则与现在的 `korean_course` 相同（vip2 / vip3），以后只改策略、不改结构。
 - 韩语专属功能继续使用 `korean_course`，不必改动。
 
-### 4.3 顺带发现（未验证）
+### 4.3 顺带发现：教职人员角色判断口径（已核查，2026-09-30）
 
-`enforce_student_lesson_progress_permission` 用 `profiles.role` 判断是否为教职人员，而平台鉴权代码注释说明租户内真实角色来自 `tenant_memberships`，`profiles.role` 可能是默认的 `student`。机构老师在写入课时进度时是否会被误判，需要单独验证，不属于本次改造范围。
+`enforce_student_lesson_progress_permission` 用 `profiles.role` 判断是否为教职人员，而数据库的标准函数 `public.current_profile_role()` 读取的是当前机构的 `tenant_memberships.role`（批改函数等使用后者）。
+
+核查结果（只读）：
+
+- 后台创建员工 / 学生账号时，代码同时写入 `profiles.role` 与成员角色，取值相同；修改角色时两边同时更新；新建机构时负责人 `profiles.role` 直接设为 `tenant_super_admin`。
+- 数据库另有一致性约束（`profiles_role_global_consistency_check`）与同步触发器（`sync_profile_to_bootstrap_membership`，方向为资料 → 成员关系）。
+- 本机库中的机构账号两边一致。
+
+结论：通过后台正常流程创建与修改的账号不会被误判；**残留风险**在于非界面方式创建或早期历史账号——若教职人员的 `profiles.role` 仍为默认的 `student`，其预览课时时进度写入会被拒绝。线上数据未核实（不在本次权限范围）。
+
+建议：
+
+1. 如需确认，可由有权限的负责人在线上库执行只读核对：
+
+   ```sql
+   select p.role as profile_role, m.role as membership_role, count(*)
+   from public.profiles p
+   join public.tenant_memberships m on m.user_id = p.id and m.status = 'active'
+   where p.role is distinct from m.role
+   group by 1, 2;
+   ```
+
+2. 在 D2 重写该触发器时，改用 `public.current_profile_role()` 判断教职人员，与平台其他数据库函数口径一致，不单独开修复。
 
 ## 5. 与未应用迁移、Codex 线的关系
 
@@ -88,7 +110,7 @@
 | 编号 | 内容 | 前置条件 | 风险 |
 |---|---|---|---|
 | D1 | 删除 `capture_toolbox_review_item` 的韩语兜底 | Codex 迁移之后 | 低 |
-| D2 | 平台“按应用的完整课程访问”策略 + 课时进度触发器改造（与课时页同步） | 收费决定；课时页属于黄区，需与 Codex 协调 | 中 |
+| D2 | 平台“按应用的完整课程访问”策略 + 课时进度触发器改造（与课时页同步；教职人员判断改用 `current_profile_role()`） | 收费决定；课时页属于黄区，需与 Codex 协调 | 中 |
 | D3 | `save_conversation_practice_scenario` 增加应用参数 | 英语 AI 陪练 / 会话练习决定 | 低到中 |
 | D4 | 数学题组与标准试卷的关系（容器方案或解耦） | 数学题库与判题器设计 | 中到高 |
 | — | 章节测试表结构 | **不需要改**（按 2.3 的约定） | — |
