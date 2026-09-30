@@ -610,7 +610,11 @@ export async function CourseCatalog({
   const favoriteCategoryIds = new Set(
     (favoriteCategoryRows ?? []).map((row) => row.category_id)
   );
-  const upcomingCategorySlugs = new Set(["english", "math", "university"]);
+  // 旧版总目录把尚未开放的学科分类显示为“即将上线”；按应用显示目录时，
+  // 分类已限定在当前应用内，应用能否进入由入口守卫决定，不再按 slug 判断。
+  const upcomingCategorySlugs = new Set(
+    studentAppSlug ? [] : ["english", "math", "university"],
+  );
   const upcomingCategories = categories.filter((category) =>
     upcomingCategorySlugs.has(category.slug)
   );

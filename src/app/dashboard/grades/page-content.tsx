@@ -14,7 +14,7 @@ import {
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
-import type { SubjectSlug } from "@/features/subjects";
+import { isSubjectSectionEnabled, type SubjectSlug } from "@/features/subjects";
 import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
   GradeBoard,
@@ -513,7 +513,7 @@ export async function GradesPageContent({
           </section>
         )}
 
-        {isStudent && (
+        {isStudent && isSubjectSectionEnabled(studentAppSlug, "completion-review") && (
           <section className="app-card flex min-w-0 flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div className="flex min-w-0 items-start gap-3">
               <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary)]">

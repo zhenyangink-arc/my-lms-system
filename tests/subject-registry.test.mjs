@@ -98,12 +98,20 @@ test("英语和数学的管理端先只开放三个已按应用隔离的分区",
   }
 });
 
-test("英语和数学的学生端目前只有应用首页", () => {
-  for (const slug of ["english", "math"]) {
-    const manifest = getSubjectManifest(slug);
-    assert.deepEqual(manifest.student.navigation, [{ label: "应用导航", items: ["home"] }]);
-    assert.deepEqual(manifest.student.navLabels, { home: "应用首页" });
-  }
+test("英语学生端只接入已按应用隔离的平台页面，数学仍只有应用首页", () => {
+  const english = getSubjectManifest("english");
+  assert.deepEqual(english.student.navigation, [
+    { label: "学习", items: ["home", "courses", "assignments"] },
+    { label: "成长记录", items: ["grades", "records", "library"] },
+    { label: "消息与服务", items: ["announcements", "help"] },
+  ]);
+  assert.deepEqual(english.student.navLabels, { home: "应用首页", courses: "英语课程" });
+  const englishKeys = english.student.navigation.flatMap((group) => group.items);
+  for (const pending of ["practice", "conversation"]) assert.ok(!englishKeys.includes(pending), pending);
+
+  const math = getSubjectManifest("math");
+  assert.deepEqual(math.student.navigation, [{ label: "应用导航", items: ["home"] }]);
+  assert.deepEqual(math.student.navLabels, { home: "应用首页" });
 });
 
 test("学科清单里的每个学生导航项都有对应的应用路由", () => {
@@ -126,6 +134,33 @@ test("学科清单里的每个学生导航项都有对应的应用路由", () =>
       assert.ok(statSync(join(root, route)).isFile(), route);
     }
   }
+});
+
+test("英语应用路由明确传入 english，课程分类只放行英语分类", () => {
+  const english = "src/app/[space]/apps/english";
+  for (const route of filesUnder(english).filter((path) => /\.tsx$/.test(path))) {
+    const source = read(route);
+    assert.doesNotMatch(source, /"korean"|STUDENT_APP_IDS\.korean/, route);
+  }
+  for (const route of [
+    "courses/page.tsx",
+    "assignments/page.tsx",
+    "assignments/[assignmentId]/page.tsx",
+    "grades/page.tsx",
+    "records/page.tsx",
+    "library/page.tsx",
+  ]) {
+    assert.match(read(`${english}/${route}`), /studentAppSlug="english"/, route);
+  }
+  assert.match(read(`${english}/courses/[categorySlug]/layout.tsx`), /if \(categorySlug !== "english"\) notFound\(\);/);
+  assert.match(read(`${english}/assignments/[assignmentId]/layout.tsx`), /STUDENT_APP_IDS\.english/);
+});
+
+test("按应用显示课程目录时不再把本应用分类当作即将上线", () => {
+  const catalog = read("src/app/dashboard/courses/page-content.tsx");
+  assert.match(catalog, /studentAppSlug \? \[\] : \["english", "math", "university"\]/);
+  const grades = read("src/app/dashboard/grades/page-content.tsx");
+  assert.match(grades, /isStudent && isSubjectSectionEnabled\(studentAppSlug, "completion-review"\)/);
 });
 
 test("依赖学科能力的分区只对启用它的学科开放", () => {
