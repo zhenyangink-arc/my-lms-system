@@ -10,6 +10,7 @@ export {
   SUBJECT_SLUGS,
   getSubjectManifest,
   isManagementSectionKey,
+  isStudentNavItemEnabled,
   isSubjectSectionEnabled,
   isSubjectSlug,
 } from "./registry.ts";

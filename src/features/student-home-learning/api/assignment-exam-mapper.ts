@@ -232,8 +232,8 @@ export function mapAssignmentExamTask({
     }),
     href:
       sourceType === "exam"
-        ? getExamDetailPath(space, assignment.id)
-        : getAssignmentDetailPath(space, assignment.id),
+        ? getExamDetailPath(space, assignment.id, appSlug)
+        : getAssignmentDetailPath(space, assignment.id, appSlug),
     courseId: assignment.course_id,
     courseChapterId: null,
     skill: null,
@@ -296,6 +296,6 @@ export function mapRetakeExamTask({
   return {
     ...task,
     sourceId: assignment.id,
-    href: getExamDetailPath(space, assignment.id),
+    href: getExamDetailPath(space, assignment.id, appSlug),
   };
 }

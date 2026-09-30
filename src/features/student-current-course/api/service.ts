@@ -369,6 +369,6 @@ export async function loadStudentCurrentCourse({
       subcategorySlug: subcategory.slug,
       courseSlug: course.slug,
       lessonSlug: lesson.slug,
-    }),
+    }, appSlug),
   };
 }

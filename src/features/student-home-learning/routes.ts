@@ -1,14 +1,20 @@
-const KOREAN_APP_PATH = "apps/korean";
+// 未指明应用的调用方（仅韩语开放的老师推荐、章节测试等）沿用韩语应用。
+const DEFAULT_APP_SLUG = "korean";
 
 function segment(value: string | null | undefined): string | null {
   const normalized = value?.trim();
   return normalized ? encodeURIComponent(normalized) : null;
 }
 
-function appPath(space: string, suffix: string): string {
+function appPath(
+  space: string,
+  suffix: string,
+  appSlug: string = DEFAULT_APP_SLUG,
+): string {
   const spaceSegment = segment(space);
-  if (!spaceSegment) return "/";
-  return `/${spaceSegment}/${KOREAN_APP_PATH}/${suffix}`;
+  const appSegment = segment(appSlug);
+  if (!spaceSegment || !appSegment) return "/";
+  return `/${spaceSegment}/apps/${appSegment}/${suffix}`;
 }
 
 function appendSegments(basePath: string, routeSegments: string[]): string {
@@ -54,17 +60,19 @@ export type TeacherRecommendationLocation = {
 export function getAssignmentDetailPath(
   space: string,
   assignmentId?: string | null,
+  appSlug?: string,
 ): string {
   const id = segment(assignmentId);
-  const basePath = appPath(space, "assignments");
+  const basePath = appPath(space, "assignments", appSlug);
   return id ? appendSegments(basePath, [id]) : basePath;
 }
 
 export function getExamDetailPath(
   space: string,
   examId?: string | null,
+  appSlug?: string,
 ): string {
-  return getAssignmentDetailPath(space, examId);
+  return getAssignmentDetailPath(space, examId, appSlug);
 }
 
 export function getChapterTestDetailPath(
@@ -79,8 +87,9 @@ export function getChapterTestDetailPath(
 export function getCourseLearningPath(
   space: string,
   location?: CourseLearningLocation | null,
+  appSlug?: string,
 ): string {
-  const basePath = appPath(space, "courses");
+  const basePath = appPath(space, "courses", appSlug);
   const routeSegments = [
     segment(location?.categorySlug),
     segment(location?.subcategorySlug),
@@ -96,8 +105,9 @@ export function getCourseLearningPath(
 export function getChapterPracticePath(
   space: string,
   location?: ChapterPracticeLocation | null,
+  appSlug?: string,
 ): string {
-  const basePath = appPath(space, "practice/course");
+  const basePath = appPath(space, "practice/course", appSlug);
   const courseKey = segment(location?.courseKey);
   const chapterSlug = segment(location?.chapterSlug);
   return courseKey && chapterSlug
@@ -108,8 +118,9 @@ export function getChapterPracticePath(
 export function getSpecializedPracticePath(
   space: string,
   location?: SpecializedPracticeLocation | null,
+  appSlug?: string,
 ): string {
-  const fallbackPath = appPath(space, "practice/skills");
+  const fallbackPath = appPath(space, "practice/skills", appSlug);
   const routeSegments = [
     segment(location?.skill),
     segment(location?.courseSlug),
@@ -118,12 +129,12 @@ export function getSpecializedPracticePath(
   ];
 
   return routeSegments.every((value): value is string => value !== null)
-    ? appendSegments(appPath(space, "training"), routeSegments)
+    ? appendSegments(appPath(space, "training", appSlug), routeSegments)
     : fallbackPath;
 }
 
-export function getReviewPath(space: string): string {
-  return appPath(space, "practice/review");
+export function getReviewPath(space: string, appSlug?: string): string {
+  return appPath(space, "practice/review", appSlug);
 }
 
 /**
@@ -170,8 +181,9 @@ export function getReviewSourcePath(
 export function getGradeFeedbackPath(
   space: string,
   assignmentId?: string | null,
+  appSlug?: string,
 ): string {
   return segment(assignmentId)
-    ? getAssignmentDetailPath(space, assignmentId)
-    : appPath(space, "grades");
+    ? getAssignmentDetailPath(space, assignmentId, appSlug)
+    : appPath(space, "grades", appSlug);
 }

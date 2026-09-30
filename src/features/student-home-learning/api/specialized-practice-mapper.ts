@@ -97,7 +97,7 @@ export function mapSpecializedPracticeTask({
       courseSlug: candidate.courseSlug,
       lessonSlug: candidate.lessonSlug,
       chapterSlug: candidate.chapterSlug,
-    }),
+    }, appSlug),
     courseId: candidate.courseId,
     courseChapterId: candidate.courseChapterId,
     skill: candidate.skill,

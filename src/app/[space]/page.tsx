@@ -26,12 +26,13 @@ import {
   type AbilityPortraitData,
 } from "@/features/student-ability-portrait/api/service";
 import {
-  loadPortalHomeLearningSummary,
+  loadPortalHomeLearningSummaryForApps,
   selectPortalHomeLearningSummary,
   type PortalHomeLearningSummary,
 } from "@/features/student-home-learning/api/service";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
+import { isSubjectSlug } from "@/features/subjects";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
@@ -381,6 +382,14 @@ export default async function StudentPortalPage({
     day: "numeric",
   }).format(new Date(personalSpaceProfile?.created_at ?? user.created_at));
   const koreanApp = portalApps.find((app) => app.slug === "korean");
+  // 今日总览汇总所有已开放、已报名的学科应用；未开放的应用学生无法进入，不汇总其任务。
+  const summaryApps = portalApps.filter(
+    (app) =>
+      app.kind === "learning" &&
+      app.portalStatus === "active" &&
+      isSubjectSlug(app.slug),
+  );
+  const showTaskAppLabels = summaryApps.length > 1;
   const primaryApp =
     portalApps.find((app) => app.portalStatus === "active") ?? portalApps[0];
   const koreanAppPath = koreanApp
@@ -397,8 +406,31 @@ export default async function StudentPortalPage({
     selectPortalHomeLearningSummary([], null, portalNow);
   let abilityPortrait: AbilityPortraitData | null = null;
   let abilityPortraitLoadFailed = false;
+  const learningSummaryPromise =
+    summaryApps.length > 0
+      ? loadPortalHomeLearningSummaryForApps(
+          summaryApps.map((app) => ({
+            supabase,
+            tenantId: tenant.id,
+            studentId: user.id,
+            studentAppId: STUDENT_APP_IDS[app.slug],
+            appSlug: app.slug,
+            appLabel: app.portalTitle,
+            space,
+          })),
+          portalNow,
+        )
+          .then((summary) => ({ summary, failed: false }))
+          .catch((error: unknown) => {
+            console.warn("[student-portal] 今日学习摘要读取失败", error);
+            return {
+              summary: selectPortalHomeLearningSummary([], null, portalNow),
+              failed: true,
+            };
+          })
+      : null;
   if (koreanApp) {
-    const [currentCourseResult, learningSummaryResult, loadedAbilityPortrait] =
+    const [currentCourseResult, loadedAbilityPortrait] =
       await Promise.all([
         loadStudentCurrentCourse({
           supabase,
@@ -412,24 +444,6 @@ export default async function StudentPortalPage({
           .catch((error: unknown) => {
             console.warn("[student-portal] 当前课程读取失败", error);
             return { course: null, failed: true };
-          }),
-        loadPortalHomeLearningSummary({
-          supabase,
-          tenantId: tenant.id,
-          studentId: user.id,
-          studentAppId: STUDENT_APP_IDS.korean,
-          appSlug: "korean",
-          appLabel: koreanApp.portalTitle,
-          space,
-          now: portalNow,
-        })
-          .then((summary) => ({ summary, failed: false }))
-          .catch((error: unknown) => {
-            console.warn("[student-portal] 今日学习摘要读取失败", error);
-            return {
-              summary: selectPortalHomeLearningSummary([], null, portalNow),
-              failed: true,
-            };
           }),
         loadAbilityPortrait({
           supabase,
@@ -446,10 +460,13 @@ export default async function StudentPortalPage({
       ]);
     currentCourse = currentCourseResult.course;
     currentCourseLoadFailed = currentCourseResult.failed;
-    learningSummary = learningSummaryResult.summary;
-    learningSummaryLoadFailed = learningSummaryResult.failed;
     abilityPortrait = loadedAbilityPortrait.portrait;
     abilityPortraitLoadFailed = loadedAbilityPortrait.failed;
+  }
+  if (learningSummaryPromise) {
+    const learningSummaryResult = await learningSummaryPromise;
+    learningSummary = learningSummaryResult.summary;
+    learningSummaryLoadFailed = learningSummaryResult.failed;
   }
   const primaryTask = learningSummary.mostImportant;
   const notifications: PortalNotificationItem[] = [];
@@ -791,7 +808,9 @@ export default async function StudentPortalPage({
                         {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)}
                       </strong>
                       <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
-                        {learningSummary.nearestDeadline.title}
+                        {showTaskAppLabels
+                          ? `${learningSummary.nearestDeadline.appLabel} · ${learningSummary.nearestDeadline.title}`
+                          : learningSummary.nearestDeadline.title}
                       </p>
                     </>
                   ) : (
@@ -812,6 +831,9 @@ export default async function StudentPortalPage({
                         已发布
                       </strong>
                       <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
+                        {showTaskAppLabels
+                          ? `${learningSummary.latestFeedback.appLabel} · `
+                          : null}
                         {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
                       </p>
                     </>

@@ -71,7 +71,7 @@ export function mapReviewTask({
     dueAt: null,
     progressPercent: null,
     reason: `${scope}有${candidate.itemCount}道错题尚未重新掌握${repeatNote}，建议集中复习。`,
-    href: getReviewPath(space),
+    href: getReviewPath(space, appSlug),
     courseId: candidate.courseId,
     courseChapterId: candidate.courseChapterId,
     skill: candidate.skill,

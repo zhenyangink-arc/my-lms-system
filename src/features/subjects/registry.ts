@@ -3,6 +3,7 @@ import type { StudentAppSlug } from "@/lib/student-apps";
 import {
   MANAGEMENT_SECTION_KEYS,
   type ManagementSectionKey,
+  type StudentNavKey,
   type SubjectManifest,
   type SubjectSlug,
 } from "./contracts.ts";
@@ -47,4 +48,17 @@ export function isSubjectSectionEnabled(
   section: ManagementSectionKey,
 ) {
   return getSubjectManifest(slug)?.management.sections.includes(section) ?? false;
+}
+
+/**
+ * 学生导航是否包含该栏目。没有学科清单的应用返回 null，由调用方沿用原有逻辑。
+ * 用于决定是否生成指向该栏目的任务或链接，避免出现指向不存在页面的入口。
+ */
+export function isStudentNavItemEnabled(
+  slug: string,
+  item: StudentNavKey,
+): boolean | null {
+  const manifest = getSubjectManifest(slug);
+  if (!manifest) return null;
+  return manifest.student.navigation.some((group) => group.items.includes(item));
 }

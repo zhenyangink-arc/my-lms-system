@@ -7,6 +7,7 @@ import {
   type DefaultPriorityRule,
 } from "../priority.ts";
 import { getGradeFeedbackPath } from "../routes.ts";
+import { isStudentNavItemEnabled } from "@/features/subjects";
 import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
 import { loadAssignmentExamTasks } from "./assignment-exam-source.ts";
 import { loadChapterPracticeTasks } from "./chapter-practice-source.ts";
@@ -177,16 +178,25 @@ export async function loadHomeLearningTasks({
     space,
     now,
   };
+  // 巩固、专项训练、错题复习三类任务都指向巩固中心；学科未开放巩固中心时不生成，
+  // 避免出现指向不存在页面的任务。没有学科清单的应用沿用原有行为。
+  const practiceEnabled = isStudentNavItemEnabled(appSlug, "practice") ?? true;
   // 课程巩固目录本身要串行查好几轮（课程→课时→章节→…），
   // chapterPractice/specializedPractice/review 三个来源都要用它——
   // 这里只发起一次，其余三个来源共享同一个 promise，避免各自重复查一遍。
-  const catalogPromise = loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now });
+  const catalogPromise = practiceEnabled
+    ? loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now })
+    : null;
   const taskGroups = await Promise.all([
     loadAssignmentExamTasks({ ...commonInput, tenantId }),
     loadCourseContinuationTasks(commonInput),
-    loadChapterPracticeTasks({ ...commonInput, catalog: catalogPromise }),
-    loadSpecializedPracticeTasks({ ...commonInput, catalog: catalogPromise }),
-    loadReviewTasks({ ...commonInput, catalog: catalogPromise }),
+    ...(catalogPromise
+      ? [
+          loadChapterPracticeTasks({ ...commonInput, catalog: catalogPromise }),
+          loadSpecializedPracticeTasks({ ...commonInput, catalog: catalogPromise }),
+          loadReviewTasks({ ...commonInput, catalog: catalogPromise }),
+        ]
+      : []),
   ]);
 
   const sortedTasks = sortHomeLearningTasks(
@@ -223,6 +233,7 @@ export async function loadLatestPublishedFeedback({
   tenantId,
   studentId,
   studentAppId,
+  appSlug,
   appLabel,
   space,
 }: LoadHomeLearningTasksInput): Promise<PortalLearningFeedback | null> {
@@ -261,7 +272,7 @@ export async function loadLatestPublishedFeedback({
     feedback,
     publishedAt,
     appLabel,
-    href: getGradeFeedbackPath(space, row.assignment_id),
+    href: getGradeFeedbackPath(space, row.assignment_id, appSlug),
   };
 }
 
@@ -292,13 +303,30 @@ export function selectPortalHomeLearningSummary(
   };
 }
 
-export async function loadPortalHomeLearningSummary(
-  input: LoadHomeLearningTasksInput,
+/**
+ * 门户跨学科总览：分别读取每个已开通学科的任务与最新反馈，合并后按同一规则排序。
+ * 任一学科读取失败即整体失败，避免在缺少部分学科数据时误报“今天没有任务”。
+ */
+export async function loadPortalHomeLearningSummaryForApps(
+  inputs: LoadHomeLearningTasksInput[],
+  now = new Date(),
 ): Promise<PortalHomeLearningSummary> {
-  const now = input.now ?? new Date();
-  const [tasks, latestFeedback] = await Promise.all([
-    loadHomeLearningTasks({ ...input, now }),
-    loadLatestPublishedFeedback({ ...input, now }),
-  ]);
+  const results = await Promise.all(
+    inputs.map((input) =>
+      Promise.all([
+        loadHomeLearningTasks({ ...input, now }),
+        loadLatestPublishedFeedback({ ...input, now }),
+      ]),
+    ),
+  );
+  const tasks = results.flatMap(([appTasks]) => appTasks);
+  const latestFeedback =
+    results
+      .map(([, feedback]) => feedback)
+      .filter((feedback): feedback is PortalLearningFeedback => feedback !== null)
+      .sort(
+        (left, right) =>
+          updatedTimestamp(right.publishedAt) - updatedTimestamp(left.publishedAt),
+      )[0] ?? null;
   return selectPortalHomeLearningSummary(tasks, latestFeedback, now);
 }

@@ -94,7 +94,7 @@ export function mapCourseContinuationTask({
       subcategorySlug: candidate.subcategorySlug,
       courseSlug: candidate.courseSlug,
       lessonSlug: candidate.lessonSlug,
-    }),
+    }, appSlug),
     courseId: candidate.courseId,
     courseChapterId: candidate.courseChapterId,
     skill: null,

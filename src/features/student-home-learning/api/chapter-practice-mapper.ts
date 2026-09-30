@@ -112,7 +112,7 @@ export function mapChapterPracticeTask({
     href: getChapterPracticePath(space, {
       courseKey: candidate.courseSlug,
       chapterSlug: candidate.chapterSlug,
-    }),
+    }, appSlug),
     courseId: candidate.courseId,
     courseChapterId: candidate.courseChapterId,
     skill: null,
