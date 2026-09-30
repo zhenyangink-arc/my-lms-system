@@ -1,116 +1,151 @@
-# 共享平台 + 学科模块 架构方案
+# 共享平台 + 学科模块 架构
+
+> 最后更新：2026-09-30（分支 `feat/subject-slots`，未提交）
+> 本文件描述已经落地的做法、仍然遗留的焊点，以及英语、数学上线前待决定的事项。
 
 ## 1. 结论
 
-韩语、大学数学、大学英语放在**同一个项目**里,采用**模块化单体**:
+韩语、英语、数学放在**同一个项目**里，采用模块化单体：
 
-- **平台层**共用:用户、租户、权限、课程骨架、学习记录、作业成绩、AI 运行时、通用 UI。
-- **学科层**独立:课程内容、题型、判题、内容渲染、学习工具、AI Skill。
+- **平台层共用**：身份、租户、权限、应用授权、课程骨架、学习记录、作业考试成绩、文件媒体、`agent-core`、通用 UI。
+- **学科层独立**：课程内容、题型、判题、学科渲染、学习工具、学科 AI 技能与提示词。
 
-同一项目、同一数据库、同一套部署,学科代码住在各自目录里,通过明确接口与平台交互。
+同一个仓库、同一个数据库、同一套部署；学科通过注册机制接入平台，平台不再写 `=== "korean"`。
 
-## 2. 为什么不拆成独立项目
+不拆成独立项目的原因：用户、租户、学习记录和作业成绩天然跨学科，拆开后要么重复实现，要么以后合并时重写。只有某个学科有独立团队、独立发布节奏或独立合规要求时才考虑拆分。
 
-| 维度 | 独立项目 | 同一项目 + 学科模块 |
-|---|---|---|
-| 用户系统 | 多套账号或额外 SSO | 一套 Supabase Auth 与租户角色 |
-| 学习记录 | 数据分散,无法跨学科聚合 | 同库同结构,首页/画像/错题可聚合 |
-| 数据库 | 迁移与 RLS 重复维护 | 一套租户隔离与 RLS |
-| 前端 | 组件与设计系统需复制 | 共用设计系统 |
-| AI | Agent 核心重复实现 | 共用 `agent-core`,学科只提供 Skill/Tool |
-| 运维 | 多套构建与环境 | 一套部署 |
-| 隔离性 | 强 | 需靠边界规则与测试约束 |
+专用服务可以独立：`~/projects/edumath`（AI 数学仿真生成器）按其计划书以独立服务 + iframe 嵌入主平台，不持有用户、课程和进度。数学学科本身仍在本项目中。
 
-以下情况才考虑拆分:某学科有独立团队、独立发布节奏、独立合规要求或独立商业主体。
+## 2. 已确认的决定（2026-09-30）
 
-## 3. 共用与独立的划分
+1. **学科就是学习类应用**。学科键是数据库已有的 `student_app_id`（代码中是 `StudentAppSlug`，路由是 `/{space}/apps/<slug>`），不新增 `subject` 字段。留学服务是服务类应用，不是学科模块；大学课程应用暂无学科清单。
+2. **大学英语放进 `english` 应用，大学数学放进 `math` 应用**；“大学”用课程分类表达，与韩语下的“基础韩语 / TOPIK 备考”同理。
+3. **英语、数学管理端先只开放三个分区**：学生与教学分配、课程结构、应用设置。其余分区的服务确认按应用隔离后再逐个开放。
+4. **改造在独立工作树进行**：`../my-lms-system-subjects`，分支 `feat/subject-slots`；全部步骤完成后一次提交。
 
-### 3.1 共用(平台层)
+## 3. 已落地的学科插槽（第 1 步）
 
-| 领域 | 内容 |
+### 3.1 目录
+
+```
+src/features/subjects/
+├── contracts.ts   学科清单格式（纯类型）
+├── registry.ts    平台读取学科的唯一入口
+├── index.ts       对外公开入口
+├── korean/        index.ts + manifest.ts
+├── english/       index.ts + manifest.ts
+└── math/          index.ts + manifest.ts
+```
+
+### 3.2 学科清单（contractVersion 1）
+
+清单只放可序列化的纯数据，服务端组件和客户端组件都能读取；链接、图标、会员开关由平台目录维护，学科只声明启用和排序。
+
+| 字段 | 作用 |
 |---|---|
-| 用户与权限 | Auth、`getAuthContext`、租户成员、角色、细粒度权限、会员等级 |
-| 课程骨架 | 课程 → 章节 → 课时、解锁规则、结课判定、证书 |
-| 学习记录 | 进度、尝试(attempt)、完成状态、学习时长、错题的通用表结构 |
-| 作业与考试 | 试卷、提交状态机、批改流程、成绩发布 |
-| 聚合视图 | 学生首页、周计划、能力画像、教师学情看板 |
-| 文件媒体 | R2 私有存储、签名 URL |
-| Agent 核心 | 预算、取消、审计、持久化、传输、Tool/Skill 注册机制、模型用量 |
-| 通用 UI | 设计系统、`components/ui`、布局与导航 |
-| 运营 | 公告、帮助中心、租户管理、平台后台 |
+| `management.sections` | 学科启用的管理端分区；不在列表中的分区对该学科返回 404 |
+| `management.teachingOperations` | 是否显示教学运营导航 |
+| `management.courseContentWorkflow` | 是否显示课程制作流程导航 |
+| `student.navigation` / `navLabels` | 学生侧边栏分组、排序与显示名 |
+| `student.mobilePrimary` | 手机端底部主入口 |
+| `student.courseSearch` | 顶栏课程搜索 |
+| `student.practiceMemory` | 巩固中心记住上次分区 |
+| `student.membershipFooter` | 侧边栏底部显示会员档位 |
 
-### 3.2 独立(学科层)
+注册表 API：`getSubjectManifest(slug)`（非学科返回 `null`）、`isSubjectSlug`、`isSubjectSectionEnabled(slug, section)`（仅当学科清单启用该分区时为 true）。
 
-| 领域 | 韩语 | 数学 | 英语 |
-|---|---|---|---|
-| 课程内容 | 韩文入门、一级 16 章 | 微积分、线代等 | 大学英语 |
-| 题型 | 听音选字、跟读、拼写 | 公式题、分步解答、证明、图形题 | 阅读、写作、听力、翻译 |
-| 判题评分 | 选择题、发音证据 | 符号/数值等价判定 | 主观题量规、写作批改 |
-| 内容渲染 | 韩文字体、发音图 | LaTeX、函数图像、交互图形 | 长文阅读、生词标注 |
-| 输入方式 | 录音、韩文输入 | 公式编辑器、手写 | 录音、长文本 |
-| 学习工具 | 收音规则、音变 | 计算器、草稿区 | 词典、语法表 |
-| AI Skill | 解释韩语句子 | 分步讲题、错因诊断 | 语法纠错、写作点评 |
-| AI 知识/Tool | 教学脚本、句子库 | 题库与标准解答 | 词汇库、语料 |
+故意没有放进清单的：教学语言、题型、判题器、课时与课程界面渲染器、AI 技能。等真实需要时按 `contractVersion` 升级。
 
-> 原则:数学的对错必须由可信的计算引擎判定,LLM 只负责讲解,不负责判分。
+### 3.3 平台如何读取清单
 
-## 4. 目录结构
+- 管理端：统一分区检查、工作区卡片（`subjectOnly`）、教学运营导航、课程制作流程导航，以及原先只限韩语的分区页面。
+- 学生端：侧边栏、手机端主入口、巩固中心记忆、顶栏课程搜索、侧边栏底部。
+- 共享层 `src/lib` 不引用学科代码；需要学科信息时由 `src/app` 层读取清单后作为参数传入（例如 `courseContentSteps(access, workflowEnabled)`）。
 
-```
-src/
-├── features/
-│   ├── courses, course-completion, student-assignments, grades,
-│   │   learning-records, student-home-learning, agent-core ...   ← 平台层
-│   └── subjects/
-│       ├── korean/      课程内容、韩语题型、发音/录音、教学 Skill
-│       ├── math/        公式渲染、符号判题、解题步骤、数学 Skill
-│       └── english/     阅读/写作、评分量规、英语 Skill
-├── lib/                 只保留通用基础设施(auth、supabase、r2、utils)
-└── app/[space]/apps/    korean | math | english   ← 仅做路由与页面组装
-```
+## 4. 已完成的拆焊点（第 2 步）
 
-## 5. 学科注册机制
+| 批次 | 内容 | 做法 |
+|---|---|---|
+| 2A 功能开关 | 结课政策与审核、学习计划、平台学情会话入口、学生分配页学习计划待办、课程页标题 | 改为 `isSubjectSectionEnabled` 或读取清单 |
+| 2B 只读查询 | 成绩、学习记录、作业列表与详情、工具箱（首页 / 技能 / 词汇）页面；巩固覆盖与章节读取、当前课程、能力画像、结课读取、课程巩固目录服务 | 页面导出接收 `studentAppSlug` 的具名组件，韩语路由传入 `"korean"`；服务由调用方传入应用 |
+| 2C 写入操作 | 作业提交、工具箱提交与计时、巩固进度、听辨判定、章节测试后刷新、错题掌握、老师巩固推荐、巩固中心后台 | 应用由服务端从记录推出；只有工具箱计时和老师推荐接收页面传入的学科，且服务端核对权限 |
+| 2E 会话练习（平台侧） | 会话练习基础路径、6 个学生页面、去后台编辑的链接 | 与 2B 相同 |
 
-平台定义接口,学科去实现:
+### 4.1 旧入口约定
 
-- **题型注册**:学科注册自己的渲染器与判题器,平台只调用统一接口。
-- **Skill/Tool 注册**:复用 `agent-core` 的 `skills/registry.ts`、`tools/registry.ts`,按学科注册。
-- **学科标识**:课程、题目、资源、Agent 会话都带 `subject` 字段。
+旧的 `/{space}/dashboard/...` 学生路由会重定向到应用路由，只有教职人员会直接看到。共享页面模块的旧默认导出统一引用 `src/app/dashboard/legacy-redirect.ts` 中的 `LEGACY_DASHBOARD_APP_SLUG`（值为 `"korean"`），“旧入口默认韩语”只定义在这一处；自动生成的路由适配文件未改动。
 
-## 6. 数据库原则
+### 4.2 写入安全原则
 
-1. 共享表(课程、作业、试卷、学习记录、错题)加 `subject` 维度,不要一门学科一套表。
-2. 学科专属数据单独建表并加前缀(如数学解题步骤、韩语录音证据),不要塞进通用表的 JSON。
-3. RLS 统一按租户与角色,学科不改变权限模型。
-4. 迁移命名区分"平台基线 / 学科增量"。
+- 写入所属的应用必须由服务端确定：从目标记录（作业、练习、练习单元、错题、章节测试、课程）读取。
+- 必须由页面告诉服务端学科时（工具箱计时、老师巩固推荐），服务端核对：是学科应用；学生对该应用有有效权限，或该学科开启了对应分区且学生在老师该应用的负责名单中。
+- 使用管理员权限读取私有数据前（如听辨答案），先核对学生对该记录所属应用的权限。
+- 数据库 RLS 是最终边界，应用层不依赖它，但也不替代它。
 
-## 7. AI 功能划分
+新增的平台工具：`src/lib/student-app-access.server.ts`（`getStudentAppSlugById`、`hasActiveStudentAppAccess`）、`src/features/student-home-learning/api/refresh-for-app.ts`（按记录所属应用刷新首页）。
 
-- **共用**:运行时、预算、取消、审计、Provider 适配、事件流、学生 UI 外壳。
-- **按学科**:Skill、Tool、系统提示词、评估用例。
-- 数学接入计算/校验工具,英语接入写作评分量规,不强行合并成一个通用 Agent。
+### 4.3 英语应用骨架（第 3 步的代码部分，不含数据库）
 
-## 8. 依赖规则
+- 学生导航：学习（应用首页、英语课程、学习任务）、成长记录（我的成绩、学习记录、资料库）、消息与服务（通知公告、帮助中心）。
+- 路由：`src/app/[space]/apps/english/` 下接入课程目录 / 分类 / 课程 / 课时、学习任务与详情、成绩、学习记录、资料库、公告、帮助，全部复用平台页面并明确传入 `"english"`；课程分类层只放行 `english` 分类。
+- 课程目录：按应用显示时不再把 `english`、`math`、`university` 分类当作“即将上线”（仅旧版总目录保留该规则）。
+- 成绩页“结课资格与证书”卡片只在学科开启结课资格时显示，避免英语出现指向不存在页面的链接。
+- 暂不接入：巩固中心、专项训练（依赖韩语内容格式）、会话练习（依赖 AI 陪练定位）、结课资格（依赖数据库中韩语化的结课评估）。
+- 已知限制：课时页的完整访问只认 `korean_course`，英语学生目前只能进入免费试看课时；英语首页仍是通用的应用首页框架。两者分别取决于第 8 节的会员与首页决定。
+- 英语在机构中仍为“即将上线”，学生无法进入；浏览器验证同样待本机库同步。
+
+## 5. 依赖与边界规则
 
 ```
-app → features(平台层 / subjects) → shared
+app → features（平台 / subjects） → shared
 ```
 
-- 允许:`app` 调用 feature 的公开入口。
-- 禁止:`shared` 依赖 `subjects`。
-- 禁止:一个学科深链引用另一个学科的内部文件。
-- 禁止:在共享代码里写 `if (subject === "xxx")`。
-- 建议用 ESLint 规则或边界测试强制执行。
+- `shared`（`src/lib`）不得引用 `subjects`；一个学科不得深链另一个学科的内部文件；学科只通过 `index.ts` 对外。
+- 共享代码不再新增 `if (slug === "...")`；需要差异时加入学科清单。
+- 由测试强制：`tests/subject-registry.test.mjs`（清单合法性、韩语清单与改造前一致、依赖方向、已改文件不再固定韩语）、`tests/subject-write-boundaries.test.mjs`（写入边界与权限核对顺序）。
 
-## 9. 落地步骤
+### 5.1 与教学 Agent（Codex 线）的隔离
 
-1. **立规矩**:新增的学科专属逻辑一律放 `features/subjects/<学科>/`,不再往 `src/lib` 添加。
-2. **补 `subject` 标识**:确认课程与学习记录表能区分学科。
-3. **迁移韩语专属代码**:把 `src/lib/korean-*.ts` 逐个迁到 `features/subjects/korean/`,每次迁移后跑对应测试。
-4. **抽接口**:提取题型与判题的注册接口,用数学作为第二个学科验证设计。
-5. **加边界检查**:落实第 8 节的依赖规则。
-6. **清理旧债**:处理 `/dashboard` 与 `/[space]/dashboard` 双轨,修复当前失败的测试,更新过期的 README。
+改造期间不修改以下内容：`src/features/teaching-agent`、`agent-core`、`smart-textbook-runtime`、`development-execution`、`src/lib/smart-textbook-*`、`scripts/teaching-agent-*`、`docs/evidence/teaching-agent-*`、`.codex/`、`AGENTS.md`、`CODEX_*.md`，以及被这些代码直接或间接引用的 38 个文件（例如 `src/lib/student-apps.ts`、`student-home-learning/api/refresh.ts`）。每批改动都与这份引用链交叉核对，结果为零交集。
 
-## 10. 一句话总结
+## 6. 仍然遗留的焊点
 
-用户、租户、权限、课程骨架、学习记录、作业成绩、AI 运行时全部共用;题型、判题、内容渲染、学习工具、AI Skill 按学科独立。
+| 内容 | 位置 | 计划 |
+|---|---|---|
+| 课程目录、分类、课程页按韩语选择界面（`KoreanDirectCourseCatalog`、`KoreanLearningCenter`） | `src/app/dashboard/courses/**` | 课程和课时界面插槽（原 2D），设计见 [course-lesson-experience-slot-design.md](./course-lesson-experience-slot-design.md) |
+| 课时页韩语分支与 28,719 行韩语组件 | `courses/.../[lessonSlug]/` | 同上；课时页是金老师面板宿主，等 Codex 线收尾 |
+| `korean_course` 会员开关 | TS 15 个文件 + SQL 4 个函数 | 改为按应用（可用 `student_app_enrollments.access_tier`），需数据库改动 |
+| 写死韩语应用的数据库函数 | `capture_toolbox_review_item`、`enforce_chapter_test_learning_prerequisites`、`record_ebook_progress`、`save_conversation_practice_scenario` | 数据库改动批次 |
+| 章节测试表 | `korean_title` 必填、slug 全局唯一；标准试卷必须挂章节测试 | 数据库改动批次（先做依赖分析） |
+| 韩语题库列名 `_ko` | `exam_bank_*`、`homework_bank_*` | 不改；视为韩语模块的创作表，英语、数学各建自己的创作表 |
+| 会话练习 AI 提示词、回答语言模式、场景内容格式（`korean` 字段） | `supabase/functions/qwen-conversation-chat`、AI 体验页面、场景数据 | 第 3 步与英语会话内容一起设计 |
+| 英语课时完整访问 | 课时页 `korean_course` 准入（黄区） | 会员决定 + 会员开关按应用改造 |
+| 门户首页、韩语首页 | `src/app/[space]/page.tsx`、`DashboardHomePage.tsx` | 第 3 步，取决于多学科汇总的产品决定 |
+| 韩语专属页面与内容 | 深化学习页、韩语章节测试、韩语教材路径判断、创建教学内容骨架等 | 第 5 步整体迁入 `subjects/korean` |
+| 死代码 | 旧后台“学生分配”整条链、`admin/growth-toolbox/page-content.tsx` | 单独清理 |
+
+## 7. 验证状态
+
+- 自动化：相关测试 179 个通过；类型检查（`next typegen` 后 `tsc --noEmit`）与改动文件 lint 通过。只运行与改动相关的测试文件，不运行 `test:navigation` 全集（其中有测试会改写证据文件）。
+- 浏览器验证：**NOT VALIDATED**。项目 `.env.local` 指向云端 Supabase，未使用；本机 Supabase 的 `authenticated` 角色缺少 `profiles` 读取权限且落后仓库 51 个迁移，登录后无法进入页面。待本机库同步后补做。
+- 备份：`~/projects/my-lms-system-subject-slots-backup/2026-09-30/`（补丁 + 新增文件包 + 恢复说明 + SHA256），已验证可逐字节恢复。
+
+## 8. 英语、数学上线前待决定的事项
+
+1. **门户与首页如何汇总多个学科**：门户只展示一个主学科、并列展示已报名的学科，还是按最近学习自动选择？韩语首页与英语、数学首页是否统一为同一套首页框架？
+2. **会员与收费**：新学科沿用 vip2/vip3 档位，还是按应用单独设置档位（`student_app_enrollments.access_tier`）？
+3. **英语 AI 陪练定位**：只做口语陪练，还是包含写作批改？回答语言模式（全英文 / 中英辅助）如何设定？是否需要英语版教师形象？
+4. **金老师（教学 Agent）是否扩展到英语、数学**：还是只服务韩语，英语、数学各自新建？
+5. **EduMath 的对接边界**：数学模块按计划书以 iframe + postMessage + Launch Token 嵌入；LMS 服务端能否复用 `@edumath/math-core` 做数学判题？
+6. **大学课程应用**：保留给以后的专业课，还是先隐藏？
+
+## 9. 下一步
+
+| 顺序 | 内容 | 前置条件 |
+|---|---|---|
+| 1 | 本机库同步，补浏览器验证 | Codex 线收尾 |
+| 2 | 数据库改动批次（第 6 节中的数据库项） | 同上，并按 Architecture Gate 处理 |
+| 3 | 第 3 步其余部分：英语首页、课时完整访问、巩固与专项训练、会话练习与 AI 陪练、英语内容 | 第 8 节第 1–3 项决定；代码骨架已完成（4.3） |
+| 4 | 课程与课时界面插槽 | 英语需要自己的课程界面时 |
+| 5 | 第 4 步：数学（EduMath 接入、数学题型、服务端判题） | 第 8 节第 5 项决定 |
+| 6 | 第 5 步：韩语迁入 `subjects/korean` | 以上完成后分批进行 |
