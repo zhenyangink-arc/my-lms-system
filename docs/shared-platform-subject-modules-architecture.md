@@ -119,6 +119,7 @@ app → features（平台 / subjects） → shared
 | 章节测试表 | `korean_title` 必填、slug 全局唯一；标准试卷必须挂章节测试 | 依赖分析结论：英语**不改表结构**（slug 加学科前缀，`korean_title` 填空字符串）；数学另定。见 [db-subject-unweld-dependency-analysis.md](./db-subject-unweld-dependency-analysis.md) |
 | 韩语题库列名 `_ko` | `exam_bank_*`、`homework_bank_*` | 不改；视为韩语模块的创作表，英语、数学各建自己的创作表 |
 | 会话练习 AI 提示词、回答语言模式、场景内容格式（`korean` 字段） | `supabase/functions/qwen-conversation-chat`、AI 体验页面、场景数据 | 第 3 步与英语会话内容一起设计 |
+| 作答表单短答题提示写死“填写韩语答案”；投放题型只有 5 种、客观判分为字符串相等 | `AssignmentSubmissionForm.tsx`、`learning_assignment_questions` | 题型与判题器插槽，设计见 [question-type-grader-slot-design.md](./question-type-grader-slot-design.md) |
 | 英语课时完整访问 | 课时页 `korean_course` 准入（黄区） | 会员决定 + 会员开关按应用改造 |
 | 门户首页、韩语首页 | `src/app/[space]/page.tsx`、`DashboardHomePage.tsx` | 按第 8 节第 1 项的决定改造（门户跨学科总览 + 平台首页框架），排在本机库同步之后 |
 | 韩语专属页面与内容 | 深化学习页、韩语章节测试、韩语教材路径判断、创建教学内容骨架等 | 第 5 步整体迁入 `subjects/korean` |
