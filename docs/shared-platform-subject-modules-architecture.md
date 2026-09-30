@@ -123,7 +123,7 @@ app → features（平台 / subjects） → shared
 | 英语课时完整访问 | 课时页 `korean_course` 准入（黄区） | 会员决定 + 会员开关按应用改造 |
 | 门户首页、韩语首页 | `src/app/[space]/page.tsx`、`DashboardHomePage.tsx` | 按第 8 节第 1 项的决定改造（门户跨学科总览 + 平台首页框架），排在本机库同步之后 |
 | 韩语专属页面与内容 | 深化学习页、韩语章节测试、韩语教材路径判断、创建教学内容骨架等 | 第 5 步整体迁入 `subjects/korean` |
-| 死代码 | 旧后台“学生分配”整条链、`admin/growth-toolbox/page-content.tsx` | 单独清理 |
+| ~~死代码~~ | 旧后台“学生分配”整条链、`admin/growth-toolbox/page-content.tsx` | 已删除（18 个文件，旧入口重定向路由保留） |
 
 ## 7. 验证状态
 
