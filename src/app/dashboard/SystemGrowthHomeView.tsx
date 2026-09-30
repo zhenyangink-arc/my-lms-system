@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import {
   ArrowRight,
   BellRing,
@@ -105,6 +105,8 @@ type Props = {
   assignmentsHref: string;
   coursePracticeHref: string;
   reviewHref: string;
+  /** 平台能力画像区块；学科清单未启用时不传。 */
+  abilityPortrait?: ReactNode;
 };
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -384,6 +386,7 @@ export function SystemGrowthHomeView({
   assignmentsHref,
   coursePracticeHref,
   reviewHref,
+  abilityPortrait,
 }: Props) {
   const visibleCourses = courseProgressList.slice(0, 3);
   const secondaryRecentActivity = recentActivity.slice(1, 4);
@@ -515,6 +518,8 @@ export function SystemGrowthHomeView({
           })}
         </div>
       </nav>
+
+      {abilityPortrait ? <div className="mt-3.5">{abilityPortrait}</div> : null}
 
       <details className="korean-more-overview">
         <summary>

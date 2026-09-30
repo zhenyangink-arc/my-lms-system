@@ -13,6 +13,15 @@ import {
 } from "@/features/student-home-learning/api/service";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { loadPublishedStudentCurriculumTasks } from "@/features/curriculum-plans/api/service";
+import {
+  loadAbilityPortrait,
+  type AbilityPortraitData,
+} from "@/features/student-ability-portrait/api/service";
+import {
+  AbilityPortrait,
+  AbilityPortraitLoadFailed,
+} from "@/features/student-ability-portrait/components/AbilityPortrait";
+import { isStudentHomeBlockEnabled } from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
@@ -188,6 +197,8 @@ export default async function DashboardHomePage() {
   let dailyLearningTasks: HomeLearningTask[] = [];
   let weeklyPlanTasks: HomeLearningTask[] = [];
   let dailyLearningLoadFailed = false;
+  let abilityPortrait: AbilityPortraitData | null = null;
+  let abilityPortraitLoadFailed = false;
 
   if (user) {
     studentName =
@@ -223,11 +234,32 @@ export default async function DashboardHomePage() {
           return [] as HomeLearningTask[];
         })
       : Promise.resolve([] as HomeLearningTask[]);
-    const [koreanScope, dailyLearningResult, formalPlanTasks] = await Promise.all([
+    // 能力画像从门户移到学科首页（门户只做跨学科总览）。
+    const abilityPortraitPromise =
+      auth.tenant &&
+      userRole === "student" &&
+      isStudentHomeBlockEnabled("korean", "ability-portrait")
+        ? loadAbilityPortrait({
+            supabase,
+            tenantId: auth.tenant.id,
+            studentId: user.id,
+            studentAppId: STUDENT_APP_IDS.korean,
+            now: requestNow,
+          })
+            .then((portrait) => ({ portrait, failed: false }))
+            .catch((error: unknown) => {
+              console.warn("[student-home] 能力画像读取失败", error);
+              return { portrait: null, failed: true };
+            })
+        : Promise.resolve({ portrait: null, failed: false });
+    const [koreanScope, dailyLearningResult, formalPlanTasks, abilityPortraitResult] = await Promise.all([
       getStudentAppCourseScope(supabase, "korean"),
       dailyLearningTasksPromise,
       weeklyPlanTasksPromise,
+      abilityPortraitPromise,
     ]);
+    abilityPortrait = abilityPortraitResult.portrait;
+    abilityPortraitLoadFailed = abilityPortraitResult.failed;
     dailyLearningTasks = dailyLearningResult.tasks;
     weeklyPlanTasks = formalPlanTasks;
     dailyLearningLoadFailed = dailyLearningResult.failed;
@@ -762,6 +794,13 @@ export default async function DashboardHomePage() {
       assignmentsHref={assignmentsHref}
       coursePracticeHref={coursePracticeHref}
       reviewHref={reviewHref}
+      abilityPortrait={
+        abilityPortrait ? (
+          <AbilityPortrait data={abilityPortrait} sourceLabel="韩语学习" />
+        ) : abilityPortraitLoadFailed ? (
+          <AbilityPortraitLoadFailed sourceLabel="韩语学习" reloadHref={dashboardBasePath} />
+        ) : null
+      }
     />
   );
 }

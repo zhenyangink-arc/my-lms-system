@@ -6,7 +6,6 @@ import {
   CalendarClock,
   Calculator,
   CheckCircle2,
-  ChevronRight,
   CircleAlert,
   Clock3,
   GraduationCap,
@@ -22,11 +21,6 @@ import {
   type StudentCurrentCourse,
 } from "@/features/student-current-course/api/service";
 import {
-  loadAbilityPortrait,
-  type AbilityPortraitData,
-} from "@/features/student-ability-portrait/api/service";
-import { AbilityPortrait } from "@/features/student-ability-portrait/components/AbilityPortrait";
-import {
   loadPortalHomeLearningSummaryForApps,
   selectPortalHomeLearningSummary,
   type PortalHomeLearningSummary,
@@ -37,7 +31,7 @@ import {
   getTaskTiming,
 } from "@/features/student-home-learning/presentation";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
-import { isSubjectSlug } from "@/features/subjects";
+import { isStudentHomeBlockEnabled, isSubjectSlug } from "@/features/subjects";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
@@ -74,6 +68,11 @@ type TenantAppRow = {
   custom_title: string | null;
   sort_order: number;
   student_apps: TenantAppRelation | TenantAppRelation[] | null;
+};
+
+type PortalAppContinuation = {
+  course: StudentCurrentCourse | null;
+  failed: boolean;
 };
 
 type PortalApp = StudentAppDefinition & {
@@ -116,9 +115,11 @@ function getGreeting() {
 function PortalAppsSection({
   apps,
   space,
+  continuations,
 }: {
   apps: PortalApp[];
   space: string;
+  continuations: Map<StudentAppSlug, PortalAppContinuation>;
 }) {
   return (
     <section
@@ -143,6 +144,7 @@ function PortalAppsSection({
           const Icon = appIconMap[app.slug];
           const iconAccent = appAccentClasses[app.accent];
           const active = app.portalStatus === "active";
+          const continuation = active ? continuations.get(app.slug) : undefined;
 
           return (
             <article
@@ -184,6 +186,36 @@ function PortalAppsSection({
                 hintClassName="relative z-10"
                 hintLabel={`查看${app.portalTitle}说明`}
               />
+
+              {continuation ? (
+                continuation.course ? (
+                  <Link
+                    href={continuation.course.continueHref}
+                    aria-label={`继续学习${app.portalTitle}：${getLessonDisplayTitle(continuation.course.lessonTitle)}`}
+                    className="mt-4 block rounded-xl bg-slate-50 px-3 py-2.5 ring-1 ring-slate-200/80 transition-colors hover:bg-emerald-50/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 motion-reduce:transition-none"
+                  >
+                    <span className="flex items-center justify-between gap-2 text-xs font-semibold text-slate-500">
+                      <span>继续学习</span>
+                      <span className="tabular-nums text-emerald-700">
+                        {Math.round(continuation.course.progressPercent)}%
+                      </span>
+                    </span>
+                    <span className="mt-0.5 block truncate text-sm font-bold text-slate-900">
+                      {getLessonDisplayTitle(continuation.course.lessonTitle)}
+                    </span>
+                    <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-slate-200/80">
+                      <span
+                        className="block h-full rounded-full bg-emerald-500"
+                        style={{ width: `${continuation.course.progressPercent}%` }}
+                      />
+                    </span>
+                  </Link>
+                ) : (
+                  <p className="mt-4 text-xs font-medium text-slate-500">
+                    {continuation.failed ? "课程进度暂时无法读取" : "尚未开始课程"}
+                  </p>
+                )
+              ) : null}
 
               <div className="mt-auto pt-5">
                 {active ? (
@@ -377,13 +409,9 @@ export default async function StudentPortalPage({
     ? getStudentAppPath(space, "korean", "/announcements")
     : `${access.dashboardBasePath}/announcements`;
   const portalNow = new Date();
-  let currentCourse: StudentCurrentCourse | null = null;
-  let currentCourseLoadFailed = false;
   let learningSummaryLoadFailed = false;
   let learningSummary: PortalHomeLearningSummary =
     selectPortalHomeLearningSummary([], null, portalNow);
-  let abilityPortrait: AbilityPortraitData | null = null;
-  let abilityPortraitLoadFailed = false;
   const learningSummaryPromise =
     summaryApps.length > 0
       ? loadPortalHomeLearningSummaryForApps(
@@ -407,40 +435,34 @@ export default async function StudentPortalPage({
             };
           })
       : null;
-  if (koreanApp) {
-    const [currentCourseResult, loadedAbilityPortrait] =
-      await Promise.all([
+  // 每个学科应用卡片显示“继续学习”；能力画像已移到各学科首页。
+  const appContinuationsPromise = Promise.all(
+    summaryApps
+      .filter((app) => isStudentHomeBlockEnabled(app.slug, "continue-learning"))
+      .map((app) =>
         loadStudentCurrentCourse({
           supabase,
           studentId: user.id,
-          studentAppId: STUDENT_APP_IDS.korean,
-          appSlug: "korean",
+          studentAppId: STUDENT_APP_IDS[app.slug],
+          appSlug: app.slug,
           space,
           now: portalNow,
         })
-          .then((course) => ({ course, failed: false }))
-          .catch((error: unknown) => {
+          .then((course): [StudentAppSlug, PortalAppContinuation] => [
+            app.slug,
+            { course, failed: false },
+          ])
+          .catch((error: unknown): [StudentAppSlug, PortalAppContinuation] => {
             console.warn("[student-portal] 当前课程读取失败", error);
-            return { course: null, failed: true };
+            return [app.slug, { course: null, failed: true }];
           }),
-        loadAbilityPortrait({
-          supabase,
-          tenantId: tenant.id,
-          studentId: user.id,
-          studentAppId: STUDENT_APP_IDS.korean,
-          now: portalNow,
-        })
-          .then((portrait) => ({ portrait, failed: false }))
-          .catch((error: unknown) => {
-            console.warn("[student-portal] 能力画像读取失败", error);
-            return { portrait: null, failed: true };
-          }),
-      ]);
-    currentCourse = currentCourseResult.course;
-    currentCourseLoadFailed = currentCourseResult.failed;
-    abilityPortrait = loadedAbilityPortrait.portrait;
-    abilityPortraitLoadFailed = loadedAbilityPortrait.failed;
-  }
+      ),
+  );
+  const appContinuations = new Map(await appContinuationsPromise);
+  const primaryContinuation =
+    summaryApps
+      .map((app) => appContinuations.get(app.slug)?.course ?? null)
+      .find((course): course is StudentCurrentCourse => course !== null) ?? null;
   if (learningSummaryPromise) {
     const learningSummaryResult = await learningSummaryPromise;
     learningSummary = learningSummaryResult.summary;
@@ -491,9 +513,9 @@ export default async function StudentPortalPage({
       href: learningSummary.latestFeedback.href,
     });
   }
-  const emptyStateHref = currentCourse?.continueHref ??
-    (koreanApp
-      ? getCourseLearningPath(space)
+  const emptyStateHref = primaryContinuation?.continueHref ??
+    (summaryApps[0]
+      ? getCourseLearningPath(space, null, summaryApps[0].slug)
       : primaryApp
         ? getStudentAppBasePath(space, primaryApp.slug)
         : portalPath);
@@ -541,7 +563,7 @@ export default async function StudentPortalPage({
             <section
               id="personal-space"
               aria-label="我的个人资料"
-              className={`flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/92 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] ${koreanApp ? "" : "xl:col-span-2"}`}
+              className={`flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/92 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] xl:col-span-2`}
             >
               <div className="grid sm:grid-cols-[12rem_minmax(0,1fr)]">
                 <PortalAvatarCard
@@ -563,100 +585,8 @@ export default async function StudentPortalPage({
                 <PortalTagsCard tags={interestTags} embedded />
                 <PortalMottoCard motto={motto} embedded />
               </div>
-              {koreanApp ? (
-                <Link
-                  href={currentCourse?.continueHref ?? getCourseLearningPath(space)}
-                  className="group mt-auto flex min-h-24 items-center gap-4 border-y border-slate-200/75 bg-slate-50/80 px-5 py-4 transition-colors hover:bg-emerald-50/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-600 motion-reduce:transition-none sm:px-6 xl:mb-7"
-                >
-                  <span className="flex size-12 shrink-0 items-center justify-center rounded-[1.1rem] bg-emerald-100 text-emerald-700 shadow-sm ring-1 ring-emerald-200/80">
-                    <BookOpen size={19} aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-xs font-bold text-slate-500">
-                      学习状况
-                    </span>
-                    <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
-                      <strong className="shrink-0 text-sm font-black text-slate-950">
-                        韩语学习
-                      </strong>
-                      {currentCourse ? (
-                        <>
-                          <ChevronRight size={14} aria-hidden="true" className="shrink-0 text-slate-300" />
-                          <strong className="min-w-0 text-sm font-black text-slate-700">
-                            {getLessonDisplayTitle(currentCourse.lessonTitle)}
-                          </strong>
-                        </>
-                      ) : null}
-                    </span>
-                    <span className="mt-1 block text-xs font-semibold leading-5 text-slate-500">
-                      {currentCourse
-                        ? `${currentCourse.courseTitle} · 正式课程`
-                        : currentCourseLoadFailed
-                          ? "课程进度暂时无法读取，可进入课程页查看"
-                          : "尚未开始正式课程，可从课程页选择"}
-                    </span>
-                  </span>
-                  {currentCourse ? (
-                    <span className="hidden w-28 shrink-0 sm:block">
-                      <span className="flex items-center justify-between text-xs font-semibold text-slate-500">
-                        <span>当前进度</span>
-                        <span className="tabular-nums text-emerald-700">
-                          {Math.round(currentCourse.progressPercent)}%
-                        </span>
-                      </span>
-                      <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-slate-200/80">
-                        <span
-                          className="block h-full rounded-full bg-emerald-500"
-                          style={{ width: `${currentCourse.progressPercent}%` }}
-                        />
-                      </span>
-                    </span>
-                  ) : null}
-                  <span className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-white px-3.5 text-xs font-black text-slate-700 shadow-sm ring-1 ring-slate-200 transition group-hover:bg-slate-950 group-hover:text-white">
-                    {currentCourse
-                      ? currentCourse.status === "completed"
-                        ? "查看"
-                        : "继续"
-                      : "课程"}
-                    <ArrowRight size={14} aria-hidden="true" />
-                  </span>
-                </Link>
-              ) : null}
             </section>
 
-            {koreanApp && abilityPortrait ? (
-              <AbilityPortrait data={abilityPortrait} sourceLabel="韩语学习" />
-            ) : koreanApp && abilityPortraitLoadFailed ? (
-              <section className="flex h-full min-h-72 flex-col rounded-[1.75rem] border border-slate-200/80 bg-white/92 p-5 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] sm:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <CardTitleWithHint
-                    headingLevel={2}
-                    title="学习能力画像"
-                    titleClassName="text-2xl font-bold tracking-[-0.035em] text-slate-950"
-                    description="依据韩语学习中的作业、测试和专项练习生成。"
-                    hintLabel="查看能力画像说明"
-                  />
-                  <p className="rounded-full bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200/80">
-                    数据来源：<span className="text-slate-800">韩语学习</span>
-                  </p>
-                </div>
-                <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-[1.35rem] bg-slate-50/80 p-6 text-center ring-1 ring-slate-200/70" role="alert">
-                  <CircleAlert size={24} className="text-amber-700" aria-hidden="true" />
-                  <p className="mt-3 text-sm font-bold text-slate-800">
-                    能力数据暂时无法读取
-                  </p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">
-                    其他门户功能不受影响，可以稍后重新加载。
-                  </p>
-                  <a
-                    href={portalPath}
-                    className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                  >
-                    重新加载
-                  </a>
-                </div>
-              </section>
-            ) : null}
           </div>
 
           <section
@@ -748,7 +678,7 @@ export default async function StudentPortalPage({
                       href={emptyStateHref}
                       className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     >
-                      {currentCourse ? "继续课程" : koreanApp ? "进入课程" : "查看应用"}
+                      {primaryContinuation ? "继续课程" : summaryApps.length > 0 ? "进入课程" : "查看应用"}
                       <ArrowRight size={16} aria-hidden="true" />
                     </Link>
                   </div>
@@ -823,7 +753,7 @@ export default async function StudentPortalPage({
             </div>
           </section>
 
-          <PortalAppsSection apps={portalApps} space={space} />
+          <PortalAppsSection apps={portalApps} space={space} continuations={appContinuations} />
 
         </div>
       </main>

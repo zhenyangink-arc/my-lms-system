@@ -101,9 +101,12 @@ test("状态同时使用图标和文字，摘要加载失败提供恢复入口",
 });
 
 test("能力画像使用受控聚合读取，局部失败不会触发开发错误层", async () => {
-  const [abilityService, portal] = await Promise.all([
+  // 能力画像已从门户移到学科首页（韩语首页与平台首页框架）。
+  const [abilityService, portal, koreanHome, portraitComponent] = await Promise.all([
     source("src/features/student-ability-portrait/api/service.ts"),
     source("src/app/[space]/page.tsx"),
+    source("src/app/dashboard/DashboardHomePage.tsx"),
+    source("src/features/student-ability-portrait/components/AbilityPortrait.tsx"),
   ]);
 
   assert.match(abilityService, /createAdminClient/);
@@ -111,8 +114,11 @@ test("能力画像使用受控聚合读取，局部失败不会触发开发错�
     abilityService,
     /admin[\s\S]+from\("student_grade_skill_profiles"\)[\s\S]+eq\("tenant_id", tenantId\)[\s\S]+eq\("student_id", studentId\)[\s\S]+eq\("student_app_id", studentAppId\)/,
   );
-  assert.match(portal, /loadAbilityPortrait\(\{[\s\S]*?studentAppId: STUDENT_APP_IDS\.korean,/);
-  assert.match(portal, /能力数据暂时无法读取/);
+  assert.doesNotMatch(portal, /loadAbilityPortrait|AbilityPortrait/);
+  assert.match(koreanHome, /loadAbilityPortrait\(\{[\s\S]*?studentAppId: STUDENT_APP_IDS\.korean,/);
+  assert.match(koreanHome, /console\.warn\("\[student-home\] 能力画像读取失败"/);
+  assert.match(koreanHome, /<AbilityPortraitLoadFailed sourceLabel="韩语学习"/);
+  assert.match(portraitComponent, /能力数据暂时无法读取/);
   assert.doesNotMatch(portal, /console\.error/);
 });
 

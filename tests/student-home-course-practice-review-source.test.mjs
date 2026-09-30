@@ -35,8 +35,10 @@ test("门户当前课程只读取正式课时，并用已通过的前置章节�
   assert.match(currentCourseSource, /lesson\.unlock_mode !== "prerequisite_passed"/);
   assert.match(currentCourseSource, /completedLessonIds\.add\(prerequisiteLessonId\)/);
   assert.doesNotMatch(currentCourseSource, /loadCoursePracticeCatalog/);
-  assert.match(portalSource, /getLessonDisplayTitle\(currentCourse\.lessonTitle\)/);
-  assert.match(portalSource, /currentCourse\?\.continueHref/);
+  // 门户按学科应用卡片显示各自的“继续学习”。
+  assert.match(portalSource, /getLessonDisplayTitle\(continuation\.course\.lessonTitle\)/);
+  assert.match(portalSource, /href=\{continuation\.course\.continueHref\}/);
+  assert.match(portalSource, /isStudentHomeBlockEnabled\(app\.slug, "continue-learning"\)/);
 });
 
 function courseCandidate(overrides = {}) {
