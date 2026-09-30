@@ -23,5 +23,6 @@ export const englishManifest: SubjectManifest = {
     practiceMemory: false,
     membershipFooter: false,
     catalogOpensAllCategories: true,
+    homeBlocks: ["today-tasks", "continue-learning", "ability-portrait"],
   },
 };

@@ -44,6 +44,15 @@ export const STUDENT_NAV_KEYS = [
 
 export type StudentNavKey = (typeof STUDENT_NAV_KEYS)[number];
 
+/** 平台首页框架提供的区块；学科按需启用。 */
+export const STUDENT_HOME_BLOCK_KEYS = [
+  "today-tasks",
+  "continue-learning",
+  "ability-portrait",
+] as const;
+
+export type StudentHomeBlockKey = (typeof STUDENT_HOME_BLOCK_KEYS)[number];
+
 export type StudentNavGroup = {
   label: string;
   items: readonly StudentNavKey[];
@@ -77,5 +86,7 @@ export type SubjectManifest = {
      * 只有主线分类可进入，其余分类显示为“努力完善中”。
      */
     catalogOpensAllCategories: boolean;
+    /** 学科首页启用的平台区块（今日任务、继续学习、能力画像），按列表顺序显示。 */
+    homeBlocks: readonly StudentHomeBlockKey[];
   };
 };

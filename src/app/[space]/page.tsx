@@ -25,12 +25,17 @@ import {
   loadAbilityPortrait,
   type AbilityPortraitData,
 } from "@/features/student-ability-portrait/api/service";
+import { AbilityPortrait } from "@/features/student-ability-portrait/components/AbilityPortrait";
 import {
   loadPortalHomeLearningSummaryForApps,
   selectPortalHomeLearningSummary,
   type PortalHomeLearningSummary,
 } from "@/features/student-home-learning/api/service";
-import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
+import {
+  formatLearningDateTime,
+  getLessonDisplayTitle,
+  getTaskTiming,
+} from "@/features/student-home-learning/presentation";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
 import { isSubjectSlug } from "@/features/subjects";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
@@ -45,7 +50,6 @@ import {
   type StudentAppSlug,
   type StudentAppStatus,
 } from "@/lib/student-apps";
-import { AbilityPortrait } from "./AbilityPortrait";
 import { PortalAskBar } from "./PortalAskBar";
 import { PortalAvatarCard } from "./PortalAvatarCard";
 import { PortalMottoCard } from "./PortalMottoCard";
@@ -107,32 +111,6 @@ function getGreeting() {
   if (hour < 12) return "早上好";
   if (hour < 18) return "下午好";
   return "晚上好";
-}
-
-function formatPortalDateTime(value: string): string {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "时间待确认";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "numeric",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).format(parsed);
-}
-
-function getTaskTiming(task: HomeLearningTask): string {
-  if (task.dueAt) return `${formatPortalDateTime(task.dueAt)} 截止`;
-  if (task.progressPercent !== null) {
-    return `已完成 ${Math.round(task.progressPercent)}%`;
-  }
-  if (task.startsAt) return `${formatPortalDateTime(task.startsAt)} 开始`;
-  return task.status === "in_progress" ? "可以继续完成" : "现在可以开始";
-}
-
-function getLessonDisplayTitle(title: string): string {
-  return title.replace(/^第\s*\d+\s*课[：:\s]*/, "").trim() || title;
 }
 
 function PortalAppsSection({
@@ -477,7 +455,7 @@ export default async function StudentPortalPage({
       title: announcement.title,
       description: announcement.content,
       meta: announcement.published_at
-        ? formatPortalDateTime(announcement.published_at)
+        ? formatLearningDateTime(announcement.published_at)
         : "时间待确认",
       href: announcementHref,
     });
@@ -489,7 +467,7 @@ export default async function StudentPortalPage({
       kind: "deadline",
       title: nearestDeadline.title,
       description: nearestDeadline.reason,
-      meta: `${formatPortalDateTime(nearestDeadline.dueAt!)} 截止`,
+      meta: `${formatLearningDateTime(nearestDeadline.dueAt!)} 截止`,
       href: nearestDeadline.href,
     });
   }
@@ -509,7 +487,7 @@ export default async function StudentPortalPage({
       kind: "feedback",
       title: learningSummary.latestFeedback.title,
       description: learningSummary.latestFeedback.feedback,
-      meta: formatPortalDateTime(learningSummary.latestFeedback.publishedAt),
+      meta: formatLearningDateTime(learningSummary.latestFeedback.publishedAt),
       href: learningSummary.latestFeedback.href,
     });
   }
@@ -647,7 +625,7 @@ export default async function StudentPortalPage({
             </section>
 
             {koreanApp && abilityPortrait ? (
-              <AbilityPortrait data={abilityPortrait} />
+              <AbilityPortrait data={abilityPortrait} sourceLabel="韩语学习" />
             ) : koreanApp && abilityPortraitLoadFailed ? (
               <section className="flex h-full min-h-72 flex-col rounded-[1.75rem] border border-slate-200/80 bg-white/92 p-5 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -805,7 +783,7 @@ export default async function StudentPortalPage({
                   ) : learningSummary.nearestDeadline ? (
                     <>
                       <strong className="mt-2 text-base font-bold text-slate-950">
-                        {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)}
+                        {formatLearningDateTime(learningSummary.nearestDeadline.dueAt!)}
                       </strong>
                       <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
                         {showTaskAppLabels
@@ -834,7 +812,7 @@ export default async function StudentPortalPage({
                         {showTaskAppLabels
                           ? `${learningSummary.latestFeedback.appLabel} · `
                           : null}
-                        {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
+                        {learningSummary.latestFeedback.title} · {formatLearningDateTime(learningSummary.latestFeedback.publishedAt)}
                       </p>
                     </>
                   ) : (

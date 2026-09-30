@@ -39,5 +39,7 @@ export const koreanManifest: SubjectManifest = {
     practiceMemory: true,
     membershipFooter: true,
     catalogOpensAllCategories: false,
+    // 韩语首页仍是韩语定制页面，这里声明它显示的平台区块。
+    homeBlocks: ["today-tasks", "continue-learning", "ability-portrait"],
   },
 };

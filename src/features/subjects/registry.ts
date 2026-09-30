@@ -3,6 +3,7 @@ import type { StudentAppSlug } from "@/lib/student-apps";
 import {
   MANAGEMENT_SECTION_KEYS,
   type ManagementSectionKey,
+  type StudentHomeBlockKey,
   type StudentNavKey,
   type SubjectManifest,
   type SubjectSlug,
@@ -61,4 +62,12 @@ export function isStudentNavItemEnabled(
   const manifest = getSubjectManifest(slug);
   if (!manifest) return null;
   return manifest.student.navigation.some((group) => group.items.includes(item));
+}
+
+/** 学科首页是否启用该平台区块；没有学科清单的应用一律为 false。 */
+export function isStudentHomeBlockEnabled(
+  slug: string,
+  block: StudentHomeBlockKey,
+): boolean {
+  return getSubjectManifest(slug)?.student.homeBlocks.includes(block) ?? false;
 }

@@ -17,5 +17,7 @@ export const mathManifest: SubjectManifest = {
     practiceMemory: false,
     membershipFooter: false,
     catalogOpensAllCategories: false,
+    // 数学课程内容接入前首页仍显示建设中。
+    homeBlocks: [],
   },
 };
