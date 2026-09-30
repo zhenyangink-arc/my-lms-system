@@ -1,7 +1,7 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-# Root / Supervisor
-model = "gpt-6-sol"
+# Root Supervisor: 全局规划、拆任务、模型路由与最终审核。
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 
 [mcp_servers.chrome-devtools]
@@ -17,26 +17,51 @@ multi_agent = true
 
 [agents]
 enabled = true
-default_subagent_model = "gpt-6-sol"
+# 未显式指定 profile 的普通子代理，默认使用 Sol medium。
+default_subagent_model = "gpt-6.1-sol"
 default_subagent_reasoning_effort = "medium"
 max_concurrent_threads_per_session = 4
 
 [agents.worker_low]
-description = "GPT-6 Sol low worker for simple, bounded, low-risk tasks."
+description = "Simple bounded worker: GPT-6.1 Sol low. Docs, text, small CSS/config, mechanical changes, clear single-file fixes."
 config_file = "agents/worker-low.toml"
 
 [agents.worker_medium]
-description = "GPT-6 Sol medium worker for normal implementation, CRUD, UI, API, and routine tests."
+description = "Default standard worker: GPT-6.1 Sol medium. Normal UI, CRUD, API, single-module features, routine tests and simple tasks needing more context."
 config_file = "agents/worker-medium.toml"
 
 [agents.worker_high]
-description = "GPT-6 Sol high worker for complex multi-file, cross-module, security, migration, and difficult debugging tasks."
+description = "Advanced implementation worker: GPT-6.1 Sol high. Multi-file logic, difficult debugging, state machines, complex data flows and higher-risk bounded implementation."
 config_file = "agents/worker-high.toml"
 
 [agents.worker_xhigh]
-description = "GPT-6 Sol xhigh worker for any task where deeper reasoning, stronger reliability, or reduced rework is desirable."
+description = "Deep bounded implementation worker: GPT-6.1 Sol xhigh. Very complex implementation, large refactors with frozen contracts and system-level debugging."
 config_file = "agents/worker-xhigh.toml"
 
+[agents.worker_astra_medium]
+description = "Complex reasoning worker: GPT-6 Astra medium. Use when stronger base reasoning is more valuable than simply increasing Sol effort."
+config_file = "agents/worker-astra-medium.toml"
+
+[agents.worker_astra_high]
+description = "High-risk complex worker: GPT-6 Astra high. Architecture-sensitive implementation, data/security impact, migrations and difficult cross-module work."
+config_file = "agents/worker-astra-high.toml"
+
+[agents.worker_astra_xhigh]
+description = "Critical complex worker: GPT-6 Astra xhigh. Systemic bugs, core architecture/security/data consistency and very difficult cross-module work."
+config_file = "agents/worker-astra-xhigh.toml"
+
 [agents.worker_max]
-description = "GPT-6 Sol max worker used only when xhigh cannot reliably solve the task."
+description = "Final escalation worker: GPT-6 Astra max. Use only when prior appropriate Sol/Astra profiles cannot reliably converge or the gate explicitly recommends max."
 config_file = "agents/worker-max.toml"
+
+[agents.architect_gate]
+description = "Independent architecture gate: GPT-6 Astra xhigh. Schema, RLS, Auth, public contracts, agent-core protocols, module boundaries, high-risk security and hard-to-reverse design decisions."
+config_file = "agents/architect-gate.toml"
+
+[agents.verifier]
+description = "Independent verifier: GPT-6.1 Sol high. Reviews actual diff, scope, tests, acceptance criteria and architecture boundaries; normally does not modify implementation."
+config_file = "agents/verifier-high.toml"
+
+[agents.verifier_critical]
+description = "Critical independent verifier: GPT-6 Astra xhigh. Auth/RLS, major migrations, public contracts, agent-core core changes, high-risk security, Astra critical outputs and release-critical review."
+config_file = "agents/verifier-critical.toml"
