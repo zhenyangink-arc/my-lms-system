@@ -80,9 +80,12 @@ function Favorite({ id, active }: { id: string; active: boolean }) {
 export function LibraryBrowser({
   resources,
   favorites,
+  categoryLabels = LIBRARY_CATEGORY_LABELS,
 }: {
   resources: Resource[];
   favorites: string[];
+  /** 分类显示名；学科可覆盖“语言学习”分类的名称。 */
+  categoryLabels?: Record<LibraryCategory, string>;
 }) {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<"all" | LibraryCategory>("all");
@@ -141,7 +144,7 @@ export function LibraryBrowser({
         >
           全部
         </Button>
-        {Object.entries(LIBRARY_CATEGORY_LABELS).map(([value, label]) => (
+        {Object.entries(categoryLabels).map(([value, label]) => (
           <Button
             key={value}
             type="button"
@@ -207,7 +210,7 @@ export function LibraryBrowser({
                       className="text-[10px] font-bold"
                       style={{ color: "var(--support)" }}
                     >
-                      {LIBRARY_CATEGORY_LABELS[resource.category]}
+                      {categoryLabels[resource.category]}
                     </span>
                     <span className="app-muted-text text-[10px]">
                       {LIBRARY_RESOURCE_TYPE_LABELS[resource.resource_type]}

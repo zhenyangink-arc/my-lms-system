@@ -78,3 +78,17 @@ test("门户公告链接指向第一个提供公告栏目的已开放学科应�
   assert.match(portal, /summaryApps\.find\(\s*\(app\) => isStudentNavItemEnabled\(app\.slug, "announcements"\)/);
   assert.match(portal, /getStudentAppPath\(space, announcementApp\.slug, "\/announcements"\)/);
 });
+
+test("资料库“语言学习”分类名随学科显示，韩语沿用原名称", async () => {
+  assert.equal(getSubjectManifest("english").student.libraryLanguageCategoryLabel, "英语学习");
+  assert.equal(getSubjectManifest("korean").student.libraryLanguageCategoryLabel, undefined);
+  const [page, browser, config] = await Promise.all([
+    source("src/app/dashboard/library/page-content.tsx"),
+    source("src/app/dashboard/library/LibraryBrowser.tsx"),
+    source("src/app/dashboard/library/config.ts"),
+  ]);
+  assert.match(config, /language:"韩语学习"/);
+  assert.match(page, /\{ \.\.\.LIBRARY_CATEGORY_LABELS, language: languageCategoryLabel \}/);
+  assert.match(browser, /categoryLabels = LIBRARY_CATEGORY_LABELS/);
+  assert.doesNotMatch(browser, /LIBRARY_CATEGORY_LABELS\[/);
+});

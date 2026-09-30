@@ -9,11 +9,16 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { getSubjectManifest } from "@/features/subjects";
 import { getLibraryAccess } from "@/lib/resource-library";
 import { getStudentAppCourseScope } from "@/lib/student-app-data";
 import type { StudentAppSlug } from "@/lib/student-apps";
 import { LibraryBrowser } from "./LibraryBrowser";
-import type { LibraryCategory, LibraryResourceType } from "./config";
+import {
+  LIBRARY_CATEGORY_LABELS,
+  type LibraryCategory,
+  type LibraryResourceType,
+} from "./config";
 
 
 type Resource = {
@@ -58,6 +63,13 @@ export async function LibraryPageContent({
   ]);
 
   const resources = (resourcesResult.data ?? []) as Resource[];
+  // 资料按应用内课程筛选；“语言学习”分类名称随学科显示（例如英语应用显示“英语学习”）。
+  const languageCategoryLabel = studentAppSlug
+    ? getSubjectManifest(studentAppSlug)?.student.libraryLanguageCategoryLabel
+    : undefined;
+  const categoryLabels = languageCategoryLabel
+    ? { ...LIBRARY_CATEGORY_LABELS, language: languageCategoryLabel }
+    : LIBRARY_CATEGORY_LABELS;
   const resourceIds = new Set(resources.map((resource) => resource.id));
   const favorites = (favoritesResult.data ?? [])
     .map((item) => item.resource_id as string)
@@ -138,7 +150,7 @@ export async function LibraryPageContent({
           </section>
         )}
 
-        <LibraryBrowser resources={resources} favorites={favorites} />
+        <LibraryBrowser resources={resources} favorites={favorites} categoryLabels={categoryLabels} />
 
         <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5 app-muted-text">
           <ShieldCheck className="mt-0.5 shrink-0" size={16} aria-hidden="true" />

@@ -88,5 +88,7 @@ export type SubjectManifest = {
     catalogOpensAllCategories: boolean;
     /** 学科首页启用的平台区块（今日任务、继续学习、能力画像），按列表顺序显示。 */
     homeBlocks: readonly StudentHomeBlockKey[];
+    /** 资料库“语言学习”分类在本学科中的显示名；不设置时沿用平台默认名称。 */
+    libraryLanguageCategoryLabel?: string;
   };
 };

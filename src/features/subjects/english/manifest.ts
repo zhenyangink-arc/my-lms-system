@@ -24,5 +24,6 @@ export const englishManifest: SubjectManifest = {
     membershipFooter: false,
     catalogOpensAllCategories: true,
     homeBlocks: ["today-tasks", "continue-learning", "ability-portrait"],
+    libraryLanguageCategoryLabel: "英语学习",
   },
 };
