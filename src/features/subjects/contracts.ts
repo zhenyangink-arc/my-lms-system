@@ -72,5 +72,10 @@ export type SubjectManifest = {
     practiceMemory: boolean;
     /** 侧边栏底部显示学员姓名和会员档位。 */
     membershipFooter: boolean;
+    /**
+     * 课程目录中所有顶层分类都提供学习入口。为 false 时沿用旧规则：
+     * 只有主线分类可进入，其余分类显示为“努力完善中”。
+     */
+    catalogOpensAllCategories: boolean;
   };
 };

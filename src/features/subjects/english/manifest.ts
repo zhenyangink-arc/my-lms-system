@@ -22,5 +22,6 @@ export const englishManifest: SubjectManifest = {
     courseSearch: false,
     practiceMemory: false,
     membershipFooter: false,
+    catalogOpensAllCategories: true,
   },
 };

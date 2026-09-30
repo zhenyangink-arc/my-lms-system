@@ -84,6 +84,8 @@ test("韩语清单与改造前的管理端和学生端行为一致", () => {
   assert.equal(korean.student.courseSearch, true);
   assert.equal(korean.student.practiceMemory, true);
   assert.equal(korean.student.membershipFooter, true);
+  // 韩语课程目录维持旧规则：只有主线分类可进入。
+  assert.equal(korean.student.catalogOpensAllCategories, false);
 });
 
 test("英语和数学的管理端先只开放三个已按应用隔离的分区", () => {
@@ -96,6 +98,11 @@ test("英语和数学的管理端先只开放三个已按应用隔离的分区",
     assert.equal(manifest.student.practiceMemory, false);
     assert.equal(manifest.student.membershipFooter, false);
   }
+});
+
+test("英语课程目录的分类都提供学习入口，数学尚未接入课程目录", () => {
+  assert.equal(getSubjectManifest("english").student.catalogOpensAllCategories, true);
+  assert.equal(getSubjectManifest("math").student.catalogOpensAllCategories, false);
 });
 
 test("英语学生端只接入已按应用隔离的平台页面，数学仍只有应用首页", () => {

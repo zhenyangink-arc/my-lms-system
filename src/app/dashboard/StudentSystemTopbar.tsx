@@ -61,11 +61,15 @@ const TOPBAR_INDEX_LABELS = [
 ] as const;
 
 function getTopbarIndexLabel(pathname: string, studentAppSlug?: StudentAppSlug) {
-  const matchedLabel = TOPBAR_INDEX_LABELS.find(([prefix]) =>
+  const matched = TOPBAR_INDEX_LABELS.find(([prefix]) =>
     pathname === prefix || pathname.startsWith(`${prefix}/`),
-  )?.[1];
+  );
 
-  if (matchedLabel) return matchedLabel;
+  if (matched?.[0] === "/dashboard/courses" && studentAppSlug) {
+    // 课程目录的显示名由学科清单提供；没有学科清单的应用沿用原标签。
+    return getSubjectManifest(studentAppSlug)?.student.navLabels?.courses ?? matched[1];
+  }
+  if (matched) return matched[1];
   return studentAppSlug
     ? getStudentAppDefinition(studentAppSlug).title
     : "学习空间";

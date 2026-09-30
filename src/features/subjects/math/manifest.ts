@@ -16,5 +16,6 @@ export const mathManifest: SubjectManifest = {
     courseSearch: false,
     practiceMemory: false,
     membershipFooter: false,
+    catalogOpensAllCategories: false,
   },
 };

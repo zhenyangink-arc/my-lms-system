@@ -34,6 +34,7 @@ import {
   type KoreanCourseCatalogSection,
   type KoreanCourseLearningStatus,
 } from "./KoreanCourseCatalogBrowser";
+import { getSubjectManifest } from "@/features/subjects";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -615,6 +616,9 @@ export async function CourseCatalog({
   const upcomingCategorySlugs = new Set(
     studentAppSlug ? [] : ["english", "math", "university"],
   );
+  const catalogOpensAllCategories = studentAppSlug
+    ? getSubjectManifest(studentAppSlug)?.student.catalogOpensAllCategories ?? false
+    : false;
   const upcomingCategories = categories.filter((category) =>
     upcomingCategorySlugs.has(category.slug)
   );
@@ -852,10 +856,12 @@ export async function CourseCatalog({
                             {category.title}
                           </span>
 
-                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
-                            <LoaderCircle size={13} />
-                            努力完善中
-                          </span>
+                          {!catalogOpensAllCategories && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                              <LoaderCircle size={13} />
+                              努力完善中
+                            </span>
+                          )}
                         </div>
 
                         <DashboardTitleWithHint
@@ -907,11 +913,23 @@ export async function CourseCatalog({
                       </p>
                     </div>
 
-                    {/* 英语、数学与大学课程暂不开放入口，避免没有资源时造成误导。 */}
-                    <div className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700">
-                      <LoaderCircle size={16} />
-                      努力完善中
-                    </div>
+                    {catalogOpensAllCategories ? (
+                      <Link
+                        href={courseBasePath ? `${courseBasePath}/${category.slug}` : "/"}
+                        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+                        style={{ backgroundColor: "var(--support)" }}
+                      >
+                        <PlayCircle size={16} aria-hidden="true" />
+                        {buttonLabel}
+                        <ArrowRight size={15} aria-hidden="true" />
+                      </Link>
+                    ) : (
+                      /* 学科清单未开放全部分类时，非主线分类暂不开放入口，避免没有资源时造成误导。 */
+                      <div className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700">
+                        <LoaderCircle size={16} />
+                        努力完善中
+                      </div>
+                    )}
                   </article>
                 );
               })}

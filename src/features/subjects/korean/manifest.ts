@@ -38,5 +38,6 @@ export const koreanManifest: SubjectManifest = {
     courseSearch: true,
     practiceMemory: true,
     membershipFooter: true,
+    catalogOpensAllCategories: false,
   },
 };
