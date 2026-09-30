@@ -152,7 +152,7 @@
     "publish": 0
   },
   "queryRegistrySha256": "852bcc36e10a21da2d61ed220238f8b6f329d386722b311217cb322066173d0f",
-  "recordedAt": 1790667381.7460577,
+  "recordedAt": 1790615591,
   "rolesGateRegistrySha256": "124ebebaa8b0ae513d463e5b1443159a377620e419ad116c8324ce3198b0c5c4",
   "schemaVersion": 1,
   "sessionDesignSha256": "b445df04c4ee6a46f066d0ecd2b050e2200a8b3827e421a1622c3d5278c3ebfa",
@@ -168,6 +168,6 @@
   },
   "validationContextHashes": {
     "docs/teaching-agent-source-provenance-acquisition.md": "6cc29943403ef7ec3eb5a46c72ec05ad5a381b43fb87da493a3cdd0765972d3e",
-    "tests/teaching_agent_source_provenance_acquisition_test.py": "3b9bf9205fc71422643889adece6f425ee51ea74055920f098bd38b529d073fb"
+    "tests/teaching_agent_source_provenance_acquisition_test.py": "6dac6760834e43780f17027c1e4ce9983b40c3c9306072e785e5a5a217961d3e"
   }
 }

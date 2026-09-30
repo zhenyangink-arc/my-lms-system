@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch, Mock
 import uuid
@@ -159,7 +160,8 @@ def check_synthetic_admission_bundle(leaf,imp,v,package,sources,context):
     build=unit_build_evidence(imp);braw=canonical(build);lock_raw=canonical(unit_artifact_lock())
     v['implementationEvidenceSha256']=sha(iraw);v['buildEvidenceSha256']=sha(braw);vraw=canonical(v)
     for key,raw in [('implementationEvidenceRef',iraw),('buildEvidenceRef',braw),('validationEvidenceRef',vraw)]:
-        leaf[key].update(sha256=sha(raw),bytes=len(raw))
+        if key in leaf:
+            leaf[key].update(sha256=sha(raw),bytes=len(raw))
     parsed=a._validate_admission_bundle(leaf,iraw,vraw,package,sources,context,build_raw=braw,lock_raw=lock_raw)
     a.validate_validation_evidence(parsed,sha(iraw),sha(braw))
 
@@ -468,8 +470,12 @@ class ProvenanceAcquisitionAuthorization(UnitBase):
         self.reject(lambda:a.strict_json(b'{"a":1,"a":2}'))
 
     def test_PROVENANCE_ACQUISITION_V1_003_scope_separation(self):
-        for scope in ['BACKUP_READ_EXPORT','SINGLE_MIGRATION_APPLY','READ_ONLY_BASELINE_CAPTURE',a.SCOPE]:
-            self.f.auth['scope']=self.f.human['scope']=scope
+        for scope in ['BACKUP_READ_EXPORT','SINGLE_MIGRATION_APPLY','READ_ONLY_BASELINE_CAPTURE']:
+            with self.subTest(scope=scope):
+                self.f.auth['scope']=self.f.human['scope']=scope;self.f.persist()
+                self.reject(self.f.validate,'ACQUISITION_ARTIFACT_INVALID')
+        with self.subTest(scope=a.SCOPE):
+            self.f.auth['scope']=self.f.human['scope']=a.SCOPE;self.f.persist()
             self.reject(self.f.validate,'ACQUISITION_SCOPE_MISMATCH')
 
     def test_PROVENANCE_ACQUISITION_V1_004_human_binding(self):
@@ -489,9 +495,17 @@ class ProvenanceAcquisitionAuthorization(UnitBase):
         self.reject(run.time_guard,'ACQUISITION_AUTH_EXPIRED')
 
     def test_PROVENANCE_ACQUISITION_V1_006_target_plan(self):
-        self.f.auth['bindings']['acquisitionIntent']['target']=dict(self.f.target,database='other')
-        self.f.human['bindings']=copy.deepcopy(self.f.auth['bindings']);self.f.persist()
-        self.reject(self.f.validate,'ACQUISITION_TARGET_MISMATCH')
+        with self.subTest(targetField='database'):
+            self.f.auth['bindings']['acquisitionIntent']['target']=dict(self.f.target,database='other')
+            self.f.human['bindings']=copy.deepcopy(self.f.auth['bindings']);self.f.persist()
+            self.reject(self.f.validate,'ACQUISITION_ARTIFACT_INVALID')
+        with self.subTest(targetField='hostIdentitySha256'):
+            host_sha='0'*64 if self.f.target['hostIdentitySha256']!='0'*64 else '1'*64
+            target=dict(self.f.target,hostIdentitySha256=host_sha)
+            intent=a.direct_intent(target,fixture=True)
+            self.f.auth['bindings'].update(acquisitionIntent=intent,acquisitionIntentSha256=sha(canonical(intent)))
+            self.f.human['bindings']=copy.deepcopy(self.f.auth['bindings']);self.f.persist()
+            self.reject(self.f.validate,'ACQUISITION_TARGET_MISMATCH')
 
     def test_PROVENANCE_ACQUISITION_V1_007_sealed_v4_dependencies(self):
         self.assertEqual(sha(canonical(a.pc.package_hashes())),a.PACKAGE_DIGEST)
@@ -846,6 +860,14 @@ class ProvenanceAcquisitionProfileArtifact(UnitBase):
                 bad=copy.deepcopy(leaf);bad[key]=value;self.reject(lambda:check_synthetic_admission_bundle(bad,imp,v,package,sources,context))
         for key in ('status','buildEvidenceRef','artifactLockRef'):
             bad=copy.deepcopy(leaf);del bad[key];self.reject(lambda:check_synthetic_admission_bundle(bad,imp,v,package,sources,context))
+        # Malformed reference inputs enter the reader unchanged, without UNIT rebinding.
+        for key in ('implementationEvidenceRef','buildEvidenceRef','validationEvidenceRef'):
+            for field in ('path','sha256','bytes'):
+                with self.subTest(reference=key,missingField=field):
+                    bad=copy.deepcopy(leaf);del bad[key][field]
+                    self.reject(lambda:a._validate_admission_bundle(bad,canonical(imp),canonical(v),package,sources,context,
+                        build_raw=canonical(unit_build_evidence(imp)),lock_raw=canonical(unit_artifact_lock())),
+                        'ACQUISITION_ARTIFACT_INVALID')
         for stage,key in [('implementation','implementationEvidenceRef'),('validation','validationEvidenceRef')]:
             bad=copy.deepcopy(leaf);bad[key]['path']=a.FORWARD_SLOTS[stage];self.reject(lambda:check_synthetic_admission_bundle(bad,imp,v,package,sources,context))
         for key,value in [('status','IMPLEMENTED_UNBUILT_NOT_FRESH_VALIDATED'),('schemaVersion',True),('formalRepositoryTestsRun',False),
@@ -1523,7 +1545,7 @@ class OwnedSessionSource(OwnedSource):
                 'REGION':'local','PORT':'4000','PROXY_PORT_SESSION':'5432','PROXY_PORT_TRANSACTION':'6543',
                 'NO_WARM_POOL_USERS':'','METRICS_PUSHER_ENABLED':'false','TENANT_METRICS_PUSHER_ENABLED':'false',
                 'GLOBAL_DOWNSTREAM_CERT_PATH':'/lab/pool.crt','GLOBAL_DOWNSTREAM_KEY_PATH':'/lab/pool.key',
-                'SECRET_KEY_BASE':secret(),'VAULT_ENC_KEY':base64.b64encode(os.urandom(32)).decode(),
+                'SECRET_KEY_BASE':secret(),'VAULT_ENC_KEY':base64.b64encode(os.urandom(24)).decode('ascii'),
                 'API_JWT_SECRET':secret(),'METRICS_JWT_SECRET':secret(),'RELEASE_COOKIE':secret()}
             ep=self.base/'pool-startup.env';ep.write_text(''.join(k+'='+v+'\n' for k,v in env.items()));ep.chmod(0o600)
             self.docker(['run','-d','--pull=never','--platform=linux/amd64','--memory','2g','--restart=no','--no-healthcheck',
@@ -1770,7 +1792,7 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
         self.assertTrue(b'CREATE ROLE postgres;' in roles,'ROLE_SQL_MISSING_BOOTSTRAP')
         self.assertFalse((s.root/'terminal'/(s.aid+'.json')).exists())
 
-    def test_SESSION_003_reject_argv_conn_environment_overrides(self):
+    def _check_SESSION_003_local_argv_conn_environment(self):
         f=self.session_unit();run=f.run();self.addCleanup(run.unlock);run.consume();run.credentials()
         _,argv=run.argv('ROLES','b'*32)
         ceilings=SESSION_SPEC['futureActualLocalValidationResources']['memoryCeilings']
@@ -1782,14 +1804,6 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
             self.assertLess(limited.index('--memory'),limited.index('--entrypoint'))
         direct=self.f.run();self.addCleanup(direct.unlock);direct.consume();direct.credentials()
         for kind in ('PRE','ROLES','POST'):self.assertNotIn('--memory',direct.argv(kind,'b'*32)[1])
-        # An isolated production-shaped argv input grants no authority and does
-        # not read credentials or start a client. Its fixed domain stays strict.
-        production=copy.copy(run);host='aws-0-unit.pooler.supabase.com';project='a'*20;user='postgres.'+project
-        target=a.session_target(sha(canonical(host)),sha(canonical(user)),sha(run.artifact_lock_raw),
-            run.artifact_lock['outputs']['runtimeImageId'],project_sha=sha(canonical(project)))
-        production.ctx=a._Context(f.root,f.creds,target,{},False,'host','','SESSION')
-        production.endpoint=dict(host=host,user=user,port=5432)
-        for kind in ('PRE','ROLES','POST'):self.assertNotIn('--memory',production.argv(kind,'b'*32)[1])
         self.assertIn('--pull=never',argv);self.assertEqual(argv.count('--env-file'),1)
         self.assertEqual(argv[argv.index('--entrypoint')+1],a.EXPORTER_PREFIX+'/entrypoint-v1.sh')
         self.assertEqual(argv[-2:],['--roles-only','--no-role-passwords'])
@@ -1805,6 +1819,22 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
             self.reject(lambda:a.parse_producer_environment(raw+suffix,bindings))
         for bad in (raw.replace(b'=',b'="',1),raw.replace(b'\n',b'\r\n'),raw[::-1],b'x'*1025):
             self.reject(lambda:a.parse_producer_environment(bad,bindings))
+        host='aws-0-unit.pooler.supabase.com';project='a'*20;user='postgres.'+project
+        self.reject(lambda:a.session_target(sha(canonical(host)),sha(canonical(user)),sha(run.artifact_lock_raw),
+            run.artifact_lock['outputs']['runtimeImageId'],project_sha=sha(canonical(project))), 'ACQUISITION_ARTIFACT_INVALID')
+        return f,run
+
+    def test_SESSION_003_reject_argv_conn_environment_overrides(self):
+        f,run=self._check_SESSION_003_local_argv_conn_environment()
+        # An isolated production-shaped argv input grants no authority and does
+        # not read credentials or start a client. Its fixed domain stays strict.
+        # User-supplied nonsecret identity values are for offline argv only.
+        production=copy.copy(run);host='aws-1-ap-northeast-2.pooler.supabase.com';project='jubdbsjsalpecfvseskz';user='postgres.'+project
+        target=a.session_target(sha(canonical(host)),sha(canonical(user)),sha(run.artifact_lock_raw),
+            run.artifact_lock['outputs']['runtimeImageId'],project_sha=sha(canonical(project)))
+        production.ctx=a._Context(f.root,f.creds,target,{},False,'host','','SESSION')
+        production.endpoint=dict(host=host,user=user,port=5432)
+        for kind in ('PRE','ROLES','POST'):self.assertNotIn('--memory',production.argv(kind,'b'*32)[1])
 
     def test_SESSION_004_reject_initializer_measurement_status_shape_values(self):
         r=producer_receipt_fixture();a.validate_producer_receipt(canonical(r)+b'\n',r['bindings'])
@@ -1893,18 +1923,25 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
         s=self.owned();p=s.ordinary('SELECT 1;\n',plaintext=True)
         self.assertNotEqual(p.returncode,0);self.assertTrue(not p.stdout,'PLAINTEXT_MUST_HAVE_EMPTY_STDOUT')
 
+    def _check_SESSION_008_observation_tls_and_proof(self):
+        for phase in ('PRE','POST'):
+            obs=observation(synthetic_values(),phase=phase)
+            a._validate_observation(obs,phase,obs['sourceTargetId'],obs['acquisitionId'])
+            for value in (False,'unavailable',None):
+                values=synthetic_values();values['backendTlsObservation']=value
+                obs=observation(values,phase=phase)
+                self.reject(lambda:a._validate_observation(obs,phase,obs['sourceTargetId'],obs['acquisitionId']), 'ACQUISITION_CLIENT_TLS')
+        p=schema_fixture('RolesExporterProof');self.assertIs(p['backendTlsObservation'],None)
+        self.assertEqual(p['backendTlsObservationStatus'],'NOT_OBSERVABLE_BY_FIXED_GATE')
+        p['backendTlsObservation']=True;self.reject(lambda:a.schema_validate(p,'RolesExporterProof'))
+
     def test_SESSION_008_reject_upstream_tls_ca_hostname_route(self):
+        self._check_SESSION_008_observation_tls_and_proof()
         for fault in ('ca','hostname','route'):
             with self.subTest(actualUpstreamFault=fault):
                 s=self.owned(upstream_fault=fault);rc,out,err,receipt=s.component()
                 self.assertNotEqual(rc,0);self.assertTrue(not out,'TLS_FAILURE_MUST_HAVE_EMPTY_SQL_STDOUT');self.assertIsNone(receipt);self.assertTrue(err)
                 self.assertFalse((s.root/'terminal'/(s.aid+'.json')).exists());s.close()
-        for value in (False,'unavailable',None):
-            values=synthetic_values();values['backendTlsObservation']=value
-            self.reject(lambda:a.source_profile(observation(values)['responses']))
-        p=schema_fixture('RolesExporterProof');self.assertIs(p['backendTlsObservation'],None)
-        self.assertEqual(p['backendTlsObservationStatus'],'NOT_OBSERVABLE_BY_FIXED_GATE')
-        p['backendTlsObservation']=True;self.reject(lambda:a.schema_validate(p,'RolesExporterProof'))
 
     def test_SESSION_009_reject_backend_version_identity_encoding_mode(self):
         f=self.session_unit();target=f.target;a.validate_session_target(target,fixture=True)
@@ -2072,7 +2109,8 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
         for kind in ('PRE','ROLES','POST'):
             _,argv=run.argv(kind,'a'*32);self.assertIn('PGOPTIONS=-c default_transaction_read_only=on -c statement_timeout=30000 -c lock_timeout=5000',argv)
             self.assertNotIn('--env-file',argv);self.assertIn(a.IMAGE,argv)
-        values=synthetic_values('SQL_ASCII');self.assertEqual(a.source_profile(observation(values)['responses'])[1]['bootstrapIdentity']['serverEncoding'],'SQL_ASCII')
+        responses=observation(synthetic_values('SQL_ASCII'))['responses'];a.source_profile(responses)
+        self.assertEqual(next(r for r in responses if r['queryId']=='bootstrapIdentity')['canonicalResponse']['serverEncoding'],'SQL_ASCII')
 
     def test_SESSION_017_claim_consumption_replay_crash_lock(self):
         f=self.session_unit();run=f.run();contender=f.run();run.consume();self.addCleanup(run.unlock)
@@ -2238,25 +2276,23 @@ class ProvenanceAcquisitionSessionContract(UnitBase):
             name=dependency['name'];path='/lib64/ld-linux-x86-64.so.2' if name=='ld-linux-x86-64.so.2' else a.EXPORTER_PREFIX+'/lib/'+name
             resolved=outputs['libpq']['path'] if name=='libpq.so.5' else path
             inspection.append('UPLY_RUNTIME_FILE='+name+'\n'+resolved+'\n'+str(dependency['bytes'])+'\n'+dependency['sha256']+'  '+path+'\n')
-        host='aws-0-unit.pooler.supabase.com';project='a'*20;user='postgres.'+project
-        target=a.session_target(sha(canonical(host)),sha(canonical(user)),sha(audit.artifact_lock_raw),
-            outputs['runtimeImageId'],project_sha=sha(canonical(project)))
-        production=a._Context(f.root,f.creds,target,{},False,'host','','SESSION')
-        for context in (f.ctx,self.f.ctx,production):
-            audit.ctx=context;runs=[]
+        policy_ctx=SimpleNamespace(fixture=False,transport_kind='SESSION')
+        for context in (f.ctx,self.f.ctx,policy_ctx):
+            runs=[]
             def audit_response(args):
                 if args[:2]==['image','inspect']:
                     return 0,(args[2]+(' linux amd64' if args[2]!=a.IMAGE else '')+'\n').encode(),b''
                 self.assertEqual(args[:2],['run','--rm']);runs.append(args)
                 return (0,b'psql (PostgreSQL) 17.6\npg_dumpall (PostgreSQL) 17.6\npg_dump (PostgreSQL) 17.6\n',b'') if args[args.index('--name')+1].endswith('-version') else (0,''.join(inspection).encode('ascii'),b'')
-            with patch.object(audit,'docker',side_effect=audit_response):audit.image_preflight()
-            self.assertEqual(len(runs),2 if context.transport_kind=='SESSION' else 1)
-            for args in runs:
-                if context.fixture is True and context.transport_kind=='SESSION':
-                    expected=ceilings['stockPrePostClientBytes'] if args[args.index('--name')+1].endswith('-version') else ceilings['rolesRuntimeBytes']
-                    self.assertEqual(args.count('--memory'),1);self.assertEqual(args[args.index('--memory')+1],str(expected))
-                    self.assertLess(args.index('--memory'),args.index('--network'));self.assertLess(args.index('--memory'),args.index('--entrypoint'))
-                else:self.assertNotIn('--memory',args)
+            with patch.object(audit,'ctx',context):
+                with patch.object(audit,'docker',side_effect=audit_response):audit.image_preflight()
+                self.assertEqual(len(runs),2 if context.transport_kind=='SESSION' else 1)
+                for args in runs:
+                    if context.fixture is True and context.transport_kind=='SESSION':
+                        expected=ceilings['stockPrePostClientBytes'] if args[args.index('--name')+1].endswith('-version') else ceilings['rolesRuntimeBytes']
+                        self.assertEqual(args.count('--memory'),1);self.assertEqual(args[args.index('--memory')+1],str(expected))
+                        self.assertLess(args.index('--memory'),args.index('--network'));self.assertLess(args.index('--memory'),args.index('--entrypoint'))
+                    else:self.assertNotIn('--memory',args)
 
         # R1 F2: rebind report and terminal hashes so these negatives reach the
         # artifact-reader counter domain gate, rather than only hash rejection.
