@@ -114,9 +114,9 @@ app → features（平台 / subjects） → shared
 |---|---|---|
 | 课程目录、分类、课程页按韩语选择界面（`KoreanDirectCourseCatalog`、`KoreanLearningCenter`） | `src/app/dashboard/courses/**` | 课程和课时界面插槽（原 2D），设计见 [course-lesson-experience-slot-design.md](./course-lesson-experience-slot-design.md) |
 | 课时页韩语分支与 28,719 行韩语组件 | `courses/.../[lessonSlug]/` | 同上；课时页是金老师面板宿主，等 Codex 线收尾 |
-| `korean_course` 会员开关 | TS 15 个文件 + SQL 4 个函数 | 改为按应用（可用 `student_app_enrollments.access_tier`），需数据库改动 |
-| 写死韩语应用的数据库函数 | `capture_toolbox_review_item`、`enforce_chapter_test_learning_prerequisites`、`record_ebook_progress`、`save_conversation_practice_scenario` | 数据库改动批次 |
-| 章节测试表 | `korean_title` 必填、slug 全局唯一；标准试卷必须挂章节测试 | 数据库改动批次（先做依赖分析） |
+| `korean_course` 会员开关 | TS 15 个文件 + SQL 4 个函数；平台级 4 处（课时页、课时操作、资料下载、课时进度触发器），其余为韩语专属 | 平台级改为“按应用的完整课程访问”策略（默认沿用 vip2/vip3，收费决定后替换），需数据库改动 |
+| 写死韩语应用的数据库函数 | `capture_toolbox_review_item`、`enforce_chapter_test_learning_prerequisites`、`record_ebook_progress`、`save_conversation_practice_scenario` | 依赖分析结论：第 1 个删除无效兜底；第 2、3 个是韩语专属功能，保留；第 4 个随英语会话练习增加应用参数 |
+| 章节测试表 | `korean_title` 必填、slug 全局唯一；标准试卷必须挂章节测试 | 依赖分析结论：英语**不改表结构**（slug 加学科前缀，`korean_title` 填空字符串）；数学另定。见 [db-subject-unweld-dependency-analysis.md](./db-subject-unweld-dependency-analysis.md) |
 | 韩语题库列名 `_ko` | `exam_bank_*`、`homework_bank_*` | 不改；视为韩语模块的创作表，英语、数学各建自己的创作表 |
 | 会话练习 AI 提示词、回答语言模式、场景内容格式（`korean` 字段） | `supabase/functions/qwen-conversation-chat`、AI 体验页面、场景数据 | 第 3 步与英语会话内容一起设计 |
 | 英语课时完整访问 | 课时页 `korean_course` 准入（黄区） | 会员决定 + 会员开关按应用改造 |
