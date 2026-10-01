@@ -55,7 +55,7 @@ test("数学学生端：作业路由与英语一致且按数学应用读取；�
   assert.match(form, /question\.type === "math\.expression" \|\| question\.type === "math\.numeric"/);
   assert.match(form, /maxLength=\{200\}/);
   // 其余题型的输入保持不变（含原有的短答提示）
-  assert.match(form, /placeholder=\{question\.type === "file_link" \? "粘贴完整文件链接" : "填写韩语答案"\}/);
+  assert.match(form, /placeholder=\{question\.type === "file_link" \? "粘贴完整文件链接" : shortAnswerPlaceholder\}/);
 });
 
 test("非韩语应用的作业详情链接指向本应用；韩语沿用旧路径（行为不变）", () => {
@@ -78,4 +78,13 @@ test("数学草稿编辑：界面带 paper_id、课时只读；动作调用 repl
   assert.match(slot, /\.eq\("status", "draft"\)/);
   assert.match(slot, /无法编辑，请复制为新草稿/);
   for (const text of [composer, actions, slot]) assert.doesNotMatch(text, /from ["']@\/app\//);
+});
+
+test("短答题输入提示：韩语（或未传应用）仍是“填写韩语答案”，其他应用用中性文案", () => {
+  const form = read("src/app/dashboard/assignments/AssignmentSubmissionForm.tsx");
+  assert.match(form, /appSlug === undefined \|\| appSlug === "korean" \? "填写韩语答案" : "填写答案"/);
+  assert.match(form, /shortAnswerPlaceholder=\{shortAnswerPlaceholder\}/);
+  assert.match(form, /\? "粘贴完整文件链接" : shortAnswerPlaceholder\}/);
+  const detail = read("src/app/dashboard/assignments/[assignmentId]/page-content.tsx");
+  assert.match(detail, /<AssignmentSubmissionForm appSlug=\{studentAppSlug\}/);
 });

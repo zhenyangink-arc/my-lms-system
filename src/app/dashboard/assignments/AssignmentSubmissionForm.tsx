@@ -152,11 +152,13 @@ function QuestionAnswer({
   question,
   previousAnswer,
   onAnswerChange,
+  shortAnswerPlaceholder,
 }: {
   assignmentId: string;
   question: Question;
   previousAnswer?: string;
   onAnswerChange: () => void;
+  shortAnswerPlaceholder: string;
 }) {
   if (question.type === "audio_recording") {
     return (
@@ -226,7 +228,7 @@ function QuestionAnswer({
       maxLength={10000}
       type={question.type === "file_link" ? "url" : "text"}
       defaultValue={previousAnswer ?? ""}
-      placeholder={question.type === "file_link" ? "粘贴完整文件链接" : "填写韩语答案"}
+      placeholder={question.type === "file_link" ? "粘贴完整文件链接" : shortAnswerPlaceholder}
       className="app-input min-h-12 w-full rounded-xl border px-4 py-3 text-base sm:text-sm"
     />
   );
@@ -240,6 +242,7 @@ export function AssignmentSubmissionForm({
   previousAnswers,
   cloudDraft,
   examConfig,
+  appSlug,
 }: {
   assignmentId: string;
   studentId: string;
@@ -248,7 +251,10 @@ export function AssignmentSubmissionForm({
   previousAnswers: Record<string, string>;
   cloudDraft?: DraftPayload | null;
   examConfig?: AssignmentExamConfig;
+  /** 作业所属的学生应用；韩语（或未传）沿用“填写韩语答案”，其他应用使用中性提示。 */
+  appSlug?: string;
 }) {
+  const shortAnswerPlaceholder = appSlug === undefined || appSlug === "korean" ? "填写韩语答案" : "填写答案";
   const formRef = useRef<HTMLFormElement>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveRequestRef = useRef(0);
@@ -1007,6 +1013,7 @@ export function AssignmentSubmissionForm({
                       restoredAnswers[question.id] ?? previousAnswers[question.id]
                     }
                     onAnswerChange={handleEvidenceChange}
+                    shortAnswerPlaceholder={shortAnswerPlaceholder}
                   />
                 </div>
               </article>
