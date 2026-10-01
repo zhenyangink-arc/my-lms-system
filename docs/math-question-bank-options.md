@@ -1,6 +1,6 @@
 # 数学题库与试卷：D4 方案选项
 
-> 状态：只读核对 + 选项分析，未改任何代码与数据库（2026-10-01，分支 `feat/subject-slots`）。
+> 状态：选项分析；用户已确认“平台负责人出题”，按方案 E 起草并演练了 D7（见 `db-drafts/README.md`），未改代码与真实库（2026-10-01，分支 `feat/subject-slots`）。
 > 依据：验证库 `~/projects/lms-verify-db` 中的表、约束、触发器与函数定义，以及 `src` 中的调用点。
 > 关联：[题型与判题器插槽设计](./question-type-grader-slot-design.md)、[数据库依赖分析](./db-subject-unweld-dependency-analysis.md)、[数据库草稿 D5](./db-drafts/README.md)。
 

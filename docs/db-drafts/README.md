@@ -1,4 +1,4 @@
-# 数据库改动草稿（D1、D2、D5；D6 已作废）
+# 数据库改动草稿（D1、D2、D5、D7；D6 已作废）
 
 本目录是**草稿**，不是迁移：不进入 `supabase/migrations`，不在共享本机库、云端库执行。Codex 线收尾后按 Architecture Gate 流程整理为正式迁移。
 
@@ -10,6 +10,7 @@
 | D2 | `D2-app-course-access-policy.{up,down,test}.sql` | 新增 `private.student_app_course_access_policies`（每个应用可学全部课时的会员档位，收费已决定与韩语相同，韩语、英语、数学均为 vip2/vip3）与 `private.student_app_full_course_allowed()`；课时进度触发器按课程所属应用查策略，教职人员判断改用 `current_profile_role()` | 10 种身份与课时组合中只有 2 处变化：vip2 学生可写入英语正式课时进度（预期）；“资料角色误设为老师、实际为普通会员的学生”不再能绕过档位（修复）。其余 8 种（含全部韩语情况）不变；回滚后触发器定义与测试结果逐字一致。验证库中**未保留**执行状态 |
 | D5 | `D5-math-grading-storage.{up,down,test}.sql` | 数学判题存储层：`question_type` 约束新增 `math.expression`、`math.numeric`；`math_question_specs`（判题规格，仅有“管理内容”能力的教职人员可读）；`learning_submission_machine_grades`（机器判题结果，只增不改，重判新增修订号留痕，仅有“管理测评”能力的教职人员可读，学生不可读）；判题规格带结构校验 `private.math_spec_is_valid()`（表达式：expected / seed / variables；数值：expected + tolerance；容差非负）；`set_math_question_spec()`（教职人员设置规格，已有作答后禁止修改）；`record_learning_machine_grade()`（仅 service_role，校验题型、判题器、得分范围、提交处于待批改阶段） | 39 项检查全部符合预期（含 10 种畸形规格被拒；题型约束、权限正反例、重判留痕、状态限制、规格冻结）；回滚后约束定义与对象全部还原，up / down 可重复执行。验证库中**未保留**执行状态 |
 | ~~D6~~ | `superseded/D6-create-assignment-math-questions.*` | **已作废**：针对 `create_learning_assignment`，但应用代码从不调用它（见下文）。文件保留作参考 | 当时预演通过，但对实际出题路径没有价值 |
+| D7 | `D7-math-paper-layer.{up,down,test}.sql`、`D7-korean-regression.{probe.sql,baseline.txt}` | 依赖 D5。数学试卷层（方案 E，平台负责人出题，见 `../math-question-bank-options.md` §6）：试卷题题型约束；`private.assessment_paper_uses_language_skills()`；`math_paper_question_specs`（试卷题判题规格，发布后不可改）；`create_math_paper()`（仅平台负责人 / 标准题库管理员，创建草稿，发布仍走 `change_assessment_paper_status`）。**替换 5 个既有函数**，每处只改指定位置：发布校验问题清单与发布校验（数学试卷题 skill 不要求属于六项，作业类型的“六项齐全”等检查对数学不适用）、`create_learning_assignment_from_paper` 与 `configure_learning_assignment_retake`（复制判题规格到作业题）、`duplicate_assessment_paper`（复制判题规格） | **数学**：28 项检查全部 PASS（创建 → 发布 → 复制 → 机构布置 → 学生提交 → 机器判题 → 教师批改，权限与 9 类畸形输入的负向用例）。**韩语回归**：探针走“题库 → 试卷 → 发布校验 → 复制 → 布置作业”，D7 执行前、执行后、回滚后三份输出逐行一致（含“作业类型两项技能试卷仍被拒”“skill 为空仍被报出”）；5 个被替换函数的定义与原定义的差异仅为注释所列位置，回滚后 5 个函数与原定义逐字一致（授权不变）。验证库中**未保留**执行状态 |
 
 ## 预演中的发现
 
@@ -28,10 +29,15 @@
 - **D3**（`save_conversation_practice_scenario` 增加应用参数）：属于英语**场景练习**，而 2026-10-01 的 AI 辅导决定是先做自由对话（复用韩语 ai-experience）、场景练习等有内容后再做，所以 D3 **仍不具备前置条件**，不起草。
 - **D4**（数学题组与标准试卷的关系）：取决于数学题库设计，尚未决定，**不起草**。D5 只覆盖“作业题 → 提交 → 机器判题”这一条链，不涉及题库与试卷。
 
-## D5 未覆盖的部分（后续批次）
+## D4 的结论（2026-10-01）
 
-1. **出题入口**：实际路径是“标准题库 → 标准试卷 → 作业”，数学题库设计（D4）未定，暂不改；D6 已作废（见下）。
-2. **判题任务表与后台进程**：设计文档 §5.1 的“登记任务 → 后台判题”。D5 只提供写入结果的 RPC，由服务端在需要时调用。
+用户确认数学题由平台负责人出，D4（题组与试卷关系）按方案 E 解决：不建独立题库，平台负责人直接在试卷层出数学题（D7）。试卷容器仍然是数学应用中的章节测试（需要先有数学课程与课时）。
+
+## D5 / D7 未覆盖的部分（后续批次）
+
+1. **试卷容器与数学内容**：数学课程、课时、容器章节测试要先存在；创建容器章节测试会多出一行无用的六项作业计划（无害，已在回归中核对）。
+2. **平台负责人出题的界面**：`create_math_paper` 只是数据库函数，需要对应的管理页面（黄区 / 数学管理端），以及编辑草稿试卷题目的入口（D7 只提供创建与复制）。
+2b. **判题任务表与后台进程**：设计文档 §5.1 的“登记任务 → 后台判题”。D5 只提供写入结果的 RPC，由服务端在需要时调用。
 3. **提交时的作答形状校验**：`submit_learning_assignment` 目前不校验数学作答（长度已有 10000 上限）；判题器自身会限长并拒绝恶意输入，但提交层是否也校验，待定。
 4. **学生查看判定**：D5 不对学生开放机器判题结果（判定依据含标准答案的取点值）；成绩发布后如何向学生展示，另行决定。
 5. **教师批改界面预填**：应用层改动，黄区，等 Codex 线收尾。
