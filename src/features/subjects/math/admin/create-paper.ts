@@ -30,10 +30,22 @@ export type MathPaperStore = {
     allowResubmission: boolean;
     questions: unknown[];
   }): Promise<{ id: string } | { error: string | undefined }>;
+  /** 整体替换草稿试卷（名称、说明、用时、及格线与全部题目）；仅限数学草稿，数据库函数最终校验。 */
+  replacePaper(input: {
+    paperId: string;
+    title: string;
+    description: string;
+    durationMinutes: number | null;
+    passingScore: number | null;
+    allowResubmission: boolean;
+    questions: unknown[];
+  }): Promise<{ error: string | undefined }>;
   publish(paperId: string): Promise<{ error: string | undefined }>;
 };
 
 export type CreateMathPaperInput = {
+  /** 有值表示整体替换这份草稿（编辑），没有值表示新建。 */
+  paperId?: unknown;
   paperType: unknown;
   lessonId: unknown;
   allowResubmission: boolean;
@@ -62,7 +74,11 @@ export async function createMathPaper(
 ): Promise<MathPaperActionResult> {
   if (input.paperType !== "homework" && input.paperType !== "exam") return fail("试卷类型不正确。");
   const paperType = input.paperType;
-  if (typeof input.lessonId !== "string" || !UUID.test(input.lessonId)) return fail("请选择有效的数学课时。");
+  const editing = input.paperId !== undefined && input.paperId !== null && input.paperId !== "";
+  if (editing && (typeof input.paperId !== "string" || !UUID.test(input.paperId))) return fail("试卷编号不正确。");
+  if (!editing && (typeof input.lessonId !== "string" || !UUID.test(input.lessonId))) {
+    return fail("请选择有效的数学课时。");
+  }
   const publish = input.intent === "publish";
   if (publish && !input.canRelease) return fail("草稿可以保存，但只有平台负责人可以发布给机构。");
 
@@ -83,7 +99,29 @@ export async function createMathPaper(
   const validation = validatePaperDraft(parsed.value, (index) => seeds[index]);
   if (!validation.ok) return fail(validation.errors.join("；"));
 
-  const lesson = await store.findLesson(input.lessonId);
+  if (editing) {
+    const paperId = input.paperId as string;
+    const replaced = await store.replacePaper({
+      paperId,
+      title: validation.title,
+      description: validation.description,
+      durationMinutes: validation.durationMinutes,
+      passingScore: validation.passingScore,
+      allowResubmission: input.allowResubmission,
+      questions: validation.questions,
+    });
+    if (replaced.error) return fail(friendlyDatabaseError(replaced.error, "数学试卷草稿保存失败，请稍后重试。"));
+    if (publish) {
+      const published = await store.publish(paperId);
+      if (published.error) {
+        return fail(`草稿已更新，但发布失败：${friendlyDatabaseError(published.error, "请在试卷目录中查看发布质检结果后重试。")}`);
+      }
+      return { status: "success", message: "数学试卷已经更新并发布，机构端现在可以选择整卷。" };
+    }
+    return { status: "success", message: "数学试卷草稿已经更新。" };
+  }
+
+  const lesson = await store.findLesson(input.lessonId as string);
   if (!lesson) return fail("所选课时不存在、尚未发布或不属于数学应用。");
 
   let containerId = await store.findContainer(lesson.id);

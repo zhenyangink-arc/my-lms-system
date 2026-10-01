@@ -203,3 +203,55 @@ test("数学出题界面不引用 app 层（依赖方向 app → features）", a
     assert.doesNotMatch(readFileSync(new URL(name, dir), "utf8"), /from ["']@\/app\//, name);
   }
 });
+
+test("草稿还原：保存的行 → 表单状态 → 校验 → 与原题目等价（往返一致）", async () => {
+  const { draftFromRows } = await import("../src/features/subjects/math/admin/paper-model.ts");
+  const original = paper([
+    expression({ toleranceAbs: "1e-6", toleranceRel: "0", variables: [{ name: "x", min: "-5", max: "5" }, { name: "y", min: "0.5", max: "3" }], expected: "x*y" }),
+    numeric(),
+    choice(),
+  ]);
+  const saved = validatePaperDraft(original, () => 11);
+  assert.equal(saved.ok, true);
+  // 把校验结果当作数据库里的行（点名数字以字符串 / 数字混合出现，模拟 numeric 列）
+  const rows = saved.questions.map((q, i) => ({
+    id: `q${i}`,
+    question_type: q.type,
+    prompt: q.prompt,
+    options: q.options ?? [],
+    points: String(q.points) + ".00",
+    difficulty: q.difficulty,
+    sort_order: i,
+    correct_answer: q.correctAnswer ?? null,
+    explanation: q.explanation,
+    spec: q.mathSpec ?? null,
+  })).reverse(); // 顺序打乱，按 sort_order 还原
+  const restored = draftFromRows({ title: saved.title, description: saved.description, duration_minutes: saved.durationMinutes, passing_score: "60.00" }, rows);
+  assert.ok(restored);
+  assert.equal(restored.questions.length, 3);
+  const again = validatePaperDraft(restored, () => 11);
+  assert.equal(again.ok, true, JSON.stringify(again));
+  assert.deepEqual(again.questions, saved.questions);
+  assert.equal(restored.passingScore, "60");
+  assert.equal(restored.durationMinutes, "30");
+});
+
+test("草稿还原：无法识别的行返回 null，不做猜测", async () => {
+  const { draftFromRows } = await import("../src/features/subjects/math/admin/paper-model.ts");
+  const meta = { title: "t", description: "", duration_minutes: null, passing_score: null };
+  const row = { id: "q", question_type: "math.numeric", prompt: "p", options: [], points: "5.00", difficulty: "foundation", sort_order: 0, correct_answer: null, explanation: "e", spec: { expected: 1, tolerance: { abs: 0, rel: 0 } } };
+  assert.ok(draftFromRows(meta, [row]));
+  assert.equal(draftFromRows(meta, [{ ...row, question_type: "short_text" }]), null);
+  assert.equal(draftFromRows(meta, [{ ...row, spec: null }]), null);
+  assert.equal(draftFromRows(meta, [{ ...row, spec: { expected: "1", tolerance: { abs: "x", rel: 0 } } }]), null);
+  assert.equal(draftFromRows(meta, [{ ...row, points: "abc" }]), null);
+  assert.equal(draftFromRows(meta, [{ ...row, difficulty: "easy" }]), null);
+  const choiceRow = { ...row, question_type: "single_choice", options: ["a", "b"], correct_answer: "b", spec: null };
+  assert.equal(draftFromRows(meta, [choiceRow]).questions[0].correctIndex, 1);
+  assert.equal(draftFromRows(meta, [{ ...choiceRow, options: [1, 2] }]), null);
+  assert.equal(draftFromRows(meta, [{ ...choiceRow, correct_answer: "zzz" }]).questions[0].correctIndex, null);
+  const exprRow = { ...row, question_type: "math.expression", spec: { expected: "x", variables: [{ name: "x", min: 0, max: 1 }], seed: 1 } };
+  assert.equal(draftFromRows(meta, [exprRow]).questions[0].toleranceAbs, "1e-9");
+  assert.equal(draftFromRows(meta, [{ ...exprRow, spec: { expected: "x", variables: [{ name: "x", min: "a", max: 1 }] } }]), null);
+  assert.deepEqual(draftFromRows(meta, []).questions, []);
+});

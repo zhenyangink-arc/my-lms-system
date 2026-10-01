@@ -471,3 +471,87 @@ export function parseDraftPaper(raw: unknown): { ok: true; value: DraftPaper } |
   }
   return { ok: true, value: { title, description, durationMinutes, passingScore, questions } };
 }
+
+// ---------- 把已保存的草稿还原成可编辑的表单状态 ----------
+
+export type SavedPaperRow = {
+  title: string;
+  description: string;
+  duration_minutes: number | null;
+  passing_score: number | string | null;
+};
+
+export type SavedQuestionRow = {
+  id: string;
+  question_type: string;
+  prompt: string;
+  options: unknown;
+  points: number | string;
+  difficulty: string;
+  sort_order: number;
+  /** 答案键：选择题的正确答案文本、解析 */
+  correct_answer: string | null;
+  explanation: string | null;
+  /** 数学题的判题规格；来自数据库，按不可信数据处理 */
+  spec: unknown;
+};
+
+function numberText(value: unknown): string | null {
+  const n = typeof value === "number" ? value : typeof value === "string" ? Number(value) : NaN;
+  return Number.isFinite(n) ? String(n) : null;
+}
+
+/**
+ * 把数据库里的草稿试卷还原成 DraftPaper。任何一处无法识别就返回 null（界面会提示“无法编辑，请复制为新草稿”），
+ * 不做猜测式还原。判题种子不还原：保存时服务端会重新生成。
+ */
+export function draftFromRows(paper: SavedPaperRow, rows: readonly SavedQuestionRow[]): DraftPaper | null {
+  const questions: DraftQuestion[] = [];
+  for (const row of [...rows].sort((a, b) => a.sort_order - b.sort_order)) {
+    const points = numberText(row.points);
+    if (points === null || !(DIFFICULTIES as readonly string[]).includes(row.difficulty)) return null;
+    const base = {
+      prompt: row.prompt,
+      points,
+      difficulty: row.difficulty as Difficulty,
+      explanation: row.explanation ?? "",
+    };
+    if (row.question_type === "single_choice") {
+      if (!Array.isArray(row.options) || !row.options.every((o) => typeof o === "string")) return null;
+      const options = row.options as string[];
+      const index = row.correct_answer === null ? -1 : options.indexOf(row.correct_answer);
+      questions.push({ ...base, kind: "choice", options, correctIndex: index >= 0 ? index : null });
+    } else if (row.question_type === "math.numeric") {
+      const spec = row.spec;
+      if (!isRecord(spec) || !isRecord(spec.tolerance)) return null;
+      const expected = numberText(spec.expected);
+      const abs = numberText(spec.tolerance.abs);
+      const rel = numberText(spec.tolerance.rel);
+      if (expected === null || abs === null || rel === null) return null;
+      questions.push({ ...base, kind: "numeric", expected, toleranceAbs: abs, toleranceRel: rel });
+    } else if (row.question_type === "math.expression") {
+      const spec = row.spec;
+      if (!isRecord(spec) || typeof spec.expected !== "string" || !Array.isArray(spec.variables)) return null;
+      const variables: DraftVariable[] = [];
+      for (const variable of spec.variables) {
+        if (!isRecord(variable) || typeof variable.name !== "string") return null;
+        const min = numberText(variable.min);
+        const max = numberText(variable.max);
+        if (min === null || max === null) return null;
+        variables.push({ name: variable.name, min, max });
+      }
+      const tolerance = isRecord(spec.tolerance) ? spec.tolerance : { abs: 1e-9, rel: 1e-9 };
+      const abs = numberText(tolerance.abs);
+      const rel = numberText(tolerance.rel);
+      if (abs === null || rel === null) return null;
+      questions.push({ ...base, kind: "expression", expected: spec.expected, variables, toleranceAbs: abs, toleranceRel: rel });
+    } else return null;
+  }
+  return {
+    title: paper.title,
+    description: paper.description,
+    durationMinutes: paper.duration_minutes === null ? "" : String(paper.duration_minutes),
+    passingScore: paper.passing_score === null ? "" : (numberText(paper.passing_score) ?? ""),
+    questions,
+  };
+}

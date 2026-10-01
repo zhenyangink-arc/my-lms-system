@@ -169,3 +169,67 @@ test("parseDraftPaper：严格结构，忽略多余字段，拒绝越界与类�
   ];
   for (const raw of bad) assert.equal(parseDraftPaper(raw).ok, false, JSON.stringify(raw)?.slice(0, 60));
 });
+
+function editStore(over = {}) {
+  const calls = { replace: [], publish: [], findLesson: 0, createPaper: 0, createContainer: 0 };
+  const store = {
+    async findLesson() { calls.findLesson++; return null; },
+    async findContainer() { return null; },
+    async createContainer() { calls.createContainer++; return { id: "c" }; },
+    async createPaper() { calls.createPaper++; return { id: "p" }; },
+    async replacePaper(i) { calls.replace.push(i); return { error: undefined }; },
+    async publish(id) { calls.publish.push(id); return { error: undefined }; },
+    ...over,
+  };
+  return { store, calls };
+}
+const PAPER = "24000000-0000-4000-8000-0000000000aa";
+
+test("编辑草稿：整体替换，不查课时也不创建容器；种子仍由服务端生成", async () => {
+  counter = 0;
+  const { store, calls } = editStore();
+  const result = await createMathPaper(store, seed, input({ paperId: PAPER, lessonId: null }));
+  assert.deepEqual(result, { status: "success", message: "数学试卷草稿已经更新。" });
+  assert.equal(calls.findLesson + calls.createContainer + calls.createPaper, 0);
+  assert.equal(calls.replace.length, 1);
+  assert.equal(calls.replace[0].paperId, PAPER);
+  assert.equal(calls.replace[0].questions[0].mathSpec.seed, 1000);
+  assert.equal(calls.replace[0].title, "数学试卷");
+});
+
+test("编辑草稿：发布权限、发布失败说明、数据库提示", async () => {
+  const noRight = editStore();
+  const denied = await createMathPaper(noRight.store, seed, input({ paperId: PAPER, intent: "publish", canRelease: false }));
+  assert.equal(denied.status, "error");
+  assert.equal(noRight.calls.replace.length, 0);
+
+  const ok = editStore();
+  const published = await createMathPaper(ok.store, seed, input({ paperId: PAPER, intent: "publish" }));
+  assert.equal(published.status, "success");
+  assert.deepEqual(ok.calls.publish, [PAPER]);
+
+  const failing = editStore({ async publish() { return { error: "试卷发布质检未通过：有 1 道数学题缺少判题规格" }; } });
+  const failed = await createMathPaper(failing.store, seed, input({ paperId: PAPER, intent: "publish" }));
+  assert.match(failed.message, /^草稿已更新，但发布失败：/);
+
+  const published2 = editStore({ async replacePaper() { return { error: "只有草稿试卷可以修改，请先复制为新草稿" }; } });
+  const stale = await createMathPaper(published2.store, seed, input({ paperId: PAPER }));
+  assert.equal(stale.message, "只有草稿试卷可以修改，请先复制为新草稿");
+  assert.equal(published2.calls.publish.length, 0);
+
+  const other = editStore({ async replacePaper() { return { error: "permission denied for function" }; } });
+  assert.equal((await createMathPaper(other.store, seed, input({ paperId: PAPER }))).message, "数学试卷草稿保存失败，请稍后重试。");
+});
+
+test("编辑草稿：坏输入在访问存储之前被拒", async () => {
+  for (const bad of [input({ paperId: "not-a-uuid" }), input({ paperId: 5 }), input({ paperId: PAPER, draftJson: "{" }), input({ paperId: PAPER, paperType: "quiz" }), input({ paperId: PAPER, draftJson: JSON.stringify(draft({ title: "" })) })]) {
+    const { store, calls } = editStore();
+    const result = await createMathPaper(store, seed, bad);
+    assert.equal(result.status, "error");
+    assert.equal(calls.replace.length, 0);
+  }
+  // 空 paperId 视为新建（需要课时）
+  const { store } = editStore();
+  const create = await createMathPaper(store, seed, input({ paperId: "", lessonId: "bad" }));
+  assert.match(create.message, /课时/);
+});

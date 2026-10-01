@@ -1,6 +1,6 @@
 "use client";
 
-import { FilePlus2, Plus, Save, Send, X } from "lucide-react";
+import { FilePlus2, Pencil, Plus, Save, Send, X } from "lucide-react";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { MathQuestionEditor } from "./MathQuestionEditor";
@@ -36,23 +36,33 @@ const fieldClass = "app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm";
  * 平台负责人录入数学试卷。提交内容是整份草稿（draft_json），
  * 服务端动作会用同一份校验代码重新校验并生成判题种子；这里的校验只用于即时提示。
  */
+/** 编辑已有草稿：整体替换（D8）。课时与试卷类型不可改，沿用原容器。 */
+export type MathPaperEdit = {
+  paperId: string;
+  paperCode: string;
+  initialDraft: DraftPaper;
+  allowResubmission: boolean;
+  lessonLabel: string;
+};
+
 export function MathPaperComposer({
   paperType,
   lessons,
   canPublish,
   createAction,
+  edit,
 }: {
   paperType: "homework" | "exam";
   lessons: MathPaperLessonOption[];
   canPublish: boolean;
   createAction: MathPaperAction;
+  edit?: MathPaperEdit;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [state, formAction, pending] = useActionState(createAction, initialState);
-  const [draft, setDraft] = useState<DraftPaper>(() => ({
-    ...newPaper(),
-    durationMinutes: paperType === "exam" ? "60" : "30",
-  }));
+  const [draft, setDraft] = useState<DraftPaper>(
+    () => edit?.initialDraft ?? { ...newPaper(), durationMinutes: paperType === "exam" ? "60" : "30" },
+  );
   const [lessonId, setLessonId] = useState(lessons[0]?.id ?? "");
   const typeLabel = paperType === "homework" ? "作业" : "考试";
 
@@ -87,18 +97,22 @@ export function MathPaperComposer({
     });
   }
 
-  const canSubmit = validation.ok && lessonId !== "" && !pending;
+  const canSubmit = validation.ok && (edit !== undefined || lessonId !== "") && !pending;
 
   return (
     <>
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
-        style={{ backgroundColor: "var(--primary)" }}
+        className={
+          edit
+            ? "app-soft-card inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold"
+            : "inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
+        }
+        style={edit ? undefined : { backgroundColor: "var(--primary)" }}
       >
-        <FilePlus2 size={16} />
-        新增数学{typeLabel}卷
+        {edit ? <Pencil size={14} /> : <FilePlus2 size={16} />}
+        {edit ? "编辑草稿" : `新增数学${typeLabel}卷`}
       </button>
 
       <dialog
@@ -114,7 +128,9 @@ export function MathPaperComposer({
             className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b px-5 py-4 sm:px-6"
             style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--card)" }}
           >
-            <h2 className="text-xl font-semibold">新增数学{typeLabel}卷</h2>
+            <h2 className="text-xl font-semibold">
+              {edit ? `编辑数学${typeLabel}卷草稿 · ${edit.paperCode}` : `新增数学${typeLabel}卷`}
+            </h2>
             <button
               type="button"
               onClick={() => dialogRef.current?.close()}
@@ -127,7 +143,11 @@ export function MathPaperComposer({
 
           <form action={formAction} className="space-y-6 p-5 sm:p-6">
             <input type="hidden" name="draft_json" value={JSON.stringify(draft)} />
-            <input type="hidden" name="lesson_id" value={lessonId} />
+            {edit ? (
+              <input type="hidden" name="paper_id" value={edit.paperId} />
+            ) : (
+              <input type="hidden" name="lesson_id" value={lessonId} />
+            )}
 
             <section className="grid gap-4 md:grid-cols-2">
               <label className="text-xs font-semibold">
@@ -140,6 +160,12 @@ export function MathPaperComposer({
                   className={fieldClass}
                 />
               </label>
+              {edit ? (
+                <div className="text-xs font-semibold">
+                  所属课时
+                  <p className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm font-normal">{edit.lessonLabel}</p>
+                </div>
+              ) : (
               <label className="text-xs font-semibold">
                 所属课时（试卷挂在该课时的容器下）
                 <select value={lessonId} onChange={(event) => setLessonId(event.target.value)} className={fieldClass}>
@@ -151,6 +177,7 @@ export function MathPaperComposer({
                   ))}
                 </select>
               </label>
+              )}
               <label className="text-xs font-semibold md:col-span-2">
                 试卷说明
                 <textarea
@@ -183,7 +210,7 @@ export function MathPaperComposer({
                 <input
                   name="allow_resubmission"
                   type="checkbox"
-                  defaultChecked={paperType === "homework"}
+                  defaultChecked={edit ? edit.allowResubmission : paperType === "homework"}
                   className="h-4 w-4"
                 />
                 {paperType === "homework" ? "允许学生再次提交" : "允许考试重复提交（正式考试通常关闭）"}

@@ -76,6 +76,18 @@ function buildStore(supabase: Supabase): MathPaperStore {
       if (error || !data) return { error: error?.message };
       return { id: data as string };
     },
+    async replacePaper(input) {
+      const { error } = await supabase.rpc("replace_math_paper_draft", {
+        p_paper_id: input.paperId,
+        p_title: input.title,
+        p_description: input.description,
+        p_duration_minutes: input.durationMinutes,
+        p_passing_score: input.passingScore,
+        p_allow_resubmission: input.allowResubmission,
+        p_questions: input.questions,
+      });
+      return { error: error?.message };
+    },
     async publish(paperId) {
       const { error } = await supabase.rpc("change_assessment_paper_status", {
         p_paper_id: paperId,
@@ -101,6 +113,8 @@ export async function createMathPaperAction(
     // 判题种子：0 到 2^31-1 的随机整数
     () => randomInt(0, 2 ** 31 - 1),
     {
+      // 编辑草稿时带 paper_id（此时不需要课时）；新建时带 lesson_id
+      paperId: formData.get("paper_id"),
       paperType: fixedType,
       lessonId: formData.get("lesson_id"),
       allowResubmission: formData.get("allow_resubmission") === "on",

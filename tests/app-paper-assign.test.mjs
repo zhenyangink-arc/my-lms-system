@@ -66,3 +66,16 @@ test("非韩语应用的作业详情链接指向本应用；韩语沿用旧路�
   const detail = read("src/app/dashboard/assignments/[assignmentId]/page-content.tsx");
   assert.match(detail, /space && studentAppSlug !== "korean" \? getStudentAppPath\(space, studentAppSlug, "assignments"\) : "\/dashboard\/assignments"/);
 });
+
+test("数学草稿编辑：界面带 paper_id、课时只读；动作调用 replace_math_paper_draft；仍不引用 app 层", () => {
+  const composer = read("src/features/subjects/math/admin/MathPaperComposer.tsx");
+  assert.match(composer, /name="paper_id" value=\{edit\.paperId\}/);
+  assert.match(composer, /edit \? \(\s*<input type="hidden" name="paper_id"/);
+  const actions = read("src/features/subjects/math/admin/actions.ts");
+  assert.match(actions, /rpc\("replace_math_paper_draft"/);
+  assert.match(actions, /paperId: formData\.get\("paper_id"\)/);
+  const slot = read("src/features/subjects/math/admin-slot.tsx");
+  assert.match(slot, /\.eq\("status", "draft"\)/);
+  assert.match(slot, /无法编辑，请复制为新草稿/);
+  for (const text of [composer, actions, slot]) assert.doesNotMatch(text, /from ["']@\/app\//);
+});
