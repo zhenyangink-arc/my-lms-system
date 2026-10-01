@@ -35,8 +35,11 @@ type Resource = {
 
 export async function LibraryPageContent({
   studentAppSlug,
+  visibleCategoryIds,
 }: {
   studentAppSlug?: StudentAppSlug;
+  /** 学科限制学生可见的二级分类（如大学课程的专业范围）；不传表示不限制。 */
+  visibleCategoryIds?: ReadonlySet<string>;
 } = {}) {
   const { supabase, user, canManage, canCurate } = await getLibraryAccess();
   const appScope = studentAppSlug
@@ -49,7 +52,15 @@ export async function LibraryPageContent({
     )
     .eq("status", "published");
   if (appScope) {
-    resourcesQuery = resourcesQuery.in("course_id", appScope.courseIds);
+    let courseIds = appScope.courseIds;
+    if (visibleCategoryIds) {
+      // 只保留可见分类下的课程；读取失败时不显示资料，不放宽范围
+      const { data } = courseIds.length > 0 && visibleCategoryIds.size > 0
+        ? await supabase.from("courses").select("id").in("id", courseIds).in("category_id", [...visibleCategoryIds])
+        : { data: [] as { id: string }[] };
+      courseIds = (data ?? []).map((course) => String(course.id));
+    }
+    resourcesQuery = resourcesQuery.in("course_id", courseIds);
   }
   const [resourcesResult, favoritesResult] = await Promise.all([
     resourcesQuery

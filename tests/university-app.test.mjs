@@ -62,8 +62,8 @@ test("清单中的每个学生导航项都有对应的应用路由", () => {
   }
 });
 
-test("大学课程内容结构：二级分类显示为“专业”，其他学科沿用“课程分类”", () => {
-  assert.equal(getSubjectManifest("university").student.catalogSubcategoryLabel, "专业");
+test("大学课程内容结构：二级分类统称“专业与公共课”，其他学科沿用“课程分类”", () => {
+  assert.equal(getSubjectManifest("university").student.catalogSubcategoryLabel, "专业与公共课");
   for (const slug of ["korean", "english", "math"]) {
     assert.equal(getSubjectManifest(slug).student.catalogSubcategoryLabel, undefined, slug);
   }
@@ -123,4 +123,13 @@ test("专业管理：插槽只对大学课程注册，写入只经数据库函�
   for (const route of ["students", "content"]) {
     assert.match(read(`src/app/[space]/dashboard/admin/apps/[appSlug]/${route}/page.tsx`), new RegExp(`renderSubjectSectionExtras\\(appSlug, "${route}"`));
   }
+});
+
+test("资料库：大学课程按专业范围收窄课程集合，不传范围时行为不变", () => {
+  const route = read("src/app/[space]/apps/university/library/page.tsx");
+  assert.match(route, /visibleCategoryIds=\{scope\.restricted \? scope\.categoryIds : undefined\}/);
+  const page = read("src/app/dashboard/library/page-content.tsx");
+  assert.match(page, /if \(visibleCategoryIds\) \{/);
+  assert.match(page, /\.in\("category_id", \[\.\.\.visibleCategoryIds\]\)/);
+  assert.match(page, /resourcesQuery\.in\("course_id", courseIds\)/);
 });
