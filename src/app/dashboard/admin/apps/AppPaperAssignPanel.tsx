@@ -6,6 +6,8 @@ import { useActionState, useMemo, useRef, useState } from "react";
 import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
 import { publishAssessmentPaperAction } from "@/app/dashboard/admin/assignments/paper-actions";
 
+import { localDateTimeToIso, toLocalDateTimeInputValue } from "./local-datetime";
+
 export type AssignablePaper = {
   id: string;
   paperCode: string;
@@ -19,10 +21,6 @@ export type AssignablePaper = {
 export type AssignStudentOption = { id: string; name: string; email: string; tier: string };
 export type AssignCourseOption = { id: string; title: string };
 
-function localDateTimeValue(date: Date) {
-  const adjusted = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
-  return adjusted.toISOString().slice(0, 16);
-}
 
 const inputClass = "app-input mt-1.5 w-full rounded-lg border px-3 py-2.5 text-xs";
 
@@ -116,11 +114,16 @@ function AssignDialog({
     const start = new Date(now + 60 * 60 * 1000);
     const due = new Date(now + (isExam ? 3 * 60 : 7 * 24 * 60) * 60 * 1000);
     return {
-      start: localDateTimeValue(start),
-      due: localDateTimeValue(due),
-      release: localDateTimeValue(new Date(due.getTime() + 24 * 60 * 60 * 1000)),
+      start: toLocalDateTimeInputValue(start),
+      due: toLocalDateTimeInputValue(due),
+      release: toLocalDateTimeInputValue(new Date(due.getTime() + 24 * 60 * 60 * 1000)),
     };
   });
+
+  // 时间按用户电脑的时区理解：可见输入框不带 name，提交的是换算成 UTC 的 ISO 值（见 local-datetime.ts）
+  const [startsAt, setStartsAt] = useState(defaults.start);
+  const [dueAt, setDueAt] = useState(defaults.due);
+  const [gradeReleaseAt, setGradeReleaseAt] = useState(defaults.release);
 
   const visibleStudents = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -220,13 +223,15 @@ function AssignDialog({
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-[11px] font-bold">
                 开始时间
-                <input name="starts_at" type="datetime-local" required defaultValue={defaults.start} className={inputClass} />
+                <input type="datetime-local" required value={startsAt} onChange={(event) => setStartsAt(event.target.value)} className={inputClass} />
+                <input type="hidden" name="starts_at" value={localDateTimeToIso(startsAt)} />
               </label>
               <label className="text-[11px] font-bold">
                 截止时间
-                <input name="due_at" type="datetime-local" required defaultValue={defaults.due} className={inputClass} />
+                <input type="datetime-local" required value={dueAt} onChange={(event) => setDueAt(event.target.value)} className={inputClass} />
+                <input type="hidden" name="due_at" value={localDateTimeToIso(dueAt)} />
               </label>
-              <p className="app-muted-text text-[11px] sm:col-span-2">时间按韩国标准时间（UTC+9）记录。</p>
+              <p className="app-muted-text text-[11px] sm:col-span-2">时间按你当前电脑的时区理解。</p>
               {courses.length > 0 && (
                 <label className="text-[11px] font-bold sm:col-span-2">
                   关联课程（可选）
@@ -250,7 +255,8 @@ function AssignDialog({
                 </label>
                 <label className="text-[11px] font-bold">
                   成绩公开时间
-                  <input name="grade_release_at" type="datetime-local" required defaultValue={defaults.release} className={inputClass} />
+                  <input type="datetime-local" required value={gradeReleaseAt} onChange={(event) => setGradeReleaseAt(event.target.value)} className={inputClass} />
+                  <input type="hidden" name="grade_release_at" value={localDateTimeToIso(gradeReleaseAt)} />
                 </label>
                 <label className="flex items-center gap-2 text-xs">
                   <input name="allow_late_submission" type="checkbox" />
