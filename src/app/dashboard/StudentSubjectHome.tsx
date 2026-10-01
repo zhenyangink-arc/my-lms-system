@@ -1,3 +1,4 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import Link from "next/link";
 import { ArrowRight, BookOpen, CalendarClock, CircleAlert } from "lucide-react";
 
@@ -49,12 +50,14 @@ function TodayTasksBlock({
   failed,
   coursesHref,
   homeHref,
+  timeZone,
 }: {
   tasks: HomeLearningTask[];
   requiredTodayCount: number;
   failed: boolean;
   coursesHref: string;
   homeHref: string;
+  timeZone: string;
 }) {
   return (
     <section className="app-card rounded-3xl border p-5 sm:p-6" data-card-level="1" aria-label="今日任务">
@@ -83,7 +86,7 @@ function TodayTasksBlock({
                 <p className="truncate text-sm font-bold">{task.title}</p>
                 <p className="mt-1 inline-flex items-center gap-1.5 text-xs app-muted-text">
                   <CalendarClock size={13} aria-hidden="true" />
-                  {getTaskTiming(task)}
+                  {getTaskTiming(task, timeZone)}
                 </p>
               </div>
               <Link
@@ -196,6 +199,8 @@ export async function StudentSubjectHome({
   const homeHref = getStudentAppBasePath(space, appSlug);
   const coursesHref = getCourseLearningPath(space, null, appSlug);
   const now = new Date();
+  // 今天 / 明天与任务时间都按用户电脑的时区算
+  const timeZone = await getViewerTimeZone();
 
   const empty = { value: null, failed: false };
   const { tasks, currentCourse, abilityPortrait: portrait } = tenant
@@ -208,6 +213,7 @@ export async function StudentSubjectHome({
         space,
         blocks,
         now,
+        timeZone,
       })
     : { tasks: { value: [], failed: false }, currentCourse: empty, abilityPortrait: empty };
 
@@ -220,7 +226,8 @@ export async function StudentSubjectHome({
               <TodayTasksBlock
                 key={block}
                 tasks={tasks.value.slice(0, TASK_LIMIT)}
-                requiredTodayCount={selectRequiredTodayTasks(tasks.value, now).length}
+                requiredTodayCount={selectRequiredTodayTasks(tasks.value, now, timeZone).length}
+                timeZone={timeZone}
                 failed={tasks.failed}
                 coursesHref={coursesHref}
                 homeHref={homeHref}

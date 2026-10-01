@@ -1,3 +1,4 @@
+import { DEFAULT_VIEWER_TIME_ZONE, formatInTimeZone } from "@/lib/viewer-time-zone";
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -174,15 +175,12 @@ function tierForScore(score: number): AbilitySkillTier {
   return "待提升";
 }
 
-function formatUpdatedAt(date: Date): string {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+function formatUpdatedAt(date: Date, timeZone: string): string {
+  return formatInTimeZone(date, timeZone, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  })
-    .format(date)
-    .replace(/\//g, "-");
+  }).replace(/\//g, "-");
 }
 
 export async function loadAbilityPortrait({
@@ -191,12 +189,15 @@ export async function loadAbilityPortrait({
   studentId,
   studentAppId,
   now,
+  timeZone = DEFAULT_VIEWER_TIME_ZONE,
 }: {
   supabase: SupabaseClient;
   tenantId: string;
   studentId: string;
   studentAppId: string;
   now: Date;
+  /** 用户时区（“更新日期”按它显示）；不传时是首尔。 */
+  timeZone?: string;
 }): Promise<AbilityPortraitData> {
   // 成绩六维是 service_role 专用聚合视图；页面鉴权完成后仍必须按
   // 当前租户和当前学生精确收口，不能用学生会话直接读取该视图。
@@ -370,7 +371,7 @@ export async function loadAbilityPortrait({
         : availableSkills.length > 0
           ? "各维度数据还比较接近，继续保持均衡练习即可看到更清晰的强弱项对比。"
           : "还没有足够的作业、测试或专项练习数据，完成学习后这里会自动生成能力解读。",
-    updatedAtLabel: formatUpdatedAt(now),
+    updatedAtLabel: formatUpdatedAt(now, timeZone),
     strengths,
     improvements,
     growthSuggestions,

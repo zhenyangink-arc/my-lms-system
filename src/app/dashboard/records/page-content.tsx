@@ -1,3 +1,11 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
+import {
+  addDaysToDateKey,
+  dateKeyInTimeZone,
+  formatDateKey,
+  startOfDayInTimeZone,
+  weekdayOfDateKey,
+} from "@/lib/viewer-time-zone";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -81,22 +89,6 @@ const TOOLBOX_LABELS: Record<string, string> = {
   "toolbox-listening": "听力练习",
 };
 
-const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-function dateKey(value: string | Date) {
-  const parts = dateKeyFormatter.formatToParts(
-    typeof value === "string" ? new Date(value) : value,
-  );
-  const read = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? "";
-  return `${read("year")}-${read("month")}-${read("day")}`;
-}
-
 function nameMap(rows: unknown) {
   return new Map(
     ((rows ?? []) as NamedRow[]).map((row) => [row.id, row.title]),
@@ -137,14 +129,13 @@ export async function LearningRecordsPageContent({
   const studentAppBasePath = isStudent
     ? dashboardBasePath.replace(/\/dashboard$/, `/apps/${studentAppSlug}`)
     : dashboardBasePath;
-  const recordOldestDate = new Date();
-  recordOldestDate.setDate(recordOldestDate.getDate() - 364);
-  recordOldestDate.setHours(0, 0, 0, 0);
+  // 日期与“今天 / 本周”都按用户电脑的时区算（cookie 里的时区；没有时是首尔）
+  const timeZone = await getViewerTimeZone();
+  const dateKey = (value: string | Date) => dateKeyInTimeZone(value, timeZone);
+  const todayKey = dateKey(new Date());
+  const recordOldestDate = startOfDayInTimeZone(addDaysToDateKey(todayKey, -364), timeZone);
   const recordOldestIso = recordOldestDate.toISOString();
-  const activityOldestDate = new Date();
-  activityOldestDate.setDate(activityOldestDate.getDate() - 364);
-  activityOldestDate.setHours(0, 0, 0, 0);
-  const activityOldestIso = activityOldestDate.toISOString();
+  const activityOldestIso = recordOldestIso;
 
   const [appScope, assignmentScopeResult] = isStudent
     ? await Promise.all([
@@ -475,8 +466,6 @@ export async function LearningRecordsPageContent({
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
-  const today = new Date();
-  const todayKey = dateKey(today);
   const dailySeconds = new Map<string, number>();
   for (const row of timeLogs) {
     const key = dateKey(row.recorded_at);
@@ -492,13 +481,8 @@ export async function LearningRecordsPageContent({
     dailyActivityCounts.set(key, (dailyActivityCounts.get(key) ?? 0) + 1);
   }
   const learningDays: LearningDay[] = Array.from({ length: 365 }, (_, index) => {
-    const day = new Date(today);
-    day.setDate(today.getDate() - (364 - index));
-    const key = dateKey(day);
-    const weekday = new Intl.DateTimeFormat("zh-CN", {
-      timeZone: "Asia/Seoul",
-      weekday: "short",
-    }).format(day);
+    const key = addDaysToDateKey(todayKey, -(364 - index));
+    const weekday = formatDateKey(key, { weekday: "short" });
     return {
       key,
       label: key === todayKey ? "今天" : weekday.replace("星期", "周"),
@@ -507,13 +491,11 @@ export async function LearningRecordsPageContent({
       isToday: key === todayKey,
     };
   });
-  const startOfWeek = new Date(today);
-  const daysSinceMonday = (startOfWeek.getDay() + 6) % 7;
-  startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
-  startOfWeek.setHours(0, 0, 0, 0);
+  const mondayKey = addDaysToDateKey(todayKey, -((weekdayOfDateKey(todayKey) + 6) % 7));
+  const startOfWeekMs = startOfDayInTimeZone(mondayKey, timeZone).getTime();
   const weekSeconds = timeLogs.reduce(
     (sum, row) =>
-      new Date(row.recorded_at).getTime() >= startOfWeek.getTime()
+      new Date(row.recorded_at).getTime() >= startOfWeekMs
         ? sum + Math.max(0, Number(row.seconds) || 0)
         : sum,
     0,
@@ -524,13 +506,10 @@ export async function LearningRecordsPageContent({
       .filter((day) => day.seconds > 0 || day.activityCount > 0)
       .map((day) => day.key),
   );
-  const streakCursor = new Date(today);
-  if (!activityDays.has(todayKey)) {
-    streakCursor.setDate(streakCursor.getDate() - 1);
-  }
-  while (activityDays.has(dateKey(streakCursor)) && streakDays < 365) {
+  let streakKey = activityDays.has(todayKey) ? todayKey : addDaysToDateKey(todayKey, -1);
+  while (activityDays.has(streakKey) && streakDays < 365) {
     streakDays += 1;
-    streakCursor.setDate(streakCursor.getDate() - 1);
+    streakKey = addDaysToDateKey(streakKey, -1);
   }
 
   const latestTeacherNote =

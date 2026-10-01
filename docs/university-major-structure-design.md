@@ -100,7 +100,17 @@
 - 测试：`tests/local-datetime.test.mjs` 增加结构断言（上述表单都用 `LocalDateTimeField`、不再有写死韩国时间的文案、自动主题不含 Seoul）；原有的纽约 / 上海 / 首尔 / 伦敦换算单元测试保留。
 - 测试手法提醒：Playwright 的 `fill` 对 `datetime-local` 直接改 `.value`，会绕过 React 的值跟踪、不触发 `onChange`（真人输入没有这个问题）；脚本里要用原生 setter + `input` 事件，并先等水合完成（开发服务器上约 15 秒）。
 
-**没有做（`Asia/Seoul` 仍写死，约 50 处，分三类）：**
-1. 仅韩语流程里按韩国时间解析输入：结课补考配置（`course-completion/review-actions.ts`）、学习计划（`curriculum-plans/time.ts` 的 `seoulLocalInputToISOString`，表单在 `CurriculumPlanWorkspace`）、留学资料截止日（`documents/page-content.tsx`）、旧的标准试卷布置表单（`AssessmentPaperReleaseCatalog` + `paper-actions.ts`，没有可访问入口）。改法与上面相同，但需要韩语流程的验证数据，没有擅自动。
-2. 约 35 处用 `timeZone: "Asia/Seoul"` 格式化显示时间的页面（学习记录、学生首页、今日课堂、成绩洞察、结课、资料库等）。要让服务端渲染的页面按“电脑时区”显示，需要一个“用户时区”机制（浏览器写 cookie，服务端读取，没有 cookie 时回落首尔）。
-3. “今天 / 本周”的统计口径：每日必做、周计划、学习日历、连续学习天数按首尔日界线；周计划还以首尔周一作为数据库里的周键。这是数据口径问题，需要单独设计，不是换一个格式化函数能解决。
+**第二批：用户时区机制与显示（同日，用户确认“继续”）**
+
+先发现：第一批改的表单输入（如学习记录时间）按电脑时区提交了，但学习记录页面仍按首尔显示，非韩国时区的人会“输入一个时间、页面显示另一个”，所以输入和显示必须一起改。
+
+- **机制**：`src/lib/viewer-time-zone.ts`（纯函数：日期键、小时、按时区格式化、某时区某天零点 / 某钟点、周一日期键，夏令时正确）、`viewer-time-zone.server.ts`（服务端读 cookie `viewer_tz`，没有或无效时回落首尔）、`components/viewer-time-zone.tsx`（`ViewerTimeZoneSync` 放在根布局：浏览器时区写进 cookie，值变化时刷新一次当前路由；`useViewerTimeZone()` 给客户端组件，服务端渲染先用首尔、水合后换成浏览器时区）。根布局不读 cookie，所以不会让所有页面变成动态渲染；只有需要格式化时间的页面读。
+- **已改（不传时区时默认首尔，行为与原来一致）**：学习记录页（服务端日期键、周起点、连续学习天数、365 天窗口，原来混着服务器时区和首尔；客户端的趋势图 / 日历 / 看板）、学生端顶栏日期、学生首页“今日任务”（今天 / 明天的划分、任务时间文字、必做数量）、门户首页（问候语、截止与反馈时间）、暂缓任务（“明天上午 9 点 / 今天结束 / 本周”）、能力画像更新日期、成绩洞察趋势日期与跟进记录时间、管理端作业与考试页时间、标准试卷目录更新时间、留学服务洞察时间。
+- **测试**：`tests/viewer-time-zone.test.mjs` 9 项（纽约 / 上海 / 首尔 / 伦敦 / 奥克兰，夏令时开始与结束当天，往返一致，今日任务的今天 / 明天会因时区不同而不同，默认与原来一致，接线与“已改文件不再含 Asia/Seoul”的结构断言）。
+- **浏览器验证**（Playwright，纽约与首尔两个浏览器，学生账号）：cookie 分别写成 `America/New_York`、`Asia/Seoul`；学习记录页趋势图终点纽约是 10/1、首尔是 10/2，与各自“今天”一致（此时首尔已过午夜、纽约还是前一天）；两边都没有控制台错误或水合报错。**未单独在页面上验证**：顶栏日期、学生首页今日任务、暂缓任务、成绩洞察、管理端作业与考试页（同一套函数，由单元测试与结构断言覆盖）。
+
+**仍写死首尔（待决事项 C13 的剩余部分）：**
+1. **数据库里的日界线**：教师“今日课堂”的“今天已学习 / 连续未学习天数”由数据库函数按 `Asia/Seoul` 计算（5 个迁移用到），应用层改不了，要给函数加时区参数，属于数据库评审。
+2. **按首尔周一做数据库周键**：每周学习计划（`student-weekly-learning-plan/*`，周键存在库里）；暂缓任务的“本周”键现在按用户时区算，同一学生换时区的那一周可能对不上，影响很小。
+3. **仅韩语使用的页面与流程**（没有韩语验证数据，没有动）：韩语首页（`DashboardHomePage`、`SystemGrowthHomeView`、`DailyLearningWorkspace`）、结课（`course-completion` 四处，含补考配置的输入解析）、学习计划（`curriculum-plans`，含 `seoulLocalInputToISOString`）、专项练习目录文案（`lib/course-practice-catalog.ts`）、巩固覆盖列表（`chapter-practice-coverage-listing`）、留学资料截止日（`documents/page-content.tsx`，只有日期的截止按首尔零点算）。
+4. 旧代码保留：`assignments/actions.ts` 的 `parseKoreanDateTime`（现在表单提交的是带时区的值，直接采用；旧格式才按韩国时间解析）、`paper-actions.ts`（旧的标准试卷布置表单，没有可访问入口）。

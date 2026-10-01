@@ -60,7 +60,7 @@
 1. **永远不要给 `node --test` 传通配符或整个 `tests/` 目录**。会跑 Codex 的 r7c / 4a 测试，往 `/tmp/r7c-isolated-db-ledger.jsonl` 追加记录。2026-10-01 我误触发过一次，多了第 24–32 行（`observedAtUtc` 07:25:14Z–07:25:35Z）和被重写的 `/tmp/runtime-4a8-roleplay.png`，**未清理，待你们决定**。只点名文件；已知安全的清单见 `docs/decisions-pending-2026-10-01.md` 之外的做法：先排除 `teaching-agent-*`、`smart-textbook-*`、`*-browser*`、`*-durable*`、`*-db.test*`，并检查含写文件 / 子进程 / docker 的文件。
 2. 数据库草稿**不在** `supabase/migrations`，合并代码不会自动改库；代码里已加“迁移未应用时出题界面说明原因”的保护。
 3. Gate 报告是作者自审；上线前需要独立 Gate。
-4. 时间**跟随用户电脑的时区**（用户 2026-10-01 决定）：布置面板、批改页截止时间、课程 / 课时 / 章节开放时间、学习记录时间已改（`LocalDateTimeField`）；仍写死首尔的约 50 处（韩语专属流程的输入解析、约 35 处显示、今日 / 本周统计口径）见 `docs/university-major-structure-design.md` 第 11 节与待决事项 C13。
+4. 时间**跟随用户电脑的时区**（用户 2026-10-01 决定）：布置面板、批改页截止时间、课程 / 课时 / 章节开放时间、学习记录时间已改（`LocalDateTimeField`）；另新增“用户时区”机制（`src/lib/viewer-time-zone*.ts`、根布局 `ViewerTimeZoneSync`，浏览器时区写 cookie、服务端读取、没有时回落首尔），学习记录、学生首页今日任务、门户、顶栏、成绩洞察等已按它显示；仍写死首尔的（数据库日界线、周计划周键、韩语专属页面与流程）见 `docs/university-major-structure-design.md` 第 11 节与待决事项 C13。
 
 ## 7. 下一步（按顺序）
 

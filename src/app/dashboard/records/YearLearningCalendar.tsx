@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
+import { formatDateKey, weekdayOfDateKey } from "@/lib/viewer-time-zone";
+
 import {
   formatLearningDuration,
   fullLearningDateLabel,
@@ -31,13 +33,9 @@ function buildMonths(days: LearningDay[]) {
   }
   return [...months.entries()].map(([key, monthDays]) => ({
     key,
-    label: new Intl.DateTimeFormat("zh-CN", {
-      timeZone: "Asia/Seoul",
-      year: "numeric",
-      month: "long",
-    }).format(new Date(`${key}-15T12:00:00+09:00`)),
-    offset:
-      (new Date(`${monthDays[0].key}T12:00:00+09:00`).getDay() + 6) % 7,
+    // 日期键本身是日历日期，月份名称与星期偏移都与时区无关
+    label: formatDateKey(`${key}-15`, { year: "numeric", month: "long" }),
+    offset: (weekdayOfDateKey(monthDays[0].key) + 6) % 7,
     days: monthDays,
   }));
 }

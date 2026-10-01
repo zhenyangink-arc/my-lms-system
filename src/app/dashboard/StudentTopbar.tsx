@@ -1,3 +1,5 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
@@ -26,13 +28,13 @@ export async function StudentTopbar({
   let teacherReminders: TeacherReplyReminder[] = [];
   const dashboardBasePath =
     requestedWorkspaceBasePath ?? getDashboardBasePath(tenant?.slug);
-  const dateLabel = new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+  // 顶栏日期按用户电脑的时区显示
+  const dateLabel = formatInTimeZone(new Date(), await getViewerTimeZone(), {
     year: "numeric",
     month: "long",
     day: "numeric",
     weekday: "long",
-  }).format(new Date());
+  });
 
   if (profile?.role === "student") {
     // 教师回复（无条件取前 20 条，由前端按 unread 过滤计数）

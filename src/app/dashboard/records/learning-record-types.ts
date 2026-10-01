@@ -1,3 +1,5 @@
+import { dateKeyInTimeZone, formatDateKey } from "@/lib/viewer-time-zone";
+
 export type LearningRecordCategory =
   | "course"
   | "task"
@@ -27,20 +29,9 @@ export type LearningDay = {
 
 export type LearningRangeDays = 7 | 30 | 90 | 365;
 
-const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-export function learningDateKey(value: string | Date) {
-  const parts = dateKeyFormatter.formatToParts(
-    typeof value === "string" ? new Date(value) : value,
-  );
-  const read = (type: Intl.DateTimeFormatPartTypes) =>
-    parts.find((part) => part.type === type)?.value ?? "";
-  return `${read("year")}-${read("month")}-${read("day")}`;
+/** 时间点在用户时区下的日期键（YYYY-MM-DD）；时区来自用户电脑（见 lib/viewer-time-zone.ts）。 */
+export function learningDateKey(value: string | Date, timeZone: string) {
+  return dateKeyInTimeZone(value, timeZone);
 }
 
 export function formatLearningDuration(totalSeconds: number) {
@@ -52,19 +43,11 @@ export function formatLearningDuration(totalSeconds: number) {
   return minutes > 0 ? `${hours} 小时 ${minutes} 分钟` : `${hours} 小时`;
 }
 
+/** 日期键本身是日历日期，格式化与时区无关。 */
 export function fullLearningDateLabel(key: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(`${key}T12:00:00+09:00`));
+  return formatDateKey(key, { year: "numeric", month: "long", day: "numeric" });
 }
 
 export function shortLearningDateLabel(key: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "numeric",
-    day: "numeric",
-  }).format(new Date(`${key}T12:00:00+09:00`));
+  return formatDateKey(key, { month: "numeric", day: "numeric" });
 }

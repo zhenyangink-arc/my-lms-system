@@ -1,5 +1,7 @@
 "use client";
 
+import { useViewerTimeZone } from "@/components/viewer-time-zone";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import { Search, Send } from "lucide-react";
 import { useActionState, useMemo, useState } from "react";
 
@@ -48,14 +50,13 @@ const statusColors: Record<AssessmentPaperStatus, string> = {
   archived: "var(--foreground-muted)",
 };
 
-function updatedAtLabel(value: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+function updatedAtLabel(value: string, timeZone: string) {
+  return formatInTimeZone(value, timeZone, {
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value));
+  });
 }
 
 export function PlatformAssessmentPaperCatalog({
@@ -65,6 +66,7 @@ export function PlatformAssessmentPaperCatalog({
   papers: PlatformAssessmentPaperItem[];
   canRelease: boolean;
 }) {
+  const timeZone = useViewerTimeZone();
   const [query, setQuery] = useState("");
   const [paperType, setPaperType] = useState<"all" | "homework" | "exam">(
     "all"
@@ -242,7 +244,7 @@ export function PlatformAssessmentPaperCatalog({
                 <td className="px-4 py-2">
                   <p className="text-sm font-bold">{paper.title}</p>
                   <p className="app-muted-text mt-0.5 font-mono text-[10px]">
-                    {paper.paperCode} · 版本 {paper.version} · {updatedAtLabel(paper.updatedAt)}
+                    {paper.paperCode} · 版本 {paper.version} · {updatedAtLabel(paper.updatedAt, timeZone)}
                   </p>
                 </td>
                 <td className="border-l px-4 py-2 text-xs">

@@ -2,7 +2,14 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { getSeoulDateKey, getSeoulWeekRange } from "@/features/student-weekly-learning-plan/week";
+import {
+  addDaysToDateKey,
+  dateKeyInTimeZone,
+  DEFAULT_VIEWER_TIME_ZONE,
+  startOfDayInTimeZone,
+  weekStartKeyInTimeZone,
+  zonedTimeToDate,
+} from "@/lib/viewer-time-zone";
 
 export const STUDENT_TASK_SNOOZE_OPTIONS = [
   "later_today",
@@ -13,25 +20,22 @@ export const STUDENT_TASK_SNOOZE_OPTIONS = [
 export type StudentTaskSnoozeOption =
   (typeof STUDENT_TASK_SNOOZE_OPTIONS)[number];
 
-const DAY_MS = 86_400_000;
-
-function preferenceWindow(option: StudentTaskSnoozeOption, now: Date) {
+function preferenceWindow(option: StudentTaskSnoozeOption, now: Date, timeZone: string) {
   if (option === "this_week") {
     return {
       snoozed_until: null,
-      dismissed_for_week: getSeoulWeekRange(now).weekStartDate,
+      dismissed_for_week: weekStartKeyInTimeZone(now, timeZone),
     };
   }
+  const tomorrowKey = addDaysToDateKey(dateKeyInTimeZone(now, timeZone), 1);
   if (option === "tomorrow") {
-    const tomorrow = getSeoulDateKey(new Date(now.getTime() + DAY_MS));
     return {
-      snoozed_until: new Date(`${tomorrow}T09:00:00+09:00`).toISOString(),
+      snoozed_until: zonedTimeToDate(tomorrowKey, 9, 0, timeZone).toISOString(),
       dismissed_for_week: null,
     };
   }
 
-  const nextSeoulDate = getSeoulDateKey(new Date(now.getTime() + DAY_MS));
-  const endOfToday = new Date(`${nextSeoulDate}T00:00:00+09:00`).getTime();
+  const endOfToday = startOfDayInTimeZone(tomorrowKey, timeZone).getTime();
   return {
     snoozed_until: new Date(
       Math.min(now.getTime() + 3 * 60 * 60_000, endOfToday),
@@ -48,6 +52,7 @@ export async function snoozeStudentLearningTask({
   taskKey,
   option,
   now = new Date(),
+  timeZone = DEFAULT_VIEWER_TIME_ZONE,
 }: {
   supabase: SupabaseClient;
   tenantId: string;
@@ -56,6 +61,8 @@ export async function snoozeStudentLearningTask({
   taskKey: string;
   option: StudentTaskSnoozeOption;
   now?: Date;
+  /** 用户时区（“明天上午 9 点”“今天结束”“本周”按它算）；不传时是首尔。 */
+  timeZone?: string;
 }) {
   const { error } = await supabase
     .from("student_learning_task_preferences")
@@ -65,7 +72,7 @@ export async function snoozeStudentLearningTask({
         student_id: studentId,
         student_app_id: studentAppId,
         task_key: taskKey,
-        ...preferenceWindow(option, now),
+        ...preferenceWindow(option, now, timeZone),
       },
       {
         onConflict: "tenant_id,student_id,student_app_id,task_key",

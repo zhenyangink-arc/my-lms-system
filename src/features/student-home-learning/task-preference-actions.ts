@@ -1,5 +1,6 @@
 "use server";
 
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { z } from "zod";
 
 import { requireActiveUser } from "@/lib/auth";
@@ -112,6 +113,7 @@ export async function snoozeStudentLearningTaskAction(
       supabase: context.supabase,
       tenantId: context.tenant.id,
       studentId: context.user.id,
+      timeZone: await getViewerTimeZone(),
       ...parsed.data,
     });
     refreshPreferenceScope(context, parsed.data.studentAppId);

@@ -8,6 +8,7 @@ import {
 } from "../priority.ts";
 import { getGradeFeedbackPath } from "../routes.ts";
 import { isStudentNavItemEnabled } from "@/features/subjects";
+import { DEFAULT_VIEWER_TIME_ZONE } from "@/lib/viewer-time-zone";
 import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
 import { loadAssignmentExamTasks } from "./assignment-exam-source.ts";
 import { loadChapterPracticeTasks } from "./chapter-practice-source.ts";
@@ -46,6 +47,8 @@ export type LoadHomeLearningTasksInput = {
   appLabel: string;
   space: string;
   now?: Date;
+  /** 用户时区（今天 / 明天的划分按它算）；不传时是首尔。 */
+  timeZone?: string;
 };
 
 export type PortalLearningFeedback = {
@@ -91,13 +94,14 @@ function updatedTimestamp(value: string): number {
 function priorityRuleForTask(
   task: HomeLearningTask,
   now: Date,
+  timeZone: string,
 ): DefaultPriorityRule {
   if (isOverdueCompletable(task)) return "overdue_required_completable";
 
   const nowTime = now.getTime();
   const startTime = timestamp(task.startsAt);
   const dueTime = timestamp(task.dueAt);
-  if (dueTime >= nowTime && isSamePortalDay(task.dueAt, now)) {
+  if (dueTime >= nowTime && isSamePortalDay(task.dueAt, now, timeZone)) {
     return "due_today";
   }
   if (
@@ -110,7 +114,7 @@ function priorityRuleForTask(
   if (task.sourceType === "teacher_recommendation" && task.required) {
     return "teacher_required_recommendation";
   }
-  if (isTomorrowInPortal(task.dueAt, now)) return "due_tomorrow";
+  if (isTomorrowInPortal(task.dueAt, now, timeZone)) return "due_tomorrow";
   if (
     task.status === "in_progress" &&
     (task.sourceType === "course" || task.sourceType === "chapter_practice")
@@ -131,11 +135,12 @@ function priorityRuleForTask(
 export function sortHomeLearningTasks(
   tasks: HomeLearningTask[],
   now = new Date(),
+  timeZone: string = DEFAULT_VIEWER_TIME_ZONE,
 ): HomeLearningTask[] {
   return [...tasks].sort((left, right) => {
     const ruleDifference = compareDefaultPriority(
-      priorityRuleForTask(left, now),
-      priorityRuleForTask(right, now),
+      priorityRuleForTask(left, now, timeZone),
+      priorityRuleForTask(right, now, timeZone),
     );
     if (ruleDifference !== 0) return ruleDifference;
 
@@ -168,6 +173,7 @@ export async function loadHomeLearningTasks({
   appLabel,
   space,
   now = new Date(),
+  timeZone = DEFAULT_VIEWER_TIME_ZONE,
 }: LoadHomeLearningTasksInput): Promise<HomeLearningTask[]> {
   const commonInput = {
     supabase,
@@ -205,6 +211,7 @@ export async function loadHomeLearningTasks({
   const sortedTasks = sortHomeLearningTasks(
     dedupeHomeLearningTasks(taskGroups.flat()),
     now,
+    timeZone,
   );
   const { data: preferenceRows, error: preferenceError } = await supabase
     .from("student_learning_task_preferences")
@@ -228,6 +235,7 @@ export async function loadHomeLearningTasks({
         : null,
     })),
     now,
+    timeZone,
   );
 }
 
@@ -288,8 +296,9 @@ export function selectPortalHomeLearningSummary(
   tasks: HomeLearningTask[],
   latestFeedback: PortalLearningFeedback | null,
   now = new Date(),
+  timeZone: string = DEFAULT_VIEWER_TIME_ZONE,
 ): PortalHomeLearningSummary {
-  const sortedTasks = sortHomeLearningTasks(tasks, now);
+  const sortedTasks = sortHomeLearningTasks(tasks, now, timeZone);
   const nowTime = now.getTime();
   const nearestDeadline = sortedTasks
     .filter(
@@ -302,7 +311,7 @@ export function selectPortalHomeLearningSummary(
 
   return {
     mostImportant: sortedTasks[0] ?? null,
-    requiredTodayCount: selectRequiredTodayTasks(sortedTasks, now).length,
+    requiredTodayCount: selectRequiredTodayTasks(sortedTasks, now, timeZone).length,
     nearestDeadline: nearestDeadline ?? null,
     latestFeedback,
   };
@@ -315,11 +324,12 @@ export function selectPortalHomeLearningSummary(
 export async function loadPortalHomeLearningSummaryForApps(
   inputs: LoadHomeLearningTasksInput[],
   now = new Date(),
+  timeZone: string = DEFAULT_VIEWER_TIME_ZONE,
 ): Promise<PortalHomeLearningSummary> {
   const results = await Promise.all(
     inputs.map((input) =>
       Promise.all([
-        loadHomeLearningTasks({ ...input, now }),
+        loadHomeLearningTasks({ ...input, now, timeZone }),
         loadLatestPublishedFeedback({ ...input, now }),
       ]),
     ),
@@ -333,5 +343,5 @@ export async function loadPortalHomeLearningSummaryForApps(
         (left, right) =>
           updatedTimestamp(right.publishedAt) - updatedTimestamp(left.publishedAt),
       )[0] ?? null;
-  return selectPortalHomeLearningSummary(tasks, latestFeedback, now);
+  return selectPortalHomeLearningSummary(tasks, latestFeedback, now, timeZone);
 }

@@ -1,3 +1,4 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import "server-only";
 
 import { requireManagementAppAccess } from "@/lib/management-apps";
@@ -30,6 +31,7 @@ export async function loadPlatformInsights(appSlug: string, mode: InsightMode, f
   const allowed = mode === "conversation" ? access.capabilities.manageAssessments : access.capabilities.viewAnalytics;
   if (access.scope !== "platform" || !allowed) throw new Error("当前账号没有此应用的分析权限。");
   const admin = createAdminClient();
+  const timeZone = await getViewerTimeZone();
   const facts = emptyFacts();
   const errors: string[] = [];
   let registrations: AppRegistration[] = [];
@@ -47,14 +49,14 @@ export async function loadPlatformInsights(appSlug: string, mode: InsightMode, f
   const invalidCourse = mode === "grades" && Boolean(filters.course) && !courses.some(course => course.id === filters.course);
 
   if (filters.tenant && !tenants.some(row => row.id === filters.tenant)) {
-    return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode), errors, invalidTenant: true };
+    return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode, timeZone), errors, invalidTenant: true };
   }
   // Only the requested module is queried. Fact queries are bounded to two comparison periods.
   const collect = async <T>(label: string, task: Promise<T[]>, accept: (rows: T[]) => void) => {
     try { accept(await task); } catch { errors.push(label); }
   };
   const tasks: Promise<void>[] = [];
-  if (invalidCourse) return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode), errors, invalidTenant: false };
+  if (invalidCourse) return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode, timeZone), errors, invalidTenant: false };
   if (mode === "records") {
     tasks.push(collect("学生授权", readInsightPages<Enrollment>((from, to) => admin.from("student_app_enrollments").select("tenant_id,student_id").eq("app_id", access.appId).eq("status", "active").match(filters.tenant ? { tenant_id: filters.tenant } : {}).order("tenant_id").order("student_id").range(from, to)), rows => { facts.enrollments = rows; }));
     tasks.push(collect("辅导关注", readInsightPages<Note>((from, to) => admin.from("learning_record_notes").select("tenant_id,student_id,record_type,status,occurred_at").eq("student_app_id", access.appId).match(filters.tenant ? { tenant_id: filters.tenant } : {}).or(`status.eq.active,occurred_at.gte.${filters.previousStart}`).lt("occurred_at", filters.end).order("id").range(from, to)), rows => { facts.notes = rows; }));
@@ -95,5 +97,5 @@ export async function loadPlatformInsights(appSlug: string, mode: InsightMode, f
     tasks.push(collect("实时课堂", readInsightPages<Classroom>((from, to) => admin.from("live_class_sessions").select("tenant_id,status,mode,created_at,ended_at,course:courses!inner(student_app_id)").match(filters.tenant ? { tenant_id: filters.tenant } : {}).eq("course.student_app_id", access.appId).or(`status.eq.active,created_at.gte.${filters.previousStart}`).lt("created_at", filters.end).order("id").range(from, to)), rows => { facts.classrooms = rows; }));
   }
   await Promise.all(tasks);
-  return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode), errors, invalidTenant: false };
+  return { access, tenants, courses, invalidCourse, report: buildInsightReport(facts, filters, mode, timeZone), errors, invalidTenant: false };
 }

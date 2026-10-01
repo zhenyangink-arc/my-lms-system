@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { PwaServiceWorkerRegistration } from "@/app/PwaServiceWorkerRegistration";
+import { ViewerTimeZoneSync } from "@/components/viewer-time-zone";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="zh-CN" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-background antialiased`}>
         <PwaServiceWorkerRegistration />
+        <ViewerTimeZoneSync />
         <main className="flex-1">{children}</main>
       </body>
     </html>

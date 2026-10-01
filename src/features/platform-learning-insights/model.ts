@@ -1,3 +1,5 @@
+import { DEFAULT_VIEWER_TIME_ZONE } from "../../lib/viewer-time-zone.ts";
+
 export type InsightMode = "grades" | "records" | "conversation";
 export type SearchParams = Record<string, string | string[] | undefined>;
 export type InsightFilters = { days: 7 | 30 | 90; tenant: string; course: string; source: "all" | "homework" | "exam" | "chapter"; start: string; previousStart: string; end: string };
@@ -74,7 +76,7 @@ function summarize(facts: InsightFacts, start: string, end: string, source: stri
   return result;
 }
 
-export function buildInsightReport(facts: InsightFacts, filters: InsightFilters, mode: InsightMode): InsightReport {
+export function buildInsightReport(facts: InsightFacts, filters: InsightFilters, mode: InsightMode, timeZone: string = DEFAULT_VIEWER_TIME_ZONE): InsightReport {
   const tenants = facts.tenants.filter(row => !filters.tenant || row.id === filters.tenant);
   const tenantIds = new Set(tenants.map(row => row.id));
   const scope = (ids: Set<string>): InsightFacts => ({ tenants: facts.tenants.filter(row => ids.has(row.id)), enrollments: facts.enrollments.filter(row => ids.has(row.tenant_id)), grades: facts.grades.filter(row => ids.has(row.tenant_id)), activities: facts.activities.filter(row => ids.has(row.tenant_id)), notes: facts.notes.filter(row => ids.has(row.tenant_id)), classrooms: facts.classrooms.filter(row => ids.has(row.tenant_id)), scenarios: facts.scenarios.filter(row => row.tenant_id === null || ids.has(row.tenant_id)), skills: facts.skills.filter(row => ids.has(row.tenant_id)) });
@@ -97,7 +99,7 @@ export function buildInsightReport(facts: InsightFacts, filters: InsightFilters,
     const start = new Date(Date.parse(filters.start) + day * DAY).toISOString();
     const end = new Date(Math.min(Date.parse(filters.end), Date.parse(start) + width * DAY)).toISOString();
     const data = metrics(scoped, start, end);
-    trend.push({ date: new Date(start).toLocaleDateString("zh-CN", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit" }), value: mode === "grades" ? data.average ?? -1 : mode === "records" ? data.seconds / 3600 : data.practices });
+    trend.push({ date: new Date(start).toLocaleDateString("zh-CN", { timeZone, month: "2-digit", day: "2-digit" }), value: mode === "grades" ? data.average ?? -1 : mode === "records" ? data.seconds / 3600 : data.practices });
   }
   const skills = ["listening", "speaking", "reading", "writing", "grammar", "vocabulary"].map(skill => {
     const evidence = scoped.skills.filter(row => row.skill === skill);

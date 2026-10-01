@@ -20,6 +20,8 @@ import {
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { Button } from "@/components/ui/button";
+import { useViewerTimeZone } from "@/components/viewer-time-zone";
+import { addDaysToDateKey, formatDateKey } from "@/lib/viewer-time-zone";
 import { LearningActivityPanel } from "./LearningActivityPanel";
 import { LEARNING_RECORD_DATE_TIME_OPTIONS } from "./config";
 import {
@@ -85,20 +87,11 @@ const categoryPresentation = {
   }
 >;
 
-const relativeDateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
-  month: "long",
-  day: "numeric",
-  weekday: "short",
-});
-
-function relativeDateLabel(key: string) {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  if (key === learningDateKey(today)) return "今天";
-  if (key === learningDateKey(yesterday)) return "昨天";
-  return relativeDateFormatter.format(new Date(`${key}T12:00:00+09:00`));
+function relativeDateLabel(key: string, timeZone: string) {
+  const todayKey = learningDateKey(new Date(), timeZone);
+  if (key === todayKey) return "今天";
+  if (key === addDaysToDateKey(todayKey, -1)) return "昨天";
+  return formatDateKey(key, { month: "long", day: "numeric", weekday: "short" });
 }
 
 export function LearningRecordBoard({
@@ -114,6 +107,7 @@ export function LearningRecordBoard({
   latestTeacherNote: LearningRecordEvent | null;
   dataError: boolean;
 }) {
+  const timeZone = useViewerTimeZone();
   const [category, setCategory] =
     useState<LearningRecordCategory>("course");
   const [rangeDays, setRangeDays] = useState<LearningRangeDays>(30);
@@ -127,10 +121,10 @@ export function LearningRecordBoard({
     () =>
       events.filter((event) =>
         selectedDate
-          ? learningDateKey(event.date) === selectedDate
-          : learningDateKey(event.date) >= cutoffKey,
+          ? learningDateKey(event.date, timeZone) === selectedDate
+          : learningDateKey(event.date, timeZone) >= cutoffKey,
       ),
-    [cutoffKey, events, selectedDate],
+    [cutoffKey, events, selectedDate, timeZone],
   );
   const categoryCounts = useMemo(
     () => ({
@@ -150,7 +144,7 @@ export function LearningRecordBoard({
   const groupedEvents = filteredEvents.reduce<
     Array<{ key: string; events: LearningRecordEvent[] }>
   >((groups, event) => {
-    const key = learningDateKey(event.date);
+    const key = learningDateKey(event.date, timeZone);
     const last = groups.at(-1);
     if (last?.key === key) {
       last.events.push(event);
@@ -170,7 +164,7 @@ export function LearningRecordBoard({
     setSelectedDate(date);
     if (!date) return;
     const firstEvent = events.find(
-      (event) => learningDateKey(event.date) === date,
+      (event) => learningDateKey(event.date, timeZone) === date,
     );
     if (firstEvent) setCategory(firstEvent.category);
   }
@@ -418,7 +412,7 @@ export function LearningRecordBoard({
             >
               <summary className="mb-2 flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] [&::-webkit-details-marker]:hidden">
                 <span className="text-xs font-semibold">
-                  {relativeDateLabel(group.key)}
+                  {relativeDateLabel(group.key, timeZone)}
                 </span>
                 <span className="app-muted-text text-[9px] font-medium">
                   {group.events.length} 条

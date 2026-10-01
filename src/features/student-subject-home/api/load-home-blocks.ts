@@ -53,6 +53,7 @@ export async function loadStudentHomeBlocks({
   space,
   blocks,
   now = new Date(),
+  timeZone,
 }: {
   supabase: SupabaseClient;
   tenantId: string;
@@ -62,6 +63,8 @@ export async function loadStudentHomeBlocks({
   space: string;
   blocks: readonly StudentHomeBlockKey[];
   now?: Date;
+  /** 用户时区（今日任务的“今天 / 明天”按它算）；不传时是首尔。 */
+  timeZone?: string;
 }): Promise<StudentHomeBlockData> {
   const studentAppId = STUDENT_APP_IDS[appSlug];
   const [tasks, currentCourse, abilityPortrait] = await Promise.all([
@@ -75,13 +78,14 @@ export async function loadStudentHomeBlocks({
         appLabel,
         space,
         now,
+        timeZone,
       }),
     ),
     loadBlock<StudentCurrentCourse | null>(blocks.includes("continue-learning"), "当前课程", null, () =>
       loadStudentCurrentCourse({ supabase, studentId, studentAppId, appSlug, space, now }),
     ),
     loadBlock<AbilityPortraitData | null>(blocks.includes("ability-portrait"), "能力画像", null, () =>
-      loadAbilityPortrait({ supabase, tenantId, studentId, studentAppId, now }),
+      loadAbilityPortrait({ supabase, tenantId, studentId, studentAppId, now, timeZone }),
     ),
   ]);
   return { tasks, currentCourse, abilityPortrait };

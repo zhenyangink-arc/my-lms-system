@@ -1,3 +1,5 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import Link from "next/link";
 
 import {
@@ -101,16 +103,15 @@ const testStatusLabels = {
   archived: "已归档",
 } as const;
 
-function dateTime(value: string | null) {
+function dateTime(value: string | null, timeZone: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+  return formatInTimeZone(value, timeZone, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value));
+  });
 }
 
 export async function ManagementApplicationAssessmentPage({
@@ -119,6 +120,7 @@ export async function ManagementApplicationAssessmentPage({
   access: ManagementAppAccess;
 }) {
   const { supabase } = await requireActiveUser();
+  const timeZone = await getViewerTimeZone();
   const canPrepareStandardPapers =
     access.scope === "platform" && access.capabilities.manageAssessments;
   const canReleaseStandardPapers =
@@ -559,10 +561,10 @@ export async function ManagementApplicationAssessmentPage({
                         {Number(item.total_points)}
                       </td>
                       <td className="app-muted-text px-4 py-2">
-                        {dateTime(item.starts_at)}
+                        {dateTime(item.starts_at, timeZone)}
                       </td>
                       <td className="app-muted-text px-4 py-2">
-                        {dateTime(item.due_at)}
+                        {dateTime(item.due_at, timeZone)}
                       </td>
                       <td className="px-4 py-2">
                         {assignmentStatusLabels[item.status]}

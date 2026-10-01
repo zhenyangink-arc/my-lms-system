@@ -119,7 +119,7 @@ test("能力画像使用受控聚合读取，局部失败不会触发开发错�
   // 韩语首页与平台首页框架通过同一个区块取数函数读取能力画像。
   assert.match(koreanHome, /loadStudentHomeBlocks\(\{[\s\S]*?appSlug: "korean",[\s\S]*?blocks: koreanHomeBlocks,/);
   assert.match(koreanHome, /block === "ability-portrait" && userRole === "student"/);
-  assert.match(homeBlocks, /loadAbilityPortrait\(\{ supabase, tenantId, studentId, studentAppId, now \}\)/);
+  assert.match(homeBlocks, /loadAbilityPortrait\(\{ supabase, tenantId, studentId, studentAppId, now, timeZone \}\)/);
   assert.match(homeBlocks, /console\.warn\(`\[student-home\] \$\{label\}读取失败`/);
   assert.doesNotMatch(homeBlocks, /console\.error/);
   assert.match(koreanHome, /<AbilityPortraitLoadFailed sourceLabel="韩语学习"/);

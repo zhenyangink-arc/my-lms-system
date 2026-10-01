@@ -1,3 +1,5 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
+import { hourInTimeZone } from "@/lib/viewer-time-zone";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -101,14 +103,8 @@ const appAccentClasses = {
   rose: "bg-rose-500/12 text-rose-700 ring-rose-600/15",
 } as const;
 
-function getGreeting() {
-  const hour = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Seoul",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).format(new Date()),
-  );
+function getGreeting(timeZone: string) {
+  const hour = hourInTimeZone(new Date(), timeZone);
 
   if (hour < 6) return "夜深了";
   if (hour < 12) return "早上好";
@@ -419,9 +415,11 @@ export default async function StudentPortalPage({
     ? getStudentAppPath(space, announcementApp.slug, "/announcements")
     : `${access.dashboardBasePath}/announcements`;
   const portalNow = new Date();
+  // 问候语、今天 / 明天与任务时间都按用户电脑的时区算（cookie；没有时是首尔）
+  const viewerTimeZone = await getViewerTimeZone();
   let learningSummaryLoadFailed = false;
   let learningSummary: PortalHomeLearningSummary =
-    selectPortalHomeLearningSummary([], null, portalNow);
+    selectPortalHomeLearningSummary([], null, portalNow, viewerTimeZone);
   const learningSummaryPromise =
     summaryApps.length > 0
       ? loadPortalHomeLearningSummaryForApps(
@@ -435,12 +433,13 @@ export default async function StudentPortalPage({
             space,
           })),
           portalNow,
+          viewerTimeZone,
         )
           .then((summary) => ({ summary, failed: false }))
           .catch((error: unknown) => {
             console.warn("[student-portal] 今日学习摘要读取失败", error);
             return {
-              summary: selectPortalHomeLearningSummary([], null, portalNow),
+              summary: selectPortalHomeLearningSummary([], null, portalNow, viewerTimeZone),
               failed: true,
             };
           })
@@ -487,7 +486,7 @@ export default async function StudentPortalPage({
       title: announcement.title,
       description: announcement.content,
       meta: announcement.published_at
-        ? formatLearningDateTime(announcement.published_at)
+        ? formatLearningDateTime(announcement.published_at, viewerTimeZone)
         : "时间待确认",
       href: announcementHref,
     });
@@ -499,7 +498,7 @@ export default async function StudentPortalPage({
       kind: "deadline",
       title: nearestDeadline.title,
       description: nearestDeadline.reason,
-      meta: `${formatLearningDateTime(nearestDeadline.dueAt!)} 截止`,
+      meta: `${formatLearningDateTime(nearestDeadline.dueAt!, viewerTimeZone)} 截止`,
       href: nearestDeadline.href,
     });
   }
@@ -509,7 +508,7 @@ export default async function StudentPortalPage({
       kind: "task",
       title: primaryTask.title,
       description: primaryTask.reason,
-      meta: getTaskTiming(primaryTask),
+      meta: getTaskTiming(primaryTask, viewerTimeZone),
       href: primaryTask.href,
     });
   }
@@ -519,7 +518,7 @@ export default async function StudentPortalPage({
       kind: "feedback",
       title: learningSummary.latestFeedback.title,
       description: learningSummary.latestFeedback.feedback,
-      meta: formatLearningDateTime(learningSummary.latestFeedback.publishedAt),
+      meta: formatLearningDateTime(learningSummary.latestFeedback.publishedAt, viewerTimeZone),
       href: learningSummary.latestFeedback.href,
     });
   }
@@ -571,7 +570,7 @@ export default async function StudentPortalPage({
       >
         <span aria-hidden="true" className="pointer-events-none absolute -left-48 top-16 size-[30rem] rounded-full bg-emerald-100/55 blur-3xl" />
         <div className="relative mx-auto w-full max-w-[1680px] space-y-6">
-          <PortalAskBar greeting={getGreeting()} userName={userName} />
+          <PortalAskBar greeting={getGreeting(viewerTimeZone)} userName={userName} />
 
           <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(22rem,0.72fr)_minmax(0,1.28fr)]">
             <section
@@ -662,7 +661,7 @@ export default async function StudentPortalPage({
                     />
                     <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-slate-600">
                       <CalendarClock size={17} aria-hidden="true" />
-                      {getTaskTiming(primaryTask)}
+                      {getTaskTiming(primaryTask, viewerTimeZone)}
                     </p>
                     <div className="mt-5 rounded-2xl bg-emerald-50/80 p-4 text-sm leading-6 text-slate-700">
                       <span className="font-black text-emerald-800">推荐原因：</span>
@@ -727,7 +726,7 @@ export default async function StudentPortalPage({
                   ) : learningSummary.nearestDeadline ? (
                     <>
                       <strong className="mt-2 text-base font-bold text-slate-950">
-                        {formatLearningDateTime(learningSummary.nearestDeadline.dueAt!)}
+                        {formatLearningDateTime(learningSummary.nearestDeadline.dueAt!, viewerTimeZone)}
                       </strong>
                       <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
                         {showTaskAppLabels
@@ -756,7 +755,7 @@ export default async function StudentPortalPage({
                         {showTaskAppLabels
                           ? `${learningSummary.latestFeedback.appLabel} · `
                           : null}
-                        {learningSummary.latestFeedback.title} · {formatLearningDateTime(learningSummary.latestFeedback.publishedAt)}
+                        {learningSummary.latestFeedback.title} · {formatLearningDateTime(learningSummary.latestFeedback.publishedAt, viewerTimeZone)}
                       </p>
                     </>
                   ) : (

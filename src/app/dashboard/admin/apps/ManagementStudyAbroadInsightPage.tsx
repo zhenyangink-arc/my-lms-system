@@ -1,3 +1,5 @@
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import { CircleDot } from "lucide-react";
 
 import {
@@ -7,16 +9,15 @@ import {
 import { getDocumentReviewManagementData } from "@/features/document-reviews/api/service";
 import { getVisaManagementData } from "@/features/visa-management/api/service";
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null, timeZone: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+  return formatInTimeZone(value, timeZone, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value));
+  });
 }
 
 type ServiceStatusKind = "document" | "visa" | "task";
@@ -73,6 +74,7 @@ export async function ManagementStudyAbroadInsightPage({
 }: {
   mode: "records" | "analytics";
 }) {
+  const timeZone = await getViewerTimeZone();
   const [documents, visas] = await Promise.all([
     getDocumentReviewManagementData(),
     getVisaManagementData(),
@@ -169,7 +171,7 @@ export async function ManagementStudyAbroadInsightPage({
                     {row.pendingVisaTasks}
                   </td>
                   <td className="app-muted-text px-4 py-2">
-                    {formatDate(row.lastActivityAt)}
+                    {formatDate(row.lastActivityAt, timeZone)}
                   </td>
                 </tr>
               ))}
@@ -342,7 +344,7 @@ export async function ManagementStudyAbroadInsightPage({
                   <ServiceStatus kind={row.kind} status={row.status} />
                 </td>
                 <td className="app-muted-text px-4 py-2">
-                  {formatDate(row.occurredAt)}
+                  {formatDate(row.occurredAt, timeZone)}
                 </td>
               </tr>
             ))}
