@@ -33,14 +33,14 @@ function filesUnder(dir) {
   });
 }
 
-test("学科清单只覆盖学习类应用，留学服务和大学课程不是学科模块", () => {
-  assert.deepEqual([...SUBJECT_SLUGS].sort(), ["english", "korean", "math"]);
+test("学科清单只覆盖学习类应用，留学服务（服务类）不是学科模块", () => {
+  assert.deepEqual([...SUBJECT_SLUGS].sort(), ["english", "korean", "math", "university"]);
   for (const slug of SUBJECT_SLUGS) {
     assert.equal(STUDENT_APPS.find((app) => app.slug === slug)?.kind, "learning");
     assert.equal(getSubjectManifest(slug)?.slug, slug);
     assert.equal(getSubjectManifest(slug)?.contractVersion, 1);
   }
-  for (const slug of ["university", "study-abroad", "toString", "__proto__", ""]) {
+  for (const slug of ["study-abroad", "toString", "__proto__", ""]) {
     assert.equal(getSubjectManifest(slug), null, slug);
     assert.equal(isSubjectSlug(slug), false, slug);
   }

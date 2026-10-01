@@ -11,6 +11,7 @@ import {
 import { englishManifest } from "./english/index.ts";
 import { koreanManifest } from "./korean/index.ts";
 import { mathManifest } from "./math/index.ts";
+import { universityManifest } from "./university/index.ts";
 
 /**
  * 平台读取学科能力的唯一入口。只引用各学科的 index，不深链学科内部文件。
@@ -20,6 +21,7 @@ const SUBJECT_MANIFESTS: Readonly<Record<SubjectSlug, SubjectManifest>> = {
   korean: koreanManifest,
   english: englishManifest,
   math: mathManifest,
+  university: universityManifest,
 };
 
 export const SUBJECT_SLUGS = Object.keys(SUBJECT_MANIFESTS) as SubjectSlug[];

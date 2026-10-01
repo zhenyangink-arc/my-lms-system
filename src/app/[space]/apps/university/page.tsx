@@ -1,7 +1,6 @@
-import { StudentApplicationHome } from "@/app/dashboard/StudentApplicationHome";
+import { StudentSubjectHome } from "@/app/dashboard/StudentSubjectHome";
 
 export default async function UniversityStudentAppPage({ params }: { params: Promise<{ space: string }> }) {
   const { space } = await params;
-  return <StudentApplicationHome space={space} appSlug="university" />;
+  return <StudentSubjectHome space={space} appSlug="university" />;
 }
-

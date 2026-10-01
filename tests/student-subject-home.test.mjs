@@ -22,7 +22,9 @@ test("学科首页区块由清单声明，没有学科清单的应用不启用",
   assert.deepEqual(getSubjectManifest("math").student.homeBlocks, []);
   assert.equal(isStudentHomeBlockEnabled("korean", "ability-portrait"), true);
   assert.equal(isStudentHomeBlockEnabled("math", "today-tasks"), false);
-  assert.equal(isStudentHomeBlockEnabled("university", "today-tasks"), false);
+  assert.equal(isStudentHomeBlockEnabled("study-abroad", "today-tasks"), false);
+  assert.equal(isStudentHomeBlockEnabled("university", "today-tasks"), true);
+  assert.equal(isStudentHomeBlockEnabled("university", "ability-portrait"), false);
 });
 
 test("英语首页使用平台首页框架，数学课程接入前仍显示建设中", async () => {

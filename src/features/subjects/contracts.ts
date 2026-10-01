@@ -7,7 +7,7 @@ import type { StudentAppSlug } from "@/lib/student-apps";
  * 清单只保存可序列化的纯数据，服务端组件和客户端组件都可以读取；
  * 图标、链接和权限由平台目录维护，学科只声明启用和排序。
  */
-export type SubjectSlug = Extract<StudentAppSlug, "korean" | "english" | "math">;
+export type SubjectSlug = Extract<StudentAppSlug, "korean" | "english" | "math" | "university">;
 
 export const MANAGEMENT_SECTION_KEYS = [
   "learning-plans",

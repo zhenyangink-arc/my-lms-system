@@ -83,7 +83,9 @@ test("学生导航栏目查询：没有学科清单的应用返回 null", () => 
   assert.equal(isStudentNavItemEnabled("english", "practice"), false);
   assert.equal(isStudentNavItemEnabled("english", "courses"), true);
   assert.equal(isStudentNavItemEnabled("math", "courses"), false);
-  assert.equal(isStudentNavItemEnabled("university", "practice"), null);
+  assert.equal(isStudentNavItemEnabled("study-abroad", "practice"), null);
+  assert.equal(isStudentNavItemEnabled("university", "practice"), false);
+  assert.equal(isStudentNavItemEnabled("university", "courses"), true);
 });
 
 test("未开放巩固中心的学科不生成巩固、专项训练、错题复习任务", async () => {

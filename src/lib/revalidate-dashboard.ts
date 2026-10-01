@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
  * https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-a-page-path
  */
 /** 提供课程目录路由（`/[space]/apps/<app>/courses/**`）的学生应用，须与路由目录保持一致。 */
-export const COURSE_ROUTE_APP_SLUGS = ["korean", "english", "study-abroad"] as const;
+export const COURSE_ROUTE_APP_SLUGS = ["korean", "english", "university", "study-abroad"] as const;
 
 export function revalidateDashboard(path: string, type?: "page" | "layout") {
   if (!path.startsWith("/dashboard")) {
