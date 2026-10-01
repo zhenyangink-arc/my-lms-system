@@ -6,6 +6,8 @@ export const QUESTION_TYPES = [
   "single_choice",
   "file_link",
   "audio_recording",
+  "math.expression",
+  "math.numeric",
 ] as const;
 export const SUBMISSION_STATUSES = [
   "submitted",
@@ -45,6 +47,8 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   single_choice: "单选题",
   file_link: "附件链接",
   audio_recording: "录音题",
+  "math.expression": "表达式作答",
+  "math.numeric": "数值作答",
 };
 
 export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {

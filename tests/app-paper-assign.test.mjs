@@ -41,3 +41,19 @@ test("韩语、英语页面其余部分不变：制作标准试卷仍走原有�
   assert.equal((page.match(/<AssessmentPaperComposer/g) ?? []).length, 2);
   assert.match(page, /canPrepareStandardPapers &&\s*!subjectAssessmentAuthoring &&\s*!testResult\.error/);
 });
+
+test("数学学生端：作业路由与英语一致且按数学应用读取；数学题型有标签与专用输入", () => {
+  for (const file of ["assignments/page.tsx", "assignments/[assignmentId]/page.tsx", "assignments/[assignmentId]/layout.tsx"]) {
+    const text = read(`src/app/[space]/apps/math/${file}`);
+    assert.match(text, /"math"/, file);
+    assert.doesNotMatch(text, /english|korean|English/i, file);
+  }
+  const config = read("src/app/dashboard/assignments/config.ts");
+  assert.match(config, /"math\.expression": "表达式作答"/);
+  assert.match(config, /"math\.numeric": "数值作答"/);
+  const form = read("src/app/dashboard/assignments/AssignmentSubmissionForm.tsx");
+  assert.match(form, /question\.type === "math\.expression" \|\| question\.type === "math\.numeric"/);
+  assert.match(form, /maxLength=\{200\}/);
+  // 其余题型的输入保持不变（含原有的短答提示）
+  assert.match(form, /placeholder=\{question\.type === "file_link" \? "粘贴完整文件链接" : "填写韩语答案"\}/);
+});

@@ -115,7 +115,7 @@ test("英语课程目录的分类都提供学习入口，数学尚未接入课�
   assert.equal(getSubjectManifest("math").student.catalogOpensAllCategories, false);
 });
 
-test("英语学生端只接入已按应用隔离的平台页面，数学仍只有应用首页", () => {
+test("英语学生端只接入已按应用隔离的平台页面，数学只有应用首页与作业", () => {
   const english = getSubjectManifest("english");
   assert.deepEqual(english.student.navigation, [
     { label: "学习", items: ["home", "courses", "assignments"] },
@@ -127,7 +127,7 @@ test("英语学生端只接入已按应用隔离的平台页面，数学仍只�
   for (const pending of ["practice", "conversation"]) assert.ok(!englishKeys.includes(pending), pending);
 
   const math = getSubjectManifest("math");
-  assert.deepEqual(math.student.navigation, [{ label: "应用导航", items: ["home"] }]);
+  assert.deepEqual(math.student.navigation, [{ label: "学习", items: ["home", "assignments"] }]);
   assert.deepEqual(math.student.navLabels, { home: "应用首页" });
 });
 

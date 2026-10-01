@@ -11,9 +11,9 @@ export const mathManifest: SubjectManifest = {
     courseContentWorkflow: false,
   },
   student: {
-    navigation: [{ label: "应用导航", items: ["home"] }],
+    navigation: [{ label: "学习", items: ["home", "assignments"] }],
     navLabels: { home: "应用首页" },
-    mobilePrimary: ["home"],
+    mobilePrimary: ["home", "assignments"],
     courseSearch: false,
     practiceMemory: false,
     membershipFooter: false,
