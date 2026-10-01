@@ -8,6 +8,10 @@ import {
   ManagementMetricStrip,
   ManagementNotice,
 } from "@/components/layout/management-page";
+import {
+  renderSubjectAssessmentAuthoring,
+  type SubjectSlug,
+} from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
 import type { ManagementAppAccess } from "@/lib/management-apps";
 import { questionOptions } from "@/lib/question-bank";
@@ -116,6 +120,15 @@ export async function ManagementApplicationAssessmentPage({
     access.scope === "platform" && access.capabilities.manageAssessments;
   const canReleaseStandardPapers =
     canPrepareStandardPapers && access.globalRole === "platform_owner";
+  // 学科自带出题界面时（例如数学直接录入题目），不再从章节测试题库选题。
+  const subjectAssessmentAuthoring = renderSubjectAssessmentAuthoring(
+    access.app.slug,
+    {
+      appId: access.appId,
+      appSlug: access.app.slug as SubjectSlug,
+      canRelease: canReleaseStandardPapers,
+    },
+  );
 
   let assignmentQuery = supabase
     .from("learning_assignments")
@@ -156,7 +169,9 @@ export async function ManagementApplicationAssessmentPage({
 
   const [bankQuestionResult, paperQuestionResult, adoptionResult] =
     await Promise.all([
-      canPrepareStandardPapers && publishedTests.length > 0
+      canPrepareStandardPapers &&
+      !subjectAssessmentAuthoring &&
+      publishedTests.length > 0
         ? supabase
             .from("chapter_test_questions")
             .select(
@@ -338,7 +353,9 @@ export async function ManagementApplicationAssessmentPage({
                   内容管理员可以保存草稿；直接发布只向平台负责人开放。
                 </p>
               </div>
+              {canPrepareStandardPapers && subjectAssessmentAuthoring}
               {canPrepareStandardPapers &&
+                !subjectAssessmentAuthoring &&
                 !testResult.error &&
                 !bankQuestionResult.error && (
                   <div className="flex flex-wrap gap-2">

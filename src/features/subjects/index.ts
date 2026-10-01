@@ -20,3 +20,8 @@ export {
   isSubjectSectionEnabled,
   isSubjectSlug,
 } from "./registry.ts";
+export { renderSubjectAssessmentAuthoring } from "./admin-slots.ts";
+export type {
+  SubjectAdminSlots,
+  SubjectAssessmentAuthoringProps,
+} from "./admin-slots.ts";
