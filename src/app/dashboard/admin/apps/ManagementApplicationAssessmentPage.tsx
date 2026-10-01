@@ -14,6 +14,11 @@ import { requireActiveUser } from "@/lib/auth";
 import type { ManagementAppAccess } from "@/lib/management-apps";
 import { questionOptions } from "@/lib/question-bank";
 import {
+  MEMBERSHIP_TIER_LABELS,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
+import { AppPaperAssignPanel } from "./AppPaperAssignPanel";
+import {
   PlatformAssessmentPaperCatalog,
   type PlatformAssessmentPaperItem,
 } from "./PlatformAssessmentPaperCatalog";
@@ -145,6 +150,24 @@ export async function ManagementApplicationAssessmentPage({
   if (access.scope === "tenant") {
     paperQuery = paperQuery.eq("status", "published");
   }
+
+  // 机构布置试卷需要的学生与课程（只在机构视图且有测评权限时读取，均按本应用过滤）
+  const canAssignPapers =
+    access.scope === "tenant" && access.capabilities.manageAssessments;
+  const [assignStudentsResult, assignCoursesResult] = canAssignPapers
+    ? await Promise.all([
+        supabase.rpc("list_learning_assignment_students_by_app", {
+          p_student_app_id: access.appId,
+        }),
+        supabase
+          .from("courses")
+          .select("id,title")
+          .eq("student_app_id", access.appId)
+          .eq("is_published", true)
+          .order("sort_order", { ascending: true })
+          .limit(100),
+      ])
+    : [null, null];
 
   const [assignmentResult, testResult, paperResult] = await Promise.all([
     access.tenantId
@@ -381,7 +404,7 @@ export async function ManagementApplicationAssessmentPage({
       ) : (
         <>
           <ManagementNotice tone="info">
-            这里仅显示平台负责人已经正式发布的整套试卷。机构不能修改平台题目，可以前往作业考试管理选择学生和时间进行布置。
+            这里仅显示平台负责人已经正式发布的整套试卷。机构不能修改平台题目，可以在下方选择学生和时间进行布置。
           </ManagementNotice>
           <ManagementMetricStrip
             label="机构作业与考试概况"
@@ -405,14 +428,6 @@ export async function ManagementApplicationAssessmentPage({
                   机构端只接收平台正式发布的版本。
                 </p>
               </div>
-              {access.capabilities.manageAssessments && (
-                <Link
-                  href={`${access.dashboardBasePath}/admin/assignments`}
-                  className="inline-flex min-h-11 items-center rounded-lg bg-[var(--primary)] px-4 text-xs font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
-                >
-                  去布置作业或考试
-                </Link>
-              )}
             </div>
             <div className="overflow-x-auto border bg-[var(--card)]">
               <table className="w-full min-w-[760px] border-collapse text-left text-xs">
@@ -472,6 +487,37 @@ export async function ManagementApplicationAssessmentPage({
               </table>
             </div>
           </section>
+
+          {canAssignPapers && (
+            <AppPaperAssignPanel
+              papers={papers.map((paper) => ({
+                id: paper.id,
+                paperCode: paper.paper_code,
+                title: paper.title,
+                paperType: paper.paper_type,
+                questionCount: paper.question_count,
+                totalPoints: Number(paper.total_points),
+                version: paper.version,
+              }))}
+              students={(
+                (assignStudentsResult?.data ?? []) as {
+                  id: string;
+                  full_name: string | null;
+                  email: string | null;
+                  membership_tier: string | null;
+                }[]
+              ).map((student) => ({
+                id: student.id,
+                name: student.full_name?.trim() || "未填写姓名",
+                email: student.email || "未填写邮箱",
+                tier: MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(student.membership_tier)],
+              }))}
+              courses={(
+                (assignCoursesResult?.data ?? []) as { id: string; title: string }[]
+              ).map((course) => ({ id: course.id, title: course.title }))}
+              canTargetAllStudents={access.role !== "teacher"}
+            />
+          )}
 
           <section className="space-y-3">
             <h2 className="text-sm font-semibold">本机构布置记录</h2>
