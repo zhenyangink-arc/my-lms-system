@@ -13,7 +13,7 @@ import {
   getStudentAppCourseScope,
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { STUDENT_APP_IDS, getStudentAppPath } from "@/lib/student-apps";
 import type { SubjectSlug } from "@/features/subjects";
 import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
@@ -481,6 +481,12 @@ export async function AssignmentsPageContent({
           key={initialTaskTypeFilter}
           items={boardItems}
           chapterTests={chapterTests}
+          assignmentHrefBase={
+            // 韩语沿用旧路径（行为不变）；其他应用直接指向本应用的作业详情，避免被旧入口重定向到韩语应用
+            studentAppSlug !== "korean" && tenant
+              ? getStudentAppPath(tenant.slug, studentAppSlug, "assignments")
+              : undefined
+          }
           isManager={isManager}
           currentTime={currentTime}
           preferenceScope={`${tenant?.id ?? "platform"}:${user.id}`}

@@ -16,7 +16,7 @@ import {
   type AssignmentDetailRow,
 } from "@/lib/assignment-detail-data";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { STUDENT_APP_IDS, getStudentAppPath } from "@/lib/student-apps";
 import type { SubjectSlug } from "@/features/subjects";
 import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 
@@ -164,7 +164,7 @@ export async function AssignmentDetailPageContent({ params, studentAppSlug }: { 
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-      <Link href={`/dashboard/assignments?type=${assignment.assignment_type === "exam" ? "exam" : "homework"}`} className="inline-flex items-center gap-2 text-xs font-bold app-muted-text"><ArrowLeft size={14} />返回任务列表</Link>
+      <Link href={`${space && studentAppSlug !== "korean" ? getStudentAppPath(space, studentAppSlug, "assignments") : "/dashboard/assignments"}?type=${assignment.assignment_type === "exam" ? "exam" : "homework"}`} className="inline-flex items-center gap-2 text-xs font-bold app-muted-text"><ArrowLeft size={14} />返回任务列表</Link>
       {isRetakeWindow && (
         <p role="status" className="rounded-xl bg-[var(--status-warning-surface)] px-4 py-3 text-sm font-semibold text-[var(--status-warning)]">
           当前为老师布置的补考，开始与截止时间已按补考安排更新。

@@ -57,3 +57,12 @@ test("数学学生端：作业路由与英语一致且按数学应用读取；�
   // 其余题型的输入保持不变（含原有的短答提示）
   assert.match(form, /placeholder=\{question\.type === "file_link" \? "粘贴完整文件链接" : "填写韩语答案"\}/);
 });
+
+test("非韩语应用的作业详情链接指向本应用；韩语沿用旧路径（行为不变）", () => {
+  const list = read("src/app/dashboard/assignments/page-content.tsx");
+  assert.match(list, /studentAppSlug !== "korean" && tenant\s*\?\s*getStudentAppPath\(tenant\.slug, studentAppSlug, "assignments"\)\s*:\s*undefined/);
+  const board = read("src/app/dashboard/assignments/AssignmentBoard.tsx");
+  assert.match(board, /\$\{assignmentHrefBase \?\? "\/dashboard\/assignments"\}\/\$\{item\.id\}/);
+  const detail = read("src/app/dashboard/assignments/[assignmentId]/page-content.tsx");
+  assert.match(detail, /space && studentAppSlug !== "korean" \? getStudentAppPath\(space, studentAppSlug, "assignments"\) : "\/dashboard\/assignments"/);
+});

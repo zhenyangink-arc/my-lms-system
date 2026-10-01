@@ -407,6 +407,7 @@ function TaskRow({
 export function AssignmentBoard({
   items,
   chapterTests,
+  assignmentHrefBase,
   isManager,
   currentTime,
   preferenceScope,
@@ -414,6 +415,8 @@ export function AssignmentBoard({
 }: {
   items: AssignmentItem[];
   chapterTests: ChapterTestItem[];
+  /** 非韩语应用的作业详情路径前缀（如 /local-dev/apps/math/assignments）；不传则沿用旧的 /dashboard 路径。 */
+  assignmentHrefBase?: string;
   isManager: boolean;
   currentTime: number;
   preferenceScope: string;
@@ -434,7 +437,7 @@ export function AssignmentBoard({
   const tasks = useMemo<UnifiedTask[]>(() => {
     const assignmentTasks = items.map<UnifiedTask>((item) => ({
       id: item.id,
-      href: `/dashboard/assignments/${item.id}?type=${
+      href: `${assignmentHrefBase ?? "/dashboard/assignments"}/${item.id}?type=${
         item.assignment_type === "exam" ? "exam" : "homework"
       }`,
       kind: item.assignment_type === "exam" ? "exam" : "homework",
@@ -491,7 +494,7 @@ export function AssignmentBoard({
     }));
 
     return [...assignmentTasks, ...testTasks].sort(sortTasks);
-  }, [chapterTests, currentTime, isManager, items]);
+  }, [assignmentHrefBase, chapterTests, currentTime, isManager, items]);
 
   const counts = {
     todo: tasks.filter((task) => ["pending", "in_progress", "studying"].includes(task.state)).length,
