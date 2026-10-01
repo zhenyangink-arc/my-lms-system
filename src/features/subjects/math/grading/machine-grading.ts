@@ -24,6 +24,8 @@ export type MachineGradeRecord = {
   suggestedPoints: number | null;
   reason: string;
   evidence: Readonly<Record<string, unknown>>;
+  /** 为真时数据库在该作答已有结果时不再新增（自动补判）；重判为假。 */
+  onlyIfMissing?: boolean;
 };
 
 export type MachineGradingStore = {
@@ -84,9 +86,9 @@ export async function gradePendingMathAnswers(
   let recorded = 0;
   let failed = 0;
   for (const answer of answers) {
-    const record = gradeAnswer(answer);
-    if (!record) continue;
-    const result = await store.record(record);
+    const graded = gradeAnswer(answer);
+    if (!graded) continue;
+    const result = await store.record({ ...graded, onlyIfMissing: options.regrade !== true });
     if (result.error) failed += 1;
     else recorded += 1;
   }

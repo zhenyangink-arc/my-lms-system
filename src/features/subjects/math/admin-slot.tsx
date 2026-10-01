@@ -26,32 +26,66 @@ type DraftPaperItem = {
   draft: ReturnType<typeof draftFromRows>;
 };
 
+type ReadResult<T> = PromiseLike<{ data: T[] | null; error: unknown }>;
+
+/** 按 ID 分批读取并合并；任何一批失败整体返回 null（不返回残缺数据）。 */
+async function selectInChunks<T>(ids: string[], size: number, run: (chunk: string[]) => ReadResult<T>): Promise<T[] | null> {
+  const rows: T[] = [];
+  for (let i = 0; i < ids.length; i += size) {
+    const { data, error } = await run(ids.slice(i, i + size));
+    if (error) return null;
+    rows.push(...(data ?? []));
+  }
+  return rows;
+}
+
+/**
+ * 数据库迁移（D5、D7、D8）是否已应用。代码先于迁移合并时，界面直接说明原因，
+ * 而不是让每个操作都在数据库函数处失败、草稿读取悄悄返回空。其他错误按“已应用”处理，避免瞬时故障把功能藏起来。
+ */
+async function isMathSchemaReady(): Promise<boolean> {
+  const { supabase } = await requireActiveUser();
+  const { error } = await supabase.from("math_paper_question_specs").select("paper_question_id").limit(1);
+  if (!error) return true;
+  const code = (error as { code?: string }).code;
+  const message = (error as { message?: string }).message ?? "";
+  return !(code === "42P01" || code === "PGRST205" || /does not exist|schema cache/i.test(message));
+}
+
 /** 读取当前数学应用的草稿试卷，并还原成可编辑的表单状态（读取全部走平台负责人自己的连接，受 RLS 约束）。 */
 async function loadDraftPapers(): Promise<DraftPaperItem[]> {
   const { supabase } = await requireActiveUser();
-  const { data: papers } = await supabase
+  const { data: papers, error: papersError } = await supabase
     .from("assessment_papers")
     .select("id,paper_code,paper_type,title,description,duration_minutes,passing_score,allow_resubmission,source_test_id,updated_at")
     .eq("student_app_id", STUDENT_APP_IDS.math)
     .eq("status", "draft")
     .order("updated_at", { ascending: false })
     .limit(MAX_DRAFT_PAPERS);
-  if (!papers || papers.length === 0) return [];
+  if (papersError || !papers || papers.length === 0) return [];
   const paperIds = papers.map((paper) => paper.id as string);
-  const { data: questions } = await supabase
-    .from("assessment_paper_questions")
-    .select("id,paper_id,question_type,prompt,options,points,difficulty,sort_order")
-    .in("paper_id", paperIds);
+
+  // 每套试卷最多 100 题，PostgREST 默认单次最多返回 1000 行，所以按 5 套一批读取
+  const questions = await selectInChunks(paperIds, 5, (chunk) =>
+    supabase
+      .from("assessment_paper_questions")
+      .select("id,paper_id,question_type,prompt,options,points,difficulty,sort_order")
+      .in("paper_id", chunk),
+  );
   const questionIds = (questions ?? []).map((question) => question.id as string);
-  const [{ data: keys }, { data: specs }, { data: containers }] = await Promise.all([
-    questionIds.length
-      ? supabase.from("assessment_paper_question_keys").select("question_id,correct_answer,explanation").in("question_id", questionIds)
-      : Promise.resolve({ data: [] as { question_id: string; correct_answer: string | null; explanation: string | null }[] }),
-    questionIds.length
-      ? supabase.from("math_paper_question_specs").select("paper_question_id,spec").in("paper_question_id", questionIds)
-      : Promise.resolve({ data: [] as { paper_question_id: string; spec: unknown }[] }),
-    supabase.from("chapter_tests").select("id,title").in("id", [...new Set(papers.map((paper) => paper.source_test_id as string))]),
+  const [keys, specs, containers] = await Promise.all([
+    selectInChunks(questionIds, 100, (chunk) =>
+      supabase.from("assessment_paper_question_keys").select("question_id,correct_answer,explanation").in("question_id", chunk),
+    ),
+    selectInChunks(questionIds, 100, (chunk) =>
+      supabase.from("math_paper_question_specs").select("paper_question_id,spec").in("paper_question_id", chunk),
+    ),
+    selectInChunks([...new Set(papers.map((paper) => paper.source_test_id as string))], 100, (chunk) =>
+      supabase.from("chapter_tests").select("id,title").in("id", chunk),
+    ),
   ]);
+  // 任何一类数据读取失败，就不能还原出完整草稿：保存会用残缺内容覆盖原题目与答案键，所以一律标为不可编辑
+  const complete = questions !== null && keys !== null && specs !== null;
   const keyByQuestion = new Map((keys ?? []).map((key) => [key.question_id as string, key]));
   const specByQuestion = new Map((specs ?? []).map((spec) => [spec.paper_question_id as string, spec.spec as unknown]));
   const containerTitle = new Map((containers ?? []).map((container) => [container.id as string, container.title as string]));
@@ -78,15 +112,17 @@ async function loadDraftPapers(): Promise<DraftPaperItem[]> {
       updatedAt: paper.updated_at as string,
       allowResubmission: paper.allow_resubmission === true,
       lessonLabel: containerTitle.get(paper.source_test_id as string) ?? "数学课时",
-      draft: draftFromRows(
-        {
-          title: paper.title as string,
-          description: (paper.description as string) ?? "",
-          duration_minutes: paper.duration_minutes as number | null,
-          passing_score: paper.passing_score as number | string | null,
-        },
-        rows,
-      ),
+      draft: complete
+        ? draftFromRows(
+            {
+              title: paper.title as string,
+              description: (paper.description as string) ?? "",
+              duration_minutes: paper.duration_minutes as number | null,
+              passing_score: paper.passing_score as number | string | null,
+            },
+            rows,
+          )
+        : null,
     };
   });
 }
@@ -119,6 +155,13 @@ async function loadLessonOptions(): Promise<MathPaperLessonOption[]> {
 
 /** 数学“制作标准试卷”界面：平台负责人直接录入题目（见 docs/math-admin-authoring-design.md）。 */
 async function MathAssessmentAuthoring({ canRelease }: SubjectAssessmentAuthoringProps) {
+  if (!(await isMathSchemaReady())) {
+    return (
+      <p role="status" className="app-muted-text basis-full text-xs leading-5">
+        数学出题功能需要先应用数据库迁移（判题存储、数学试卷层、草稿替换）。迁移应用后这里会出现“新增数学作业卷 / 考试卷”。
+      </p>
+    );
+  }
   const [lessons, drafts] = await Promise.all([loadLessonOptions(), loadDraftPapers()]);
   return (
     <div className="flex flex-wrap gap-2">

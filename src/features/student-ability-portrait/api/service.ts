@@ -241,11 +241,14 @@ export async function loadAbilityPortrait({
       .from("toolbox_practice_sessions")
       .select("id", { count: "exact", head: true })
       .eq("student_id", studentId)
+      .eq("student_app_id", studentAppId)
       .eq("status", "completed"),
+    // 作答记录本身没有应用字段，通过所属练习会话限定到当前应用
     supabase
       .from("toolbox_practice_attempts")
-      .select("id", { count: "exact", head: true })
+      .select("id, toolbox_practice_sessions!inner(student_app_id)", { count: "exact", head: true })
       .eq("student_id", studentId)
+      .eq("toolbox_practice_sessions.student_app_id", studentAppId)
       .eq("skill", "speaking")
       .eq("evaluated_by", "ai"),
   ]);

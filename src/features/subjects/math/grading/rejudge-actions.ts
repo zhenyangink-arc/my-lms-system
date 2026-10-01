@@ -1,7 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentAppSlugById } from "@/lib/student-app-access.server";
@@ -47,19 +46,25 @@ export async function rejudgeMathAnswersAction(
     .select("id")
     .eq("assignment_id", assignmentId)
     .in("submission_state", PENDING_STATES)
-    .limit(MAX_SUBMISSIONS_PER_RUN);
-  const ids = (submissions ?? []).map((row) => row.id as string);
+    .order("submitted_at", { ascending: true })
+    .limit(MAX_SUBMISSIONS_PER_RUN + 1);
+  const found = (submissions ?? []).map((row) => row.id as string);
+  // 多取一条用来判断是否被截断；超出上限的提交这次不处理，需要再点一次
+  const truncated = found.length > MAX_SUBMISSIONS_PER_RUN;
+  const ids = found.slice(0, MAX_SUBMISSIONS_PER_RUN);
   if (ids.length === 0) return { status: "success", message: "没有待批改的提交需要重新判题。" };
 
   try {
     const result = await gradePendingMathAnswers(createStore(createAdminClient()), ids, { regrade: true });
-    revalidatePath("/[space]/dashboard/admin/apps/[appSlug]/assignments/[assignmentId]", "page");
+    revalidateDashboard("/dashboard/admin/apps/[appSlug]/assignments/[assignmentId]", "page");
     return {
       status: result.failed > 0 ? "error" : "success",
       message:
         result.failed > 0
           ? `已重新判题 ${result.recorded} 道，${result.failed} 道失败，请稍后重试。`
-          : `已重新判题 ${result.recorded} 道作答（旧结果已保留，建议分以最新一次为准）。`,
+          : `已重新判题 ${result.recorded} 道作答（旧结果已保留，建议分以最新一次为准）。${
+              truncated ? `待批改提交超过 ${MAX_SUBMISSIONS_PER_RUN} 份，这次只处理了最早的 ${MAX_SUBMISSIONS_PER_RUN} 份。` : ""
+            }`,
     };
   } catch {
     return { status: "error", message: "重新判题失败，请稍后重试。" };

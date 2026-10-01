@@ -262,10 +262,35 @@ export function trialGrade(
   );
 }
 
-/** 保存前自检：标准答案对自身判题必须为“正确”。 */
-export function selfCheck(question: DraftExpressionQuestion | DraftNumericQuestion): TrialResult {
+/** 保存前自检：标准答案对自身判题必须为“正确”。`seed` 必须和实际保存的种子一致，否则自检与真实判题不是同一件事。 */
+export function selfCheck(question: DraftExpressionQuestion | DraftNumericQuestion, seed = 1): TrialResult {
   const answer = question.expected.trim();
-  return trialGrade(question, answer);
+  return trialGrade(question, answer, seed);
+}
+
+const SEED_SEARCH_TRIES = 25;
+
+/**
+ * 为题目挑一个能让“标准答案对自身判对”的种子。有些表达式在取值范围内只有一部分点有定义
+ * （例如 sqrt(x) 在 [-5, 5]），个别种子会让有效点不足，学生写对也无法自动判定，所以保存前先找一个可用的种子。
+ * 数值题不使用种子，直接返回第一个候选。找不到时返回 null（调用方按自检失败报错）。
+ */
+export function findWorkingSeed(
+  question: DraftExpressionQuestion | DraftNumericQuestion,
+  nextSeed: () => number,
+): number | null {
+  if (question.kind === "numeric") return nextSeed();
+  for (let i = 0; i < SEED_SEARCH_TRIES; i += 1) {
+    const seed = nextSeed();
+    if (selfCheck(question, seed).verdict === "correct") return seed;
+  }
+  return null;
+}
+
+/** 界面用的确定性版本：从 1 开始依次尝试，找不到时退回 1（此时自检会如实报出原因）。 */
+export function deterministicWorkingSeed(question: DraftExpressionQuestion | DraftNumericQuestion): number {
+  let next = 0;
+  return findWorkingSeed(question, () => (next += 1)) ?? 1;
 }
 
 /** 标准表达式的 LaTeX（用于 KaTeX 预览）；无法解析时返回 null。 */
@@ -378,7 +403,7 @@ export function validatePaperDraft(draft: DraftPaper, seedFor: (index: number) =
           : buildNumericSpec(question);
       if (!spec.ok) problems.push(spec.message);
       else {
-        const check = selfCheck(question);
+        const check = selfCheck(question, seedFor(index));
         if (check.verdict !== "correct") problems.push(`标准答案无法通过自检：${check.message}`);
         else if (problems.length === 0 && points !== null) {
           rpc = {

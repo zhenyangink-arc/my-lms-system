@@ -122,6 +122,8 @@ begin
   insert into d5_result(name, outcome) values ('3c 重判新增一行',
     pg_temp.try(null, 'service_role', format($f$select public.record_learning_machine_grade(%L, 'math.expression-equivalence', '1.0.1', 'incorrect', 0, 'value_mismatch', '{}'::jsonb)$f$, a_expr)));
   select count(*) into v_n from public.learning_submission_machine_grades where answer_id = a_expr;
+  insert into d5_result(name, outcome) values ('3c2 自动补判（only_if_missing）遇到已有结果不再新增',
+    pg_temp.try(null, 'service_role', format($f$select public.record_learning_machine_grade(%L, 'math.expression-equivalence', '1.0.0', 'correct', 5, 'equivalent_on_samples', '{}'::jsonb, true)$f$, a_expr)));
   insert into d5_result(name, outcome) values ('3d 留痕行数（应为 2）', v_n::text);
   select max(revision) into v_n from public.learning_submission_machine_grades where answer_id = a_expr;
   insert into d5_result(name, outcome) values ('3e 最新修订号（应为 2）', v_n::text);

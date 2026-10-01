@@ -146,7 +146,7 @@ export async function recordStudentChapterPracticeProgress({
     supabase
       .from("chapter_practice_units")
       .select("id,course_chapter_id,completion_rule")
-      // 练习单元自带应用归属；RLS 只允许读取学生有权使用的应用内容。
+      // 练习单元自带应用归属：读取受“能读该应用”的 RLS 约束，写入进度的 INSERT / UPDATE 策略还要求学生当前有该应用的使用权限（数据库层兜底，已核对策略定义）。
       .eq("id", practiceUnitId)
       .eq("status", "published")
       .maybeSingle(),

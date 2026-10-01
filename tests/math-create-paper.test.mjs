@@ -233,3 +233,31 @@ test("编辑草稿：坏输入在访问存储之前被拒", async () => {
   const create = await createMathPaper(store, seed, input({ paperId: "", lessonId: "bad" }));
   assert.match(create.message, /课时/);
 });
+
+test("种子挑选：取值范围内只有部分点有定义时（sqrt(x) 在 [-5, 5]），保存的种子必须让标准答案自己判对", async () => {
+  const { gradeExpression } = await import("../src/features/subjects/math/grading/equivalence.ts");
+  const { selfCheck } = await import("../src/features/subjects/math/admin/paper-model.ts");
+  const q = { ...newQuestion("expression"), prompt: "根号", explanation: "e", expected: "sqrt(x)", variables: [{ name: "x", min: "-5", max: "5" }] };
+  // 复现审查发现的问题：固定种子 1 对这道题自检失败
+  assert.equal(selfCheck(q, 1).verdict, "error");
+  // 从种子 1 开始依次给出，服务端应跳过不可用的种子
+  let n = 0;
+  const { store, calls } = makeStore();
+  const result = await createMathPaper(store, () => (n += 1), input({ draftJson: JSON.stringify(draft({ questions: [q] })) }));
+  assert.equal(result.status, "success", result.message);
+  const spec = calls.createPaper[0].questions[0].mathSpec;
+  assert.notEqual(spec.seed, 1);
+  assert.equal(gradeExpression("sqrt(x)", spec).verdict, "correct");
+  assert.equal(gradeExpression("sqrt(x)+0", spec).verdict, "correct");
+  assert.equal(gradeExpression("x", spec).verdict, "incorrect");
+});
+
+test("种子挑选：确实无法判定的规格（取值范围内函数处处无定义）仍然被拒，且给出原因", async () => {
+  const q = { ...newQuestion("expression"), prompt: "无定义", explanation: "e", expected: "sqrt(x)", variables: [{ name: "x", min: "-100", max: "-50" }] };
+  let n = 0;
+  const { store, calls } = makeStore();
+  const result = await createMathPaper(store, () => (n += 1), input({ draftJson: JSON.stringify(draft({ questions: [q] })) }));
+  assert.equal(result.status, "error");
+  assert.match(result.message, /取值范围内两边都有定义的点太少/);
+  assert.equal(calls.createPaper.length, 0);
+});

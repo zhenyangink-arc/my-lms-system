@@ -190,7 +190,6 @@ function AssignDialog({
                         <label className="flex items-center gap-2 text-xs">
                           <input
                             type="checkbox"
-                            name="target_ids"
                             value={student.id}
                             checked={chosen.has(student.id)}
                             onChange={() =>
@@ -209,6 +208,10 @@ function AssignDialog({
                     ))}
                     {visibleStudents.length === 0 && <li className="app-muted-text text-xs">没有符合条件的学生。</li>}
                   </ul>
+                  {/* 提交的名单来自这里，而不是当前可见的复选框：搜索过滤会让已选学生的复选框消失 */}
+                  {[...chosen].map((id) => (
+                    <input key={id} type="hidden" name="target_ids" value={id} />
+                  ))}
                   <p className="app-muted-text text-[11px]">已选 {chosen.size} 人</p>
                 </div>
               )}

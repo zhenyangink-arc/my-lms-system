@@ -10,6 +10,7 @@ import {
   DIFFICULTY_LABELS,
   MAX_VARIABLES,
   QUESTION_KIND_LABELS,
+  deterministicWorkingSeed,
   expressionToTex,
   selfCheck,
   trialGrade,
@@ -40,7 +41,10 @@ export function MathQuestionEditor({
 
   const isMath = question.kind !== "choice";
   const check = useMemo(
-    () => (question.kind === "choice" || question.expected.trim() === "" ? null : selfCheck(question)),
+    () =>
+      question.kind === "choice" || question.expected.trim() === ""
+        ? null
+        : selfCheck(question, deterministicWorkingSeed(question)),
     [question],
   );
   const tex = useMemo(
@@ -48,7 +52,10 @@ export function MathQuestionEditor({
     [question],
   );
   const trial = useMemo(
-    () => (trialDone && question.kind !== "choice" ? trialGrade(question, trialAnswer) : null),
+    () =>
+      trialDone && question.kind !== "choice"
+        ? trialGrade(question, trialAnswer, deterministicWorkingSeed(question))
+        : null,
     [question, trialAnswer, trialDone],
   );
 

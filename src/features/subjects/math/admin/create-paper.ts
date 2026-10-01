@@ -3,7 +3,7 @@
  * 校验输入 → 找到数学课时 → 确保试卷容器 → 调用 create_math_paper → 可选发布。
  * 权限由调用方（动作）先做，数据库函数最终再校验一次；这里不信任客户端传来的任何内容。
  */
-import { parseDraftPaper, validatePaperDraft } from "./paper-model.ts";
+import { findWorkingSeed, parseDraftPaper, validatePaperDraft } from "./paper-model.ts";
 
 export type MathPaperActionResult = { status: "success" | "error"; message: string };
 
@@ -94,8 +94,11 @@ export async function createMathPaper(
   const parsed = parseDraftPaper(rawDraft);
   if (!parsed.ok) return fail("试卷内容格式不正确，请刷新页面后重试。");
 
-  // 判题种子由服务端生成，每题一个；不接受客户端传入。
-  const seeds = parsed.value.questions.map(() => randomSeed());
+  // 判题种子由服务端生成，每题一个；不接受客户端传入。表达式题挑一个能让标准答案自检通过的种子
+  // （取值范围内只有部分点有定义时，个别种子会让有效点不足）；挑不到就用随机种子，由校验如实报出原因。
+  const seeds = parsed.value.questions.map((question) =>
+    question.kind === "expression" ? (findWorkingSeed(question, randomSeed) ?? randomSeed()) : randomSeed(),
+  );
   const validation = validatePaperDraft(parsed.value, (index) => seeds[index]);
   if (!validation.ok) return fail(validation.errors.join("；"));
 

@@ -164,3 +164,48 @@ test("重判动作：先校验作业编号与数学应用，再校验“管理�
   const page = read("src/app/dashboard/admin/assignments/[assignmentId]/page-content.tsx");
   assert.match(page, /subjectSlug && subjectQuestionIds\.size > 0 \? renderSubjectReviewActions\(/);
 });
+
+test("自动补判带 onlyIfMissing=true（数据库已有结果时不再新增），重判为 false", async () => {
+  const auto = makeStore([answer({ answerId: "a1" })]);
+  await gradePendingMathAnswers(auto.store, ["s1"]);
+  assert.equal(auto.calls.recorded[0].onlyIfMissing, true);
+  const regrade = makeStore([answer({ answerId: "a1" })]);
+  await gradePendingMathAnswers(regrade.store, ["s1"], { regrade: true });
+  assert.equal(regrade.calls.recorded[0].onlyIfMissing, false);
+});
+
+test("机器判题服务端读取：翻页读取、读取错误抛出（不当成没有数据）、按批限定 ID 数量", () => {
+  const text = read("src/features/subjects/math/grading/machine-grading.server.ts");
+  assert.match(text, /const PAGE = 1000/);
+  assert.match(text, /\.range\(from, to\)/);
+  assert.match(text, /if \(error\) throw new Error\(/);
+  assert.match(text, /chunks\(submissionIds, 50\)/);
+  assert.match(text, /p_only_if_missing: record\.onlyIfMissing === true/);
+  // 四类读取（作答、题目、规格、已有结果）都走 selectAll，不再有直接忽略 error 的 .in() 读取
+  assert.equal((text.match(/await selectAll</g) ?? []).length, 4);
+  assert.doesNotMatch(text, /const \{ data: (answers|questions|specs|existing) \}/);
+});
+
+test("重判动作：按提交时间取最早的一批、多取一条判断截断并提示、使用统一的刷新函数", () => {
+  const text = read("src/features/subjects/math/grading/rejudge-actions.ts");
+  assert.match(text, /\.order\("submitted_at", \{ ascending: true \}\)/);
+  assert.match(text, /\.limit\(MAX_SUBMISSIONS_PER_RUN \+ 1\)/);
+  assert.match(text, /truncated \?/);
+  assert.match(text, /revalidateDashboard\(/);
+  assert.doesNotMatch(text, /revalidatePath/);
+});
+
+test("数学草稿列表：分批读取、读取失败时不还原草稿；迁移未应用时界面说明原因", () => {
+  const slot = read("src/features/subjects/math/admin-slot.tsx");
+  assert.match(slot, /selectInChunks\(paperIds, 5,/);
+  assert.match(slot, /const complete = questions !== null && keys !== null && specs !== null/);
+  assert.match(slot, /draft: complete\s*\?\s*draftFromRows\(/);
+  assert.match(slot, /isMathSchemaReady\(\)/);
+  assert.match(slot, /42P01/);
+  assert.match(slot, /数学出题功能需要先应用数据库迁移/);
+});
+
+test("教师评分输入：有机器建议时步长 0.01（满分 1.25 之类的建议分不会被浏览器的 step 校验拦住）", () => {
+  const form = read("src/app/dashboard/admin/assignments/SubmissionGradingForm.tsx");
+  assert.match(form, /step=\{answer\.suggestedPoints != null \? "0\.01" : "0\.5"\}/);
+});

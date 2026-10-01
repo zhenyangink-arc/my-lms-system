@@ -14,11 +14,27 @@ import {
 } from "./machine-grading.ts";
 
 const CHUNK = 100;
+/** PostgREST 默认单次最多返回 1000 行，需要翻页。 */
+const PAGE = 1000;
 
-function chunks<T>(items: T[]): T[][] {
+function chunks<T>(items: T[], size = CHUNK): T[][] {
   const result: T[][] = [];
-  for (let i = 0; i < items.length; i += CHUNK) result.push(items.slice(i, i + CHUNK));
+  for (let i = 0; i < items.length; i += size) result.push(items.slice(i, i + size));
   return result;
+}
+
+type PageResult<T> = PromiseLike<{ data: T[] | null; error: { message: string } | null }>;
+
+/** 翻页读取全部行；任何一页出错就抛出（不把读取失败当成“没有数据”）。 */
+async function selectAll<T>(page: (from: number, to: number) => PageResult<T>): Promise<T[]> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await page(from, from + PAGE - 1);
+    if (error) throw new Error(`机器判题读取失败：${error.message}`);
+    rows.push(...(data ?? []));
+    if ((data?.length ?? 0) < PAGE) break;
+  }
+  return rows;
 }
 
 /** 用服务端权限读写判题数据；调用方必须已经确认这些提交属于当前教职人员有权批改的作业。 */
@@ -26,43 +42,53 @@ export function createStore(admin: SupabaseClient): MachineGradingStore {
   return {
     async listUngraded(submissionIds, options) {
       const result: AnswerToGrade[] = [];
-      for (const ids of chunks(submissionIds)) {
-        const { data: answers } = await admin
-          .from("learning_submission_answers")
-          .select("id,question_id,answer_text")
-          .in("submission_id", ids);
-        if (!answers || answers.length === 0) continue;
-        const questionIds = [...new Set(answers.map((a) => a.question_id as string))];
-        const { data: questions } = await admin
-          .from("learning_assignment_questions")
-          .select("id,question_type,points")
-          .in("id", questionIds);
-        const mathQuestions = new Map(
-          (questions ?? [])
-            .filter((q) => isMathQuestionType(q.question_type as string))
-            .map((q) => [q.id as string, q]),
+      for (const ids of chunks(submissionIds, 50)) {
+        const answers = await selectAll<{ id: string; question_id: string; answer_text: string | null }>((from, to) =>
+          admin
+            .from("learning_submission_answers")
+            .select("id,question_id,answer_text")
+            .in("submission_id", ids)
+            .order("id")
+            .range(from, to),
         );
+        if (answers.length === 0) continue;
+        const questionIds = [...new Set(answers.map((a) => a.question_id))];
+        const questions: { id: string; question_type: string; points: number | string }[] = [];
+        for (const chunk of chunks(questionIds)) {
+          questions.push(
+            ...(await selectAll<{ id: string; question_type: string; points: number | string }>((from, to) =>
+              admin.from("learning_assignment_questions").select("id,question_type,points").in("id", chunk).order("id").range(from, to),
+            )),
+          );
+        }
+        const mathQuestions = new Map(questions.filter((q) => isMathQuestionType(q.question_type)).map((q) => [q.id, q]));
         if (mathQuestions.size === 0) continue;
-        const mathAnswers = answers.filter((a) => mathQuestions.has(a.question_id as string));
-        const { data: specs } = await admin
-          .from("math_question_specs")
-          .select("question_id,spec")
-          .in("question_id", [...mathQuestions.keys()]);
-        const specByQuestion = new Map((specs ?? []).map((s) => [s.question_id as string, s.spec as unknown]));
-        const { data: existing } = await admin
-          .from("learning_submission_machine_grades")
-          .select("answer_id")
-          .in("answer_id", mathAnswers.map((a) => a.id as string));
-        const done = new Set((existing ?? []).map((g) => g.answer_id as string));
+        const mathAnswers = answers.filter((a) => mathQuestions.has(a.question_id));
+        const specByQuestion = new Map<string, unknown>();
+        for (const chunk of chunks([...mathQuestions.keys()])) {
+          const specs = await selectAll<{ question_id: string; spec: unknown }>((from, to) =>
+            admin.from("math_question_specs").select("question_id,spec").in("question_id", chunk).order("question_id").range(from, to),
+          );
+          specs.forEach((row) => specByQuestion.set(row.question_id, row.spec));
+        }
+        const done = new Set<string>();
+        if (!options?.includeGraded) {
+          for (const chunk of chunks(mathAnswers.map((a) => a.id))) {
+            const graded = await selectAll<{ id: string; answer_id: string }>((from, to) =>
+              admin.from("learning_submission_machine_grades").select("id,answer_id").in("answer_id", chunk).order("id").range(from, to),
+            );
+            graded.forEach((row) => done.add(row.answer_id));
+          }
+        }
         for (const answer of mathAnswers) {
-          if (!options?.includeGraded && done.has(answer.id as string)) continue;
-          const question = mathQuestions.get(answer.question_id as string)!;
+          if (done.has(answer.id)) continue;
+          const question = mathQuestions.get(answer.question_id)!;
           result.push({
-            answerId: answer.id as string,
-            questionType: question.question_type as string,
+            answerId: answer.id,
+            questionType: question.question_type,
             points: Number(question.points),
             answerText: String(answer.answer_text ?? ""),
-            spec: specByQuestion.get(answer.question_id as string) ?? null,
+            spec: specByQuestion.get(answer.question_id) ?? null,
           });
         }
       }
@@ -77,6 +103,7 @@ export function createStore(admin: SupabaseClient): MachineGradingStore {
         p_suggested_points: record.suggestedPoints,
         p_reason: record.reason,
         p_evidence: record.evidence,
+        p_only_if_missing: record.onlyIfMissing === true,
       });
       return { error: error?.message };
     },

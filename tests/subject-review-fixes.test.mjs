@@ -80,3 +80,10 @@ test("管理端面包屑为所有管理分区提供中文名称", async () => {
     assert.match(breadcrumbs, new RegExp(`(^|\\s)("${key}"|${key}):`, "m"), key);
   }
 });
+
+test("能力画像：练习会话与 AI 口语次数都按当前应用统计（作答记录通过所属会话限定）", async () => {
+  const text = await source("src/features/student-ability-portrait/api/service.ts");
+  assert.match(text, /\.from\("toolbox_practice_sessions"\)[\s\S]*?\.eq\("student_app_id", studentAppId\)[\s\S]*?\.eq\("status", "completed"\)/);
+  assert.match(text, /toolbox_practice_sessions!inner\(student_app_id\)/);
+  assert.match(text, /\.eq\("toolbox_practice_sessions\.student_app_id", studentAppId\)/);
+});

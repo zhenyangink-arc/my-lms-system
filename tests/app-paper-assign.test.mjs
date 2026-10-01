@@ -90,3 +90,11 @@ test("短答题输入提示：韩语（或未传应用）仍是“填写韩语�
   const detail = read("src/app/dashboard/assignments/[assignmentId]/page-content.tsx");
   assert.match(detail, /<AssignmentSubmissionForm appSlug=\{studentAppSlug\}/);
 });
+
+test("布置面板：提交的学生名单来自“已选”集合的隐藏字段，而不是可见的复选框（搜索过滤不会丢人）", () => {
+  const text = read("src/app/dashboard/admin/apps/AppPaperAssignPanel.tsx");
+  assert.equal((text.match(/name="target_ids"/g) ?? []).length, 1);
+  assert.match(text, /\[\.\.\.chosen\]\.map\(\(id\) => \(\s*<input key=\{id\} type="hidden" name="target_ids" value=\{id\} \/>/);
+  // 可见的复选框不再带 name，避免同一学生被提交两次
+  assert.doesNotMatch(text, /type="checkbox"\s*name="target_ids"/);
+});

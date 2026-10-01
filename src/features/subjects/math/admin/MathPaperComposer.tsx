@@ -9,6 +9,7 @@ import {
   QUESTION_KIND_LABELS,
   newPaper,
   newQuestion,
+  deterministicWorkingSeed,
   validatePaperDraft,
   type DraftPaper,
   type DraftQuestion,
@@ -70,8 +71,15 @@ export function MathPaperComposer({
     if (state.status === "success") dialogRef.current?.close();
   }, [state]);
 
-  // 即时校验用固定种子；真正的种子由服务端生成。
-  const validation = useMemo(() => validatePaperDraft(draft, () => 1), [draft]);
+  // 即时校验用确定性的“可用种子”；真正的种子由服务端另外挑选并保存。
+  const validation = useMemo(
+    () =>
+      validatePaperDraft(draft, (index) => {
+        const question = draft.questions[index];
+        return question && question.kind !== "choice" ? deterministicWorkingSeed(question) : 1;
+      }),
+    [draft],
+  );
   const totalPoints = draft.questions.reduce((sum, q) => sum + (Number(q.points) || 0), 0);
 
   function updateQuestion(index: number, next: DraftQuestion) {

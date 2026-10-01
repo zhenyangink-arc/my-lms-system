@@ -159,7 +159,10 @@ create policy "staff read machine grades" on public.learning_submission_machine_
 
 create function public.record_learning_machine_grade(
   p_answer_id uuid, p_grader_key text, p_grader_version text, p_verdict text,
-  p_suggested_points numeric, p_reason text, p_evidence jsonb
+  p_suggested_points numeric, p_reason text, p_evidence jsonb,
+  -- 为真时，该作答已有任何结果就什么也不写（教师批改页自动补判用：两位老师同时打开同一页不会产生重复修订）；
+  -- 为假（默认）时总是新增一条修订（重新判题用）
+  p_only_if_missing boolean default false
 ) returns void language plpgsql security definer set search_path = '' as $$
 declare
   v_answer public.learning_submission_answers%rowtype;
@@ -168,6 +171,12 @@ declare
 begin
   select * into v_answer from public.learning_submission_answers where id = p_answer_id for update;
   if v_answer.id is null then raise exception '答案不存在'; end if;
+  -- 行锁已持有：并发的自动补判在这里串行化，后到的看到先到的结果后直接返回
+  if p_only_if_missing and exists (
+    select 1 from public.learning_submission_machine_grades where answer_id = v_answer.id
+  ) then
+    return;
+  end if;
   select * into v_question from public.learning_assignment_questions
   where id = v_answer.question_id and tenant_id = v_answer.tenant_id;
   select submission_state into v_state from public.learning_submissions
@@ -191,9 +200,9 @@ begin
     p_grader_key, p_grader_version, p_verdict, p_suggested_points, p_reason, coalesce(p_evidence, '{}'::jsonb)
   );
 end $$;
-revoke all on function public.record_learning_machine_grade(uuid, text, text, text, numeric, text, jsonb)
+revoke all on function public.record_learning_machine_grade(uuid, text, text, text, numeric, text, jsonb, boolean)
   from public, anon, authenticated;
-grant execute on function public.record_learning_machine_grade(uuid, text, text, text, numeric, text, jsonb)
+grant execute on function public.record_learning_machine_grade(uuid, text, text, text, numeric, text, jsonb, boolean)
   to service_role;
 
 commit;
