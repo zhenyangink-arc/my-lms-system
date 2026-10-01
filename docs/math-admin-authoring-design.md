@@ -1,0 +1,147 @@
+# 数学管理端：平台负责人出题页面方案
+
+> 状态：设计稿，未实施（2026-10-01，分支 `feat/subject-slots`）。只读核对了管理端代码与验证库，未改代码与数据库。
+> 依据：[D5 + D7 评审汇总](./db-drafts/REVIEW-D5-D7.md)（`create_math_paper` 等）、[数学题库方案 E](./math-question-bank-options.md)、[题型与判题器插槽设计](./question-type-grader-slot-design.md)、现有管理端 `ManagementApplicationAssessmentPage`、`paper-actions.ts`、`lib/assessment-papers.ts`。
+> 前提：D5、D7 已通过 Architecture Gate 并成为正式迁移。在此之前本方案只能开发到“页面可编译”，不能连真实库。
+
+## 1. 要做什么
+
+平台负责人（及被授权的标准题库管理员）在数学应用的“作业与考试”分区里，**直接录入数学题并保存为标准试卷草稿**；平台负责人发布后，机构教职人员用现有的布置流程把整卷布置给学生。
+
+不做：独立题库（方案 E 已取消）、机构自己出数学题、学生端数学输入界面（单独任务，见 §7）。
+
+## 2. 现状（只读核对）
+
+| 项目 | 现状 | 对本方案的影响 |
+|---|---|---|
+| 入口路由 | `/dashboard/admin/apps/[appSlug]/assessments` → `ManagementApplicationAssessmentPage`，已按 `student_app_id` 过滤 | 数学可复用同一路由与试卷目录 `PlatformAssessmentPaperCatalog`（列表、发布、停用、复制已是应用无关的） |
+| 制作入口 | 页面里“制作标准试卷”固定渲染 `AssessmentPaperComposer`，它从**标准题库**（`chapter_test_questions`，只有四选一）选题 | 数学没有题库，必须换成“内联出题”的编辑器 |
+| 权限 | `access.scope === "platform" && access.capabilities.manageAssessments` 可准备草稿；`globalRole === "platform_owner"` 才能发布；数据库端 `current_user_can_manage_assessment_papers()` / `…release…` 再校验 | 完全沿用，不新增权限体系 |
+| 学科开关 | 数学清单 `management.sections` 目前只有 `students / content / settings`；`assessments` 未开放 | 需要加入 `assessments`（见 §3） |
+| 学科差异的插入点 | 没有。平台页面直接 import 韩语相关组件；学科清单只有纯数据，不含组件 | 需要一个学科“管理端插槽”（见 §3） |
+| 试卷容器 | 试卷必须挂在数学应用的已发布章节测试（挂课时）上；平台题库管理员对 `chapter_tests` 有 RLS 写权限 | 页面里选课时，自动创建 / 复用容器（见 §4.3） |
+| 草稿试卷题的写权限 | `assessment_paper_questions` 对平台管理员是 ALL 策略，但判题规格表 `math_paper_question_specs` 只有读权限（D7） | 改草稿题目和规格不能直接写表，需要一个受控函数（见 §4.4） |
+| 渲染数学公式 | 项目没有 KaTeX 依赖；判题层的 `toTex()` 已能产出 LaTeX | 预览要新增 `katex` 依赖（见 §5） |
+
+## 3. 结构与插槽
+
+```
+src/features/subjects/math/
+├── index.ts                      清单（已有，纯数据）
+├── grading/ question-types.ts    判题器与题型（已有）
+├── admin/
+│   ├── MathPaperComposer.tsx     客户端：试卷基本信息 + 题目编辑器 + 试判
+│   ├── MathQuestionEditor.tsx    客户端：单题编辑（按题型切换字段）
+│   └── actions.ts                "use server"：createMathPaperAction、ensureMathPaperContainerAction
+└── admin.tsx                     对外入口：导出 MathAssessmentAuthoring（给插槽注册表用）
+
+src/features/subjects/admin-slots.tsx   （新增，平台层）
+   getSubjectAssessmentAuthoring(slug)  →  学科注册的出题组件，没有则返回 null
+
+ManagementApplicationAssessmentPage（改）：
+   平台视图里：slot 存在 → 渲染学科出题组件；否则渲染现有的两个 AssessmentPaperComposer（韩语、英语行为不变）
+```
+
+要点：
+
+- 平台页面只通过 `admin-slots` 取组件，不 import 数学内部文件（符合“学科不深链、平台只通过公开接口”）。
+- 清单（`contracts.ts`）不放组件，仍是纯数据；组件注册放独立文件，避免把客户端组件拖进清单的静态导入。
+- 数学清单 `management.sections` 加入 `assessments`；其他分区继续按“服务确认按应用隔离后再开放”的原则不动。
+
+## 4. 页面与流程
+
+### 4.1 试卷目录（沿用）
+
+`PlatformAssessmentPaperCatalog`：待完善 / 机构可用 / 已停止提供 / 布置次数、状态切换、复制为新草稿、批量发布，全部沿用。数学试卷的复制已经带判题规格（D7）。
+
+### 4.2 新建试卷（核心）
+
+对话框式编辑器，字段分三块：
+
+1. **基本信息**：类型（作业 / 考试）、名称、说明、建议用时、及格线、允许重复提交（与现有表单一致）。
+2. **试卷容器**：选择数学课时；页面自动查找该课时的容器章节测试，没有则创建（§4.3）。
+3. **题目列表**（1–100 题，可排序、删除、复制一题）。每题字段：
+
+| 题型 | 字段 | 说明 |
+|---|---|---|
+| 表达式作答（`math.expression`） | 题干、分值、难度、解析（必填）、标准表达式、变量列表（名称 / 最小 / 最大，1–4 个）、容差（默认 1e-9）、取点数 | 种子由服务端随机生成并写入规格，保证同一题判定可重复；不在界面暴露 |
+| 数值作答（`math.numeric`） | 题干、分值、难度、解析、标准数值、绝对误差、相对误差 | 例如 `0.333` 与 `1/3` 都判对，取决于误差设置 |
+| 选择题（`single_choice`） | 题干、分值、难度、解析、选项（≥2）、正确选项 | 走现有的自动判分，不依赖 D5 |
+
+**保存前的自检（“试判”）**：对每道数学题，用判题器（客户端可跑，与服务端同一份代码）做两件事：
+
+- 标准答案对自身判题必须为“正确”，且有效取点数达标；否则提示“规格无法判定（如取值范围内函数无定义）”，不允许保存。
+- 提供“输入一个学生答案试判”的小面板，显示判对 / 判错 / 无法判定与依据摘要，方便老师确认容差与取值范围。
+
+校验口径与数据库一致：前端用 `parseExpressionSpec` / `parseNumericSpec`，数据库有 `math_spec_is_valid`，双层校验。
+
+### 4.3 试卷容器
+
+- 选中课时后，服务端 `ensureMathPaperContainerAction`：查找该课时已发布的章节测试，没有则插入一条（`slug` 带课时标识保证全局唯一，`course_key` 取课程标识，`chapter_number` 取课时序号，`status = published`，标题取课时标题）。依赖平台题库管理员对 `chapter_tests` 的现有 RLS 写权限，不需要新数据库对象。
+- 创建时数据库会自动生成一行六项作业计划（无害，D7 回归已核对）。
+- 前置：数学课程与课时必须先存在（课程结构分区 `content` 已开放）。
+
+### 4.4 草稿编辑
+
+D7 只提供“创建”和“复制为新草稿”，**不能改草稿里的题**（规格表对浏览器角色只读）。两种做法：
+
+| 做法 | 说明 | 取舍 |
+|---|---|---|
+| A. 第一版只支持创建 + 复制 + 删除草稿（推荐作为第一阶段） | 改错题就复制出新草稿再删旧的，数学题少时可以接受 | 零数据库改动；体验差一点 |
+| B. 新增 D8：`replace_math_paper_draft(paper_id, questions)` | 仅草稿；一次事务内替换全部题目与规格，权限和校验同 `create_math_paper` | 体验好；需要再走一次 Gate（只涉及新函数，不改旧函数，风险低） |
+
+建议：先做 A 上线跑通，同时起草 D8，等老师确实被“改题”困扰再放行。
+
+### 4.5 发布与布置（沿用）
+
+- 平台负责人发布：现有 `changeAssessmentPaperStatusAction`（调用 `change_assessment_paper_status`）；发布校验已在 D7 里对数学做了适配，页面把校验返回的中文问题原样展示。
+- 机构布置：现有“作业与考试”布置流程（`publishAssessmentPaperAction` → `create_learning_assignment_from_paper_with_unlock`），已把判题规格复制到作业题。**需要顺手核对**：该 action 末尾的缓存刷新写死了 `/dashboard/assignments/korean`（`paper-actions.ts` 538、584 行附近属于章节测试相关 action），布置 action 本身是否应用无关，实施时逐行确认。
+
+## 5. 公式显示与输入
+
+- **老师端**：题干与标准答案的预览用 `compileExpression(...).toTex()` + KaTeX（`trust: false`），新增依赖 `katex`（EduMath 已使用 0.18.9，版本对齐）。不引入公式编辑器，第一版老师输入的是受限的文本表达式（`2x+2`、`x^2`、`sqrt(x)`、`pi`），页面旁列出支持的函数清单（取自判题层 `FUNCTION_NAMES`）。
+- **学生端**（单独任务）：文本输入 + 实时渲染预览 + 语法提示；现状是未知题型退化为文本框，占位提示写死“填写韩语答案”，题型标签为空（见 D5/D7 评审汇总“前端影响”）。
+
+## 6. 权限与安全
+
+| 动作 | 谁能做 | 控制 |
+|---|---|---|
+| 看到数学“作业与考试”出题界面 | 平台负责人、被授权的标准题库管理员 | 页面 `access.scope === "platform" && manageAssessments`；组件内不再自判，数据库函数最终校验 |
+| 保存数学试卷草稿 | 同上 | `create_math_paper`（`current_user_can_manage_assessment_papers()`） |
+| 发布 | 仅平台负责人 | `change_assessment_paper_status` + 发布所有者触发器 |
+| 机构布置 | 有该应用“管理测评”能力的机构教职人员 | 现有函数 |
+| 读取标准答案规格 | 平台管理员、机构教职人员（作业题规格，有该应用管理内容能力） | RLS；学生读不到 |
+
+- 服务端动作必须自己校验输入（长度、数量、种子由服务端生成），不信任客户端传来的种子；数据库有结构校验兜底。
+- 试判在客户端运行判题器，**只是辅助**，不产生任何得分，也不写库。
+- 不在页面里执行任何教师输入的代码：表达式只经过 math-core 白名单解析。
+
+## 7. 任务拆分与档位
+
+档位按本项目约定（中 / 高 / 较高）。路径均在黄区外或为新增文件，除非特别标注。
+
+| # | 任务 | 写入范围 | 档位 | 前置 |
+|---|---|---|---|---|
+| T1 | 学科管理端插槽 `admin-slots.tsx` + 页面按插槽分流；数学清单加 `assessments` | `src/features/subjects/admin-slots.tsx`、`math/index.ts`、`ManagementApplicationAssessmentPage.tsx`（改一处分流）、`math/manifest.ts` | 高 | 无（可先做，韩语英语行为不变，用既有测试回归） |
+| T2 | 数学出题组件（编辑器、试判、预览） | `math/admin/**`（新增）、`package.json` 加 `katex` | 高 | T1 |
+| T3 | 服务端动作（创建、容器） | `math/admin/actions.ts` | 高 | D5、D7 已落地 |
+| T4 | 学生作答适配（题型标签、占位提示、公式预览） | `src/app/dashboard/assignments/**`（黄区） | 高 | Codex 线协调 |
+| T5 | 机器判题触发（提交后调用判题器，经 `record_learning_machine_grade` 写结果）与教师批改预填 | 新增服务端模块 + 黄区改动 | **较高** | D5、T4 |
+| T6 | D8 草稿整体替换函数 + 页面编辑入口 | 数据库草稿 + `math/admin/**` | 较高（数据库部分）/ 高 | D7 |
+| T7 | 浏览器验证（验证库 + 验证账号） | 无写入 | 中 | T1–T3 |
+
+建议顺序：T1 → T2 → T3（连验证库做 T7）→ T4 → T5 → T6。T1、T2 可以在 Gate 通过前就做，因为不依赖真实库；T3 起需要 D5、D7 在验证库里保持已执行状态（目前演练后已回滚，需重新执行）。
+
+## 8. 测试计划
+
+- 单元（`node --test`）：插槽分流（数学走数学组件，韩语、英语走原组件）、清单与导航回归、动作的输入校验（畸形种子 / 超长 / 数量越界 / 非数学应用的课时）、规格解析与数据库口径一致。
+- 数据库（验证库）：沿用 D5 / D7 测试；新增容器创建的权限用例（非题库管理员不能建容器）。
+- 浏览器（验证库 + 账号）：平台负责人创建数学试卷 → 发布 → 机构管理员布置 → 学生提交 → 老师批改；韩语、英语试卷页面截图对比无变化。
+- 注意：不运行会改写 Codex 证据文件的测试（`test:navigation` 等），只跑指定文件。
+
+## 9. 需要用户决定
+
+1. 草稿编辑：第一版只做 A（创建 + 复制 + 删除），还是同时起草 D8 直接支持编辑。
+2. 老师输入表达式的第一版是否接受纯文本语法（`x^2`、`sqrt(x)`），公式编辑器放到以后。
+3. 数学试卷类型：只做“作业”和“考试”两种（与现有一致），还是需要“随堂测验”等新类型（现有数据库只有 homework / exam）。
+4. 数学课程 / 课时何时建立（容器依赖它，出题页面在没有课时时只能显示空状态）。
