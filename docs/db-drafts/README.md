@@ -1,4 +1,4 @@
-# 数据库改动草稿（D1、D2、D5、D7、D8、D9、D10；D6 已作废）
+# 数据库改动草稿（D1、D2、D5、D7、D8、D9、D10、D11；D6 已作废）
 
 本目录是**草稿**，不是迁移：不进入 `supabase/migrations`，不在共享本机库、云端库执行。Codex 线收尾后按 Architecture Gate 流程整理为正式迁移。
 
@@ -14,6 +14,7 @@
 | D8 | `D8-replace-math-paper-draft.{up,down,test}.sql` | 依赖 D5、D7。`replace_math_paper_draft()`：仅限数学应用的**草稿**试卷，一个事务内整体替换名称、说明、用时、及格线与全部题目、答案键、判题规格；类型、容器、编号、版本不变。**不改任何既有函数**。为让 D7 与 D8 共用同一套题目校验，D7 把题目校验与写入抽成 `private.insert_math_paper_questions()`（`create_math_paper` 改为调用它；D7 的 37 项测试与韩语回归在重构后重跑，结果不变） | 27 项检查全部 PASS（替换后内容与汇总、选择题答案键、无孤立规格、替换后发布校验无问题；校验失败整体回滚原草稿不变；已发布 / 机构管理员 / 学生 / 匿名 / 不存在 / 韩语试卷均被拒）；D8 → D7 → D5 回滚后 5 个被替换函数与原定义逐字一致。验证库中**未保留**执行状态 |
 | D9 | `D9-university-major-access.{up,down,test}.sql`、`tools/rehearse-d9.sh` | 大学课程专业可见范围：3 张新表（分类可见模式 major / shared / public、公共课组关联专业、学生所属专业）、`university_category_scope()`、2 个带权限校验的写入 RPC；不改任何既有表、函数、策略。设计见 `../university-major-structure-design.md`；自审报告 `GATE-REPORT-D9.md`（非独立）| 38 项 PASS；执行前后、回滚后共用策略与函数指纹一致；演练中发现并修复“首次写入绕过模式变更保护”缺陷。验证库中**未保留**执行状态（应用层验证时会临时执行） |
 | D10 | `D10-teacher-class-today-time-zone.{up,down,test}.sql` | 教师“今日课堂”日界线时区可指定（待决事项 C13 第 ①项）：`get_teacher_class_today_snapshot` 新增第 5 个参数 `p_time_zone text default 'Asia/Seoul'`，函数体只有 4 处 `'Asia/Seoul'` 换成 `v_time_zone`（今天已学习、今日必做、连续未学习天数），时区名校验在授权检查之后（无效 → 22023）；因参数列表变化，先删旧 4 参数签名再创建，授权与注释同步重建。不传时区时行为与原来一致 | 11 项检查全部符合预期（不传 = 显式首尔 = 3 天、纽约 = 4 天；空字符串 = 首尔且结果逐字一致；同一活动在首尔不算今天、在纽约算今天；无效时区 22023；学生 42501；anon 无权限、authenticated 有权限；只剩 1 个重载）；回滚后函数定义指纹、权限、注释与原来逐字一致，测试事务已回滚。验证库中**未保留**执行状态 |
+| D11 | `D11-institution-overview-time-zone.{up,down,test}.sql` | 与 D10 同一做法，针对机构 / 平台学习总览（C13 第 ①项的另一处）：`get_institution_platform_learning_overview` 新增第 3 个参数 `p_time_zone text default 'Asia/Seoul'`，2 处 `'Asia/Seoul'` 换成 `v_time_zone`（今日活跃学生、今日必做、章节练习与复习使用人数），校验放在授权之后，先删旧 2 参数签名再创建。不传时行为不变 | 10 项检查全部符合预期（同一条活动：不传 / 首尔的今日活跃人数 0、纽约 1；空字符串 = 首尔且逐字一致；无效时区 22023；平台负责人传机构 id 与学生调用均 42501；anon 无权限；只剩 1 个重载）；回滚后函数定义指纹、权限、注释与原来逐字一致，测试事务已回滚。验证库中**未保留**执行状态 |
 
 ## 预演中的发现
 
