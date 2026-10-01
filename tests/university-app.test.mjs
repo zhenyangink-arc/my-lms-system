@@ -61,3 +61,16 @@ test("清单中的每个学生导航项都有对应的应用路由", () => {
     assert.ok(files.has(routeByKey[item]), item);
   }
 });
+
+test("大学课程内容结构：二级分类显示为“专业”，其他学科沿用“课程分类”", () => {
+  assert.equal(getSubjectManifest("university").student.catalogSubcategoryLabel, "专业");
+  for (const slug of ["korean", "english", "math"]) {
+    assert.equal(getSubjectManifest(slug).student.catalogSubcategoryLabel, undefined, slug);
+  }
+  const categoryRoute = read("src/app/[space]/apps/university/courses/[categorySlug]/page.tsx");
+  assert.match(categoryRoute, /subcategoryLabel=\{getSubjectManifest\("university"\)/);
+  // 共用页面：未传标签时保持原文案（韩语等不受影响）
+  const shared = read("src/app/dashboard/courses/[categorySlug]/page-content.tsx");
+  assert.match(shared, /subcategoryLabel \?\? "课程分类"/);
+  assert.match(shared, /申请、签证、面试等不同课程模块/);
+});

@@ -138,12 +138,15 @@ export default async function CategoryPage({
   params,
   searchParams,
   courseBasePath,
+  subcategoryLabel,
 }: {
   params: Promise<{
     categorySlug: string;
   }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   courseBasePath: string;
+  /** 二级分类的显示名（学科清单提供，如“专业”）；不传时沿用“课程分类”。 */
+  subcategoryLabel?: string;
 }) {
   const { categorySlug } = await params;
   const query = searchParams ? await searchParams : {};
@@ -623,8 +626,12 @@ export default async function CategoryPage({
               <DashboardTitleWithHint
                 headingLevel={2}
                 titleClassName="text-2xl font-bold tracking-tight text-gray-900"
-                title="选择课程分类"
-                description="每个分类会显示当前账号的整体学习状态。你可以从这里进入申请、签证、面试等不同课程模块。"
+                title={`选择${subcategoryLabel ?? "课程分类"}`}
+                description={
+                  subcategoryLabel
+                    ? `每个${subcategoryLabel}会显示当前账号的整体学习状态，进入后可以选择具体课程。`
+                    : "每个分类会显示当前账号的整体学习状态。你可以从这里进入申请、签证、面试等不同课程模块。"
+                }
               />
             </div>
 
@@ -659,11 +666,11 @@ export default async function CategoryPage({
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold tracking-tight text-gray-900">
-                课程分类
+                {subcategoryLabel ?? "课程分类"}
               </h3>
 
               <p className="mt-1 text-sm text-gray-500">
-                当前板块下共有 {subcategories.length} 个课程分类。
+                当前板块下共有 {subcategories.length} 个{subcategoryLabel ?? "课程分类"}。
               </p>
             </div>
 
@@ -838,7 +845,7 @@ export default async function CategoryPage({
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
-              <p className="font-semibold text-gray-900">暂无课程分类</p>
+              <p className="font-semibold text-gray-900">暂无{subcategoryLabel ?? "课程分类"}</p>
             </div>
           )}
         </section>

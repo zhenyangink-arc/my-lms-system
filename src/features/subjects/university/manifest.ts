@@ -24,6 +24,8 @@ export const universityManifest: SubjectManifest = {
     practiceMemory: false,
     membershipFooter: false,
     catalogOpensAllCategories: true,
+    // 大学课程的内容结构：大学课程 → 专业（二级分类）→ 课程 → 课时。
+    catalogSubcategoryLabel: "专业",
     homeBlocks: ["today-tasks", "continue-learning"],
     libraryLanguageCategoryLabel: "大学课程",
   },

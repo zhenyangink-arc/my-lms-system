@@ -86,6 +86,8 @@ export type SubjectManifest = {
      * 只有主线分类可进入，其余分类显示为“努力完善中”。
      */
     catalogOpensAllCategories: boolean;
+    /** 顶层分类下一级分类（二级分类）在本学科中的显示名，例如大学课程里的“专业”；不设置时显示“课程分类”。 */
+    catalogSubcategoryLabel?: string;
     /** 学科首页启用的平台区块（今日任务、继续学习、能力画像），按列表顺序显示。 */
     homeBlocks: readonly StudentHomeBlockKey[];
     /** 资料库“语言学习”分类在本学科中的显示名；不设置时沿用平台默认名称。 */

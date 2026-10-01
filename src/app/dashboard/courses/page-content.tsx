@@ -619,6 +619,9 @@ export async function CourseCatalog({
   const catalogOpensAllCategories = studentAppSlug
     ? getSubjectManifest(studentAppSlug)?.student.catalogOpensAllCategories ?? false
     : false;
+  const subcategoryLabel = studentAppSlug
+    ? getSubjectManifest(studentAppSlug)?.student.catalogSubcategoryLabel ?? "分类"
+    : "分类";
   const upcomingCategories = categories.filter((category) =>
     upcomingCategorySlugs.has(category.slug)
   );
@@ -772,7 +775,7 @@ export async function CourseCatalog({
 
                         <div className="mt-5 grid grid-cols-3 gap-2">
                           {[
-                            ["分类", totalSubcategories],
+                            [subcategoryLabel, totalSubcategories],
                             ["课程", totalCourses],
                             ["课时", totalLessons],
                           ].map(([label, value]) => (
@@ -908,7 +911,7 @@ export async function CourseCatalog({
                       </div>
 
                       <p className="mt-3 text-xs text-gray-400">
-                        {totalSubcategories} 个分类 · {totalCourses} 门课程 ·{" "}
+                        {totalSubcategories} 个{subcategoryLabel} · {totalCourses} 门课程 ·{" "}
                         {totalLessons} 个课时
                       </p>
                     </div>
