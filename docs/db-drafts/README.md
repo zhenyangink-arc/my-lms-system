@@ -1,4 +1,4 @@
-# 数据库改动草稿（D1、D2、D5、D7；D6 已作废）
+# 数据库改动草稿（D1、D2、D5、D7、D8；D6 已作废）
 
 本目录是**草稿**，不是迁移：不进入 `supabase/migrations`，不在共享本机库、云端库执行。Codex 线收尾后按 Architecture Gate 流程整理为正式迁移。
 
@@ -11,6 +11,7 @@
 | D5 | `D5-math-grading-storage.{up,down,test}.sql` | 数学判题存储层：`question_type` 约束新增 `math.expression`、`math.numeric`；`math_question_specs`（判题规格，仅有“管理内容”能力的教职人员可读）；`learning_submission_machine_grades`（机器判题结果，只增不改，重判新增修订号留痕，仅有“管理测评”能力的教职人员可读，学生不可读）；判题规格带结构校验 `private.math_spec_is_valid()`（表达式：expected / seed / variables；数值：expected + tolerance；容差非负）；规格不提供改写函数（只由 D7 试卷层复制而来），已有学生作答后触发器冻结规格；`record_learning_machine_grade()`（仅 service_role，校验题型、判题器、得分范围、提交处于待批改阶段） | 42 项检查全部符合预期（含 10 种畸形规格被拒、浏览器角色直接写规格被拒、级联删除不被拦截；题型约束、权限正反例、重判留痕、状态限制、规格冻结）；回滚后约束定义与对象全部还原，up / down 可重复执行。验证库中**未保留**执行状态 |
 | ~~D6~~ | `superseded/D6-create-assignment-math-questions.*` | **已作废**：针对 `create_learning_assignment`，但应用代码从不调用它（见下文）。文件保留作参考 | 当时预演通过，但对实际出题路径没有价值 |
 | D7 | `D7-math-paper-layer.{up,down,test}.sql`、`D7-korean-regression.{probe.sql,baseline.txt}` | 依赖 D5。数学试卷层（方案 E，平台负责人出题，见 `../math-question-bank-options.md` §6）：试卷题题型约束；`private.assessment_paper_uses_language_skills()`；`math_paper_question_specs`（试卷题判题规格，发布后不可改）；`create_math_paper()`（仅平台负责人 / 标准题库管理员，创建草稿，发布仍走 `change_assessment_paper_status`）。**替换 5 个既有函数**，每处只改指定位置：发布校验问题清单与发布校验（数学试卷题 skill 不要求属于六项，作业类型的“六项齐全”等检查对数学不适用；新增“数学题缺少判题规格”问题 / 拒绝）、`create_learning_assignment_from_paper` 与 `configure_learning_assignment_retake`（复制判题规格到作业题）、`duplicate_assessment_paper`（复制判题规格） | **数学**：37 项检查全部 PASS（创建 → 发布 → 复制 → 机构布置 → 学生提交 → 机器判题 → 教师批改；**补考端到端**；缺规格不能发布 / 布置、已发布试卷不能新增规格、草稿试卷级联删除；权限与 9 类畸形输入的负向用例）。**韩语回归**：探针走“题库 → 试卷 → 发布校验 → 复制 → 布置作业”，D7 执行前、执行后、回滚后三份输出逐行一致（含“作业类型两项技能试卷仍被拒”“skill 为空仍被报出”）；5 个被替换函数的定义与原定义的差异仅为注释所列位置，回滚后 5 个函数与原定义逐字一致（授权不变）。验证库中**未保留**执行状态 |
+| D8 | `D8-replace-math-paper-draft.{up,down,test}.sql` | 依赖 D5、D7。`replace_math_paper_draft()`：仅限数学应用的**草稿**试卷，一个事务内整体替换名称、说明、用时、及格线与全部题目、答案键、判题规格；类型、容器、编号、版本不变。**不改任何既有函数**。为让 D7 与 D8 共用同一套题目校验，D7 把题目校验与写入抽成 `private.insert_math_paper_questions()`（`create_math_paper` 改为调用它；D7 的 37 项测试与韩语回归在重构后重跑，结果不变） | 27 项检查全部 PASS（替换后内容与汇总、选择题答案键、无孤立规格、替换后发布校验无问题；校验失败整体回滚原草稿不变；已发布 / 机构管理员 / 学生 / 匿名 / 不存在 / 韩语试卷均被拒）；D8 → D7 → D5 回滚后 5 个被替换函数与原定义逐字一致。验证库中**未保留**执行状态 |
 
 ## 预演中的发现
 

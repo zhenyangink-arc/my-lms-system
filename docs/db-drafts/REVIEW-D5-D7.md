@@ -84,3 +84,7 @@
 - `create_math_paper` 只是数据库函数；需要平台负责人用的管理页面与草稿题目编辑入口（黄区）。
 - 服务端判题调用 `record_learning_machine_grade` 的进程 / 动作、判题任务表属于后续批次。
 - D3（英语场景练习）、D6（已作废）不在本次评审范围。
+
+## 附：D8（草稿整体替换，可选）
+
+`D8-replace-math-paper-draft.*.sql` 只新增一个函数、不改既有函数，风险低，随 D5、D7 一并评审即可，也可以晚于它们单独放行。为共用题目校验，D7 内部抽出了 `private.insert_math_paper_questions()`（评审 D7 时按重构后的版本看）。

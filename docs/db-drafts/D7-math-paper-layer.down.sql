@@ -804,6 +804,7 @@ end;
 $function$;
 
 drop function if exists public.create_math_paper(text, text, text, uuid, integer, numeric, boolean, jsonb);
+drop function if exists private.insert_math_paper_questions(uuid, jsonb);
 drop table if exists public.math_paper_question_specs;
 drop function if exists private.check_math_paper_spec();
 drop function if exists private.assessment_paper_uses_language_skills(uuid);
