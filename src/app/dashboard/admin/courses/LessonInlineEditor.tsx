@@ -1,3 +1,4 @@
+import { LocalDateTimeField } from "@/components/ui/local-datetime-field";
 import { updateCatalogLessonAction } from "./catalog-actions";
 import { CourseCoverUploadField } from "./CourseCoverUploadField";
 import { CourseInlineEditorTabs } from "./CourseInlineEditorTabs";
@@ -50,14 +51,6 @@ const unlockLabels: Record<string, string> = {
   scheduled: "按时间开放",
   manual: "手动开放",
 };
-
-function datetimeLocalValue(value: string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
 
 function TextAreaField({ name, label, value, rows = 4 }: { name: string; label: string; value: string | null; rows?: number }) {
   return <label className={labelClass}>{label}<textarea name={name} rows={rows} defaultValue={value ?? ""} className={`${inputClass} resize-y leading-5`} /></label>;
@@ -140,7 +133,7 @@ export function LessonInlineEditor({
             <label className={labelClass}>前置课时<select name="prerequisite_lesson_id" defaultValue={lesson.prerequisite_lesson_id ?? ""} className={inputClass}><option value="">无</option>{lessons.filter((item) => item.id !== lesson.id && item.course_id === lesson.course_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
             <label className={labelClass}>前置章节<select name="prerequisite_chapter_id" defaultValue={lesson.prerequisite_chapter_id ?? ""} className={inputClass}><option value="">无</option>{chapters.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
             <label className={labelClass}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={lesson.required_score ?? 80} className={inputClass} /></label>
-            <label className={labelClass}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(lesson.available_from)} className={inputClass} /></label>
+            <label className={labelClass}>开放时间<LocalDateTimeField name="available_from" defaultValue={lesson.available_from} className={inputClass} /></label>
           </div>
           <label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={lesson.is_manually_locked} />临时锁定</label>
           <SaveButton label="保存开放规则" />

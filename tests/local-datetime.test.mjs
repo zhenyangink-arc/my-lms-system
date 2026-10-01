@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { localDateTimeToIso, toLocalDateTimeInputValue } from "../src/app/dashboard/admin/apps/local-datetime.ts";
+import { localDateTimeToIso, toLocalDateTimeInputValue } from "../src/lib/local-datetime.ts";
 
 const root = new URL("..", import.meta.url).pathname;
 const read = (path) => readFileSync(join(root, path), "utf8");
@@ -60,4 +60,41 @@ test("布置面板提交的是换算后的 ISO 隐藏字段，可见的时间输
   const action = read("src/app/dashboard/admin/assignments/paper-actions.ts");
   assert.match(action, /\? `\$\{value\}:00\+09:00`/);
   assert.match(action, /: value;\s*const date = new Date\(normalized\)/);
+});
+
+test("产品决定“时间跟随电脑时区”：表单用 LocalDateTimeField，不再写死韩国时间或依赖服务器时区", () => {
+  const field = read("src/components/ui/local-datetime-field.tsx");
+  assert.match(field, /name=\{name\} value=\{localDateTimeToIso\(value\)\}/); // 提交的是换算后的 ISO
+  assert.match(field, /useSyncExternalStore/); // 初始值在浏览器换算，服务端渲染不依赖服务器时区
+  assert.doesNotMatch(field, /<input[^>]*type="datetime-local"[^>]*name=/); // 可见输入框不带 name
+
+  // 批改页截止时间
+  const deadline = read("src/app/dashboard/admin/assignments/AssignmentDeadlineForm.tsx");
+  assert.match(deadline, /<LocalDateTimeField name="due_at" required/);
+  assert.doesNotMatch(deadline, /韩国时间/);
+  assert.match(deadline, /按你电脑的时区/);
+
+  // 课程 / 课时 / 章节的开放时间、学习记录时间
+  for (const path of [
+    "src/features/courses/components/course-catalog-action-dialogs.tsx",
+    "src/app/dashboard/admin/courses/LessonInlineEditor.tsx",
+  ]) {
+    const source = read(path);
+    assert.match(source, /<LocalDateTimeField name="available_from"/, path);
+    assert.doesNotMatch(source, /name="available_from" type="datetime-local"/, path);
+  }
+  for (const path of [
+    "src/app/dashboard/admin/records/LearningRecordForm.tsx",
+    "src/features/learning-records/components/student-learning-records-table/learning-record-note-actions.tsx",
+  ]) {
+    const source = read(path);
+    assert.match(source, /<LocalDateTimeField\s+name="occurred_at"/, path);
+    assert.doesNotMatch(source, /type="datetime-local"/, path);
+  }
+
+  // 学生端自动背景主题按电脑本地小时，不再按首尔
+  const topbar = read("src/app/dashboard/StudentSystemTopbar.tsx");
+  const auto = topbar.slice(topbar.indexOf("function getAutomaticBackgroundTheme"), topbar.indexOf("function applyBackgroundTheme"));
+  assert.match(auto, /new Date\(\)\.getHours\(\)/);
+  assert.doesNotMatch(auto, /Seoul/);
 });

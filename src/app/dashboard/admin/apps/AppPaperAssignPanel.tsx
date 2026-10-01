@@ -6,7 +6,7 @@ import { useActionState, useMemo, useRef, useState } from "react";
 import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
 import { publishAssessmentPaperAction } from "@/app/dashboard/admin/assignments/paper-actions";
 
-import { localDateTimeToIso, toLocalDateTimeInputValue } from "./local-datetime";
+import { localDateTimeToIso, toLocalDateTimeInputValue } from "@/lib/local-datetime";
 
 export type AssignablePaper = {
   id: string;

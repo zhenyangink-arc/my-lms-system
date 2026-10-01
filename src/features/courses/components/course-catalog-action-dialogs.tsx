@@ -1,6 +1,8 @@
 "use client";
 
 import { PencilLine, Plus } from "lucide-react";
+
+import { LocalDateTimeField } from "@/components/ui/local-datetime-field";
 import { useId, useState } from "react";
 
 import {
@@ -55,14 +57,6 @@ const COMPLETION_LABELS: Record<string, string> = {
   test_passed: "通过章节测试",
   manual: "管理员确认",
 };
-
-function datetimeLocalValue(value: string | null) {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
 
 function SaveButton({ label = "保存修改" }: { label?: string }) {
   return (
@@ -155,7 +149,7 @@ function CourseEditor({ node, options }: { node: CourseCatalogCourse; options: C
         <div className="grid gap-4 md:grid-cols-3">
           <label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).filter(([value]) => value !== "prerequisite_passed").map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
           <label className={LABEL_CLASS}>前置课程<select name="prerequisite_course_id" defaultValue={node.prerequisite_course_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.courses.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label>
-          <label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label>
+          <label className={LABEL_CLASS}>开放时间<LocalDateTimeField name="available_from" defaultValue={node.available_from} className={INPUT_CLASS} /></label>
         </div>
         <label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>
       </div>
@@ -201,7 +195,7 @@ function LessonEditor({ node, options }: { node: CourseCatalogLesson; options: C
       <form id={`${editorId}-rules-panel`} role="tabpanel" aria-labelledby={`${editorId}-rules-tab`} hidden={activeSection !== "rules"} action={updateCatalogLessonAction} className="space-y-5">
         <input type="hidden" name="id" value={node.id} /><input type="hidden" name="editor_section" value="rules" />
         <h3 className="text-xs font-semibold">开放规则</h3>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置课时<select name="prerequisite_lesson_id" defaultValue={node.prerequisite_lesson_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.lessons.filter((item) => item.id !== node.id && item.course_id === node.course_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label></div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置课时<select name="prerequisite_lesson_id" defaultValue={node.prerequisite_lesson_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.lessons.filter((item) => item.id !== node.id && item.course_id === node.course_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<LocalDateTimeField name="available_from" defaultValue={node.available_from} className={INPUT_CLASS} /></label></div>
         <label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>
         <SaveButton label="保存开放规则" />
       </form>
@@ -213,7 +207,7 @@ function ChapterEditor({ node, options }: { node: CourseCatalogChapter; options:
   return (
     <form action={updateCourseChapterAction} className="space-y-5">
       <div className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]"><CourseCoverUploadField kind="chapter" entityId={node.id} currentObjectKey={node.cover_object_key} alt={node.cover_alt ?? node.title} /><div className="space-y-4"><CommonFields node={node} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={node.duration_minutes} className={INPUT_CLASS} /></label></div></div>
-      <div className={SECTION_CLASS}><h3 className="text-xs font-semibold">完成与开放规则</h3><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>完成条件<select name="completion_rule" defaultValue={node.completion_rule} className={INPUT_CLASS}>{Object.entries(COMPLETION_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.filter((item) => item.id !== node.id && item.lesson_id === node.lesson_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label></div><label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>{node.chapter_test_id && <p className="text-[10px] text-[var(--foreground-muted)]">已关联章节测试：{node.chapter_test_id}</p>}</div>
+      <div className={SECTION_CLASS}><h3 className="text-xs font-semibold">完成与开放规则</h3><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>完成条件<select name="completion_rule" defaultValue={node.completion_rule} className={INPUT_CLASS}>{Object.entries(COMPLETION_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.filter((item) => item.id !== node.id && item.lesson_id === node.lesson_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<LocalDateTimeField name="available_from" defaultValue={node.available_from} className={INPUT_CLASS} /></label></div><label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>{node.chapter_test_id && <p className="text-[10px] text-[var(--foreground-muted)]">已关联章节测试：{node.chapter_test_id}</p>}</div>
       <SaveButton />
     </form>
   );

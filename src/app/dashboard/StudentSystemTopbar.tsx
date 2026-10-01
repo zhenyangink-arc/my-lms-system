@@ -82,13 +82,8 @@ function findStudentShell() {
 }
 
 function getAutomaticBackgroundTheme(): ResolvedBackgroundTheme {
-  const hour = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Seoul",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).format(new Date()),
-  );
+  // 跟随用户电脑的本地时间（只在浏览器里调用）
+  const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 12) return "morning";
   if (hour >= 12 && hour < 18) return "afternoon";

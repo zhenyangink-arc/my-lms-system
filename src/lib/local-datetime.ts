@@ -1,6 +1,7 @@
 /**
  * 把 `<input type="datetime-local">` 的值（没有时区，含义是“用户电脑当前时区的这个时刻”）转成带时区的 ISO 字符串。
- * 布置动作对不带时区的时间会按韩国时间（UTC+9）解析；这里先在浏览器里按电脑时区换算成 UTC，动作就会原样采用。
+ * 服务端动作对不带时区的时间有的按韩国时间（UTC+9）解析、有的按服务器时区解析；这里先在浏览器里按电脑时区换算成 UTC，动作就会原样采用。
+ * 产品决定（2026-10-01）：时间一律跟随用户电脑的时区。表单里用 `LocalDateTimeField`（src/components/ui/local-datetime-field.tsx）。
  * 无法解析的值返回空字符串（动作会据此报“截止时间必须晚于开始时间”之类的错误）。
  */
 export function localDateTimeToIso(value: string): string {

@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { Archive, ArchiveRestore, Save } from "lucide-react";
 
+import { LocalDateTimeField } from "@/components/ui/local-datetime-field";
 import { initialLearningRecordActionState } from "@/app/dashboard/records/action-state";
 import {
   changeLearningRecordNoteStatusAction,
@@ -15,10 +16,9 @@ import {
 } from "@/app/dashboard/records/config";
 import type { LearningRecordNote } from "../../api/types";
 
-function localDate(value?: string) {
-  const date = value ? new Date(value) : new Date();
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+// 新记录的默认时间是“现在”；显示与提交都按用户电脑的时区（见 LocalDateTimeField）
+function currentIso() {
+  return new Date().toISOString();
 }
 
 const inputClass =
@@ -97,11 +97,10 @@ export function LearningRecordNoteEditor({
         </label>
         <label className="space-y-1.5 text-xs font-medium">
           <span>备注时间</span>
-          <input
-            type="datetime-local"
+          <LocalDateTimeField
             name="occurred_at"
             required
-            defaultValue={localDate(note?.occurred_at)}
+            defaultValue={note?.occurred_at ?? currentIso()}
             className={inputClass}
           />
         </label>
