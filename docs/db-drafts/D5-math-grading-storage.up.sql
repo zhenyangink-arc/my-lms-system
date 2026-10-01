@@ -17,13 +17,47 @@ alter table public.learning_assignment_questions
     'math.expression', 'math.numeric'
   ]));
 
+-- 判题规格的结构校验（与 TypeScript 侧 parseExpressionSpec / parseNumericSpec 同口径；
+-- 取值范围的先后、变量名合法性等细节仍由判题器在运行时按 invalid_spec 把关）
+create function private.math_spec_is_valid(p_grader_key text, p_spec jsonb)
+returns boolean language plpgsql immutable set search_path = '' as $$
+declare v jsonb;
+begin
+  if p_spec is null or jsonb_typeof(p_spec) <> 'object' then return false; end if;
+  if p_spec ? 'tolerance' then
+    v := p_spec->'tolerance';
+    if jsonb_typeof(v) <> 'object'
+       or jsonb_typeof(v->'abs') is distinct from 'number' or jsonb_typeof(v->'rel') is distinct from 'number'
+       or (v->>'abs')::numeric < 0 or (v->>'rel')::numeric < 0 then return false; end if;
+  end if;
+  if p_grader_key = 'math.numeric' then
+    return jsonb_typeof(p_spec->'expected') = 'number' and p_spec ? 'tolerance';
+  elsif p_grader_key = 'math.expression-equivalence' then
+    if jsonb_typeof(p_spec->'expected') is distinct from 'string'
+       or char_length(p_spec->>'expected') not between 1 and 200
+       or jsonb_typeof(p_spec->'seed') is distinct from 'number'
+       or (p_spec->>'seed')::numeric <> trunc((p_spec->>'seed')::numeric)
+       or jsonb_typeof(p_spec->'variables') is distinct from 'array'
+       or jsonb_array_length(p_spec->'variables') not between 1 and 4 then return false; end if;
+    for v in select value from jsonb_array_elements(p_spec->'variables') loop
+      if jsonb_typeof(v) <> 'object'
+         or jsonb_typeof(v->'name') is distinct from 'string'
+         or jsonb_typeof(v->'min') is distinct from 'number'
+         or jsonb_typeof(v->'max') is distinct from 'number' then return false; end if;
+    end loop;
+    return true;
+  end if;
+  return false;
+end $$;
+
 create table public.math_question_specs (
   question_id uuid primary key,
   tenant_id uuid not null references public.tenants(id) on delete restrict,
   grader_key text not null check (grader_key in ('math.expression-equivalence', 'math.numeric')),
-  spec jsonb not null check (jsonb_typeof(spec) = 'object' and pg_column_size(spec) <= 4000),
+  spec jsonb not null check (pg_column_size(spec) <= 4000),
   updated_by uuid not null references public.profiles(id) on delete restrict,
   updated_at timestamptz not null default now(),
+  check (private.math_spec_is_valid(grader_key, spec)),
   foreign key (tenant_id, question_id)
     references public.learning_assignment_questions(tenant_id, id) on delete cascade
 );

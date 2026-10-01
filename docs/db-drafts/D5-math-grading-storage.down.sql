@@ -5,6 +5,7 @@ drop function if exists public.set_math_question_spec(uuid, text, jsonb);
 drop table if exists public.learning_submission_machine_grades;
 drop table if exists public.math_question_specs;
 drop function if exists private.check_math_question_spec_type();
+drop function if exists private.math_spec_is_valid(text, jsonb);
 alter table public.learning_assignment_questions
   drop constraint learning_assignment_questions_question_type_check;
 alter table public.learning_assignment_questions
