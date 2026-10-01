@@ -9,6 +9,9 @@ import { revalidatePath } from "next/cache";
  * 每个 action 里额外查当前租户 slug：
  * https://nextjs.org/docs/app/api-reference/functions/revalidatePath#revalidating-a-page-path
  */
+/** 提供课程目录路由（`/[space]/apps/<app>/courses/**`）的学生应用，须与路由目录保持一致。 */
+export const COURSE_ROUTE_APP_SLUGS = ["korean", "english", "study-abroad"] as const;
+
 export function revalidateDashboard(path: string, type?: "page" | "layout") {
   if (!path.startsWith("/dashboard")) {
     revalidatePath(path, type);
@@ -17,8 +20,9 @@ export function revalidateDashboard(path: string, type?: "page" | "layout") {
 
   if (path === "/dashboard/courses" || path.startsWith("/dashboard/courses/")) {
     const courseSuffix = path.slice("/dashboard/courses".length);
-    revalidatePath(`/[space]/apps/korean/courses${courseSuffix}`, type ?? "page");
-    revalidatePath(`/[space]/apps/study-abroad/courses${courseSuffix}`, type ?? "page");
+    for (const appSlug of COURSE_ROUTE_APP_SLUGS) {
+      revalidatePath(`/[space]/apps/${appSlug}/courses${courseSuffix}`, type ?? "page");
+    }
     return;
   }
 

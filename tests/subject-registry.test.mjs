@@ -160,7 +160,7 @@ test("英语应用路由明确传入 english，课程分类只放行英语分类
     assert.match(read(`${english}/${route}`), /studentAppSlug="english"/, route);
   }
   assert.match(read(`${english}/courses/[categorySlug]/layout.tsx`), /if \(categorySlug !== "english"\) notFound\(\);/);
-  assert.match(read(`${english}/assignments/[assignmentId]/layout.tsx`), /STUDENT_APP_IDS\.english/);
+  assert.match(read(`${english}/assignments/[assignmentId]/layout.tsx`), /<StudentAssignmentDetailLayout[^>]*appSlug="english"/);
 });
 
 test("按应用显示课程目录时不再把本应用分类当作即将上线", () => {

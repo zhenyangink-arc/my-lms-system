@@ -523,9 +523,13 @@ export default async function StudentPortalPage({
       href: learningSummary.latestFeedback.href,
     });
   }
+  // 只指向开放了课程栏目的学科应用。
+  const courseApp = summaryApps.find(
+    (app) => isStudentNavItemEnabled(app.slug, "courses"),
+  );
   const emptyStateHref = primaryContinuation?.continueHref ??
-    (summaryApps[0]
-      ? getCourseLearningPath(space, null, summaryApps[0].slug)
+    (courseApp
+      ? getCourseLearningPath(space, null, courseApp.slug)
       : primaryApp
         ? getStudentAppBasePath(space, primaryApp.slug)
         : portalPath);
@@ -688,7 +692,7 @@ export default async function StudentPortalPage({
                       href={emptyStateHref}
                       className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     >
-                      {primaryContinuation ? "继续课程" : summaryApps.length > 0 ? "进入课程" : "查看应用"}
+                      {primaryContinuation ? "继续课程" : courseApp ? "进入课程" : "查看应用"}
                       <ArrowRight size={16} aria-hidden="true" />
                     </Link>
                   </div>

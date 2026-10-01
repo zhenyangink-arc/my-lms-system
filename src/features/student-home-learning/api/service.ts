@@ -178,8 +178,11 @@ export async function loadHomeLearningTasks({
     space,
     now,
   };
-  // 巩固、专项训练、错题复习三类任务都指向巩固中心；学科未开放巩固中心时不生成，
-  // 避免出现指向不存在页面的任务。没有学科清单的应用沿用原有行为。
+  // 每类任务只在学科开放了它指向的学生端栏目时生成，避免出现指向不存在页面的任务：
+  // 作业/考试 → 学习任务；课程继续 → 课程；巩固、专项训练、错题复习 → 巩固中心。
+  // 没有学科清单的应用沿用原有行为。
+  const assignmentsEnabled = isStudentNavItemEnabled(appSlug, "assignments") ?? true;
+  const coursesEnabled = isStudentNavItemEnabled(appSlug, "courses") ?? true;
   const practiceEnabled = isStudentNavItemEnabled(appSlug, "practice") ?? true;
   // 课程巩固目录本身要串行查好几轮（课程→课时→章节→…），
   // chapterPractice/specializedPractice/review 三个来源都要用它——
@@ -188,8 +191,8 @@ export async function loadHomeLearningTasks({
     ? loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now })
     : null;
   const taskGroups = await Promise.all([
-    loadAssignmentExamTasks({ ...commonInput, tenantId }),
-    loadCourseContinuationTasks(commonInput),
+    assignmentsEnabled ? loadAssignmentExamTasks({ ...commonInput, tenantId }) : [],
+    coursesEnabled ? loadCourseContinuationTasks(commonInput) : [],
     ...(catalogPromise
       ? [
           loadChapterPracticeTasks({ ...commonInput, catalog: catalogPromise }),
@@ -237,6 +240,8 @@ export async function loadLatestPublishedFeedback({
   appLabel,
   space,
 }: LoadHomeLearningTasksInput): Promise<PortalLearningFeedback | null> {
+  // 反馈链接指向作业详情；学科未开放学习任务栏目时不显示。
+  if (isStudentNavItemEnabled(appSlug, "assignments") === false) return null;
   const { data, error } = await supabase
     .from("learning_submissions")
     .select(

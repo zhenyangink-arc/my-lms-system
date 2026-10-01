@@ -29,7 +29,8 @@ export default async function ChapterPracticeEditorRoute({
   if (context.access.scope !== "platform" || !isSubjectSectionEnabled(appSlug, "practice-center")) notFound();
 
   const unit = await getChapterPracticeUnitDetail(courseChapterId);
-  if (!unit) notFound();
+  // 章节必须属于当前管理工作区的应用，避免在一个学科的页面里编辑另一个学科的巩固包。
+  if (!unit || unit.studentAppId !== context.access.appId) notFound();
   const inspection = await inspectChapterPracticeUnit(unit.id);
 
   return (

@@ -19,8 +19,7 @@ export function getStudentAppSlugById(
 
 /**
  * 学生当前是否能使用某个应用：机构已开放且为 active，学生报名有效且在有效期内。
- * 与学生应用入口布局的判断一致；写入操作在服务端用它核对应用权限，
- * 数据库 RLS 仍是最终边界。
+ * 学生应用入口布局与服务端写入操作共用这一判断；数据库 RLS 仍是最终边界。
  */
 export async function hasActiveStudentAppAccess({
   supabase,
