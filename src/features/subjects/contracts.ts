@@ -92,6 +92,8 @@ export type SubjectManifest = {
     catalogSubcategoryLabel?: string;
     /** 学科首页启用的平台区块（今日任务、继续学习、能力画像），按列表顺序显示。 */
     homeBlocks: readonly StudentHomeBlockKey[];
+    /** 作业详情“客观题即时结果”里关于其余题目的说明；不设置时沿用语言学习的原句（口语、阅读和写作等题目仍由老师批改）。 */
+    manualGradingNote?: string;
     /** 成绩页是否显示“六维学习能力”（听说读写词汇语法）画像；默认显示，非语言学科设为 false。 */
     gradesSkillPortrait?: boolean;
     /** 资料库“语言学习”分类在本学科中的显示名；不设置时沿用平台默认名称。 */

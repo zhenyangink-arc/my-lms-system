@@ -30,6 +30,7 @@ export const universityManifest: SubjectManifest = {
     catalogSubcategoryLabel: "专业与公共课",
     homeBlocks: ["today-tasks", "continue-learning"],
     gradesSkillPortrait: false,
+    manualGradingNote: "其余题目仍由老师批改。",
     libraryLanguageCategoryLabel: "大学课程",
   },
 };

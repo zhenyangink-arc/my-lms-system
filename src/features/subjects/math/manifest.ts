@@ -20,5 +20,6 @@ export const mathManifest: SubjectManifest = {
     catalogOpensAllCategories: false,
     // 数学课程内容接入前首页仍显示建设中。
     homeBlocks: [],
+    manualGradingNote: "其余题目仍由老师批改。",
   },
 };

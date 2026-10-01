@@ -33,11 +33,15 @@ export default async function ManagementApplicationAssignmentRoute({
     redirect(access.appPath);
   }
 
+  // 返回到已开放的分区：优先“作业与考试”，学科没有开放它时回到“成绩分析”（否则返回链接会是 404）
+  const assessmentsEnabled = !subject || subject.management.sections.includes("assessments");
+
   return (
     <AssignmentReviewPage
       params={Promise.resolve({ assignmentId })}
       expectedStudentAppId={access.appId}
-      backHref={`${access.appPath}/assessments`}
+      backHref={`${access.appPath}/${assessmentsEnabled ? "assessments" : "grades"}`}
+      backLabel={assessmentsEnabled ? "返回作业与考试" : "返回成绩分析"}
     />
   );
 }

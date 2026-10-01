@@ -176,3 +176,23 @@ test("专业范围读取：同一次请求只查一次；未选专业的学生�
   }
   assert.match(read("src/features/subjects/university/student/NoMajorNotice.tsx"), /role="status"/);
 });
+
+test("作业详情：客观题说明由清单提供，大学课程与数学用中性说明，其余学科沿用语言学习原句", () => {
+  assert.equal(getSubjectManifest("university").student.manualGradingNote, "其余题目仍由老师批改。");
+  assert.equal(getSubjectManifest("math").student.manualGradingNote, "其余题目仍由老师批改。");
+  for (const slug of ["korean", "english"]) assert.equal(getSubjectManifest(slug).student.manualGradingNote, undefined, slug);
+  const page = read("src/app/dashboard/assignments/[assignmentId]/page-content.tsx");
+  assert.match(page, /manualGradingNote \?\? "口语、阅读和写作等题目仍由老师批改。"/);
+});
+
+test("批改详情的返回链接：学科没开放“作业与考试”时回到“成绩分析”，不指向 404", () => {
+  const route = read("src/app/[space]/dashboard/admin/apps/[appSlug]/assignments/[assignmentId]/page.tsx");
+  assert.match(route, /const assessmentsEnabled = !subject \|\| subject\.management\.sections\.includes\("assessments"\)/);
+  assert.match(route, /assessmentsEnabled \? "assessments" : "grades"/);
+  assert.match(route, /backLabel=\{assessmentsEnabled \? "返回作业与考试" : "返回成绩分析"\}/);
+  assert.match(read("src/app/dashboard/admin/assignments/[assignmentId]/page-content.tsx"), /backLabel = "返回作业与考试"/);
+  // 大学课程、英语没有开放“作业与考试”，数学、韩语开放
+  for (const [slug, has] of [["university", false], ["english", false], ["math", true], ["korean", true]]) {
+    assert.equal(getSubjectManifest(slug).management.sections.includes("assessments"), has, slug);
+  }
+});
