@@ -6,6 +6,7 @@ import type {
   SubjectAssessmentAuthoringProps,
 } from "../admin-slot-contract.ts";
 import { createMathPaperAction } from "./admin/actions";
+import { RejudgeButton } from "./admin/RejudgeButton";
 import { prepareMathMachineGrades } from "./grading/machine-grading.server";
 import { MathPaperComposer, type MathPaperLessonOption } from "./admin/MathPaperComposer";
 import { draftFromRows, type SavedQuestionRow } from "./admin/paper-model";
@@ -178,4 +179,5 @@ async function MathAssessmentAuthoring({ canRelease }: SubjectAssessmentAuthorin
 export const mathAdminSlots: SubjectAdminSlots = {
   AssessmentAuthoring: MathAssessmentAuthoring,
   prepareMachineGrades: prepareMathMachineGrades,
+  SubmissionReviewActions: RejudgeButton,
 };

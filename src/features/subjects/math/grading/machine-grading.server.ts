@@ -22,9 +22,9 @@ function chunks<T>(items: T[]): T[][] {
 }
 
 /** 用服务端权限读写判题数据；调用方必须已经确认这些提交属于当前教职人员有权批改的作业。 */
-function createStore(admin: SupabaseClient): MachineGradingStore {
+export function createStore(admin: SupabaseClient): MachineGradingStore {
   return {
-    async listUngraded(submissionIds) {
+    async listUngraded(submissionIds, options) {
       const result: AnswerToGrade[] = [];
       for (const ids of chunks(submissionIds)) {
         const { data: answers } = await admin
@@ -55,7 +55,7 @@ function createStore(admin: SupabaseClient): MachineGradingStore {
           .in("answer_id", mathAnswers.map((a) => a.id as string));
         const done = new Set((existing ?? []).map((g) => g.answer_id as string));
         for (const answer of mathAnswers) {
-          if (done.has(answer.id as string)) continue;
+          if (!options?.includeGraded && done.has(answer.id as string)) continue;
           const question = mathQuestions.get(answer.question_id as string)!;
           result.push({
             answerId: answer.id as string,

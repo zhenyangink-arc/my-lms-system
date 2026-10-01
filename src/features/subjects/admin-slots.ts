@@ -1,9 +1,11 @@
 import {
   prepareMachineGradesFor,
   renderAssessmentAuthoring,
+  renderSubmissionReviewActions,
   type SubjectAdminSlotMap,
   type SubjectAssessmentAuthoringProps,
   type SubjectMachineGradingInput,
+  type SubjectSubmissionReviewActionsProps,
 } from "./admin-slot-contract.ts";
 
 import { mathAdminSlots } from "./math/admin-slot.tsx";
@@ -33,4 +35,9 @@ export function renderSubjectAssessmentAuthoring(
 /** 教师批改页：学科的机器判题建议（按作答 ID）；没有注册的学科返回空。 */
 export function prepareSubjectMachineGrades(slug: string, input: SubjectMachineGradingInput) {
   return prepareMachineGradesFor(SUBJECT_ADMIN_SLOTS, slug, input);
+}
+
+/** 教师批改页：学科的批改操作（如数学的“重新判题”）；没有注册的学科返回 null。 */
+export function renderSubjectReviewActions(slug: string, props: SubjectSubmissionReviewActionsProps) {
+  return renderSubmissionReviewActions(SUBJECT_ADMIN_SLOTS, slug, props);
 }

@@ -9,7 +9,7 @@ import {
   gradeAnswer,
   gradePendingMathAnswers,
 } from "../src/features/subjects/math/grading/machine-grading.ts";
-import { prepareMachineGradesFor } from "../src/features/subjects/admin-slot-contract.ts";
+import { prepareMachineGradesFor, renderSubmissionReviewActions } from "../src/features/subjects/admin-slot-contract.ts";
 
 const root = new URL("..", import.meta.url).pathname;
 const read = (path) => readFileSync(join(root, path), "utf8");
@@ -62,7 +62,7 @@ function makeStore(answers, over = {}) {
   return {
     calls,
     store: {
-      async listUngraded(ids) { calls.listed.push(ids); return answers; },
+      async listUngraded(ids, options) { calls.listed.push(ids); calls.options = options; return answers; },
       async record(r) { calls.recorded.push(r); return { error: undefined }; },
       ...over,
     },
@@ -124,4 +124,43 @@ test("机器判题服务端模块：服务端权限只用于读写判题数据�
   assert.match(server, /input\.supabase\s*\.from\("learning_submission_machine_grades"\)/);
   assert.match(server, /catch \{/);
   assert.doesNotMatch(server, /from "@\/app\//);
+});
+
+test("重判：默认只判没有结果的；regrade 时让存储连已有结果的一起返回（新增修订，不改旧结果）", async () => {
+  const normal = makeStore([answer()]);
+  await gradePendingMathAnswers(normal.store, ["s1"]);
+  assert.deepEqual(normal.calls.options, { includeGraded: false });
+  const regrade = makeStore([answer({ answerId: "a1" }), answer({ answerId: "a2", answerText: "2x+1" })]);
+  const result = await gradePendingMathAnswers(regrade.store, ["s1"], { regrade: true });
+  assert.deepEqual(regrade.calls.options, { includeGraded: true });
+  assert.deepEqual(result, { recorded: 2, failed: 0 });
+  assert.equal((await gradePendingMathAnswers(makeStore([]).store, [], { regrade: true })).recorded, 0);
+});
+
+test("插槽：批改页操作只对注册了的学科生效，原型属性名不会误命中", () => {
+  const Component = () => null;
+  const slots = { math: { SubmissionReviewActions: Component }, english: {} };
+  const element = renderSubmissionReviewActions(slots, "math", { assignmentId: "a" });
+  assert.equal(element.type, Component);
+  assert.deepEqual(element.props, { assignmentId: "a" });
+  for (const slug of ["english", "korean", "constructor", "__proto__", ""]) {
+    assert.equal(renderSubmissionReviewActions(slots, slug, { assignmentId: "a" }), null, slug);
+  }
+});
+
+test("重判动作：先校验作业编号与数学应用，再校验“管理测评”权限；只重算待批改提交；不引用 app 层", () => {
+  const text = read("src/features/subjects/math/grading/rejudge-actions.ts");
+  assert.match(text, /^"use server";/);
+  assert.match(text, /UUID\.test\(assignmentId\)/);
+  assert.match(text, /getStudentAppSlugById\([^)]*\) !== "math"/);
+  assert.match(text, /getTenantAppCapabilityContext\([^)]*"manageAssessments"\)/);
+  assert.match(text, /\.in\("submission_state", PENDING_STATES\)/);
+  assert.match(text, /PENDING_STATES = \["submitted_pending_grading", "objective_graded_pending_manual"\]/);
+  assert.match(text, /\{ regrade: true \}/);
+  // 提交列表用有权限的连接读取（受 RLS 约束），服务端权限只用于判题数据
+  assert.match(text, /context\.supabase\s*\.from\("learning_submissions"\)/);
+  assert.doesNotMatch(text, /from ["']@\/app\//);
+  assert.equal((text.match(/^export /gm) ?? []).length, 1, "use server 文件只能导出异步函数");
+  const page = read("src/app/dashboard/admin/assignments/[assignmentId]/page-content.tsx");
+  assert.match(page, /subjectSlug && subjectQuestionIds\.size > 0 \? renderSubjectReviewActions\(/);
 });

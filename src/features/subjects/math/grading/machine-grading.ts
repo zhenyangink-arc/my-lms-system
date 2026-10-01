@@ -27,8 +27,11 @@ export type MachineGradeRecord = {
 };
 
 export type MachineGradingStore = {
-  /** 只返回属于给定提交、题型为数学题、且还没有机器判题结果的作答。 */
-  listUngraded(submissionIds: string[]): Promise<AnswerToGrade[]>;
+  /**
+   * 返回属于给定提交、题型为数学题的作答。默认只返回还没有机器判题结果的；
+   * `includeGraded` 为真时连已有结果的也返回（重判：新增一条修订，旧结果保留）。
+   */
+  listUngraded(submissionIds: string[], options?: { includeGraded?: boolean }): Promise<AnswerToGrade[]>;
   record(record: MachineGradeRecord): Promise<{ error: string | undefined }>;
 };
 
@@ -73,10 +76,11 @@ export function gradeAnswer(answer: AnswerToGrade): MachineGradeRecord | null {
 export async function gradePendingMathAnswers(
   store: MachineGradingStore,
   submissionIds: string[],
+  options: { regrade?: boolean } = {},
 ): Promise<{ recorded: number; failed: number }> {
   const ids = [...new Set(submissionIds)].slice(0, MAX_SUBMISSIONS_PER_RUN);
   if (ids.length === 0) return { recorded: 0, failed: 0 };
-  const answers = (await store.listUngraded(ids)).slice(0, MAX_ANSWERS_PER_RUN);
+  const answers = (await store.listUngraded(ids, { includeGraded: options.regrade === true })).slice(0, MAX_ANSWERS_PER_RUN);
   let recorded = 0;
   let failed = 0;
   for (const answer of answers) {

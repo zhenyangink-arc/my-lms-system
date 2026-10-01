@@ -33,9 +33,16 @@ export type SubjectMachineGradingInput = {
   answerIds: string[];
 };
 
+export type SubjectSubmissionReviewActionsProps = {
+  /** 当前作业；学科动作自己再校验权限与归属。 */
+  assignmentId: string;
+};
+
 export type SubjectAdminSlots = {
   /** 平台视图“作业与考试”里的“制作标准试卷”区域。 */
   AssessmentAuthoring?: ComponentType<SubjectAssessmentAuthoringProps>;
+  /** 教师批改页面里提交列表上方的学科操作（如“重新判题”）。 */
+  SubmissionReviewActions?: ComponentType<SubjectSubmissionReviewActionsProps>;
   /** 教师批改页面：补上机器判题并返回每道作答的最新建议（键为作答 ID）。 */
   prepareMachineGrades?: (input: SubjectMachineGradingInput) => Promise<Map<string, MachineSuggestion>>;
 };
@@ -72,4 +79,15 @@ export async function prepareMachineGradesFor(
   if (!Object.prototype.hasOwnProperty.call(slots, slug)) return new Map();
   const prepare = slots[slug as SubjectSlug]?.prepareMachineGrades;
   return prepare ? prepare(input) : new Map();
+}
+
+/** 取学科的批改页操作并创建元素；没有注册时返回 null。 */
+export function renderSubmissionReviewActions(
+  slots: SubjectAdminSlotMap,
+  slug: string,
+  props: SubjectSubmissionReviewActionsProps,
+): ReactElement | null {
+  if (!Object.prototype.hasOwnProperty.call(slots, slug)) return null;
+  const Component = slots[slug as SubjectSlug]?.SubmissionReviewActions;
+  return Component ? createElement(Component, props) : null;
 }
