@@ -17,7 +17,7 @@ const filesUnder = (dir) =>
 test("大学课程清单：只开放骨架（学生与教学分配、课程结构、应用设置），不含巩固 / 专项训练 / 会话练习 / 结课资格", () => {
   const manifest = getSubjectManifest("university");
   assert.equal(manifest.slug, "university");
-  assert.deepEqual(manifest.management.sections, ["students", "content", "settings"]);
+  assert.deepEqual(manifest.management.sections, ["class-today", "students", "content", "grades", "records", "settings"]);
   const navKeys = manifest.student.navigation.flatMap((group) => group.items);
   assert.deepEqual(navKeys, ["home", "courses", "assignments", "grades", "records", "library", "announcements", "help"]);
   for (const pending of ["practice", "conversation"]) assert.ok(!navKeys.includes(pending), pending);

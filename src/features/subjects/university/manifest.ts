@@ -2,13 +2,14 @@ import type { SubjectManifest } from "../contracts.ts";
 
 // 独立的“大学课程”应用（2026-10-01 用户决定：不并入 english / math，保留给专业课）。
 // 现在是骨架：沿用平台已按应用隔离的页面，不含数据库改动；应用仍为“即将上线”，学生进不去。
-// 管理端先只开放学生与教学分配、课程结构、应用设置；其余分区逐个确认按应用隔离后再启用。
+// 管理端：只开放服务已确认按应用隔离的分区（今日课堂、学生与教学分配、课程结构、成绩分析、学习记录、应用设置）；
+// 作业与考试依赖标准试卷的制作流程，其余分区逐个确认后再启用。
 // 学生端不含巩固中心、专项训练、会话练习、结课资格（依赖韩语内容格式或待产品决定）。
 export const universityManifest: SubjectManifest = {
   slug: "university",
   contractVersion: 1,
   management: {
-    sections: ["students", "content", "settings"],
+    sections: ["class-today", "students", "content", "grades", "records", "settings"],
     teachingOperations: false,
     courseContentWorkflow: false,
     subcategoryLabel: "专业或公共课组",
