@@ -145,7 +145,7 @@ ExternalEmbedFrame（客户端）
 
 ## 6. 需要决定的事项
 
-1. **SDK 的引入方式**：`@edumath/embed-sdk` 目前是 EduMath 仓库内的私有包。选项：发布到私有 npm 源；按版本锁定并附哈希拷贝其构建产物；从 EduMath CDN 加载浏览器包。建议前两者之一，不建议运行时从第三方 CDN 加载脚本。
+1. **SDK 的引入方式**（2026-10-01 已决定：固定版本拷贝构建产物，附来源与文件指纹，做法同 math-core；EduMath 仿真接入本身暂缓，用户 2026-10-01 说“先不做 edumath”）：`@edumath/embed-sdk` 目前是 EduMath 仓库内的私有包。选项：发布到私有 npm 源；按版本锁定并附哈希拷贝其构建产物；从 EduMath CDN 加载浏览器包。建议前两者之一，不建议运行时从第三方 CDN 加载脚本。
 2. **域名与环境**：EduMath 的 Studio / 嵌入页 / API 域名；LMS 需要登记到 `frame-ancestors` 与 `return_url` 白名单的域名（包括 Cloudflare 与 Tailscale 入口）。
 3. **密钥管理**：Launch Token 签名私钥、服务间 `client_id` / 密钥的存放与轮换（Cloudflare 机密变量）。
 4. **仿真完成是否计入课时完成**：建议只计入学习参与，不自动把课时标记为完成，或只在教师设置后才计入。
