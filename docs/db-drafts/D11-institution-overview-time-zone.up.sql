@@ -1,7 +1,8 @@
 -- D11（草稿，未进入 supabase/migrations）：机构 / 平台学习总览的日界线时区可由调用方指定。
 -- 与 D10 同一做法：get_institution_platform_learning_overview 把“今天”写死为 Asia/Seoul（今日活跃学生、今日必做、章节练习与复习使用人数）。
--- 改动：新增第 3 个参数 p_time_zone text default 'Asia/Seoul'（不传时行为与原来一致）；函数体 2 处 'Asia/Seoul' 换成 v_time_zone，
--- 时区名校验放在授权检查之后（无效 → 22023）；参数列表变化，先删旧 2 参数签名再创建，授权与注释同步重建。
+-- 改动：新增第 3 个参数 p_time_zone text default 'Asia/Seoul'（不传时行为与原来一致）；函数体 2 处 'Asia/Seoul' 换成 v_time_zone；
+-- 无效时区名由 PostgreSQL 自身在 at time zone 处抛 22023，不另写校验（显式查 pg_timezone_names 每次约 35 ms）。
+-- 参数列表变化，先删旧 2 参数签名再创建，授权与注释同步重建。
 -- 正式迁移须按 Architecture Gate 流程提交；应用侧（institution-platform-overview/api/service.ts 传 p_time_zone）在迁移上线后再改。
 begin;
 
@@ -57,10 +58,6 @@ begin
         message = '机构负责人只能查看自己的当前机构';
     end if;
     v_scope := 'institution';
-  end if;
-
-  if not exists (select 1 from pg_catalog.pg_timezone_names as zone where zone.name = v_time_zone) then
-    raise exception using errcode = '22023', message = '无效的时区：' || v_time_zone;
   end if;
 
   v_today_start := date_trunc('day', p_now at time zone v_time_zone)

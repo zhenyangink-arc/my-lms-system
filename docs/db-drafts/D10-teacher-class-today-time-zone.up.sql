@@ -1,7 +1,7 @@
 -- D10（草稿，未进入 supabase/migrations）：教师“今日课堂”的日界线时区可由调用方指定。
 -- 背景：get_teacher_class_today_snapshot 把“今天”写死为 Asia/Seoul（今天已学习、今日必做、连续未学习天数）；
 -- 产品决定（2026-10-01）时间跟随用户电脑的时区，应用层已通过 cookie 取得用户时区。
--- 改动：新增第 5 个参数 p_time_zone text default 'Asia/Seoul'（不传时行为与原来逐字一致），校验为有效时区名。
+-- 改动：新增第 5 个参数 p_time_zone text default 'Asia/Seoul'（不传时行为与原来逐字一致）；无效时区名由 PostgreSQL 自身在 at time zone 处抛 22023，不另写校验（显式查 pg_timezone_names 每次约 35 ms）。
 -- 参数列表变化，所以先删除旧的 4 参数签名再创建新函数（否则会并存两个重载，按名调用会有歧义），授权与注释同步重建。
 -- 函数体只有 4 处 'Asia/Seoul' 换成 v_time_zone，其余与 202608190021 逐字一致。
 -- 正式迁移须按 Architecture Gate 流程提交；应用侧（service.ts 传 p_time_zone）在迁移上线后再改。
@@ -61,10 +61,6 @@ begin
     raise exception using
       errcode = '42501',
       message = '该学生不在当前老师的教学分配范围内';
-  end if;
-
-  if not exists (select 1 from pg_catalog.pg_timezone_names as zone where zone.name = v_time_zone) then
-    raise exception using errcode = '22023', message = '无效的时区：' || v_time_zone;
   end if;
 
   v_today_start := date_trunc('day', p_now at time zone v_time_zone)
