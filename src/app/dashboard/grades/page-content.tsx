@@ -14,7 +14,7 @@ import {
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
-import { isSubjectSectionEnabled, type SubjectSlug } from "@/features/subjects";
+import { getSubjectManifest, isSubjectSectionEnabled, type SubjectSlug } from "@/features/subjects";
 import { LEGACY_DASHBOARD_APP_SLUG } from "@/app/dashboard/legacy-redirect";
 import {
   GradeBoard,
@@ -543,6 +543,7 @@ export async function GradesPageContent({
           isStudent={isStudent}
           dataError={Boolean(dataError)}
           memoryKey={`student-grade-category-v1:${user.id}:${studentAppId}`}
+          showSkillPortrait={getSubjectManifest(studentAppSlug)?.student.gradesSkillPortrait !== false}
         />
       </div>
     </div>

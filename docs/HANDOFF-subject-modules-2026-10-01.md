@@ -1,6 +1,6 @@
 # 交接总结：学科模块 + 数学（2026-10-01）
 
-> 分支 `feat/subject-slots`（工作树 `../my-lms-system-subjects`），比 `main` 多 75 个提交、248 个文件（+15493 / −1808）。**全部只在本地，没有推送，没有合并，没有改过任何真实库。**
+> 分支 `feat/subject-slots`（工作树 `../my-lms-system-subjects`），比 `main` 多 91 个提交、293 个文件（+17076 / −1832，含这份文档所在的提交）。**全部只在本地，没有推送，没有合并，没有改过任何真实库。**
 > 本文只是入口；细节在各文档里。待你们决定的事见 [decisions-pending-2026-10-01.md](./decisions-pending-2026-10-01.md)。
 
 ## 1. 先看哪里
@@ -9,6 +9,7 @@
 |---|---|
 | 还卡着什么、谁来定 | `docs/decisions-pending-2026-10-01.md`（团队版页面也已发布过一份） |
 | 数据库草稿能不能上线 | `docs/db-drafts/README.md`、`REVIEW-D5-D7.md`、`GATE-REPORT-D5-D7-D8.md`（作者自审，**非独立**） |
+| 大学课程专业结构、D9 的设计与验证 | `docs/university-major-structure-design.md`、`docs/db-drafts/GATE-REPORT-D9.md`（作者自审，**非独立**） |
 | 独立 Gate 怎么提 | `docs/codex-task-drafts/MATH-DB-GATE-VERIFY-01.md`（草稿，未放进 `.codex/`） |
 | 合并会怎样 | `docs/merge-precheck-2026-10-01.md` |
 | 数学出题 / 批改 / 学生端做了什么、每步怎么验证的 | `docs/math-admin-authoring-design.md`（§10–§18 是验证记录） |
@@ -30,11 +31,13 @@
 
 **大学课程应用（2026-10-01 追加）**：独立的 `university` 学科模块，清单 `src/features/subjects/university/manifest.ts`，学生端路由 `src/app/[space]/apps/university/**`，管理端 3 个分区（课程结构、学生与教学分配、应用设置）；无数据库改动，测试 `tests/university-app.test.mjs`；已在验证库浏览器验证并清理数据。限制见架构文档第 8 节第 6 项。
 
+**大学课程专业可见范围（2026-10-01 追加）**：专业 = 大学课程下的二级分类，公共课放进“公共课组”（可见模式 专业 / 公共课组 / 通识），学生只看自己专业；数据库草稿 D9（3 张新表、`university_category_scope()`、2 个写入函数，不改既有对象；`tools/rehearse-d9.sh` 38 项 PASS 且既有策略与函数指纹不变），应用层含学生端过滤与 404 拦截、资料库过滤、机构“学生所属专业”面板、平台“专业可见范围”面板、管理端叫法，以及成绩页对大学课程关闭六维语言能力画像、未选专业学生的提示；全部在验证库浏览器验证过。**没有合并代码但未应用 D9 时不要开放大学课程。**设计与限制见 `docs/university-major-structure-design.md`。
+
 此前几天的学科插槽、英语应用骨架、门户 / 首页框架等工作见项目记忆与 `docs/shared-platform-subject-modules-architecture.md`。
 
 ## 3. 验证情况
 
-- **测试**：只点名运行的 70 个安全测试文件，418 项全部通过（排除了 103 个 Codex 线与带副作用的测试；运行前后 Codex 账本行数与图片修改时间不变，两个仓库 `git status` 干净）。另有 `tsc`、`eslint`（改动范围内）无报错。
+- **测试**：只点名运行的 72 个安全测试文件，432 项全部通过（2026-10-01 大学课程与 D9 之后重跑；此前 70 个文件 418 项）（排除了 103 个 Codex 线与带副作用的测试；运行前后 Codex 账本行数与图片修改时间不变，两个仓库 `git status` 干净）。另有 `tsc`、`eslint`（改动范围内）无报错。
 - **数据库草稿**（隔离验证库）：D5 43 行结果、D7 37 项、D8 27 项；韩语回归探针在执行前 / 后 / 回滚后一致；被替换的 5 个函数回滚后逐字一致；一键演练 `docs/db-drafts/tools/rehearse.sh`（2026-10-01 通过）。
 - **浏览器**（隔离验证库 + 开发服务 3100 端口）：出题、试判、保存、发布、编辑草稿、机构布置（作业 / 考试 / 指定学生）、学生作答与预览、机器判题建议、批改预填、重新判题、窄屏 390px、韩语页面对照。
 - **代码审查**：对整个分支做过一次审查，9 条发现里 8 条已修复并验证，1 条核对后不是缺陷。
@@ -61,7 +64,7 @@
 
 ## 7. 下一步（按顺序）
 
-1. 独立 Gate（任务单草稿已备好）→ 通过后用 `tools/install-migrations.sh` 整理迁移，编号排在 Codex 迁移之后；
+1. 独立 Gate（任务单草稿已备好，范围含 D5 / D7 / D8 与 D9）→ 通过后用 `tools/install-migrations.sh` 整理迁移，编号排在 Codex 迁移之后；
 2. （已决定）布置时间跟随电脑时区；
-3. Codex 收尾后合并，处理指纹锁（117 个重叠文件）；
+3. Codex 收尾后合并，处理指纹锁（125 个重叠文件，见 `merge-precheck-2026-10-01.md` 更新）；
 4. 合并后在本机库同步迁移，做一次浏览器验证并对照韩语页面。

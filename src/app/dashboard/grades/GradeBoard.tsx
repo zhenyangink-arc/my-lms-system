@@ -217,6 +217,7 @@ export function GradeBoard({
   isStudent,
   dataError,
   memoryKey,
+  showSkillPortrait = true,
 }: {
   results: GradeResult[];
   reviews: GradeReview[];
@@ -224,6 +225,8 @@ export function GradeBoard({
   isStudent: boolean;
   dataError: boolean;
   memoryKey: string;
+  /** 是否显示“六维学习能力”画像；非语言学科不显示。 */
+  showSkillPortrait?: boolean;
 }) {
   const [category, setCategory] = useState<GradeCategory>("homework");
 
@@ -325,7 +328,7 @@ export function GradeBoard({
           >
             {[
               ["概览", "#grade-overview"],
-              ["能力", "#grade-skills"],
+              ...(showSkillPortrait ? [["能力", "#grade-skills"]] : []),
               ["明细", "#grade-details"],
             ].map(([label, href]) => (
               <a
@@ -463,9 +466,11 @@ export function GradeBoard({
         </div>
       </section>
 
-      <div id="grade-skills" className="scroll-mt-24">
-        <SkillRadar category={category} profile={skillProfiles[category]} />
-      </div>
+      {showSkillPortrait && (
+        <div id="grade-skills" className="scroll-mt-24">
+          <SkillRadar category={category} profile={skillProfiles[category]} />
+        </div>
+      )}
 
       <section
         id="grade-details"

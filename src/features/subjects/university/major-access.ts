@@ -30,6 +30,9 @@ export function normalizeMajorIds(mode: CategoryAccessMode, values: unknown[]): 
 /** 学生范围：restricted 为 false 表示不受限；否则只能看 ids 里的二级分类。 */
 export type UniversityCategoryScope = { restricted: boolean; categoryIds: ReadonlySet<string> };
 
+/** 学生端用的范围：在 `UniversityCategoryScope` 之上多一个“是否已有生效专业”，用于提示。不受限的账号恒为 true。 */
+export type UniversityStudentScope = UniversityCategoryScope & { hasActiveMajor: boolean };
+
 export function isCategoryVisible(scope: UniversityCategoryScope, categoryId: string): boolean {
   return !scope.restricted || scope.categoryIds.has(categoryId);
 }

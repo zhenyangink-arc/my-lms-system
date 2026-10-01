@@ -28,6 +28,7 @@ export const universityManifest: SubjectManifest = {
     // 大学课程的内容结构：大学课程 → 二级分类（专业、公共课组、通识）→ 课程 → 课时；二级分类统称“专业与公共课”。
     catalogSubcategoryLabel: "专业与公共课",
     homeBlocks: ["today-tasks", "continue-learning"],
+    gradesSkillPortrait: false,
     libraryLanguageCategoryLabel: "大学课程",
   },
 };

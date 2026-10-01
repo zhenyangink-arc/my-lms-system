@@ -149,3 +149,30 @@ test("管理端课程结构：大学课程二级分类叫“专业或公共课�
   // 旧的共用管理页不传标签（韩语等不受影响）
   assert.doesNotMatch(read("src/app/dashboard/admin/courses/page-content.tsx"), /subcategoryLabel/);
 });
+
+test("成绩页：只有清单关闭的学科（大学课程）不显示六维语言能力画像，其余学科默认显示", () => {
+  assert.equal(getSubjectManifest("university").student.gradesSkillPortrait, false);
+  for (const slug of ["korean", "english", "math"]) {
+    assert.notEqual(getSubjectManifest(slug).student.gradesSkillPortrait, false, slug);
+  }
+  const page = read("src/app/dashboard/grades/page-content.tsx");
+  assert.match(page, /showSkillPortrait=\{getSubjectManifest\(studentAppSlug\)\?\.student\.gradesSkillPortrait !== false\}/);
+  const board = read("src/app/dashboard/grades/GradeBoard.tsx");
+  assert.match(board, /showSkillPortrait = true/);
+  assert.match(board, /\.\.\.\(showSkillPortrait \? \[\["能力", "#grade-skills"\]\] : \[\]\)/);
+  assert.match(board, /\{showSkillPortrait && \(/);
+});
+
+test("专业范围读取：同一次请求只查一次；未选专业的学生在目录与专业页看到提示", () => {
+  const loader = read("src/features/subjects/university/major-scope.server.ts");
+  assert.match(loader, /export const loadUniversityCategoryScope = cache\(/);
+  assert.match(loader, /hasActiveMajor: \(count \?\? 0\) > 0/);
+  // 不受限账号不额外查专业，且不会被提示
+  assert.match(loader, /if \(!row\.restricted\) return \{ restricted: false, categoryIds: new Set\(\), hasActiveMajor: true \}/);
+  for (const route of ["courses/page.tsx", "courses/[categorySlug]/page.tsx"]) {
+    const source = read(`src/app/[space]/apps/university/${route}`);
+    assert.match(source, /scope\.restricted && !scope\.hasActiveMajor/, route);
+    assert.match(source, /<NoMajorNotice \/>/, route);
+  }
+  assert.match(read("src/features/subjects/university/student/NoMajorNotice.tsx"), /role="status"/);
+});
