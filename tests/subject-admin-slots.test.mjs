@@ -4,17 +4,22 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import { renderAssessmentAuthoring, resolveAssessmentAuthoring } from "../src/features/subjects/admin-slot-contract.ts";
-import { renderSubjectAssessmentAuthoring } from "../src/features/subjects/admin-slots.ts";
-import { SUBJECT_SLUGS } from "../src/features/subjects/registry.ts";
 
 const root = new URL("..", import.meta.url).pathname;
 const props = { appId: "app", appSlug: "math", canRelease: false };
 const read = (path) => readFileSync(join(root, path), "utf8");
 
-test("没有注册插槽的学科、非学科应用都返回 null（韩语、英语沿用平台界面）", () => {
-  for (const slug of [...SUBJECT_SLUGS, "university", "study-abroad", "", "constructor", "__proto__", "toString"]) {
-    assert.equal(renderSubjectAssessmentAuthoring(slug, props), null, slug);
-  }
+test("注册表：只有数学注册了出题界面，韩语、英语沿用平台界面", () => {
+  const registry = read("src/features/subjects/admin-slots.ts");
+  assert.match(registry, /SUBJECT_ADMIN_SLOTS: SubjectAdminSlotMap = \{ math: mathAdminSlots \}/);
+  assert.doesNotMatch(registry, /korean|english/);
+  assert.match(registry, /from "\.\/math\/admin-slot\.tsx"/);
+});
+
+test("注册表不从学科入口导出：入口会被客户端组件引用，不能带上服务端代码", () => {
+  assert.doesNotMatch(read("src/features/subjects/index.ts"), /admin-slots|renderSubjectAssessmentAuthoring/);
+  const page = read("src/app/dashboard/admin/apps/ManagementApplicationAssessmentPage.tsx");
+  assert.match(page, /from "@\/features\/subjects\/admin-slots"/);
 });
 
 test("解析函数：已注册返回组件；未注册、空插槽、原型属性名都返回 null", () => {
@@ -52,11 +57,8 @@ test("作业与考试页面：有学科插槽时用插槽并跳过题库选题�
   assert.match(page, /canRelease: canReleaseStandardPapers/);
 });
 
-test("插槽契约与注册表不引用任何学科内部文件（平台只通过公开入口）", () => {
-  for (const path of ["src/features/subjects/admin-slot-contract.ts", "src/features/subjects/admin-slots.ts"]) {
-    const text = read(path);
-    assert.doesNotMatch(text, /from "\.\/(korean|english|math)\//, path);
-  }
-  const index = read("src/features/subjects/index.ts");
-  assert.match(index, /renderSubjectAssessmentAuthoring/);
+test("插槽契约不引用任何学科内部文件；注册表只引用各学科的公开入口 admin-slot.tsx", () => {
+  assert.doesNotMatch(read("src/features/subjects/admin-slot-contract.ts"), /from "\.\/(korean|english|math)\//);
+  const imports = [...read("src/features/subjects/admin-slots.ts").matchAll(/from "(\.\/(?:korean|english|math)\/[^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(imports, ["./math/admin-slot.tsx"]);
 });

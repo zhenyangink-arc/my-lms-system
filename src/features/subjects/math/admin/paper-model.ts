@@ -398,3 +398,75 @@ export function validatePaperDraft(draft: DraftPaper, seedFor: (index: number) =
   if (errors.length > 0) return { ok: false, errors: errors.slice(0, 20) };
   return { ok: true, title, description, durationMinutes, passingScore, questions };
 }
+
+// ---------- 解析不可信的草稿 JSON（服务端用） ----------
+
+const MAX_TEXT = 6000;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function text(value: unknown, max = MAX_TEXT): string | null {
+  return typeof value === "string" && value.length <= max ? value : null;
+}
+
+/**
+ * 把客户端提交的 JSON 解析成 DraftPaper：严格检查结构与类型，忽略多余字段，
+ * 不信任任何一项（题数、选项数、变量数都有上限）。内容层面的校验仍由 validatePaperDraft 完成。
+ */
+export function parseDraftPaper(raw: unknown): { ok: true; value: DraftPaper } | { ok: false } {
+  if (!isRecord(raw)) return { ok: false };
+  const title = text(raw.title);
+  const description = text(raw.description);
+  const durationMinutes = text(raw.durationMinutes, 20);
+  const passingScore = text(raw.passingScore, 20);
+  if (title === null || description === null || durationMinutes === null || passingScore === null) return { ok: false };
+  if (!Array.isArray(raw.questions) || raw.questions.length > MAX_QUESTIONS) return { ok: false };
+
+  const questions: DraftQuestion[] = [];
+  for (const item of raw.questions) {
+    if (!isRecord(item)) return { ok: false };
+    const prompt = text(item.prompt);
+    const points = text(item.points, 20);
+    const explanation = text(item.explanation);
+    const difficulty = item.difficulty;
+    if (prompt === null || points === null || explanation === null) return { ok: false };
+    if (typeof difficulty !== "string" || !(DIFFICULTIES as readonly string[]).includes(difficulty)) return { ok: false };
+    const base = { prompt, points, explanation, difficulty: difficulty as Difficulty };
+
+    if (item.kind === "choice") {
+      if (!Array.isArray(item.options) || item.options.length > 8) return { ok: false };
+      const options: string[] = [];
+      for (const option of item.options) {
+        const value = text(option, 1000);
+        if (value === null) return { ok: false };
+        options.push(value);
+      }
+      const index = item.correctIndex;
+      if (index !== null && !(typeof index === "number" && Number.isInteger(index))) return { ok: false };
+      questions.push({ ...base, kind: "choice", options, correctIndex: index });
+    } else if (item.kind === "expression" || item.kind === "numeric") {
+      const expected = text(item.expected, 400);
+      const toleranceAbs = text(item.toleranceAbs, 40);
+      const toleranceRel = text(item.toleranceRel, 40);
+      if (expected === null || toleranceAbs === null || toleranceRel === null) return { ok: false };
+      if (item.kind === "numeric") {
+        questions.push({ ...base, kind: "numeric", expected, toleranceAbs, toleranceRel });
+      } else {
+        if (!Array.isArray(item.variables) || item.variables.length > MAX_VARIABLES) return { ok: false };
+        const variables: DraftVariable[] = [];
+        for (const variable of item.variables) {
+          if (!isRecord(variable)) return { ok: false };
+          const name = text(variable.name, 64);
+          const min = text(variable.min, 40);
+          const max = text(variable.max, 40);
+          if (name === null || min === null || max === null) return { ok: false };
+          variables.push({ name, min, max });
+        }
+        questions.push({ ...base, kind: "expression", expected, variables, toleranceAbs, toleranceRel });
+      }
+    } else return { ok: false };
+  }
+  return { ok: true, value: { title, description, durationMinutes, passingScore, questions } };
+}

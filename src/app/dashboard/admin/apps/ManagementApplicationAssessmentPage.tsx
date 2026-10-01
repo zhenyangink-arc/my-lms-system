@@ -8,10 +8,8 @@ import {
   ManagementMetricStrip,
   ManagementNotice,
 } from "@/components/layout/management-page";
-import {
-  renderSubjectAssessmentAuthoring,
-  type SubjectSlug,
-} from "@/features/subjects";
+import { renderSubjectAssessmentAuthoring } from "@/features/subjects/admin-slots";
+import type { SubjectSlug } from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
 import type { ManagementAppAccess } from "@/lib/management-apps";
 import { questionOptions } from "@/lib/question-bank";

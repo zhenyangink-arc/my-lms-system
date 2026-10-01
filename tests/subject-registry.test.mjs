@@ -97,11 +97,11 @@ test("英语和数学的管理端只开放已按应用隔离的分区", () => {
     "records",
     "settings",
   ]);
-  assert.deepEqual(getSubjectManifest("math").management.sections, ["students", "content", "settings"]);
+  assert.deepEqual(getSubjectManifest("math").management.sections, ["students", "content", "assessments", "settings"]);
   for (const slug of ["english", "math"]) {
     const manifest = getSubjectManifest(slug);
-    // 作业与考试依赖章节测试与标准试卷制作流程，尚未对新学科开放。
-    assert.equal(manifest.management.sections.includes("assessments"), false);
+    // 作业与考试：英语依赖章节测试题库的制作流程，尚未开放；数学用自己的出题界面（admin-slot），已开放。
+    assert.equal(manifest.management.sections.includes("assessments"), slug === "math");
     assert.equal(manifest.management.teachingOperations, false);
     assert.equal(manifest.management.courseContentWorkflow, false);
     assert.equal(manifest.student.courseSearch, false);
@@ -232,7 +232,8 @@ test("依赖方向：学科之间不深链，共享层不引用学科", () => {
     assert.doesNotMatch(source, /from ["']@\/app\//, path);
     const subject = relative("src/features/subjects", path).split("/")[0];
     for (const other of SUBJECT_SLUGS.filter((slug) => slug !== subject)) {
-      assert.doesNotMatch(source, new RegExp(`from ["'][^"']*/${other}/(?!index\\.ts["'])`), path);
+      // 学科对外的公开入口：index.ts（清单，纯数据）与 admin-slot.tsx（管理端插槽，服务端）
+      assert.doesNotMatch(source, new RegExp(`from ["'][^"']*/${other}/(?!(index|admin-slot)\\.tsx?["'])`), path);
     }
   }
   for (const path of filesUnder("src/lib").filter((file) => /\.(ts|tsx)$/.test(file))) {
