@@ -8,6 +8,7 @@ import {
   type SectionSearchParams,
 } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
 import CourseCatalogListing from "@/features/courses/components/course-catalog-listing";
+import { getSubjectManifest } from "@/features/subjects";
 
 export default async function ManagementAppContentRoute({
   params,
@@ -36,6 +37,7 @@ export default async function ManagementAppContentRoute({
           folder: firstSectionParam(query.folder) ?? (chapter ? `lesson:${chapter.lessonId}` : undefined),
         })}
         studentAppId={context.access.appId}
+        subcategoryLabel={getSubjectManifest(appSlug)?.management.subcategoryLabel}
         routeBasePath={workflowHref(context.access.appPath, "content", chapterId)}
         textbookRoute={workflowHref(context.access.appPath, "textbooks", chapterId)}
       />

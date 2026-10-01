@@ -11,6 +11,7 @@ export const universityManifest: SubjectManifest = {
     sections: ["students", "content", "settings"],
     teachingOperations: false,
     courseContentWorkflow: false,
+    subcategoryLabel: "专业或公共课组",
   },
   student: {
     navigation: [

@@ -12,10 +12,12 @@ export type CourseCatalogActionOptions = {
   lessons: CourseCatalogLesson[];
   chapters: CourseCatalogChapter[];
   studentAppId?: string;
+  /** 学科给二级分类起的名字（如大学课程的“专业或公共课组”）；不设置时叫“分类”。 */
+  subcategoryLabel?: string;
 };
 
 export type CreateTarget =
-  | { kind: "category"; parentId?: string; title: string; sortOrder: number }
+  | { kind: "category"; parentId?: string; title: string; sortOrder: number; label?: string }
   | { kind: "course"; categoryId: string; title: string; sortOrder: number }
   | { kind: "lesson"; courseId: string; title: string; sortOrder: number }
   | { kind: "chapter"; lessonId: string; title: string; sortOrder: number };
@@ -29,7 +31,8 @@ export function getCreateChildTarget(
       return {
         kind: "category",
         parentId: node.id,
-        title: `在"${node.title}"中新建分类`,
+        title: `在"${node.title}"中新建${options.subcategoryLabel ?? "分类"}`,
+        label: options.subcategoryLabel,
         sortOrder:
           options.categories.filter((item) => item.parent_id === node.id)
             .length * 10 + 10,

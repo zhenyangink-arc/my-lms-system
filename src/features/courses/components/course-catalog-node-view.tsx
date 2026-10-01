@@ -14,6 +14,8 @@ type CourseCatalogNodeViewProps =
   | {
       kind: "category";
       node: CourseCategory;
+      /** 二级分类在本学科中的名字；不设置时叫“课程分类”。 */
+      subcategoryLabel?: string;
       resources?: never;
       resourceErrorMessage?: never;
     }
@@ -106,6 +108,10 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
   }
 
   const { kind, node } = props;
+  const nodeLabel =
+    props.kind === "category" && props.node.parent_id && props.subcategoryLabel
+      ? props.subcategoryLabel
+      : NODE_LABELS[kind];
   const detailRows =
     kind === "category"
       ? [
@@ -135,7 +141,7 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
         <NodeCover kind={kind} node={node} />
         <div className="min-w-0">
           <p className="text-xs font-medium text-[var(--foreground-muted)]">
-            {NODE_LABELS[kind]}预览
+            {nodeLabel}预览
           </p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--foreground)]">
             {node.title}
@@ -146,7 +152,7 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
           <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
             <div className="bg-[var(--card)] px-3 py-2">
               <dt className="text-[10px] text-[var(--foreground-muted)]">类型</dt>
-              <dd className="mt-1 text-xs font-semibold">{NODE_LABELS[kind]}</dd>
+              <dd className="mt-1 text-xs font-semibold">{nodeLabel}</dd>
             </div>
             <div className="bg-[var(--card)] px-3 py-2">
               <dt className="text-[10px] text-[var(--foreground-muted)]">学生端状态</dt>

@@ -244,7 +244,7 @@ export function CourseCatalogEditDialog({ node, options, compact = false }: { no
 }
 
 function CreateForm({ target, studentAppId }: { target: CreateTarget; studentAppId?: string }) {
-  if (target.kind === "category") return <form action={createCourseCategoryAction} className="space-y-4">{target.parentId && <input type="hidden" name="parent_id" value={target.parentId} />}{!target.parentId && studentAppId && <input type="hidden" name="student_app_id" value={studentAppId} />}<CreateFields sortOrder={target.sortOrder} /><SaveButton label="创建分类" /></form>;
+  if (target.kind === "category") return <form action={createCourseCategoryAction} className="space-y-4">{target.parentId && <input type="hidden" name="parent_id" value={target.parentId} />}{!target.parentId && studentAppId && <input type="hidden" name="student_app_id" value={studentAppId} />}<CreateFields sortOrder={target.sortOrder} /><SaveButton label={`创建${target.label ?? "分类"}`} /></form>;
   if (target.kind === "course") return <form action={createCatalogCourseAction} className="space-y-4"><input type="hidden" name="category_id" value={target.categoryId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>课程等级<input name="level" defaultValue="beginner" className={INPUT_CLASS} /></label><SaveButton label="创建课程" /></form>;
   if (target.kind === "lesson") return <form action={createCatalogLessonAction} className="space-y-4"><input type="hidden" name="course_id" value={target.courseId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={30} className={INPUT_CLASS} /></label><SaveButton label="创建课时" /></form>;
   return <form action={createCourseChapterAction} className="space-y-4"><input type="hidden" name="lesson_id" value={target.lessonId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={20} className={INPUT_CLASS} /></label><SaveButton label="创建章节" /></form>;
@@ -253,7 +253,7 @@ function CreateForm({ target, studentAppId }: { target: CreateTarget; studentApp
 export function CourseCatalogCreateDialog({ target, primary = false, studentAppId }: { target: CreateTarget; primary?: boolean; studentAppId?: string }) {
   const [open, setOpen] = useState(false);
   const compactTriggerLabel = {
-    category: "新建分类",
+    category: `新建${target.kind === "category" ? target.label ?? "分类" : "分类"}`,
     course: "新建课程",
     lesson: "新建课时",
     chapter: "新建章节",

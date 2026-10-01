@@ -68,6 +68,8 @@ export type SubjectManifest = {
     teachingOperations: boolean;
     /** 显示课程结构、教材、脚本、练习的制作流程导航。 */
     courseContentWorkflow: boolean;
+    /** 管理端课程结构中二级分类的名字（如大学课程的“专业或公共课组”）；不设置时叫“分类”。 */
+    subcategoryLabel?: string;
   };
   student: {
     navigation: readonly StudentNavGroup[];

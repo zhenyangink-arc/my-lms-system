@@ -133,3 +133,19 @@ test("资料库：大学课程按专业范围收窄课程集合，不传范围�
   assert.match(page, /\.in\("category_id", \[\.\.\.visibleCategoryIds\]\)/);
   assert.match(page, /resourcesQuery\.in\("course_id", courseIds\)/);
 });
+
+test("管理端课程结构：大学课程二级分类叫“专业或公共课组”，不设置标签的学科文案不变", () => {
+  assert.equal(getSubjectManifest("university").management.subcategoryLabel, "专业或公共课组");
+  for (const slug of ["korean", "english", "math"]) {
+    assert.equal(getSubjectManifest(slug).management.subcategoryLabel, undefined, slug);
+  }
+  const route = read("src/app/[space]/dashboard/admin/apps/[appSlug]/content/page.tsx");
+  assert.match(route, /subcategoryLabel=\{getSubjectManifest\(appSlug\)\?\.management\.subcategoryLabel\}/);
+  // 共用组件：没有标签时回落到原文案
+  assert.match(read("src/features/courses/components/course-catalog-create-target.ts"), /options\.subcategoryLabel \?\? "分类"/);
+  assert.match(read("src/features/courses/components/course-catalog-action-dialogs.tsx"), /target\.label \?\? "分类"/);
+  assert.match(read("src/features/courses/components/course-catalog-node-view.tsx"), /NODE_LABELS\[kind\]/);
+  assert.match(read("src/features/courses/components/course-catalog-listing.tsx"), /subcategoryLabel : KIND_LABELS\.category/);
+  // 旧的共用管理页不传标签（韩语等不受影响）
+  assert.doesNotMatch(read("src/app/dashboard/admin/courses/page-content.tsx"), /subcategoryLabel/);
+});

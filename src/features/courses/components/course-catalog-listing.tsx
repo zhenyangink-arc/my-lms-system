@@ -121,13 +121,14 @@ function folderHref(catalogRoute: string, ref: FolderRef | null) {
 function categoryRow(
   category: CourseCategory,
   childCount: number,
+  subcategoryLabel?: string,
 ): CourseCatalogFolderRow {
   const quality = catalogCompleteness("category", category, childCount);
   return {
     key: `category:${category.id}`,
     id: category.id,
     kind: "category",
-    kindLabel: KIND_LABELS.category,
+    kindLabel: category.parent_id && subcategoryLabel ? subcategoryLabel : KIND_LABELS.category,
     title: category.title,
     slug: category.slug,
     contentLabel: `${childCount} 个下级内容`,
@@ -227,6 +228,7 @@ type CatalogData = {
 function getFolderChildren(
   ref: FolderRef | null,
   data: CatalogData,
+  subcategoryLabel?: string,
 ): CourseCatalogFolderRow[] {
   const { categories, courses, lessons, chapters } = data;
 
@@ -258,7 +260,7 @@ function getFolderChildren(
     );
     return [
       ...rootCategories.map((category) =>
-        categoryRow(category, categoryChildCount(category.id)),
+        categoryRow(category, categoryChildCount(category.id), subcategoryLabel),
       ),
       ...orphanCourses.map((course) =>
         courseRow(course, courseChildCount(course.id)),
@@ -279,7 +281,7 @@ function getFolderChildren(
     );
     return [
       ...subcategories.map((category) =>
-        categoryRow(category, categoryChildCount(category.id)),
+        categoryRow(category, categoryChildCount(category.id), subcategoryLabel),
       ),
       ...childCourses.map((course) =>
         courseRow(course, courseChildCount(course.id)),
@@ -358,11 +360,14 @@ export default async function CourseCatalogListing({
   studentAppId,
   routeBasePath,
   textbookRoute,
+  subcategoryLabel,
 }: {
   searchParams: Promise<{ node?: string; id?: string; folder?: string }>;
   studentAppId?: string;
   routeBasePath?: string;
   textbookRoute?: string;
+  /** 学科给二级分类起的名字（如大学课程的“专业或公共课组”）；不传时叫“分类”。 */
+  subcategoryLabel?: string;
 }) {
   const selection = await searchParams;
   const result = await getCourseManagementData(selection, studentAppId);
@@ -382,7 +387,7 @@ export default async function CourseCatalogListing({
   const folderRef = currentFolderNode ? requestedFolder : null;
 
   const breadcrumb = buildBreadcrumb(folderRef, result, catalogRoute);
-  const folderRows = getFolderChildren(folderRef, result);
+  const folderRows = getFolderChildren(folderRef, result, subcategoryLabel);
   const createTarget = folderRef
     ? getCreateChildTarget(currentFolderNode!, {
         categories: result.categories,
@@ -390,6 +395,7 @@ export default async function CourseCatalogListing({
         lessons: result.lessons,
         chapters: result.chapters,
         studentAppId,
+        subcategoryLabel,
       })
     : {
         kind: "category" as const,
@@ -497,6 +503,7 @@ export default async function CourseCatalogListing({
                   lessons: result.lessons,
                   chapters: result.chapters,
                   studentAppId,
+                  subcategoryLabel,
                 }}
               />
             )}
@@ -518,6 +525,7 @@ export default async function CourseCatalogListing({
             lessons: result.lessons,
             chapters: result.chapters,
             studentAppId,
+            subcategoryLabel,
           }}
           dashboardBasePath={result.dashboardBasePath}
           routeBasePath={catalogRoute}
@@ -545,7 +553,7 @@ export default async function CourseCatalogListing({
             </Link>
           </div>
           {selectedKind === "category" ? (
-            <CourseCatalogNodeView kind="category" node={selectedNode as CourseCategory} />
+            <CourseCatalogNodeView kind="category" node={selectedNode as CourseCategory} subcategoryLabel={subcategoryLabel} />
           ) : selectedKind === "course" ? (
             <CourseCatalogNodeView kind="course" node={selectedNode as CourseCatalogCourse} />
           ) : selectedKind === "lesson" ? (
