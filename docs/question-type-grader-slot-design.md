@@ -161,6 +161,7 @@ export type SubjectQuestionType = {
 - 尚未做：形式要求（最简、因式分解）、区间 / 集合 / 方程答案、分步题、`partial` 部分得分——都需要上游未导出的中间表示或新规格，留待后续。
 - 尚未接入作业流程：题型登记、`question_type` 约束扩展、`learning_submission_machine_grades` 与判题任务表属于数据库批次，随 D1–D4 评审。
 - 测试：`tests/math-grading.test.mjs`（10 项，含恶意与超长输入）。
+- 包体积（6 节建议 4 的测量，esbuild 单独打包判题器并压缩）：约 169 KB，gzip 后约 50 KB。对 Cloudflare Worker 的体积上限影响很小，练习即时反馈可以在 Worker 内判题；这是单独打包的估算，不含 Next 构建的实际结果。
 
 ## 7. 英语写作
 
