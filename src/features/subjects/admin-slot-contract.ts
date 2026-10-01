@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createElement, type ComponentType, type ReactElement } from "react";
 
 import type { SubjectSlug } from "./contracts.ts";
@@ -14,9 +15,29 @@ export type SubjectAssessmentAuthoringProps = {
   canRelease: boolean;
 };
 
+/** 学科给教师批改页面提供的机器判题建议（只是建议，正式得分仍由教师确认）。 */
+export type MachineSuggestion = {
+  verdict: "correct" | "incorrect" | "error";
+  /** 建议得分；无法判定时为 null */
+  suggestedPoints: number | null;
+  /** 面向老师的中文说明 */
+  message: string;
+};
+
+export type SubjectMachineGradingInput = {
+  /** 当前教职人员的数据库连接（受 RLS 约束）。 */
+  supabase: SupabaseClient;
+  /** 已通过页面权限校验、仍在待批改阶段的提交。 */
+  pendingSubmissionIds: string[];
+  /** 页面要显示建议的作答。 */
+  answerIds: string[];
+};
+
 export type SubjectAdminSlots = {
   /** 平台视图“作业与考试”里的“制作标准试卷”区域。 */
   AssessmentAuthoring?: ComponentType<SubjectAssessmentAuthoringProps>;
+  /** 教师批改页面：补上机器判题并返回每道作答的最新建议（键为作答 ID）。 */
+  prepareMachineGrades?: (input: SubjectMachineGradingInput) => Promise<Map<string, MachineSuggestion>>;
 };
 
 export type SubjectAdminSlotMap = Readonly<
@@ -40,4 +61,15 @@ export function renderAssessmentAuthoring(
 ): ReactElement | null {
   const Component = resolveAssessmentAuthoring(slots, slug);
   return Component ? createElement(Component, props) : null;
+}
+
+/** 取学科的机器判题；没有注册时返回空结果，页面照常人工批改。 */
+export async function prepareMachineGradesFor(
+  slots: SubjectAdminSlotMap,
+  slug: string,
+  input: SubjectMachineGradingInput,
+): Promise<Map<string, MachineSuggestion>> {
+  if (!Object.prototype.hasOwnProperty.call(slots, slug)) return new Map();
+  const prepare = slots[slug as SubjectSlug]?.prepareMachineGrades;
+  return prepare ? prepare(input) : new Map();
 }

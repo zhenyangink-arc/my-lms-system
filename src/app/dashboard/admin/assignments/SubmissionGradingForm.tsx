@@ -26,6 +26,8 @@ type AnswerForGrading = {
   autoGraded: boolean;
   languageSkill: string;
   rubricScores: RubricScores | null;
+  /** 学科机器判题的建议得分（只作为输入框的初始值，教师确认后才生效）；没有建议时为 null。 */
+  suggestedPoints?: number | null;
 };
 type GradingComment = { id: string; content: string };
 
@@ -231,8 +233,8 @@ export function SubmissionGradingForm({
                   </>
                 ) : (
                   <label className="text-xs font-semibold">
-                    本题得分
-                    <input name={`score_${answer.id}`} type="number" inputMode="decimal" min={0} max={answer.maxPoints} step="0.5" required defaultValue={answer.awardedPoints ?? 0} className={`app-input mt-1.5 min-h-11 w-full rounded-lg border px-2 py-2 text-sm ${focusClass}`} />
+                    本题得分{answer.awardedPoints === null && answer.suggestedPoints != null ? "（已按系统建议预填，请确认）" : ""}
+                    <input name={`score_${answer.id}`} type="number" inputMode="decimal" min={0} max={answer.maxPoints} step="0.5" required defaultValue={answer.awardedPoints ?? answer.suggestedPoints ?? 0} className={`app-input mt-1.5 min-h-11 w-full rounded-lg border px-2 py-2 text-sm ${focusClass}`} />
                   </label>
                 )}
                 <label className="mt-3 block text-xs font-semibold">

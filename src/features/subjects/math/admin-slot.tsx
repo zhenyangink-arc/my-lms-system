@@ -6,6 +6,7 @@ import type {
   SubjectAssessmentAuthoringProps,
 } from "../admin-slot-contract.ts";
 import { createMathPaperAction } from "./admin/actions";
+import { prepareMathMachineGrades } from "./grading/machine-grading.server";
 import { MathPaperComposer, type MathPaperLessonOption } from "./admin/MathPaperComposer";
 
 const MAX_LESSON_OPTIONS = 300;
@@ -59,4 +60,5 @@ async function MathAssessmentAuthoring({ canRelease }: SubjectAssessmentAuthorin
 
 export const mathAdminSlots: SubjectAdminSlots = {
   AssessmentAuthoring: MathAssessmentAuthoring,
+  prepareMachineGrades: prepareMathMachineGrades,
 };

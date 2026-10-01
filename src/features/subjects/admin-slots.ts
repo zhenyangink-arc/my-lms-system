@@ -1,7 +1,9 @@
 import {
+  prepareMachineGradesFor,
   renderAssessmentAuthoring,
   type SubjectAdminSlotMap,
   type SubjectAssessmentAuthoringProps,
+  type SubjectMachineGradingInput,
 } from "./admin-slot-contract.ts";
 
 import { mathAdminSlots } from "./math/admin-slot.tsx";
@@ -26,4 +28,9 @@ export function renderSubjectAssessmentAuthoring(
   props: SubjectAssessmentAuthoringProps,
 ) {
   return renderAssessmentAuthoring(SUBJECT_ADMIN_SLOTS, slug, props);
+}
+
+/** 教师批改页：学科的机器判题建议（按作答 ID）；没有注册的学科返回空。 */
+export function prepareSubjectMachineGrades(slug: string, input: SubjectMachineGradingInput) {
+  return prepareMachineGradesFor(SUBJECT_ADMIN_SLOTS, slug, input);
 }

@@ -6,7 +6,7 @@
 import { compileExpression } from "../vendor/math-core/compile.ts";
 import { MAX_EXPRESSION_LENGTH } from "../vendor/math-core/limits.ts";
 import { isValidSymbolName } from "../vendor/math-core/validate.ts";
-import { MATH_QUESTION_TYPES } from "../question-types.ts";
+import { MATH_QUESTION_TYPES, type MathGradeOutcome } from "../question-types.ts";
 
 export const DIFFICULTIES = ["foundation", "medium", "hard", "expert"] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
@@ -203,8 +203,9 @@ function formatNumber(value: number | null): string {
   return value === null ? "无定义" : String(Number(value.toPrecision(10)));
 }
 
-function describeOutcome(
-  outcome: ReturnType<(typeof MATH_QUESTION_TYPES)["math.expression"]["grade"]>,
+/** 把判题结果（含数据库里保存的结果）转成面向老师的中文说明。 */
+export function describeOutcome(
+  outcome: Pick<MathGradeOutcome, "verdict" | "reason" | "evidence">,
 ): TrialResult {
   if (outcome.verdict === "correct") {
     const points = outcome.evidence.validPoints;
