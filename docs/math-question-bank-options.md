@@ -70,3 +70,37 @@ chapter_tests（“题组容器”，必须挂课时，插入时自动生成六�
 2. **数学作业挂在哪**：课程都是平台级，作业的 `course_id` 要指向平台课程；需要核对作业与平台课程的关联方式（`create_learning_assignment_from_paper_with_unlock` 如何处理 `p_course_id`，是我下一步要读的）。
 3. **作业的应用归属**：作业靠课程推导应用；不带课程的数学作业需要显式写入应用，需确认触发器允许。
 4. **是否第一阶段就要选择题**：数学选择题可以直接用现有的 `single_choice` 流程（作业题层已支持），不依赖 D5。
+
+## 6. 更新：确定“平台负责人出题”之后（2026-10-01）
+
+用户确认数学题由**平台负责人**出。现有模型本来就是这样：平台负责人维护平台级的标准试卷，机构教职人员用 `create_learning_assignment_from_paper*` 把试卷布置给本机构学生（该函数把试卷题和答案键复制成作业题）。所以数学也应当在**试卷层**出题，方案 D（教职人员直接布置作业）不再适合，**改为方案 E**。
+
+### 方案 E：平台负责人在试卷层直接出数学题（不建独立题库）
+
+```
+平台负责人 ─ create_math_paper（新） ─▶ assessment_papers + assessment_paper_questions
+                                         + assessment_paper_question_keys + math_paper_question_specs（新）
+机构教职人员 ─ create_learning_assignment_from_paper*（改：复制判题规格）─▶ 作业题 + math_question_specs（D5）
+学生作答 → 机器判题（D5）→ 教师确认 → 发布成绩（现有流程）
+```
+
+需要的改动（草拟为 D7，依赖 D5）：
+
+| # | 改动 | 说明 |
+|---|---|---|
+| 1 | `assessment_paper_questions.question_type` 约束新增两种数学题型 | 与 D5 对作业题的改动同类 |
+| 2 | 新表 `math_paper_question_specs` | 试卷题的判题规格；只有 `current_user_can_manage_assessment_papers()` 可读；试卷非草稿后不可改（沿用试卷题锁定规则） |
+| 3 | 新函数 `create_math_paper` | 仅平台负责人 / 标准题库管理员；题目内联传入（数学表达式、数值、选择题），写试卷、试卷题、答案键、规格；容器必须是数学应用的已发布章节测试 |
+| 4 | 改 `create_learning_assignment_from_paper`：复制判题规格到 `math_question_specs` | 其余逻辑逐字不变；三个 `_with_unlock` 重载都经它调用，不用逐个改 |
+| 5 | 改 `configure_learning_assignment_retake`：补考试卷同样复制判题规格 | 它自己也复制试卷题，不经过上一个函数 |
+| 6 | 改 `private.assessment_paper_release_issues_with_temporary_notice`：数学应用的试卷题 `skill` 允许为空 | **发布校验要求每道题的 `skill` 必须是听说读写词汇语法之一**，否则试卷发布不了；数学没有这六项。这是共用的发布校验函数（约 350 行），只改这一条判断，需要证明韩语试卷的校验结果不变 |
+
+### 仍然存在的前置问题
+
+- **试卷容器**：`assessment_papers.source_test_id` 必填且必须是章节测试，章节测试必须挂课时。数学要先有数学课程与课时，再各建一个“试卷容器”章节测试（创建时会多出一行无用的六项作业计划，无害但要核对）。如果数学课程还没建，这一步要等内容。
+- **能力维度**：成绩中心的六维能力依赖 `language_skill`，数学题为空串，不进入六维统计；数学自己的能力维度属于设计文档第 8 节，另行决定。
+- **改动面**：6 项里有 3 项是替换韩语也在用的共用函数（4、5、6），每项都要证明韩语行为不变，并走 Architecture Gate。
+
+### 建议
+
+按方案 E 起草 D7（含 up / down / test），在验证库里演练，重点证明：韩语试卷的发布校验、布置作业、补考三条路径改前改后结果一致；数学试卷能从“创建 → 发布 → 机构布置 → 学生作答 → 机器判题”走通。
