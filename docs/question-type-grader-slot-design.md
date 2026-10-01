@@ -122,7 +122,7 @@ export type SubjectQuestionType = {
 - 等价判定：符号化简对比，或在变量取值域内多点数值采样并按容差比较；可配置单位、有效数字、区间与集合答案。
 - 分步题：先判最终答案，步骤判定作为可选的部分得分规则。
 - 结果确定且可复核：同一输入与同一判题器版本得到相同结论，依据写入 `evidence`。
-- 是否复用 `@edumath/math-core` 的表达式白名单与采样能力，待决定（其定位是仿真引擎，需要确认是否覆盖判题所需的等价判定）。
+- 复用 `@edumath/math-core` 的表达式层，已决定并实现第一版，见 6.2。
 
 ### 6.1 `@edumath/math-core` 评估（只读审阅 EduMath 提交 `16d2e12`，2026-09-30）
 
@@ -146,6 +146,21 @@ export type SubjectQuestionType = {
 3. 判题器版本号中记录所用 `math-core` 版本，保证判定可复核；依赖需锁定版本（引入方式与嵌入 SDK 一起决定）。
 4. 作业与考试的判题放在 Node 后台进程中，不受 Cloudflare Worker 包体积影响；练习即时反馈若在 Worker 中判题，需先测量 `mathjs/number` 带来的包体积。
 5. 第一批数学题型限定为**表达式作答**与**数值作答**；方程、集合、形式要求、分步题留待后续。
+
+### 6.2 已实现的第一版（2026-10-01，提交 `52d6eb4`）
+
+复用方式已决定：**固定版本拷贝 math-core 的表达式层**（`src/features/subjects/math/vendor/math-core/`，附来源与文件指纹），并新增 `mathjs` 15.2.0 依赖。判题器在 `src/features/subjects/math/grading/equivalence.ts`，纯函数，不碰数据库：
+
+| 判题器键 | 版本 | 作用 |
+|---|---|---|
+| `math.expression-equivalence` | 1.0.0 | 变量取值范围内用固定种子取点（默认 16、上限 64），按绝对 / 相对容差比较 |
+| `math.numeric` | 1.0.0 | 作答当无变量表达式求值（`1/3`、`0.333`），按容差比较 |
+
+- 返回 `correct` / `incorrect` / `error`（无法判定：`invalid_answer`、`invalid_spec`、`insufficient_valid_points`），`evidence` 含种子、容差、各取点两边的值和首个不符点。`error` 不是答错，调用方提示学生或转人工。
+- 一边有定义、一边无定义判错；两边都无定义的点跳过；有效点少于下限（默认 8）则无法判定。
+- 尚未做：形式要求（最简、因式分解）、区间 / 集合 / 方程答案、分步题、`partial` 部分得分——都需要上游未导出的中间表示或新规格，留待后续。
+- 尚未接入作业流程：题型登记、`question_type` 约束扩展、`learning_submission_machine_grades` 与判题任务表属于数据库批次，随 D1–D4 评审。
+- 测试：`tests/math-grading.test.mjs`（10 项，含恶意与超长输入）。
 
 ## 7. 英语写作
 
