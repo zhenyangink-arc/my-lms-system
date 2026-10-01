@@ -62,3 +62,13 @@
 
 - 学生作答表单（`AssignmentSubmissionForm.tsx`）对未知题型退化为文本输入，且占位提示写死“填写韩语答案”；题型标签 `QUESTION_TYPE_LABELS` 没有数学题型，会显示为空。数学作业面向真实学生前，至少要补标签与提示（黄区，与设计文档 §11 步骤 1 一起）。
 - 教师批改界面没有机器判题预填，教师需要自己打分（功能可用，只是没有建议分）。
+
+## 工具（`tools/`）
+
+| 文件 | 作用 |
+|---|---|
+| `tools/rehearse.sh` | 在隔离验证库里完整演练 D5 → D7 → D8：执行、跑测试（D7 37 项、D8 27 项带 PASS/FAIL；D5 检查执行不报错且结果行数为 43）、韩语回归探针与基线逐行比较、回滚、核对被替换的 5 个函数与 `tools/original-functions/` 里的原定义逐字一致、确认验证库回到未应用状态。**只允许容器名含 `verify`**（对其他容器直接拒绝，已验证）；验证库里已有 D5 对象时拒绝运行。2026-10-01 运行结果：演练通过 |
+| `tools/original-functions/` | 5 个被 D7 替换的函数在 D7 之前的定义（取自验证库，与此前手工演练保存的快照一致）。**正式迁移前要用目标库的当前定义重新生成并对比**——如果 Codex 的迁移也改过这些函数，这里的“原定义”就不再是基线 |
+| `tools/install-migrations.sh <12位起始编号> [--write]` | 把 D5、D7、D8 的 up 脚本复制为 `supabase/migrations/<编号>_math_grading_storage.sql`、`…_math_paper_layer.sql`、`…_replace_math_paper_draft.sql`。默认只打印（dry-run）；编号必须是 12 位数字且大于现有最大编号（目前 202609180002），目标文件已存在则拒绝。**Gate 通过且确定排在 Codex 迁移之后再加 `--write`**；本分支没有写入任何迁移文件 |
+
+正式迁移的步骤建议：Gate 通过 → 用目标库重新生成 `original-functions` 并对比（见上）→ `rehearse.sh` 再跑一遍 → `install-migrations.sh <编号> --write` → 新环境用 `supabase/bootstrap` 基线 + 迁移重放验证 → 本机库同步。
