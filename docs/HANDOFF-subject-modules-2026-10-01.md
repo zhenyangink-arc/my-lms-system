@@ -28,6 +28,8 @@
 | 机器判题建议 + 教师批改预填 + 重新判题 | `math/grading/machine-grading*.ts`、`rejudge-actions.ts`、批改页改动 | D5 |
 | 修了两个影响所有非韩语应用的问题 | 作业链接指向旧 `/dashboard` 路径会被重定向到韩语（404）；短答提示“填写韩语答案” | 无 |
 
+**大学课程应用（2026-10-01 追加）**：独立的 `university` 学科模块，清单 `src/features/subjects/university/manifest.ts`，学生端路由 `src/app/[space]/apps/university/**`，管理端 3 个分区（课程结构、学生与教学分配、应用设置）；无数据库改动，测试 `tests/university-app.test.mjs`；已在验证库浏览器验证并清理数据。限制见架构文档第 8 节第 6 项。
+
 此前几天的学科插槽、英语应用骨架、门户 / 首页框架等工作见项目记忆与 `docs/shared-platform-subject-modules-architecture.md`。
 
 ## 3. 验证情况

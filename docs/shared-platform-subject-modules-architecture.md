@@ -170,7 +170,10 @@ app → features（平台 / subjects） → shared
 3. ~~英语 AI 陪练定位~~ **已决定（2026-10-01）：先做 AI 自由对话。**复用韩语“AI 交流体验”的功能结构，换成英语口语陪练提示词，按大学英语水平；回答模式沿用三种（智能跟随 / 英语沉浸 / 中英辅助）；使用权限与韩语相同（vip2 / vip3）。情景会话练习待有英语场景内容后再做；写作批改作为独立功能，以后结合四六级备考再考虑。实施方案与英语提示词初稿见 [english-ai-conversation-plan.md](./english-ai-conversation-plan.md)；接口在黄区，需等 Codex 线收尾，英语语音需外部会话服务支持。
 4. **金老师（教学 Agent）是否扩展到英语、数学**：还是只服务韩语，英语、数学各自新建？
 5. **EduMath 的对接边界**：数学模块按计划书以 iframe + postMessage + Launch Token 嵌入；LMS 服务端能否复用 `@edumath/math-core` 做数学判题？ 对接设计见 [edumath-integration-design.md](./edumath-integration-design.md)。
-6. **大学课程应用**：保留给以后的专业课，还是先隐藏？
+6. ~~大学课程应用~~ **已决定（2026-10-01）：做成独立的“大学课程”应用（`university`），不并入英语 / 数学。**这改写了第 1 节第 2 条之外的一个隐含假设：`university` 不再只是预留，而是第 4 个学科模块（清单 `src/features/subjects/university/manifest.ts`）。与 `student_apps` 种子（“独立的大学课程与专业学习空间”）一致。
+   - 已做：学生端路由 `/{space}/apps/university/**`（首页、课程目录 / 分类 / 课程 / 课时、作业、成绩、学习记录、资料库、公告、帮助），管理端 3 个分区（课程结构、学生与教学分配、应用设置），其余分区 404；课程目录打开所有分类（`catalogOpensAllCategories`）；资料库分类名“大学课程”；课程缓存刷新路由已纳入。**没有数据库改动。**
+   - 浏览器验证（独立验证库，2026-10-01）：学生端 8 个页面与管理端 3 个分区 + 未开放分区（`grades` 为 404）均正常，页面无韩语文案。验证数据已清理（`lms-verify-db/cleanup-university-open.sql`）。
+   - 已知限制：① 应用在 `student_apps` 里仍是 `coming_soon`，机构需先开放；② 成绩页的能力画像仍是通用的听说读写词汇语法六项，对专业课没有意义（英语、数学同样存在）；③ 没有练习、AI 对话、结课资格；④ “专业学习空间”具体包含哪些专业、内容谁来做，产品上尚未定义。
 
 ## 9. 下一步
 
