@@ -137,7 +137,7 @@ export async function MajorEnrollmentPanel({ access }: SubjectSectionExtrasProps
                         <select aria-label={`给${name}添加专业`} name="category_id" disabled={addable.length === 0} className="app-input h-8 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
                           {addable.map((major) => <option key={major.id} value={major.id}>{major.title}</option>)}
                         </select>
-                        <button disabled={addable.length === 0} className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-40">添加</button>
+                        <button aria-label={`为${name}添加所选专业`} disabled={addable.length === 0} className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:cursor-not-allowed disabled:opacity-40">添加</button>
                       </form>
                     </td>
                   </tr>

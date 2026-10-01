@@ -56,7 +56,7 @@ export async function CategoryAccessPanel({ access }: SubjectSectionExtrasProps)
             const linked = linksByCategory.get(category.id) ?? new Set<string>();
             return (
               <li key={category.id} className="border bg-[var(--card)] p-3 text-xs">
-                <form action={setCategoryAccessAction} className="space-y-2">
+                <form action={setCategoryAccessAction} className="group space-y-2">
                   <input type="hidden" name="space" value={space} />
                   <input type="hidden" name="category_id" value={category.id} />
                   <div className="flex flex-wrap items-center gap-3">
@@ -64,9 +64,10 @@ export async function CategoryAccessPanel({ access }: SubjectSectionExtrasProps)
                     <select aria-label={`${category.title}的可见模式`} name="mode" defaultValue={mode} className="app-input h-8 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
                       {CATEGORY_ACCESS_MODES.map((value) => <option key={value} value={value}>{CATEGORY_ACCESS_MODE_LABELS[value]}</option>)}
                     </select>
-                    <button className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">保存</button>
+                    <button aria-label={`保存${category.title}的可见范围`} className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">保存</button>
                   </div>
-                  <fieldset className="flex flex-wrap items-center gap-3">
+                  {/* 只有“公共课组”模式使用关联专业：其他模式下淡化且不响应指针（服务端也会忽略），不需要客户端脚本 */}
+                  <fieldset className="pointer-events-none flex flex-wrap items-center gap-3 opacity-45 group-has-[option[value=shared]:checked]:pointer-events-auto group-has-[option[value=shared]:checked]:opacity-100">
                     <legend className="app-muted-text mb-1">关联专业（仅公共课组使用）</legend>
                     {majors.filter((major) => major.id !== category.id).map((major) => (
                       <label key={major.id} className="inline-flex items-center gap-1">

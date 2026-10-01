@@ -196,3 +196,17 @@ test("批改详情的返回链接：学科没开放“作业与考试”时回�
     assert.equal(getSubjectManifest(slug).management.sections.includes("assessments"), has, slug);
   }
 });
+
+test("专业管理面板的可访问性：同名按钮带对象名字，表格有说明，选择控件有名字", () => {
+  const students = read("src/features/subjects/university/admin/MajorEnrollmentPanel.tsx");
+  assert.match(students, /aria-label=\{`为\$\{name\}添加所选专业`\}/);
+  assert.match(students, /aria-label=\{`移除\$\{name\}的专业/);
+  assert.match(students, /aria-label=\{`给\$\{name\}添加专业`\}/);
+  assert.match(students, /<caption className="sr-only">/);
+  const access = read("src/features/subjects/university/admin/CategoryAccessPanel.tsx");
+  assert.match(access, /aria-label=\{`保存\$\{category\.title\}的可见范围`\}/);
+  assert.match(access, /aria-label=\{`\$\{category\.title\}的可见模式`\}/);
+  assert.match(access, /<legend /);
+  // 关联专业只在“公共课组”模式下可用：其他模式淡化，不依赖客户端脚本
+  assert.match(access, /group-has-\[option\[value=shared\]:checked\]:opacity-100/);
+});
