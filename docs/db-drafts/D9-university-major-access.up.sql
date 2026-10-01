@@ -69,7 +69,8 @@ begin
   if not private.university_second_level_category(new.category_id) then
     raise exception '只能为大学课程下的二级分类设置可见模式' using errcode = '23514';
   end if;
-  if tg_op = 'UPDATE' and new.mode is distinct from old.mode and old.mode = 'major' then
+  -- 没有记录时等同 major，所以首次写入（INSERT）改成非 major 同样要检查
+  if new.mode <> 'major' and (tg_op = 'INSERT' or old.mode = 'major') then
     if exists (select 1 from public.student_major_enrollments e where e.category_id = new.category_id)
        or exists (select 1 from public.university_category_major_links l where l.major_category_id = new.category_id) then
       raise exception '该专业已有学生或公共课组关联，不能改成其他可见模式' using errcode = '23514';

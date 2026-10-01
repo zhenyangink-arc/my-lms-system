@@ -15,14 +15,14 @@ begin
 end $$;
 -- 当前用户的可见范围：“是否受限|可见二级分类 slug（排序）”
 create function pg_temp.scope_of(p_user uuid) returns text language plpgsql as $$
-declare r text;
+declare v_restricted boolean; v_ids uuid[]; v_names text;
 begin
   perform pg_temp.as_user(p_user);
   set local role authenticated;
-  select format('%s|%s', s.restricted, coalesce((select string_agg(c.slug, ',' order by c.slug) from public.course_categories c where c.id = any (s.category_ids)), ''))
-    into r from public.university_category_scope() s;
-  reset role;
-  return r;
+  select s.restricted, s.category_ids into v_restricted, v_ids from public.university_category_scope() s;
+  reset role;  -- 按 slug 查名字要在超级用户下做（921 没有大学课程授权，读不到这些分类）
+  select coalesce(string_agg(c.slug, ',' order by c.slug), '') into v_names from public.course_categories c where c.id = any (v_ids);
+  return format('%s|%s', case when v_restricted then 'true' else 'false' end, v_names);
 end $$;
 grant execute on function pg_temp.as_user(uuid), pg_temp.try(uuid, text), pg_temp.scope_of(uuid) to public;
 
@@ -51,8 +51,11 @@ begin
     into pol_before from pg_policies where tablename in ('courses', 'course_categories', 'lessons', 'student_app_enrollments');
 
   -- 准备：学生 911 开通大学课程；大学课程分类树（以超级用户身份直接写入）
+  perform pg_temp.as_user(v_admin);
+  update public.tenant_student_apps set status = 'active', is_enabled = true where tenant_id = v_tenant and app_id = v_uni;
   insert into public.student_app_enrollments (tenant_id, student_id, app_id, status, access_tier)
   values (v_tenant, v_s1, v_uni, 'active', 'vip2') on conflict do nothing;
+  perform pg_temp.as_user(v_owner);
   insert into public.course_categories (id, parent_id, slug, title, description, is_published, sort_order, content_scope, student_app_id) values
     (c_top, null, 'd9-uni', '大学课程', 'D9', true, 90, 'platform', v_uni),
     (c_cs, c_top, 'd9-cs', '计算机', 'D9', true, 10, 'platform', v_uni),
@@ -118,7 +121,7 @@ begin
   perform set_config('request.jwt.claim.sub', '', true);
   perform set_config('request.jwt.claims', '{"role":"anon"}', true);
   insert into t(name, got, expected) values ('5j 未登录：受限且为空',
-    (select format('%s|%s', restricted, coalesce(array_length(category_ids, 1), 0)) from public.university_category_scope() limit 1), 'true|0');
+    (select format('%s|%s', case when restricted then 'true' else 'false' end, coalesce(array_length(category_ids, 1), 0)) from public.university_category_scope() limit 1), 'true|0');
 
   -- 6 模式变更保护
   insert into t(name, got, expected) values ('6a 有学生选择的专业不能改成 public', pg_temp.try(v_owner, format($f$select public.set_university_category_access(%L, 'public')$f$, c_law)) like 'denied%', 'true');
