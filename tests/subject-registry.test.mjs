@@ -232,8 +232,8 @@ test("依赖方向：学科之间不深链，共享层不引用学科", () => {
     assert.doesNotMatch(source, /from ["']@\/app\//, path);
     const subject = relative("src/features/subjects", path).split("/")[0];
     for (const other of SUBJECT_SLUGS.filter((slug) => slug !== subject)) {
-      // 学科对外的公开入口：index.ts（清单，纯数据）与 admin-slot.tsx（管理端插槽，服务端）
-      assert.doesNotMatch(source, new RegExp(`from ["'][^"']*/${other}/(?!(index|admin-slot)\\.tsx?["'])`), path);
+      // 学科对外的公开入口：index.ts（清单，纯数据）、admin-slot.tsx（管理端插槽，服务端）、student-input.tsx（学生作答输入，客户端）
+      assert.doesNotMatch(source, new RegExp(`from ["'][^"']*/${other}/(?!(index|admin-slot|student-input)\\.tsx?["'])`), path);
     }
   }
   for (const path of filesUnder("src/lib").filter((file) => /\.(ts|tsx)$/.test(file))) {

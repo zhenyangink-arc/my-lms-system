@@ -31,6 +31,7 @@ import {
 } from "react";
 
 import { submitLearningAssignmentAction } from "./actions";
+import { renderSubjectQuestionInput } from "@/features/subjects/question-inputs";
 import { initialLearningAssignmentActionState } from "./action-state";
 import {
   QUESTION_TYPE_LABELS,
@@ -202,26 +203,12 @@ function QuestionAnswer({
       />
     );
   }
-  if (question.type === "math.expression" || question.type === "math.numeric") {
-    return (
-      <div className="space-y-2">
-        <input
-          name={`answer_${question.id}`}
-          maxLength={200}
-          type="text"
-          autoComplete="off"
-          autoCapitalize="off"
-          spellCheck={false}
-          defaultValue={previousAnswer ?? ""}
-          placeholder={question.type === "math.expression" ? "填写表达式，例如 2x+2" : "填写数值，例如 0.333 或 1/3"}
-          className="app-input min-h-12 w-full rounded-xl border px-4 py-3 font-mono text-base sm:text-sm"
-        />
-        <p className="app-muted-text text-xs leading-5">
-          用 ^ 表示乘方，sqrt(x) 表示根号，pi 表示圆周率；可以省略乘号（2x）。
-        </p>
-      </div>
-    );
-  }
+  const subjectInput = renderSubjectQuestionInput(question.type, {
+    name: `answer_${question.id}`,
+    previousAnswer,
+    kind: question.type,
+  });
+  if (subjectInput) return subjectInput;
   return (
     <input
       name={`answer_${question.id}`}

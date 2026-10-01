@@ -52,8 +52,10 @@ test("数学学生端：作业路由与英语一致且按数学应用读取；�
   assert.match(config, /"math\.expression": "表达式作答"/);
   assert.match(config, /"math\.numeric": "数值作答"/);
   const form = read("src/app/dashboard/assignments/AssignmentSubmissionForm.tsx");
-  assert.match(form, /question\.type === "math\.expression" \|\| question\.type === "math\.numeric"/);
-  assert.match(form, /maxLength=\{200\}/);
+  assert.match(form, /renderSubjectQuestionInput\(question\.type, \{/);
+  assert.doesNotMatch(form, /math\.expression|math\.numeric/);
+  const input = read("src/features/subjects/math/student/MathAnswerInput.tsx");
+  assert.match(input, /maxLength=\{MAX_EXPRESSION_LENGTH\}/);
   // 其余题型的输入保持不变（含原有的短答提示）
   assert.match(form, /placeholder=\{question\.type === "file_link" \? "粘贴完整文件链接" : shortAnswerPlaceholder\}/);
 });
