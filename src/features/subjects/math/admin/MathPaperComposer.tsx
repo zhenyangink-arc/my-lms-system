@@ -3,11 +3,6 @@
 import { FilePlus2, Plus, Save, Send, X } from "lucide-react";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
-import {
-  initialLearningAssignmentActionState,
-  type LearningAssignmentActionState,
-} from "@/app/dashboard/assignments/action-state";
-
 import { MathQuestionEditor } from "./MathQuestionEditor";
 import {
   MAX_QUESTIONS,
@@ -22,10 +17,18 @@ import {
 
 export type MathPaperLessonOption = { id: string; label: string };
 
+/** 保存动作的返回值；与平台的 LearningAssignmentActionState 结构兼容（学科不引用 app 层）。 */
+export type MathPaperActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
 export type MathPaperAction = (
-  previousState: LearningAssignmentActionState,
+  previousState: MathPaperActionState,
   formData: FormData,
-) => Promise<LearningAssignmentActionState>;
+) => Promise<MathPaperActionState>;
+
+const initialState: MathPaperActionState = { status: "idle", message: "" };
 
 const fieldClass = "app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm";
 
@@ -45,7 +48,7 @@ export function MathPaperComposer({
   createAction: MathPaperAction;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const [state, formAction, pending] = useActionState(createAction, initialLearningAssignmentActionState);
+  const [state, formAction, pending] = useActionState(createAction, initialState);
   const [draft, setDraft] = useState<DraftPaper>(() => ({
     ...newPaper(),
     durationMinutes: paperType === "exam" ? "60" : "30",

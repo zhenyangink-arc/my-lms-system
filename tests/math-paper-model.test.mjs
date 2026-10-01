@@ -195,3 +195,11 @@ test("数学出题界面的安全约束：KaTeX 禁用 trust，唯一的 dangero
   const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
   assert.match(pkg.dependencies.katex, /^\d+\.\d+\.\d+$/, "katex 需要固定版本");
 });
+
+test("数学出题界面不引用 app 层（依赖方向 app → features）", async () => {
+  const { readFileSync, readdirSync } = await import("node:fs");
+  const dir = new URL("../src/features/subjects/math/admin/", import.meta.url);
+  for (const name of readdirSync(dir)) {
+    assert.doesNotMatch(readFileSync(new URL(name, dir), "utf8"), /from ["']@\/app\//, name);
+  }
+});
