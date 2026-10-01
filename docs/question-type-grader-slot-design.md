@@ -159,6 +159,7 @@ export type SubjectQuestionType = {
 - 返回 `correct` / `incorrect` / `error`（无法判定：`invalid_answer`、`invalid_spec`、`insufficient_valid_points`），`evidence` 含种子、容差、各取点两边的值和首个不符点。`error` 不是答错，调用方提示学生或转人工。
 - 一边有定义、一边无定义判错；两边都无定义的点跳过；有效点少于下限（默认 8）则无法判定。
 - 尚未做：形式要求（最简、因式分解）、区间 / 集合 / 方程答案、分步题、`partial` 部分得分——都需要上游未导出的中间表示或新规格，留待后续。
+- 题型层（`math/question-types.ts`）：登记 `math.expression`、`math.numeric`，严格解析数据库来的判题规格和学生作答（作答限一行、≤ 200 字符），返回建议得分（对 = 满分，错 = 0，`error` = null 转人工）。测试 `tests/math-question-types.test.mjs`（5 项，含畸形规格与原型污染）。平台侧的题型登记契约仍未实现，这一层暂在学科内自成一体。
 - 尚未接入作业流程：题型登记、`question_type` 约束扩展、`learning_submission_machine_grades` 与判题任务表属于数据库批次，随 D1–D4 评审。
 - 测试：`tests/math-grading.test.mjs`（10 项，含恶意与超长输入）。
 - 包体积（6 节建议 4 的测量，esbuild 单独打包判题器并压缩）：约 169 KB，gzip 后约 50 KB。对 Cloudflare Worker 的体积上限影响很小，练习即时反馈可以在 Worker 内判题；这是单独打包的估算，不含 Next 构建的实际结果。
