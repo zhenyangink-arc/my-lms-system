@@ -126,7 +126,7 @@ app → features（平台 / subjects） → shared
 |---|---|---|
 | 课程目录、分类、课程页按韩语选择界面（`KoreanDirectCourseCatalog`、`KoreanLearningCenter`） | `src/app/dashboard/courses/**` | 课程和课时界面插槽（原 2D），设计见 [course-lesson-experience-slot-design.md](./course-lesson-experience-slot-design.md) |
 | 课时页韩语分支与 28,719 行韩语组件 | `courses/.../[lessonSlug]/` | 同上；课时页是金老师面板宿主，等 Codex 线收尾 |
-| `korean_course` 会员开关 | TS 15 个文件 + SQL 4 个函数；平台级 4 处（课时页、课时操作、资料下载、课时进度触发器），其余为韩语专属 | 平台级改为“按应用的完整课程访问”策略（默认沿用 vip2/vip3，收费决定后替换），需数据库改动 |
+| `korean_course` 会员开关 | TS 15 个文件 + SQL 4 个函数；平台级 4 处（课时页、课时操作、资料下载、课时进度触发器），其余为韩语专属 | 平台级改为“按应用的完整课程访问”策略（收费已决定：与韩语相同，vip2/vip3；草稿见 D2），需数据库改动与课时页代码改造 |
 | 写死韩语应用的数据库函数 | `capture_toolbox_review_item`、`enforce_chapter_test_learning_prerequisites`、`record_ebook_progress`、`save_conversation_practice_scenario` | 依赖分析结论：第 1 个删除无效兜底；第 2、3 个是韩语专属功能，保留；第 4 个随英语会话练习增加应用参数 |
 | 章节测试表 | `korean_title` 必填、slug 全局唯一；标准试卷必须挂章节测试 | 依赖分析结论：英语**不改表结构**（slug 加学科前缀，`korean_title` 填空字符串）；数学另定。见 [db-subject-unweld-dependency-analysis.md](./db-subject-unweld-dependency-analysis.md) |
 | 韩语题库列名 `_ko` | `exam_bank_*`、`homework_bank_*` | 不改；视为韩语模块的创作表，英语、数学各建自己的创作表 |
@@ -166,7 +166,7 @@ app → features（平台 / subjects） → shared
        - 能力画像组件移到 `src/features/student-ability-portrait/components/`，数据来源名称改为参数，颜色改用学生端主题变量（夜间主题正常）；韩语首页在“快速开始学习”下方新增能力画像插槽。
        - 已在独立验证库用“韩语 + 英语”和“仅韩语”两个学生做浏览器验证（门户、英语首页、韩语首页）。
      - 第 3 小步已完成（2026-10-01）：平台区块取数统一为 `loadStudentHomeBlocks`（`src/features/student-subject-home/api/load-home-blocks.ts`），平台首页框架与韩语首页共用；韩语首页保留自己的版面作为“韩语定制”（不读取框架的继续学习区块，因为它有自己的继续学习卡片），浏览器对照内容不变。没有把韩语首页按框架区块重排：外观必须不变，重排风险高而没有可见收益，韩语页面整体迁入 `subjects/korean` 时（第 5 步）再考虑。门户公告链接改为第一个提供公告栏目的已开放学科应用；门户顶栏“学习助手”入口仍指向韩语应用（第 8 节第 4 项未决定）。
-2. **会员与收费**：新学科沿用 vip2/vip3 档位，还是按应用单独设置档位（`student_app_enrollments.access_tier`）？
+2. ~~会员与收费~~ **已决定（2026-10-01）：与韩语相同。**会员档位是机构内统一的一个档位，不按学科单独设置；二级、三级会员可以学习所有已开通学科的全部课时，一级会员只能学习试看课时。学科本身由机构为学生开通（`student_app_enrollments`）。英语、数学都按此规则；`student_app_enrollments.access_tier` 暂不用于判断权限。实现见 D2 草稿（策略表中韩语、英语、数学均为 vip2/vip3），上线需等 D2 正式迁移与课时页代码改造（Codex 线收尾后）；在此之前英语仍只能学习试看课时。
 3. **英语 AI 陪练定位**：只做口语陪练，还是包含写作批改？回答语言模式（全英文 / 中英辅助）如何设定？是否需要英语版教师形象？
 4. **金老师（教学 Agent）是否扩展到英语、数学**：还是只服务韩语，英语、数学各自新建？
 5. **EduMath 的对接边界**：数学模块按计划书以 iframe + postMessage + Launch Token 嵌入；LMS 服务端能否复用 `@edumath/math-core` 做数学判题？ 对接设计见 [edumath-integration-design.md](./edumath-integration-design.md)。

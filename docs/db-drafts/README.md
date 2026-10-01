@@ -7,7 +7,7 @@
 | 批次 | 文件 | 内容 | 预演结果（2026-10-01） |
 |---|---|---|---|
 | D1 | `D1-capture-toolbox-review-item.{up,down,test}.sql` | 删除专项练习错题收集触发器中“找不到练习时兜底到韩语应用”的代码（练习的应用归属非空、题目以外键挂在练习上，该兜底不可达） | 执行前、执行后、回滚后三次测试结果一致（英语、韩语错题各归属本应用）；回滚后函数定义逐字一致。验证库中保留执行状态 |
-| D2 | `D2-app-course-access-policy.{up,down,test}.sql` | 新增 `private.student_app_course_access_policies`（每个应用可学全部课时的会员档位，默认韩语、英语为 vip2/vip3）与 `private.student_app_full_course_allowed()`；课时进度触发器按课程所属应用查策略，教职人员判断改用 `current_profile_role()` | 10 种身份与课时组合中只有 2 处变化：vip2 学生可写入英语正式课时进度（预期）；“资料角色误设为老师、实际为普通会员的学生”不再能绕过档位（修复）。其余 8 种（含全部韩语情况）不变；回滚后触发器定义与测试结果逐字一致。验证库中**未保留**执行状态 |
+| D2 | `D2-app-course-access-policy.{up,down,test}.sql` | 新增 `private.student_app_course_access_policies`（每个应用可学全部课时的会员档位，收费已决定与韩语相同，韩语、英语、数学均为 vip2/vip3）与 `private.student_app_full_course_allowed()`；课时进度触发器按课程所属应用查策略，教职人员判断改用 `current_profile_role()` | 10 种身份与课时组合中只有 2 处变化：vip2 学生可写入英语正式课时进度（预期）；“资料角色误设为老师、实际为普通会员的学生”不再能绕过档位（修复）。其余 8 种（含全部韩语情况）不变；回滚后触发器定义与测试结果逐字一致。验证库中**未保留**执行状态 |
 
 ## 预演中的发现
 
@@ -17,6 +17,6 @@
 
 ## 上线前还需要
 
-1. 收费方案确定后，只修改 `private.student_app_course_access_policies` 中的数据。
+1. 收费规则已决定（2026-10-01，与韩语相同），草稿已按此配置韩语、英语、数学；以后若调整，只修改 `private.student_app_course_access_policies` 中的数据。
 2. 代码侧（课时页 `hasLessonAccess`、课时操作、课时资料下载）改为按应用调用同一策略（需要一个对外的只读封装函数），与课时页插槽一起进行（黄区，等 Codex 线收尾）。
 3. 线上执行前，用分析文档 §4.3 的只读查询核对资料角色与成员角色不一致的账号数量。

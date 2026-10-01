@@ -1,6 +1,7 @@
 -- D2（草稿，未进入 supabase/migrations）：按应用的“完整课程访问”策略 + 课时进度触发器改造。
--- 1. 新增策略表：每个学生应用中可以学习全部课时的会员档位。收费方案确定后只改表中数据。
---    默认韩语、英语为 vip2 / vip3，与原 korean_course 规则相同；没有配置的应用只能学习试看课时（与现在一致）。
+-- 1. 新增策略表：每个学生应用中可以学习全部课时的会员档位。以后调整收费规则只改表中数据。
+--    收费决定（2026-10-01）：新学科与韩语相同，vip2 / vip3 可学习已开通学科的全部课时，
+--    因此韩语、英语、数学均为 vip2 / vip3；没有配置的应用（留学服务、大学课程）只能学习试看课时（与现在一致）。
 -- 2. 课时进度触发器按课程所属应用（courses.student_app_id）查策略，不再按分类 slug = 'korean' 判断。
 -- 3. 教职人员判断改用 public.current_profile_role()（当前机构成员角色），与 lesson_progress 的 RLS 口径一致；
 --    修复“资料角色误设为教职人员的学生可绕过会员档位写入进度”的问题。
@@ -19,9 +20,9 @@ create table if not exists private.student_app_course_access_policies (
 revoke all on table private.student_app_course_access_policies from public, anon, authenticated;
 
 insert into private.student_app_course_access_policies (app_id, full_access_tiers, note)
-select id, array['vip2', 'vip3']::text[], '默认规则，与原 korean_course 相同；收费方案确定后替换'
+select id, array['vip2', 'vip3']::text[], '与韩语相同：vip2 / vip3 可学习全部课时（2026-10-01 决定）'
 from public.student_apps
-where slug in ('korean', 'english')
+where slug in ('korean', 'english', 'math')
 on conflict (app_id) do nothing;
 
 create or replace function private.student_app_full_course_allowed(p_app_id uuid)
