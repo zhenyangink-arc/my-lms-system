@@ -1,3 +1,4 @@
+import { renderSubjectSectionExtras } from "@/features/subjects/admin-slots";
 import { ManagementApplicationPeoplePage } from "@/app/dashboard/admin/apps/ManagementApplicationPeoplePage";
 import {
   ManagementApplicationSectionFrame,
@@ -19,6 +20,7 @@ export default async function ManagementAppStudentsRoute({
   return (
     <ManagementApplicationSectionFrame {...context}>
       <ManagementApplicationPeoplePage access={context.access} />
+      {renderSubjectSectionExtras(appSlug, "students", { access: context.access })}
     </ManagementApplicationSectionFrame>
   );
 }

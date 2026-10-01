@@ -343,9 +343,12 @@ function KoreanDirectCourseCatalog({
 export async function CourseCatalog({
   studentAppSlug,
   space,
+  visibleSubcategoryIds,
 }: {
   studentAppSlug?: StudentAppSlug;
   space?: string;
+  /** 学科限制学生可见的二级分类（如大学课程的专业范围）；不传表示不限制。 */
+  visibleSubcategoryIds?: ReadonlySet<string>;
 }) {
   const { supabase, user, platformProfile, tenant } = await requireActiveUser();
   const courseBasePath =
@@ -426,7 +429,9 @@ export async function CourseCatalog({
     const { data: subcategoryData, error: subcategoryError } = await subcategoryQuery
       .order("sort_order", { ascending: true });
 
-    subcategories = (subcategoryData ?? []) as CourseCategory[];
+    subcategories = ((subcategoryData ?? []) as CourseCategory[]).filter(
+      (subcategory) => !visibleSubcategoryIds || visibleSubcategoryIds.has(subcategory.id),
+    );
     catalogReadError ||= Boolean(subcategoryError);
   }
 

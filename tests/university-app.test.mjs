@@ -74,3 +74,53 @@ test("大学课程内容结构：二级分类显示为“专业”，其他学�
   assert.match(shared, /subcategoryLabel \?\? "课程分类"/);
   assert.match(shared, /申请、签证、面试等不同课程模块/);
 });
+
+test("专业可见范围：模式解析、关联专业整理与范围过滤", async () => {
+  const mod = await import("../src/features/subjects/university/major-access.ts");
+  assert.equal(mod.parseCategoryAccessMode("shared"), "shared");
+  assert.equal(mod.parseCategoryAccessMode("x"), null);
+  assert.equal(mod.parseCategoryAccessMode(undefined), null);
+  const a = "20000000-0000-4000-8000-0000000000d1";
+  const b = "20000000-0000-4000-8000-0000000000d2";
+  assert.deepEqual(mod.normalizeMajorIds("shared", [a, a, "bad", b, 7]), [a, b]);
+  assert.deepEqual(mod.normalizeMajorIds("public", [a]), []);
+  assert.deepEqual(mod.normalizeMajorIds("major", [a]), []);
+  const cats = [{ id: a }, { id: b }];
+  assert.deepEqual(mod.filterVisibleCategories({ restricted: false, categoryIds: new Set() }, cats), cats);
+  assert.deepEqual(mod.filterVisibleCategories({ restricted: true, categoryIds: new Set([b]) }, cats), [{ id: b }]);
+  assert.deepEqual(mod.filterVisibleCategories({ restricted: true, categoryIds: new Set() }, cats), []);
+  assert.equal(mod.isCategoryVisible({ restricted: true, categoryIds: new Set([a]) }, b), false);
+  assert.equal(mod.isCategoryVisible({ restricted: false, categoryIds: new Set() }, b), true);
+});
+
+test("专业可见范围：学生端目录与专业页按范围过滤，专业路由层拦截，读取失败不放行", () => {
+  const catalog = read("src/app/[space]/apps/university/courses/page.tsx");
+  assert.match(catalog, /visibleSubcategoryIds=\{scope\.restricted \? scope\.categoryIds : undefined\}/);
+  const category = read("src/app/[space]/apps/university/courses/[categorySlug]/page.tsx");
+  assert.match(category, /visibleSubcategoryIds=\{scope\.restricted \? scope\.categoryIds : undefined\}/);
+  const guard = read("src/app/[space]/apps/university/courses/[categorySlug]/[subcategorySlug]/layout.tsx");
+  assert.match(guard, /scope\.restricted/);
+  assert.match(guard, /data\.some\(\(row\) => !scope\.categoryIds\.has\(row\.id\)\)\) notFound\(\)/);
+  const loader = read("src/features/subjects/university/major-scope.server.ts");
+  assert.match(loader, /if \(error\) throw/);
+  assert.match(loader, /university_category_scope/);
+  // 共用页面：不传范围时不过滤（韩语等不受影响）
+  for (const path of ["src/app/dashboard/courses/page-content.tsx", "src/app/dashboard/courses/[categorySlug]/page-content.tsx"]) {
+    assert.match(read(path), /!visibleSubcategoryIds \|\| visibleSubcategoryIds\.has\(subcategory\.id\)/, path);
+  }
+});
+
+test("专业管理：插槽只对大学课程注册，写入只经数据库函数且校验权限", () => {
+  const slot = read("src/features/subjects/university/admin-slot.tsx");
+  assert.match(slot, /students: MajorEnrollmentPanel/);
+  assert.match(slot, /content: CategoryAccessPanel/);
+  const actions = read("src/features/subjects/university/admin/actions.ts");
+  assert.match(actions, /rpc\("set_student_major_enrollment"/);
+  assert.match(actions, /rpc\("set_university_category_access"/);
+  assert.match(actions, /capabilities\.manageStudents/);
+  assert.match(actions, /access\.scope !== "platform"/);
+  assert.doesNotMatch(actions, /\.from\("(student_major_enrollments|university_category_access|university_category_major_links)"\)\s*\.(insert|update|delete|upsert)/);
+  for (const route of ["students", "content"]) {
+    assert.match(read(`src/app/[space]/dashboard/admin/apps/[appSlug]/${route}/page.tsx`), new RegExp(`renderSubjectSectionExtras\\(appSlug, "${route}"`));
+  }
+});

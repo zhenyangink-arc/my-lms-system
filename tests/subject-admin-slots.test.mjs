@@ -9,11 +9,15 @@ const root = new URL("..", import.meta.url).pathname;
 const props = { appId: "app", appSlug: "math", canRelease: false };
 const read = (path) => readFileSync(join(root, path), "utf8");
 
-test("注册表：只有数学注册了出题界面，韩语、英语沿用平台界面", () => {
+test("注册表：数学注册出题界面、大学课程注册分区区块，韩语、英语沿用平台界面", () => {
   const registry = read("src/features/subjects/admin-slots.ts");
-  assert.match(registry, /SUBJECT_ADMIN_SLOTS: SubjectAdminSlotMap = \{ math: mathAdminSlots \}/);
+  assert.match(registry, /SUBJECT_ADMIN_SLOTS: SubjectAdminSlotMap = \{ math: mathAdminSlots, university: universityAdminSlots \}/);
   assert.doesNotMatch(registry, /korean|english/);
   assert.match(registry, /from "\.\/math\/admin-slot\.tsx"/);
+  assert.match(registry, /from "\.\/university\/admin-slot\.tsx"/);
+  // 大学课程只注册分区区块，不注册出题、批改相关插槽
+  const universitySlot = read("src/features/subjects/university/admin-slot.tsx");
+  assert.doesNotMatch(universitySlot, /AssessmentAuthoring|SubmissionReviewActions|prepareMachineGrades/);
 });
 
 test("注册表不从学科入口导出：入口会被客户端组件引用，不能带上服务端代码", () => {
@@ -58,7 +62,7 @@ test("作业与考试页面：有学科插槽时用插槽并跳过题库选题�
 });
 
 test("插槽契约不引用任何学科内部文件；注册表只引用各学科的公开入口 admin-slot.tsx", () => {
-  assert.doesNotMatch(read("src/features/subjects/admin-slot-contract.ts"), /from "\.\/(korean|english|math)\//);
-  const imports = [...read("src/features/subjects/admin-slots.ts").matchAll(/from "(\.\/(?:korean|english|math)\/[^"]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(imports, ["./math/admin-slot.tsx"]);
+  assert.doesNotMatch(read("src/features/subjects/admin-slot-contract.ts"), /from "\.\/(korean|english|math|university)\//);
+  const imports = [...read("src/features/subjects/admin-slots.ts").matchAll(/from "(\.\/(?:korean|english|math|university)\/[^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(imports, ["./math/admin-slot.tsx", "./university/admin-slot.tsx"]);
 });

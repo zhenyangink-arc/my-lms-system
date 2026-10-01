@@ -139,6 +139,7 @@ export default async function CategoryPage({
   searchParams,
   courseBasePath,
   subcategoryLabel,
+  visibleSubcategoryIds,
 }: {
   params: Promise<{
     categorySlug: string;
@@ -147,6 +148,8 @@ export default async function CategoryPage({
   courseBasePath: string;
   /** 二级分类的显示名（学科清单提供，如“专业”）；不传时沿用“课程分类”。 */
   subcategoryLabel?: string;
+  /** 学科限制学生可见的二级分类（如大学课程的专业范围）；不传表示不限制。 */
+  visibleSubcategoryIds?: ReadonlySet<string>;
 }) {
   const { categorySlug } = await params;
   const query = searchParams ? await searchParams : {};
@@ -185,7 +188,9 @@ export default async function CategoryPage({
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
 
-  const subcategories = (subcategoryData ?? []) as CourseCategory[];
+  const subcategories = ((subcategoryData ?? []) as CourseCategory[]).filter(
+    (subcategory) => !visibleSubcategoryIds || visibleSubcategoryIds.has(subcategory.id),
+  );
 
   const subcategoryIds = subcategories.map((subcategory) => subcategory.id);
 

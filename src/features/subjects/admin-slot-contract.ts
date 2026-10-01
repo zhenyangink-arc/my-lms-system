@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createElement, type ComponentType, type ReactElement } from "react";
 
+import type { ManagementAppAccess } from "@/lib/management-apps";
+
 import type { SubjectSlug } from "./contracts.ts";
 
 /**
@@ -38,7 +40,16 @@ export type SubjectSubmissionReviewActionsProps = {
   assignmentId: string;
 };
 
+/** 学科在管理端分区页面底部追加的区块（如大学课程的“学生所属专业”）。 */
+export type SubjectSectionExtraKey = "students" | "content";
+export type SubjectSectionExtrasProps = {
+  /** 页面已通过分区权限校验的访问上下文；区块自己再按能力决定是否显示。 */
+  access: ManagementAppAccess;
+};
+
 export type SubjectAdminSlots = {
+  /** 学科在“学生”“课程结构”分区页面底部追加的区块。 */
+  SectionExtras?: Partial<Record<SubjectSectionExtraKey, ComponentType<SubjectSectionExtrasProps>>>;
   /** 平台视图“作业与考试”里的“制作标准试卷”区域。 */
   AssessmentAuthoring?: ComponentType<SubjectAssessmentAuthoringProps>;
   /** 教师批改页面里提交列表上方的学科操作（如“重新判题”）。 */
@@ -89,5 +100,19 @@ export function renderSubmissionReviewActions(
 ): ReactElement | null {
   if (!Object.prototype.hasOwnProperty.call(slots, slug)) return null;
   const Component = slots[slug as SubjectSlug]?.SubmissionReviewActions;
+  return Component ? createElement(Component, props) : null;
+}
+
+/** 取学科在某个分区追加的区块并创建元素；没有注册时返回 null。 */
+export function renderSectionExtras(
+  slots: SubjectAdminSlotMap,
+  slug: string,
+  section: SubjectSectionExtraKey,
+  props: SubjectSectionExtrasProps,
+): ReactElement | null {
+  if (!Object.prototype.hasOwnProperty.call(slots, slug)) return null;
+  const extras = slots[slug as SubjectSlug]?.SectionExtras;
+  if (!extras || !Object.prototype.hasOwnProperty.call(extras, section)) return null;
+  const Component = extras[section];
   return Component ? createElement(Component, props) : null;
 }

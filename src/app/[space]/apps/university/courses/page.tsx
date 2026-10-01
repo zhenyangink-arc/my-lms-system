@@ -1,4 +1,5 @@
 import { CourseCatalog } from "@/app/dashboard/courses/page-content";
+import { loadUniversityCategoryScope } from "@/features/subjects/university/major-scope.server";
 
 export default async function UniversityCoursesPage({
   params,
@@ -6,5 +7,12 @@ export default async function UniversityCoursesPage({
   params: Promise<{ space: string }>;
 }) {
   const { space } = await params;
-  return <CourseCatalog studentAppSlug="university" space={space} />;
+  const scope = await loadUniversityCategoryScope();
+  return (
+    <CourseCatalog
+      studentAppSlug="university"
+      space={space}
+      visibleSubcategoryIds={scope.restricted ? scope.categoryIds : undefined}
+    />
+  );
 }

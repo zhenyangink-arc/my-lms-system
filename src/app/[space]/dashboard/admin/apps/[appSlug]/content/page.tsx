@@ -1,3 +1,4 @@
+import { renderSubjectSectionExtras } from "@/features/subjects/admin-slots";
 import { getDigitalTextbookManagementData } from "@/features/digital-textbook/api/service";
 import { workflowChapters, workflowHref } from "@/lib/course-workflow-context";
 import {
@@ -38,6 +39,7 @@ export default async function ManagementAppContentRoute({
         routeBasePath={workflowHref(context.access.appPath, "content", chapterId)}
         textbookRoute={workflowHref(context.access.appPath, "textbooks", chapterId)}
       />
+      {renderSubjectSectionExtras(appSlug, "content", { access: context.access })}
     </ManagementApplicationSectionFrame>
   );
 }
