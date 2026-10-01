@@ -22,7 +22,7 @@ test("作业批改详情遵守学科清单的分区门禁", async () => {
   );
   assert.match(
     route,
-    /if \(subject && !subject\.management\.sections\.includes\("assessments"\)\) notFound\(\);/,
+    /subject &&\s*!subject\.management\.sections\.includes\("assessments"\) &&\s*!subject\.management\.sections\.includes\("grades"\)/,
   );
 });
 
@@ -63,5 +63,20 @@ test("韩语与英语作业详情布局共用同一实现", async () => {
     const layout = await source(`src/app/[space]/apps/${app}/assignments/[assignmentId]/layout.tsx`);
     assert.match(layout, new RegExp(`<StudentAssignmentDetailLayout[^>]*appSlug="${app}"`));
     assert.doesNotMatch(layout, /getAssignmentDetail/);
+  }
+});
+
+test("学情与设置导航只列出学科清单开放的分区", async () => {
+  const nav = await source("src/app/dashboard/admin/apps/LearningInsightsNavigation.tsx");
+  assert.match(nav, /const subject = getSubjectManifest\(access\.app\.slug\);/);
+  assert.match(nav, /subject\.management\.sections\.includes\(item\.key\)/);
+  assert.match(nav, /\{visibleItems\.map\(item =>/);
+});
+
+test("管理端面包屑为所有管理分区提供中文名称", async () => {
+  const breadcrumbs = await source("src/app/dashboard/ManagementBreadcrumbs.tsx");
+  const { MANAGEMENT_SECTION_KEYS } = await import("../src/features/subjects/contracts.ts");
+  for (const key of MANAGEMENT_SECTION_KEYS) {
+    assert.match(breadcrumbs, new RegExp(`(^|\\s)("${key}"|${key}):`, "m"), key);
   }
 });

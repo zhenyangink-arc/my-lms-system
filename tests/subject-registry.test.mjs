@@ -88,10 +88,20 @@ test("韩语清单与改造前的管理端和学生端行为一致", () => {
   assert.equal(korean.student.catalogOpensAllCategories, false);
 });
 
-test("英语和数学的管理端先只开放三个已按应用隔离的分区", () => {
+test("英语和数学的管理端只开放已按应用隔离的分区", () => {
+  assert.deepEqual(getSubjectManifest("english").management.sections, [
+    "class-today",
+    "students",
+    "content",
+    "grades",
+    "records",
+    "settings",
+  ]);
+  assert.deepEqual(getSubjectManifest("math").management.sections, ["students", "content", "settings"]);
   for (const slug of ["english", "math"]) {
     const manifest = getSubjectManifest(slug);
-    assert.deepEqual(manifest.management.sections, ["students", "content", "settings"]);
+    // 作业与考试依赖章节测试与标准试卷制作流程，尚未对新学科开放。
+    assert.equal(manifest.management.sections.includes("assessments"), false);
     assert.equal(manifest.management.teachingOperations, false);
     assert.equal(manifest.management.courseContentWorkflow, false);
     assert.equal(manifest.student.courseSearch, false);

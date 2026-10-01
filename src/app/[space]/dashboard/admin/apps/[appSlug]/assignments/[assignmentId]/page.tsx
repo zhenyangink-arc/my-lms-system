@@ -15,9 +15,16 @@ export default async function ManagementApplicationAssignmentRoute({
 }) {
   const { space, appSlug, assignmentId } = await params;
   const access = await requireManagementAppAccess(space, appSlug);
-  // 与其他管理分区一致：学科清单未开放“作业与考试”时，批改详情同样不可访问。
+  // 与其他管理分区一致：批改详情从“作业与考试”或“成绩分析”进入，
+  // 学科清单两者都未开放时不可访问。
   const subject = getSubjectManifest(access.app.slug);
-  if (subject && !subject.management.sections.includes("assessments")) notFound();
+  if (
+    subject &&
+    !subject.management.sections.includes("assessments") &&
+    !subject.management.sections.includes("grades")
+  ) {
+    notFound();
+  }
   if (
     access.scope !== "tenant" ||
     access.app.kind !== "learning" ||
