@@ -198,7 +198,7 @@ export function MathQuestionEditor({
           <fieldset className="space-y-2">
             <legend className={labelClass}>变量与取值范围（判题时在范围内取点）</legend>
             {question.variables.map((variable, variableIndex) => (
-              <div key={variableIndex} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2">
+              <div key={variableIndex} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2">
                 <input
                   value={variable.name}
                   onChange={(event) =>
@@ -206,7 +206,7 @@ export function MathQuestionEditor({
                   }
                   aria-label="变量名"
                   placeholder="变量名"
-                  className="app-input rounded-xl border px-3 py-2 font-mono text-sm"
+                  className="app-input w-full min-w-0 rounded-xl border px-3 py-2 font-mono text-sm"
                 />
                 <input
                   value={variable.min}
@@ -216,7 +216,7 @@ export function MathQuestionEditor({
                   aria-label="最小值"
                   placeholder="最小值"
                   inputMode="decimal"
-                  className="app-input rounded-xl border px-3 py-2 text-sm"
+                  className="app-input w-full min-w-0 rounded-xl border px-3 py-2 text-sm"
                 />
                 <input
                   value={variable.max}
@@ -226,7 +226,7 @@ export function MathQuestionEditor({
                   aria-label="最大值"
                   placeholder="最大值"
                   inputMode="decimal"
-                  className="app-input rounded-xl border px-3 py-2 text-sm"
+                  className="app-input w-full min-w-0 rounded-xl border px-3 py-2 text-sm"
                 />
                 <button
                   type="button"

@@ -255,3 +255,11 @@ test("草稿还原：无法识别的行返回 null，不做猜测", async () => 
   assert.equal(draftFromRows(meta, [{ ...exprRow, spec: { expected: "x", variables: [{ name: "x", min: "a", max: 1 }] } }]), null);
   assert.deepEqual(draftFromRows(meta, []).questions, []);
 });
+
+test("窄屏：变量行的网格列必须可收缩（minmax(0,1fr)），输入框带 min-w-0，否则 390px 宽度下对话框横向溢出", async () => {
+  const { readFileSync } = await import("node:fs");
+  const text = readFileSync(new URL("../src/features/subjects/math/admin/MathQuestionEditor.tsx", import.meta.url), "utf8");
+  assert.match(text, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,1fr\)_minmax\(0,1fr\)_auto\]/);
+  assert.doesNotMatch(text, /grid-cols-\[1fr_1fr_1fr_auto\]/);
+  assert.equal((text.match(/w-full min-w-0 rounded-xl border px-3 py-2/g) ?? []).length, 3);
+});
