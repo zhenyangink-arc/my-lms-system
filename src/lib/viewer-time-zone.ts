@@ -71,6 +71,13 @@ export function addDaysToDateKey(key: string, days: number): string {
   return new Date(Date.UTC(year, month - 1, day + days, 12)).toISOString().slice(0, 10);
 }
 
+/** 两个日期键相差的天数（to − from），与任何时区无关。 */
+export function daysBetweenDateKeys(fromKey: string, toKey: string): number {
+  const [fy, fm, fd] = fromKey.split("-").map(Number);
+  const [ty, tm, td] = toKey.split("-").map(Number);
+  return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86_400_000);
+}
+
 // 时区相对 UTC 的偏移（毫秒）：该时间点在时区里的“墙上时间”按 UTC 解读，减去该时间点本身。
 function offsetMsInTimeZone(instantMs: number, timeZone: string): number {
   const parts = new Intl.DateTimeFormat("en-US", {

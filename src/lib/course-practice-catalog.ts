@@ -1,3 +1,5 @@
+import { DEFAULT_VIEWER_TIME_ZONE } from "./viewer-time-zone.ts";
+
 export type CoursePracticeStatus =
   | "not_started"
   | "in_progress"
@@ -200,7 +202,7 @@ function evaluateRule({
   return { isOpen, blocker: isOpen ? null : "manual" };
 }
 
-function scheduledReason(availableFrom: string | null) {
+function scheduledReason(availableFrom: string | null, timeZone: string) {
   if (!availableFrom) return "需等待开放时间";
   const date = new Date(availableFrom);
   if (Number.isNaN(date.getTime())) return "需等待开放时间";
@@ -208,7 +210,7 @@ function scheduledReason(availableFrom: string | null) {
     year: "numeric",
     month: "long",
     day: "numeric",
-    timeZone: "Asia/Seoul",
+    timeZone,
   }).format(date)}开放`;
 }
 
@@ -217,14 +219,16 @@ function ruleReason({
   availableFrom,
   previousLabel,
   prerequisiteLabel,
+  timeZone,
 }: {
   result: CoursePracticeRuleResult;
   availableFrom: string | null;
   previousLabel: string;
   prerequisiteLabel: string;
+  timeZone: string;
 }) {
   if (result.isOpen) return null;
-  if (result.blocker === "scheduled") return scheduledReason(availableFrom);
+  if (result.blocker === "scheduled") return scheduledReason(availableFrom, timeZone);
   if (result.blocker === "previous_completed") return `需先完成${previousLabel}`;
   if (result.blocker === "prerequisite_completed") return `需先完成${prerequisiteLabel}`;
   if (result.blocker === "prerequisite_passed") return `需先通过${prerequisiteLabel}的测试`;
@@ -241,6 +245,7 @@ export function buildCoursePracticeCatalog({
   ebookProgress,
   practiceProgress = [],
   now = new Date(),
+  timeZone = DEFAULT_VIEWER_TIME_ZONE,
 }: {
   courses: CoursePracticeCourseRow[];
   lessons: CoursePracticeLessonRow[];
@@ -251,6 +256,8 @@ export function buildCoursePracticeCatalog({
   ebookProgress: CoursePracticeEbookProgressRow[];
   practiceProgress?: CoursePracticeProgressRow[];
   now?: Date;
+  /** 用户时区（“需等到某月某日开放”的日期按它算）；不传时是首尔。 */
+  timeZone?: string;
 }): CoursePracticeCourse[] {
   const completedLessonIds = new Set(
     lessonProgress
@@ -361,6 +368,7 @@ export function buildCoursePracticeCatalog({
       prerequisiteLabel: prerequisiteCourse
         ? `前置课程「${prerequisiteCourse.title}」`
         : "前置课程",
+      timeZone,
     });
     const courseLessons = lessonsByCourseId.get(course.id) ?? [];
     let chapterNumber = 0;
@@ -407,6 +415,7 @@ export function buildCoursePracticeCatalog({
           : prerequisiteLesson
             ? `前置课时「${prerequisiteLesson.title}」`
             : "前置内容",
+        timeZone,
       });
       const lessonChapters = chapters
         .filter((chapter) => chapter.lesson_id === lesson.id)
@@ -440,6 +449,7 @@ export function buildCoursePracticeCatalog({
           prerequisiteLabel: prerequisiteChapter
             ? `前置章节「${prerequisiteChapter.title}」`
             : "前置章节",
+          timeZone,
         });
         const hasPublishedContent = publishedPracticeChapterIds.has(chapter.id);
         const attempt = attemptByChapterId.get(chapter.id) ?? null;

@@ -18,6 +18,13 @@ import {
 import { loadStudentHomeBlocks } from "@/features/student-subject-home/api/load-home-blocks";
 import { getSubjectManifest } from "@/features/subjects";
 import { requireActiveUser } from "@/lib/auth";
+import {
+  dateKeyInTimeZone,
+  hourInTimeZone,
+  startOfDayInTimeZone,
+  weekStartKeyInTimeZone,
+} from "@/lib/viewer-time-zone";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
 import { getStudentAppCourseScope } from "@/lib/student-app-data";
@@ -76,34 +83,13 @@ function formatStudyMinutes(minutes: number) {
   const hours = minutes / 60;
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} 小时`;
 }
-function toSeoulDateString(date: Date) {
-  const formatter = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-
-  return formatter.format(date);
-}
-
 function parseDateStringToUTC(dateString: string) {
   const [year, month, day] = dateString.split("-").map(Number);
   return Date.UTC(year, month - 1, day);
 }
 
-function getSeoulHour() {
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Seoul",
-    hour: "numeric",
-    hour12: false,
-  });
-
-  return Number(formatter.format(new Date()));
-}
-
-function getGreeting() {
-  const hour = getSeoulHour();
+function getGreeting(timeZone: string) {
+  const hour = hourInTimeZone(new Date(), timeZone);
 
   if (hour < 6) return "夜深了";
   if (hour < 12) return "早上好";
@@ -111,22 +97,14 @@ function getGreeting() {
   return "晚上好";
 }
 
-function getWeekStartISOString() {
-  const todayString = toSeoulDateString(new Date());
-  const todayUTC = parseDateStringToUTC(todayString);
-
-  const weekday = new Date(todayUTC).getUTCDay();
-  const diffToMonday = weekday === 0 ? 6 : weekday - 1;
-
-  const mondayUTC = todayUTC - diffToMonday * 86400000;
-
-  // 韩国标准时间为 UTC+9，周统计按首尔当地周一零点开始。
-  return new Date(mondayUTC - 9 * 60 * 60 * 1000).toISOString();
+// 周统计从用户所在时区的周一零点开始。
+function getWeekStartISOString(timeZone: string) {
+  return startOfDayInTimeZone(weekStartKeyInTimeZone(new Date(), timeZone), timeZone).toISOString();
 }
 
-function calculateStreak(completedDateStrings: string[]) {
+function calculateStreak(completedDateStrings: string[], timeZone: string) {
   const daySet = new Set(completedDateStrings);
-  const todayString = toSeoulDateString(new Date());
+  const todayString = dateKeyInTimeZone(new Date(), timeZone);
 
   let cursor = parseDateStringToUTC(todayString);
 
@@ -152,6 +130,8 @@ function calculateStreak(completedDateStrings: string[]) {
 
 export default async function DashboardHomePage() {
   const requestNow = new Date();
+  // 日期、周起点、问候语与任务时间都按用户电脑的时区算（cookie；没有时是首尔）
+  const timeZone = await getViewerTimeZone();
   const auth = await requireActiveUser();
   const { supabase, user, profile } = auth;
   const userRole = auth.profile?.role ?? "student";
@@ -216,6 +196,7 @@ export default async function DashboardHomePage() {
           space: auth.tenant.slug,
           blocks: koreanHomeBlocks,
           now: requestNow,
+          timeZone,
         })
       : null;
     const weeklyPlanTasksPromise = auth.tenant
@@ -243,12 +224,10 @@ export default async function DashboardHomePage() {
       abilityPortraitLoadFailed = homeBlocks.abilityPortrait.failed;
     }
     weeklyPlanTasks = formalPlanTasks;
-    const weekStart = getWeekStartISOString();
-    const seoulTodayString = toSeoulDateString(new Date());
-    const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);
-    const learningLogFromISO = new Date(
-      Date.UTC(seoulYear, 0, 1) - 9 * 60 * 60 * 1000
-    ).toISOString();
+    const weekStart = getWeekStartISOString(timeZone);
+    const todayKeyInZone = dateKeyInTimeZone(new Date(), timeZone);
+    const [currentYear, currentMonth] = todayKeyInZone.split("-").map(Number);
+    const learningLogFromISO = startOfDayInTimeZone(`${currentYear}-01-01`, timeZone).toISOString();
 
     const [
       { data: progressData },
@@ -346,7 +325,7 @@ export default async function DashboardHomePage() {
     ) => {
       const map = new Map<string, number>();
       for (const log of logs) {
-        const dateString = toSeoulDateString(new Date(log.recorded_at));
+        const dateString = dateKeyInTimeZone(log.recorded_at, timeZone);
         const accumulated =
           (map.get(dateString) ?? 0) + Number(log.seconds) / 60;
         map.set(dateString, Math.min(accumulated, cap));
@@ -355,9 +334,9 @@ export default async function DashboardHomePage() {
     };
 
     const daysInMonth = new Date(
-      Date.UTC(seoulYear, seoulMonth, 0)
+      Date.UTC(currentYear, currentMonth, 0)
     ).getUTCDate();
-    const monthPrefix = `${seoulYear}-${String(seoulMonth).padStart(2, "0")}`;
+    const monthPrefix = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
     const monthMinutesByDay = new Map<number, number>();
 
     if (learningTimeLogs.length > 0) {
@@ -378,7 +357,7 @@ export default async function DashboardHomePage() {
           (endTime - startTime) / 60000,
           MONTHLY_DAY_STUDY_MINUTES_CAP
         );
-        const dateString = toSeoulDateString(new Date(endTime));
+        const dateString = dateKeyInTimeZone(endTime, timeZone);
         if (!dateString.startsWith(monthPrefix)) continue;
         const day = Number(dateString.slice(8, 10));
         const accumulated = (monthMinutesByDay.get(day) ?? 0) + sessionMinutes;
@@ -394,7 +373,7 @@ export default async function DashboardHomePage() {
       (_, index) => monthMinutesByDay.get(index + 1) ?? 0
     );
     monthTotalMinutes = monthDailyMinutes.reduce((sum, minutes) => sum + minutes, 0);
-    monthLabel = `${seoulMonth}月`;
+    monthLabel = `${currentMonth}月`;
     monthDailyTips = monthDailyMinutes.map(
       (minutes, index) =>
         `${index + 1} 日 · 学习 ${formatStudyMinutes(minutes)}`
@@ -406,7 +385,7 @@ export default async function DashboardHomePage() {
       YEARLY_MONTH_STUDY_MINUTES_CAP
     )) {
       const [logYear, logMonth] = dateString.split("-").map(Number);
-      if (logYear !== seoulYear) continue;
+      if (logYear !== currentYear) continue;
       const accumulated = (yearMinutesByMonth.get(logMonth) ?? 0) + minutes;
       yearMinutesByMonth.set(
         logMonth,
@@ -421,7 +400,7 @@ export default async function DashboardHomePage() {
       (sum, minutes) => sum + minutes,
       0
     );
-    yearLabel = `${seoulYear}年`;
+    yearLabel = `${currentYear}年`;
     yearMonthlyTips = yearMonthlyMinutes.map(
       (minutes, index) =>
         `${index + 1} 月 · 学习 ${formatStudyMinutes(minutes)}`
@@ -429,9 +408,9 @@ export default async function DashboardHomePage() {
 
     const completedDateStrings = progressRows
       .filter((row) => row.status === "completed" && row.completed_at)
-      .map((row) => toSeoulDateString(new Date(row.completed_at as string)));
+      .map((row) => dateKeyInTimeZone(row.completed_at as string, timeZone));
 
-    streakDays = calculateStreak(completedDateStrings);
+    streakDays = calculateStreak(completedDateStrings, timeZone);
 
     const countByDate = new Map<string, number>();
     for (const dateString of completedDateStrings) {
@@ -442,7 +421,7 @@ export default async function DashboardHomePage() {
       learningTimeLogs,
       MONTHLY_DAY_STUDY_MINUTES_CAP
     );
-    const todayString = toSeoulDateString(new Date());
+    const todayString = todayKeyInZone;
     const todayUTC = parseDateStringToUTC(todayString);
     for (let i = 6; i >= 0; i--) {
       const dateString = new Date(todayUTC - i * 86400000)
@@ -731,7 +710,7 @@ export default async function DashboardHomePage() {
     <SystemGrowthHomeView
       dashboardBasePath={dashboardBasePath}
       studentName={studentName}
-      greeting={getGreeting()}
+      greeting={getGreeting(timeZone)}
       hero={hero}
       heroHref={heroHref}
       heroLessonProgress={heroLessonProgress}
@@ -768,9 +747,10 @@ export default async function DashboardHomePage() {
       }}
       dailyLearningTasks={dailyLearningTasks}
       weeklyPlanTasks={weeklyPlanTasks}
-      requiredTodayTasks={selectRequiredTodayTasks(dailyLearningTasks, requestNow)}
+      requiredTodayTasks={selectRequiredTodayTasks(dailyLearningTasks, requestNow, timeZone)}
       dailyLearningLoadFailed={dailyLearningLoadFailed}
       dailyLearningNowISOString={requestNow.toISOString()}
+      timeZone={timeZone}
       assignmentsHref={assignmentsHref}
       coursePracticeHref={coursePracticeHref}
       reviewHref={reviewHref}

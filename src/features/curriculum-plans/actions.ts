@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { requireManagementAppAccess } from "@/lib/management-apps";
 import { createClient } from "@/lib/supabase/server";
-import { calculatePlanEnd, seoulLocalInputToISOString } from "./time";
+import { calculatePlanEnd, parsePlanStartsAt } from "./time";
 import { TEMPLATE_ITEM_COLUMNS, mapTemplateItem } from "./api/service";
 import { loadPlanLearningSources } from "./api/sources";
 import { isSubjectSectionEnabled } from "@/features/subjects";
@@ -423,7 +423,7 @@ export async function publishInstitutionCurriculumPlanAction(
     const templateId = uuid.parse(templateIdValue);
     const studentIds = [...new Set(formData.getAll("student_ids").map(String))].map((id) => uuid.parse(id));
     if (studentIds.length === 0) throw new Error("请至少选择一名学生。");
-    const startsAt = new Date(seoulLocalInputToISOString(text(formData, "starts_at")));
+    const startsAt = new Date(parsePlanStartsAt(text(formData, "starts_at")));
     const supabase = await createClient();
     const [{ data: template, error: templateError }, { data: itemRows, error: itemError }] = await Promise.all([
       supabase.from("curriculum_plan_templates").select("id,title,status,student_app_id").eq("id", templateId).single(),

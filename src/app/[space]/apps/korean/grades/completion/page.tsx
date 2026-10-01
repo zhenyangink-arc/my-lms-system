@@ -5,6 +5,7 @@ import { getStudentCompletionData } from "@/features/course-completion/student-s
 import { requireActiveUser } from "@/lib/auth";
 import { getGradeCenterAccess } from "@/lib/grade-center";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 
 export default async function KoreanCompletionPage({
   params,
@@ -35,6 +36,7 @@ export default async function KoreanCompletionPage({
       space={space}
       studentAppSlug="korean"
       institutionName={auth.tenant?.name ?? "所属机构"}
+      timeZone={await getViewerTimeZone()}
     />
   );
 }

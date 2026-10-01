@@ -29,6 +29,7 @@ import type {
   HomeLearningTaskSourceType,
   HomeLearningTaskStatus,
 } from "@/features/student-home-learning/api/types";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 
 const SUGGESTION_SOURCE_TYPES = new Set<HomeLearningTaskSourceType>([
   "course",
@@ -63,24 +64,22 @@ const STATUS_DETAILS: Record<
   unavailable: { label: "暂不可用", icon: LockKeyhole },
 };
 
-const SEOUL_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+const TASK_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   month: "numeric",
   day: "numeric",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
+};
 
-const SEOUL_LAST_VIEWED_FORMATTER = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+const LAST_VIEWED_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "numeric",
   day: "numeric",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
+};
 
 function safeDate(value: string | null): Date | null {
   if (!value) return null;
@@ -103,19 +102,19 @@ function formatRelativeTime(value: string, now: Date): string {
   return `${Math.round(absoluteMinutes / (24 * 60))} 天${suffix}`;
 }
 
-function formatTaskSchedule(task: HomeLearningTask, now: Date): string | null {
+function formatTaskSchedule(task: HomeLearningTask, now: Date, timeZone: string): string | null {
   const startsAt = safeDate(task.startsAt);
   if (task.status === "locked" && startsAt) {
-    return `开始 ${formatRelativeTime(task.startsAt!, now)} · ${SEOUL_DATE_TIME_FORMATTER.format(startsAt)}（首尔时间）`;
+    return `开始 ${formatRelativeTime(task.startsAt!, now)} · ${formatInTimeZone(startsAt, timeZone, TASK_DATE_TIME_OPTIONS)}`;
   }
 
   const dueAt = safeDate(task.dueAt);
   if (dueAt) {
-    return `截止 ${formatRelativeTime(task.dueAt!, now)} · ${SEOUL_DATE_TIME_FORMATTER.format(dueAt)}（首尔时间）`;
+    return `截止 ${formatRelativeTime(task.dueAt!, now)} · ${formatInTimeZone(dueAt, timeZone, TASK_DATE_TIME_OPTIONS)}`;
   }
 
   if (startsAt) {
-    return `开始 ${formatRelativeTime(task.startsAt!, now)} · ${SEOUL_DATE_TIME_FORMATTER.format(startsAt)}（首尔时间）`;
+    return `开始 ${formatRelativeTime(task.startsAt!, now)} · ${formatInTimeZone(startsAt, timeZone, TASK_DATE_TIME_OPTIONS)}`;
   }
 
   if (task.progressPercent !== null) {
@@ -255,7 +254,7 @@ function EmptyState({
   );
 }
 
-function ContinueTaskCard({ task }: { task: HomeLearningTask }) {
+function ContinueTaskCard({ task, timeZone }: { task: HomeLearningTask; timeZone: string }) {
   const descriptionParts = (task.description ?? "").split(" · ").filter(Boolean);
   const courseTitle = descriptionParts[0] ?? null;
   const lessonTitle = descriptionParts[1] ?? null;
@@ -269,7 +268,7 @@ function ContinueTaskCard({ task }: { task: HomeLearningTask }) {
       <div className="flex flex-wrap items-center gap-2">
         <TaskStatus status={task.status} />
         <span className="text-xs font-semibold text-[var(--foreground-muted)]">
-          上次学习 {updatedAt ? SEOUL_LAST_VIEWED_FORMATTER.format(updatedAt) : "时间未知"}
+          上次学习 {updatedAt ? formatInTimeZone(updatedAt, timeZone, LAST_VIEWED_OPTIONS) : "时间未知"}
         </span>
       </div>
 
@@ -371,10 +370,13 @@ export function LearningEntryNav({
 export function RequiredTodayCard({
   requiredTodayTasks,
   nowISOString,
+  timeZone,
   coursesHref,
 }: {
   requiredTodayTasks: HomeLearningTask[];
   nowISOString: string;
+  /** 用户时区：任务的开始、截止时间按它显示。 */
+  timeZone: string;
   coursesHref: string;
 }) {
   const now = new Date(nowISOString);
@@ -406,10 +408,10 @@ export function RequiredTodayCard({
                 headingLevel={3}
                 titleClassName="text-base font-bold leading-6 tracking-tight"
               />
-              {formatTaskSchedule(task, now) && (
+              {formatTaskSchedule(task, now, timeZone) && (
                 <p className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-[var(--foreground-muted)]">
                   <Clock3 size={14} aria-hidden="true" />
-                  {formatTaskSchedule(task, now)}
+                  {formatTaskSchedule(task, now, timeZone)}
                 </p>
               )}
               <p className="mt-2 text-sm leading-6 text-[var(--foreground-muted)]">
@@ -474,10 +476,12 @@ export function DailyLearningLoadFailedCard({
 export function MostImportantTaskCard({
   tasks,
   nowISOString,
+  timeZone,
   coursesHref,
 }: {
   tasks: HomeLearningTask[];
   nowISOString: string;
+  timeZone: string;
   coursesHref: string;
 }) {
   const now = new Date(nowISOString);
@@ -509,10 +513,10 @@ export function MostImportantTaskCard({
               headingLevel={3}
               titleClassName="text-xl font-bold leading-8 tracking-tight sm:text-2xl"
             />
-            {formatTaskSchedule(mostImportant, now) && (
+            {formatTaskSchedule(mostImportant, now, timeZone) && (
               <p className="mt-2 inline-flex items-center gap-2 text-sm font-semibold">
                 <Clock3 size={16} aria-hidden="true" />
-                {formatTaskSchedule(mostImportant, now)}
+                {formatTaskSchedule(mostImportant, now, timeZone)}
               </p>
             )}
             <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--foreground-muted)]">
@@ -537,9 +541,11 @@ export function MostImportantTaskCard({
 
 export function ContinueLastLearningCard({
   tasks,
+  timeZone,
   coursesHref,
 }: {
   tasks: HomeLearningTask[];
+  timeZone: string;
   coursesHref: string;
 }) {
   const continueTask = tasks.find((task) => task.sourceType === "course") ?? null;
@@ -554,7 +560,7 @@ export function ContinueLastLearningCard({
         soft="var(--support-surface)"
       />
       {continueTask ? (
-        <ContinueTaskCard task={continueTask} />
+        <ContinueTaskCard task={continueTask} timeZone={timeZone} />
       ) : (
         <EmptyState
           title="还没有可继续的位置"

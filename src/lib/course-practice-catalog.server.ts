@@ -18,11 +18,14 @@ export async function loadCoursePracticeCatalog({
   userId,
   studentAppId,
   now = new Date(),
+  timeZone,
 }: {
   supabase: SupabaseClient;
   userId: string;
   studentAppId: string;
   now?: Date;
+  /** 用户时区（“需等到某月某日开放”按它算）；不传时是首尔。 */
+  timeZone?: string;
 }) {
   const { data: courseData, error: courseError } = await supabase
     .from("courses")
@@ -209,5 +212,6 @@ export async function loadCoursePracticeCatalog({
     ebookProgress: (ebookResult.data ?? []) as CoursePracticeEbookProgressRow[],
     practiceProgress,
     now,
+    timeZone,
   });
 }

@@ -49,12 +49,9 @@ function databaseMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
-function parseKoreanDateTime(value: FormDataEntryValue | null) {
-  const raw = String(value ?? "").trim();
-  const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw)
-    ? `${raw}:00+09:00`
-    : raw;
-  const parsed = new Date(normalized);
+// 表单提交的是浏览器按用户电脑时区换算好的 ISO 时间点（LocalDateTimeField），这里原样解析。
+function parseDateTime(value: FormDataEntryValue | null) {
+  const parsed = new Date(String(value ?? "").trim());
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
@@ -70,8 +67,8 @@ export async function configureCompletionRetakeAction(
   const parsedAssignmentId = uuidSchema.safeParse(formData.get("assignment_id"));
   const parsedPaperId = uuidSchema.safeParse(formData.get("retake_paper_id"));
   const parsedPolicy = retakePolicySchema.safeParse(formData.get("retake_score_policy"));
-  const startsAt = parseKoreanDateTime(formData.get("retake_starts_at"));
-  const dueAt = parseKoreanDateTime(formData.get("retake_due_at"));
+  const startsAt = parseDateTime(formData.get("retake_starts_at"));
+  const dueAt = parseDateTime(formData.get("retake_due_at"));
   const originalWeight = Number(formData.get("retake_original_weight_percent"));
 
   if (!parsedEvaluationId.success || !parsedAssignmentId.success || !parsedPaperId.success) {

@@ -194,7 +194,7 @@ export async function loadHomeLearningTasks({
   // chapterPractice/specializedPractice/review 三个来源都要用它——
   // 这里只发起一次，其余三个来源共享同一个 promise，避免各自重复查一遍。
   const catalogPromise = practiceEnabled
-    ? loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now })
+    ? loadCoursePracticeCatalog({ supabase, userId: studentId, studentAppId, now, timeZone })
     : null;
   const taskGroups = await Promise.all([
     assignmentsEnabled ? loadAssignmentExamTasks({ ...commonInput, tenantId }) : [],

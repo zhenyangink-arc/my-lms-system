@@ -1,5 +1,6 @@
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { createClient } from "@/lib/supabase/server";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { ConfirmSubmitButton } from "@/features/curriculum-plans/components/ConfirmSubmitButton";
 import { POLICY_CHECKS, POLICY_FIELDS } from "./policy-form";
 import { saveCompletionPolicyAction, publishCompletionPolicyAction, processCompletionRefreshAction, retryCompletionRefreshAction, requestCompletionRefreshAction } from "./policy-actions";
@@ -9,6 +10,7 @@ type Policy = { id: string; course_id: string; title: string; version: number; s
 
 export async function CompletionPolicyWorkspace({ space, appSlug, appId, platform }: { space: string; appSlug: string; appId: string; platform: boolean }) {
   const supabase = await createClient();
+  const timeZone = await getViewerTimeZone();
   const [courses, policies, health] = await Promise.all([
     supabase.from("courses").select("id,title").eq("student_app_id",appId).eq("content_scope","platform").order("sort_order"),
     platform ? supabase.from("course_completion_policies").select("id,course_id,title,version,status,requirements").eq("student_app_id",appId).order("version",{ascending:false}) : Promise.resolve({data:[],error:null}),
@@ -31,7 +33,7 @@ export async function CompletionPolicyWorkspace({ space, appSlug, appId, platfor
     <section className="rounded-xl border p-4">
       <CardTitleWithHint title="资格刷新" description="教材和成绩变化会触发重算；政策发布产生批量任务，由后台刷新服务处理。手动执行处理最多十个到期任务。" headingLevel={2} />
       <div className="mt-3 flex flex-wrap items-center gap-4 text-sm"><span>待处理 {status.pending}</span><span>处理中 {status.processing}</span><span>失败／部分失败 {status.failed}</span>
-        <span>最近完成：{status.lastFinishedAt ? new Date(status.lastFinishedAt).toLocaleString("zh-CN",{timeZone:"Asia/Seoul"}) : "暂无完成记录"}</span>
+        <span>最近完成：{status.lastFinishedAt ? new Date(status.lastFinishedAt).toLocaleString("zh-CN",{timeZone}) : "暂无完成记录"}</span>
         <form action={processCompletionRefreshAction.bind(null,space,appSlug)}><button className="min-h-11 rounded-lg border px-3">执行一批刷新</button></form>
         {status.failed > 0 && <form action={retryCompletionRefreshAction.bind(null,space,appSlug)}><ConfirmSubmitButton className="min-h-11 rounded-lg border px-3" confirmText="确认已处理政策或成绩来源问题？将最多十个失败任务重新排队。">重试失败任务</ConfirmSubmitButton></form>}
       </div>

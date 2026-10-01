@@ -63,7 +63,7 @@ export function InsightBoard({ report, mode, days, skillsAvailable = true, cours
     </div>
     <div className={`grid gap-4 ${mode === "grades" ? "xl:grid-cols-2" : ""}`}>
       <section className="app-card min-w-0 border p-4">
-        <CardTitleWithHint headingLevel={2} title={mode === "grades" ? "成绩变化" : mode === "records" ? "学习时长变化" : "会话练习变化"} description={`最近 ${days} 天按 ${Math.max(1, Math.ceil(days / 12))} 天分组，日期为韩国时间的分组起点。成绩按每组最近一次有效结果计算；无成绩显示“暂无”，不按零分处理。`} titleClassName="text-sm font-semibold" />
+        <CardTitleWithHint headingLevel={2} title={mode === "grades" ? "成绩变化" : mode === "records" ? "学习时长变化" : "会话练习变化"} description={`最近 ${days} 天按 ${Math.max(1, Math.ceil(days / 12))} 天分组，日期为按你电脑时区计算的分组起点。成绩按每组最近一次有效结果计算；无成绩显示“暂无”，不按零分处理。`} titleClassName="text-sm font-semibold" />
         <div className="overflow-x-auto">
           <table className="w-full min-w-[280px] text-sm"><caption className="sr-only">本期分段趋势</caption><thead><tr className="app-muted-text text-left"><th scope="col" className="py-2 font-medium">起始日期</th><th scope="col" className="py-2 font-medium">{mode === "grades" ? "平均分" : mode === "records" ? "学习小时" : "练习记录"}</th></tr></thead><tbody>
             {report.trend.map(row => <tr key={row.date} className="border-t"><th scope="row" className="w-20 py-2 text-left font-normal">{row.date}</th><td className="py-2"><div className="flex items-center gap-3"><span aria-hidden="true" className="h-2 flex-1 overflow-hidden rounded bg-[var(--surface-soft)]"><span className="block h-full bg-[var(--primary)]" style={{ width: `${Math.max(0, row.value) / maxTrend * 100}%` }} /></span><span className="w-16 text-right tabular-nums">{row.value < 0 ? "暂无" : row.value.toFixed(mode === "conversation" ? 0 : 1)}</span></div></td></tr>)}

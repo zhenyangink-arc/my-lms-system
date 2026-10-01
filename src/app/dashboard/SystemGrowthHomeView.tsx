@@ -18,6 +18,14 @@ import {
 import { LocalDateTime } from "@/components/LocalDateTime";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
+import {
+  addDaysToDateKey,
+  dateKeyInTimeZone,
+  formatDateKey,
+  formatInTimeZone,
+  hourInTimeZone,
+  weekStartKeyInTimeZone,
+} from "@/lib/viewer-time-zone";
 import { DashboardTitleWithHint } from "./DashboardTitleWithHint";
 import {
   ContinueLastLearningCard,
@@ -102,6 +110,8 @@ type Props = {
   requiredTodayTasks: HomeLearningTask[];
   dailyLearningLoadFailed: boolean;
   dailyLearningNowISOString: string;
+  /** 用户时区：本周计划、任务时间和星期标签按它算。 */
+  timeZone: string;
   assignmentsHref: string;
   coursePracticeHref: string;
   reviewHref: string;
@@ -115,20 +125,6 @@ const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   hour: "2-digit",
   minute: "2-digit",
 };
-
-const SEOUL_DATE_KEY = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-
-const SEOUL_TIME = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-});
 
 const STUDY_TIME_SLOTS = Array.from({ length: 15 }, (_, index) => {
   const hour = index + 9;
@@ -182,45 +178,38 @@ function formatMinutes(minutes: number) {
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} 小时`;
 }
 
-function toSeoulDateKey(value: string | Date) {
-  return SEOUL_DATE_KEY.format(typeof value === "string" ? new Date(value) : value);
-}
-
-function buildCurrentWeek(nowISOString: string) {
-  const todayKey = toSeoulDateKey(nowISOString);
-  const [year, month, day] = todayKey.split("-").map(Number);
-  const todayUtc = Date.UTC(year, month - 1, day);
-  const weekday = new Date(todayUtc).getUTCDay();
-  const mondayUtc = todayUtc - (weekday === 0 ? 6 : weekday - 1) * 86_400_000;
+function buildCurrentWeek(nowISOString: string, timeZone: string) {
+  const mondayKey = weekStartKeyInTimeZone(nowISOString, timeZone);
 
   return Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(mondayUtc + index * 86_400_000);
+    const dateString = addDaysToDateKey(mondayKey, index);
     return {
-      dateString: date.toISOString().slice(0, 10),
-      dayNumber: date.getUTCDate(),
-      weekday: new Intl.DateTimeFormat("zh-CN", { weekday: "short", timeZone: "UTC" }).format(date),
+      dateString,
+      dayNumber: Number(dateString.slice(8, 10)),
+      weekday: formatDateKey(dateString, { weekday: "short" }),
     };
   });
 }
 
-function taskDateKey(task: HomeLearningTask) {
+function taskDateKey(task: HomeLearningTask, timeZone: string) {
   const value = task.startsAt ?? task.dueAt;
-  return value ? toSeoulDateKey(value) : null;
+  return value ? dateKeyInTimeZone(value, timeZone) : null;
 }
 
-function taskTimeLabel(task: HomeLearningTask) {
-  if (task.startsAt && task.dueAt) {
-    return `${SEOUL_TIME.format(new Date(task.startsAt))}–${SEOUL_TIME.format(new Date(task.dueAt))}`;
-  }
-  if (task.startsAt) return `开始 ${SEOUL_TIME.format(new Date(task.startsAt))}`;
-  if (task.dueAt) return `截止 ${SEOUL_TIME.format(new Date(task.dueAt))}`;
+const TASK_TIME_OPTIONS: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: false };
+
+function taskTimeLabel(task: HomeLearningTask, timeZone: string) {
+  const time = (value: string) => formatInTimeZone(new Date(value), timeZone, TASK_TIME_OPTIONS);
+  if (task.startsAt && task.dueAt) return `${time(task.startsAt)}–${time(task.dueAt)}`;
+  if (task.startsAt) return `开始 ${time(task.startsAt)}`;
+  if (task.dueAt) return `截止 ${time(task.dueAt)}`;
   return "时间待定";
 }
 
-function taskScheduleHour(task: HomeLearningTask) {
+function taskScheduleHour(task: HomeLearningTask, timeZone: string) {
   const value = task.startsAt ?? task.dueAt;
   if (!value) return 9;
-  const hour = Number(SEOUL_TIME.format(new Date(value)).slice(0, 2));
+  const hour = hourInTimeZone(value, timeZone);
   const boundedHour = Math.max(
     9,
     Math.min(23, Number.isFinite(hour) ? hour : 9),
@@ -256,13 +245,15 @@ function WeeklyLearningPlan({
   tasks,
   activityDays,
   nowISOString,
+  timeZone,
 }: {
   tasks: HomeLearningTask[];
   activityDays: GrowthWeekActivityDay[];
   nowISOString: string;
+  timeZone: string;
 }) {
-  const days = buildCurrentWeek(nowISOString);
-  const todayKey = toSeoulDateKey(nowISOString);
+  const days = buildCurrentWeek(nowISOString, timeZone);
+  const todayKey = dateKeyInTimeZone(nowISOString, timeZone);
   const activityByDate = new Map(activityDays.map((day) => [day.dateString, day]));
   const rangeLabel = `${days[0].dateString.slice(5).replace("-", "/")}–${days[6].dateString.slice(5).replace("-", "/")}`;
 
@@ -309,8 +300,8 @@ function WeeklyLearningPlan({
               {days.map((day) => {
                 const datedTasks = tasks.filter(
                   (task) =>
-                    taskDateKey(task) === day.dateString &&
-                    taskScheduleHour(task) === slot.hour,
+                    taskDateKey(task, timeZone) === day.dateString &&
+                    taskScheduleHour(task, timeZone) === slot.hour,
                 );
                 const visibleTasks = datedTasks.slice(0, 1);
                 const hiddenCount = Math.max(
@@ -335,7 +326,7 @@ function WeeklyLearningPlan({
                         <span>{task.sourceType === "student_plan" ? PLAN_ACTIVITY_LABELS[task.skill ?? ""] ?? TASK_SOURCE_LABELS.student_plan : TASK_SOURCE_LABELS[task.sourceType]}</span>
                         <strong>{task.title}</strong>
                         <small>
-                          {taskTimeLabel(task)} · {TASK_STATUS_LABELS[task.status]}
+                          {taskTimeLabel(task, timeZone)} · {TASK_STATUS_LABELS[task.status]}
                         </small>
                       </Link>
                     ))}
@@ -383,6 +374,7 @@ export function SystemGrowthHomeView({
   requiredTodayTasks,
   dailyLearningLoadFailed,
   dailyLearningNowISOString,
+  timeZone,
   assignmentsHref,
   coursePracticeHref,
   reviewHref,
@@ -406,7 +398,7 @@ export function SystemGrowthHomeView({
       label: "近 7 天",
       periodLabel: "最近 7 天",
       values: weekActivityDays.map((day) => day.minutes),
-      axisLabels: weekActivityDays.map((day) => new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "short" }).format(new Date(`${day.dateString}T12:00:00Z`))),
+      axisLabels: weekActivityDays.map((day) => formatDateKey(day.dateString, { weekday: "short" })),
       tips: weekActivityDays.map((day) => `${day.dateString.slice(5).replace("-", "月")}日 · ${formatMinutes(day.minutes)} · 完成 ${day.completedCount} 个课时`),
     },
     {
@@ -493,7 +485,7 @@ export function SystemGrowthHomeView({
           <DailyLearningLoadFailedCard reloadHref={dashboardBasePath} coursesHref={coursesHref} />
         </div>
       ) : (
-        <WeeklyLearningPlan tasks={weeklyPlanTasks} activityDays={weekActivityDays} nowISOString={dailyLearningNowISOString} />
+        <WeeklyLearningPlan tasks={weeklyPlanTasks} activityDays={weekActivityDays} nowISOString={dailyLearningNowISOString} timeZone={timeZone} />
       )}
 
       <nav className="korean-quick-start" aria-label="快速开始学习">
@@ -529,10 +521,10 @@ export function SystemGrowthHomeView({
 
         <div className="korean-more-grid">
           <div className="korean-home-panel korean-home-span-7">
-            <RequiredTodayCard requiredTodayTasks={requiredTodayTasks} nowISOString={dailyLearningNowISOString} coursesHref={coursesHref} />
+            <RequiredTodayCard requiredTodayTasks={requiredTodayTasks} nowISOString={dailyLearningNowISOString} timeZone={timeZone} coursesHref={coursesHref} />
           </div>
           <div className="korean-home-panel korean-home-span-5">
-            <ContinueLastLearningCard tasks={dailyLearningTasks} coursesHref={coursesHref} />
+            <ContinueLastLearningCard tasks={dailyLearningTasks} timeZone={timeZone} coursesHref={coursesHref} />
           </div>
           <div className="korean-home-panel korean-home-span-full">
             <TodaySuggestionsCard tasks={dailyLearningTasks} coursePracticeHref={coursePracticeHref} />

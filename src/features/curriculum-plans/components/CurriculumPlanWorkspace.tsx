@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { LocalDateTimeField } from "@/components/ui/local-datetime-field";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import type { PlanLearningSource } from "../api/sources";
 import { PlanExecutionPanel } from "./PlanExecutionPanel";
 import { CalendarClock, CheckCircle2, Clock3, Copy, Send, Trash2, UserPlus, UsersRound, XCircle } from "lucide-react";
@@ -60,14 +62,13 @@ function timeLabel(item: CurriculumPlanTemplateItem) {
   return `第 ${item.dayOffset + 1} 天 · ${hour}:${minute} · ${item.durationMinutes} 分钟`;
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+function formatDateTime(value: string, timeZone: string) {
+  return formatInTimeZone(value, timeZone, {
     month: "numeric",
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date(value));
+  });
 }
 
 function StatusMessage({ success, error }: { success?: string; error?: string }) {
@@ -269,7 +270,7 @@ function PlatformWorkspace({
   );
 }
 
-function InstitutionWorkspace({ space, appSlug, templates, items, students, plans }: { space: string; appSlug: string; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[] }) {
+function InstitutionWorkspace({ space, appSlug, timeZone, templates, items, students, plans }: { space: string; appSlug: string; timeZone: string; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[] }) {
   return (
     <div className="space-y-5">
       <section className="rounded-xl border p-4">
@@ -285,7 +286,7 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
           <details className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
             <summary className="cursor-pointer text-sm font-semibold text-slate-800">采用此计划并发布给学生</summary>
             <form action={publishInstitutionCurriculumPlanAction.bind(null, space, appSlug, template.id)} className="mt-4 space-y-4">
-              <div className="grid gap-3 md:grid-cols-2"><label className="text-xs font-medium text-slate-600">机构计划名称<input name="title" defaultValue={template.title} className={`${inputClass} mt-1`} /></label><label className="text-xs font-medium text-slate-600">第一项开始时间（韩国时间）<input name="starts_at" type="datetime-local" required className={`${inputClass} mt-1`} /></label></div>
+              <div className="grid gap-3 md:grid-cols-2"><label className="text-xs font-medium text-slate-600">机构计划名称<input name="title" defaultValue={template.title} className={`${inputClass} mt-1`} /></label><label className="text-xs font-medium text-slate-600">第一项开始时间（按你电脑的时区）<LocalDateTimeField name="starts_at" required className={`${inputClass} mt-1`} /></label></div>
               <fieldset><legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"><UsersRound size={16} />选择学生</legend><StudentPicker students={students} /></fieldset>
               <button disabled={!students.length} className="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"><Send size={15} />发布机构计划</button>
             </form>
@@ -306,7 +307,7 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <strong className="text-slate-800">{plan.title}</strong>
-                      <p className="text-xs text-slate-500">{formatDateTime(plan.startsAt)} 至 {formatDateTime(plan.endsAt)}</p>
+                      <p className="text-xs text-slate-500">{formatDateTime(plan.startsAt, timeZone)} 至 {formatDateTime(plan.endsAt, timeZone)}</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       {plan.progress ? (
@@ -349,6 +350,6 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
   );
 }
 
-export function CurriculumPlanWorkspace({ space, appSlug, scope, courses, lessons, chapterTests, learningSources, templates, items, students, plans, success, error }: { space: string; appSlug: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; chapterTests: ChapterTestOption[]; learningSources: PlanLearningSource[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
-  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} chapterTests={chapterTests} learningSources={learningSources} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} templates={templates} items={items} students={students} plans={plans} />}</div>;
+export function CurriculumPlanWorkspace({ space, appSlug, timeZone, scope, courses, lessons, chapterTests, learningSources, templates, items, students, plans, success, error }: { space: string; appSlug: string; /** 用户时区：已发布计划的起止时间按它显示。 */ timeZone: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; chapterTests: ChapterTestOption[]; learningSources: PlanLearningSource[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
+  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} chapterTests={chapterTests} learningSources={learningSources} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} timeZone={timeZone} templates={templates} items={items} students={students} plans={plans} />}</div>;
 }

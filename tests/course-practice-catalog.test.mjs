@@ -156,6 +156,17 @@ test("目录保留具体的时间与前置测试锁定原因", () => {
     "需等到2026年8月25日开放",
   );
 
+  // 同一个开放时间点，“需等到某月某日开放”的日期随用户时区变化
+  scheduled.courses[0].available_from = "2026-08-24T16:00:00.000Z";
+  assert.equal(
+    buildCoursePracticeCatalog(scheduled)[0].chapters[0].lockedReason,
+    "需等到2026年8月25日开放", // 不传时区：首尔 8/25 01:00
+  );
+  assert.equal(
+    buildCoursePracticeCatalog({ ...scheduled, timeZone: "America/New_York" })[0].chapters[0].lockedReason,
+    "需等到2026年8月24日开放", // 纽约 8/24 12:00
+  );
+
   const prerequisite = fixture();
   const source = prerequisite.chapters[0];
   prerequisite.chapters.push({

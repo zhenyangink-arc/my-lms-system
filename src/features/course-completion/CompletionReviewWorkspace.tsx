@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { LocalDateTimeField } from "@/components/ui/local-datetime-field";
+import { useViewerTimeZone } from "@/components/viewer-time-zone";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -65,22 +68,16 @@ const evaluationStatusLabels = {
   eligible: "符合资格",
 } as const;
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null, timeZone: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+  return formatInTimeZone(value, timeZone, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-  }).format(new Date(value));
-}
-
-function localDateTimeValue(date: Date) {
-  const adjusted = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
-  return adjusted.toISOString().slice(0, 16);
+  });
 }
 
 function RetakeDialog({
@@ -178,24 +175,22 @@ function RetakeDialog({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label htmlFor={`${fieldBase}-starts`} className="text-sm font-semibold">
-              补考开始时间
-              <input
+              补考开始时间（按你电脑的时区）
+              <LocalDateTimeField
                 id={`${fieldBase}-starts`}
                 name="retake_starts_at"
-                type="datetime-local"
                 required
-                defaultValue={localDateTimeValue(new Date(now.getTime() + 24 * 60 * 60 * 1000))}
+                defaultValue={new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString()}
                 className="app-input mt-2 min-h-11 w-full rounded-xl border px-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               />
             </label>
             <label htmlFor={`${fieldBase}-due`} className="text-sm font-semibold">
-              补考截止时间
-              <input
+              补考截止时间（按你电脑的时区）
+              <LocalDateTimeField
                 id={`${fieldBase}-due`}
                 name="retake_due_at"
-                type="datetime-local"
                 required
-                defaultValue={localDateTimeValue(new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000))}
+                defaultValue={new Date(now.getTime() + 4 * 24 * 60 * 60 * 1000).toISOString()}
                 className="app-input mt-2 min-h-11 w-full rounded-xl border px-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               />
             </label>
@@ -413,6 +408,7 @@ function ReasonActionDialog({
 }
 
 function EvaluationDetail({ evaluation }: { evaluation: CompletionReviewEvaluation }) {
+  const timeZone = useViewerTimeZone();
   return (
     <Sheet>
       <SheetTrigger className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-semibold outline-none transition hover:bg-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
@@ -423,7 +419,7 @@ function EvaluationDetail({ evaluation }: { evaluation: CompletionReviewEvaluati
         <SheetHeader className="border-b pr-14">
           <SheetTitle>资格明细</SheetTitle>
           <SheetDescription>
-            {evaluation.studentName} · {evaluation.courseTitle} · 计算于 {formatDate(evaluation.evaluatedAt)}
+            {evaluation.studentName} · {evaluation.courseTitle} · 计算于 {formatDate(evaluation.evaluatedAt, timeZone)}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 px-4 pb-6">
@@ -489,6 +485,7 @@ function EvaluationCard({
   retakePaperIdByAssignmentId: Record<string, string>;
   canManageCertificates: boolean;
 }) {
+  const timeZone = useViewerTimeZone();
   return (
     <article className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 sm:p-5">
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -504,7 +501,7 @@ function EvaluationCard({
       </div>
       <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm text-[var(--foreground-secondary)]">
         <Score value={evaluation.overallScore} />
-        <span>资格计算：{formatDate(evaluation.evaluatedAt)}</span>
+        <span>资格计算：{formatDate(evaluation.evaluatedAt, timeZone)}</span>
       </div>
       {!eligible && (
         <ul className="mt-4 space-y-2" aria-label="缺口摘要">
@@ -549,6 +546,7 @@ function CertificateCard({
   space: string;
   appSlug: string;
 }) {
+  const timeZone = useViewerTimeZone();
   const active = certificate.status === "issued";
   return (
     <article className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 sm:p-5">
@@ -570,7 +568,7 @@ function CertificateCard({
         </div>
         <div>
           <dt className="text-xs text-[var(--foreground-muted)]">颁发时间</dt>
-          <dd className="mt-1">{formatDate(certificate.issuedAt)}</dd>
+          <dd className="mt-1">{formatDate(certificate.issuedAt, timeZone)}</dd>
         </div>
         <div>
           <dt className="text-xs text-[var(--foreground-muted)]">综合成绩</dt>
@@ -579,7 +577,7 @@ function CertificateCard({
         {!active && (
           <div>
             <dt className="text-xs text-[var(--foreground-muted)]">撤销时间</dt>
-            <dd className="mt-1">{formatDate(certificate.revokedAt)}</dd>
+            <dd className="mt-1">{formatDate(certificate.revokedAt, timeZone)}</dd>
           </div>
         )}
       </dl>

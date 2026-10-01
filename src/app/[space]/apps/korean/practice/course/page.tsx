@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireActiveUser } from "@/lib/auth";
 import { loadStudentReviewCenter } from "@/features/student-review-center/service";
 import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { getStudentAppBasePath, getStudentAppPath, STUDENT_APP_IDS } from "@/lib/student-apps";
 import { CoursePracticeDirectory } from "./course-practice-directory";
 
@@ -31,8 +32,9 @@ export default async function KoreanCoursePracticePage({
   }
 
   const { supabase, user } = await requireActiveUser();
+  const timeZone = await getViewerTimeZone();
   const [courses, reviewResult] = await Promise.all([
-    loadCoursePracticeCatalog({ supabase, userId: user.id, studentAppId: STUDENT_APP_IDS.korean }),
+    loadCoursePracticeCatalog({ supabase, userId: user.id, studentAppId: STUDENT_APP_IDS.korean, timeZone }),
     loadStudentReviewCenter({
       supabase,
       studentId: user.id,

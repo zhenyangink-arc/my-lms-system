@@ -30,13 +30,11 @@ export function expandPlanItemTime(
   };
 }
 
-export function seoulLocalInputToISOString(value: string) {
-  const normalized = value.trim();
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(normalized)) {
+/** 表单提交的是浏览器按用户电脑时区换算好的 ISO 时间点（LocalDateTimeField），这里校验并规范成 UTC ISO 字符串。 */
+export function parsePlanStartsAt(value: string) {
+  const date = new Date(value.trim());
+  if (!value.trim() || Number.isNaN(date.getTime())) {
     throw new Error("请选择有效的开课日期和时间。");
   }
-  const date = new Date(`${normalized}:00+09:00`);
-  if (Number.isNaN(date.getTime())) throw new Error("开课时间无效。");
   return date.toISOString();
 }
-

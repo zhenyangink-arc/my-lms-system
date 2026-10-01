@@ -9,6 +9,7 @@ import { CurriculumPlanWorkspace } from "@/features/curriculum-plans/components/
 import { loadPlanLearningSources } from "@/features/curriculum-plans/api/sources";
 import { createClient } from "@/lib/supabase/server";
 import { isSubjectSectionEnabled } from "@/features/subjects";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +88,7 @@ export default async function CurriculumLearningPlansPage({
       <CurriculumPlanWorkspace
         space={space}
         appSlug={appSlug}
+        timeZone={await getViewerTimeZone()}
         scope={context.access.scope}
         courses={courseRows.map((course) => ({ id: String(course.id), title: String(course.title) }))}
         lessons={lessons}

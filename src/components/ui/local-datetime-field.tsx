@@ -14,12 +14,15 @@ const subscribeNothing = () => () => {};
  * 服务端渲染时先显示空值，水合后立即显示本地值（不会因服务器时区不同而不一致）。
  */
 export function LocalDateTimeField({
+  id,
   name,
   defaultValue,
   required,
   className,
   ariaLabel,
 }: {
+  /** 可见输入框的 id（供 `<label htmlFor>` 使用）。 */
+  id?: string;
   name: string;
   defaultValue?: string | null;
   required?: boolean;
@@ -40,6 +43,7 @@ export function LocalDateTimeField({
   return (
     <>
       <input
+        id={id}
         type="datetime-local"
         value={value}
         onChange={(event) => setEdited(event.target.value)}

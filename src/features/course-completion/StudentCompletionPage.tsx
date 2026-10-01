@@ -15,6 +15,7 @@ import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import type { CourseCompletionCertificate } from "./types";
 import { PrintCertificateButton } from "./PrintCertificateButton";
 import type { SubjectSlug } from "@/features/subjects";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
 import {
   completionHrefForSpace,
   type StudentCompletionData,
@@ -52,17 +53,16 @@ const conclusionContent: Record<
   },
 };
 
-function formatDate(value: string | null, includeTime = false) {
+function formatDate(value: string | null, timeZone: string, includeTime = false) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
+  return formatInTimeZone(value, timeZone, {
     year: "numeric",
     month: "long",
     day: "numeric",
     ...(includeTime
       ? { hour: "2-digit", minute: "2-digit", hour12: false }
       : {}),
-  }).format(new Date(value));
+  });
 }
 
 function formatScore(value: number | null) {
@@ -80,9 +80,11 @@ function certificateStatus(certificate: CourseCompletionCertificate) {
 function CertificateDetails({
   certificate,
   institutionName,
+  timeZone,
 }: {
   certificate: CourseCompletionCertificate;
   institutionName: string;
+  timeZone: string;
 }) {
   const active = certificate.status === "issued";
   return (
@@ -124,7 +126,7 @@ function CertificateDetails({
         </div>
         <div>
           <dt className="text-[var(--foreground-muted)]">颁发日期</dt>
-          <dd className="mt-1 font-semibold">{formatDate(certificate.issued_at)}</dd>
+          <dd className="mt-1 font-semibold">{formatDate(certificate.issued_at, timeZone)}</dd>
         </div>
         <div>
           <dt className="text-[var(--foreground-muted)]">综合成绩</dt>
@@ -142,7 +144,7 @@ function CertificateDetails({
           <div className="sm:col-span-2">
             <dt className="text-[var(--foreground-muted)]">状态变更</dt>
             <dd className="mt-1 leading-6">
-              {formatDate(certificate.revoked_at, true)}
+              {formatDate(certificate.revoked_at, timeZone, true)}
               {certificate.revocation_reason
                 ? ` · ${certificate.revocation_reason}`
                 : ""}
@@ -157,9 +159,11 @@ function CertificateDetails({
 function CertificatePrintView({
   certificate,
   institutionName,
+  timeZone,
 }: {
   certificate: CourseCompletionCertificate;
   institutionName: string;
+  timeZone: string;
 }) {
   return (
     <section
@@ -183,7 +187,7 @@ function CertificatePrintView({
           </div>
           <div>
             <dt>颁发日期</dt>
-            <dd>{formatDate(certificate.issued_at)}</dd>
+            <dd>{formatDate(certificate.issued_at, timeZone)}</dd>
           </div>
           <div>
             <dt>证书编号</dt>
@@ -200,11 +204,14 @@ export function StudentCompletionPage({
   space,
   studentAppSlug,
   institutionName,
+  timeZone,
 }: {
   data: StudentCompletionData;
   space: string;
   studentAppSlug: SubjectSlug;
   institutionName: string;
+  /** 用户时区：证书颁发、撤销和资格计算时间按它显示。 */
+  timeZone: string;
 }) {
   const activeCertificate = data.certificates.find(
     (certificate) => certificate.status === "issued",
@@ -453,6 +460,7 @@ export function StudentCompletionPage({
                   <CertificateDetails
                     key={certificate.id}
                     certificate={certificate}
+                    timeZone={timeZone}
                     institutionName={institutionName}
                   />
                 ))}
@@ -474,7 +482,7 @@ export function StudentCompletionPage({
 
           {evaluation ? (
             <p className="text-center text-xs leading-5 text-[var(--foreground-muted)]">
-              最近计算：{formatDate(evaluation.evaluated_at, true)} · {data.courseTitle}
+              最近计算：{formatDate(evaluation.evaluated_at, timeZone, true)} · {data.courseTitle}
             </p>
           ) : null}
         </div>
@@ -484,6 +492,7 @@ export function StudentCompletionPage({
         <CertificatePrintView
           certificate={activeCertificate}
           institutionName={institutionName}
+          timeZone={timeZone}
         />
       ) : null}
     </>

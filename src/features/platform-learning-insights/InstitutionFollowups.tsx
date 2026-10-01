@@ -13,7 +13,7 @@ export async function InstitutionFollowups({ appSlug, appId, tenant, tenantName,
     {error ? <p role="alert" className="text-sm">跟进记录暂时无法读取，请刷新重试。</p> : <>
       <p className="text-sm">当前状态：{data?.[0] ? labels[data[0].status] : "尚未记录"}</p>
       <FollowupEditor appSlug={appSlug} tenant={tenant} topic={topic} latestId={data?.[0]?.id ?? ""} status={data?.[0]?.status ?? "pending"} />
-      {data?.length ? <details><summary className="min-h-11 cursor-pointer py-3 text-sm">处理历史（最近 {data.length} 条）</summary><ol className="space-y-3">{data.map(row => <li key={row.id} className="border-t pt-3 text-sm"><div>{labels[row.status]} · <time dateTime={row.created_at}>{new Date(row.created_at).toLocaleString("zh-CN", { timeZone, hour12: false })}（韩国时间）</time></div><p className="mt-2 whitespace-pre-wrap break-words">{row.note}</p></li>)}</ol></details> : null}
+      {data?.length ? <details><summary className="min-h-11 cursor-pointer py-3 text-sm">处理历史（最近 {data.length} 条）</summary><ol className="space-y-3">{data.map(row => <li key={row.id} className="border-t pt-3 text-sm"><div>{labels[row.status]} · <time dateTime={row.created_at}>{new Date(row.created_at).toLocaleString("zh-CN", { timeZone, hour12: false })}</time></div><p className="mt-2 whitespace-pre-wrap break-words">{row.note}</p></li>)}</ol></details> : null}
     </>}
   </section>;
 }

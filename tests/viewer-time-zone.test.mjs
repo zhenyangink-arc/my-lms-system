@@ -4,6 +4,7 @@ import { test } from "node:test";
 import {
   addDaysToDateKey,
   dateKeyInTimeZone,
+  daysBetweenDateKeys,
   DEFAULT_VIEWER_TIME_ZONE,
   formatDateKey,
   formatInTimeZone,
@@ -104,6 +105,14 @@ test("今日任务的“今天 / 明天”按用户时区划分；不传时区�
   assert.equal(selectRequiredTodayTasks([task], now, "America/New_York").length, 1);
 });
 
+test("日期键之间相差的天数与时区无关，跨月跨年也对", () => {
+  assert.equal(daysBetweenDateKeys("2026-10-02", "2026-10-02"), 0);
+  assert.equal(daysBetweenDateKeys("2026-10-02", "2026-10-05"), 3);
+  assert.equal(daysBetweenDateKeys("2026-10-02", "2026-09-30"), -2);
+  assert.equal(daysBetweenDateKeys("2026-12-30", "2027-01-02"), 3);
+  assert.equal(daysBetweenDateKeys("2026-03-07", "2026-03-09"), 2); // 跨美国夏令时切换日
+});
+
 test("任务时间文字按用户时区显示", () => {
   const base = { dueAt: "2026-10-01T10:00:00.000Z", progressPercent: null, status: "available" };
   assert.match(getTaskTiming(base), /10\/1 19:00 截止/); // 默认首尔
@@ -139,10 +148,47 @@ test("用户时区机制的接线：根布局同步 cookie，服务端读 cookie
     "src/features/student-ability-portrait/api/service.ts",
     "src/features/platform-learning-insights/model.ts",
     "src/features/platform-learning-insights/InstitutionFollowups.tsx",
+    // 韩语专用页面与流程
+    "src/app/dashboard/DashboardHomePage.tsx",
+    "src/app/dashboard/SystemGrowthHomeView.tsx",
+    "src/app/dashboard/DailyLearningWorkspace.tsx",
+    "src/app/dashboard/documents/page-content.tsx",
+    "src/features/course-completion/StudentCompletionPage.tsx",
+    "src/features/course-completion/CompletionReviewWorkspace.tsx",
+    "src/features/course-completion/CompletionPolicyWorkspace.tsx",
+    "src/features/course-completion/review-actions.ts",
+    "src/features/curriculum-plans/components/CurriculumPlanWorkspace.tsx",
+    "src/features/curriculum-plans/time.ts",
+    "src/features/curriculum-plans/actions.ts",
+    "src/features/chapter-practice/components/chapter-practice-coverage-listing.tsx",
   ]) {
     assert.doesNotMatch(read(path), /Asia\/Seoul|\+09:00/, path);
   }
   // 页面向下传递用户时区
   assert.match(read("src/app/dashboard/StudentSubjectHome.tsx"), /const timeZone = await getViewerTimeZone\(\)/);
   assert.match(read("src/features/student-home-learning/task-preference-actions.ts"), /timeZone: await getViewerTimeZone\(\)/);
+  assert.match(read("src/app/dashboard/DashboardHomePage.tsx"), /const timeZone = await getViewerTimeZone\(\)/);
+  assert.match(read("src/app/[space]/apps/korean/grades/completion/page.tsx"), /timeZone=\{await getViewerTimeZone\(\)\}/);
+  assert.match(read("src/app/[space]/dashboard/admin/apps/[appSlug]/learning-plans/page.tsx"), /timeZone=\{await getViewerTimeZone\(\)\}/);
+  assert.match(read("src/app/[space]/apps/korean/practice/course/page.tsx"), /timeZone/);
+});
+
+test("韩语流程里的时间输入按电脑时区换算后提交，服务端不再按 +09:00 猜", () => {
+  // 补考开始、截止与学习计划的开课时间：用 LocalDateTimeField（浏览器换算成 UTC ISO），不再是裸 datetime-local
+  for (const path of [
+    "src/features/course-completion/CompletionReviewWorkspace.tsx",
+    "src/features/curriculum-plans/components/CurriculumPlanWorkspace.tsx",
+  ]) {
+    const source = read(path);
+    assert.match(source, /<LocalDateTimeField/, path);
+    assert.doesNotMatch(source, /type="datetime-local"/, path);
+  }
+  assert.match(read("src/features/course-completion/review-actions.ts"), /function parseDateTime\(/);
+  assert.match(read("src/features/curriculum-plans/actions.ts"), /parsePlanStartsAt\(text\(formData, "starts_at"\)\)/);
+});
+
+test("留学资料截止日按日期相减，不再把日期当成首尔午夜", () => {
+  const source = read("src/app/dashboard/documents/page-content.tsx");
+  assert.match(source, /daysBetweenDateKeys\(dateKeyInTimeZone\(new Date\(\), timeZone\), dueKey\)/);
+  assert.match(source, /formatDateKey\(dueKey, DUE_DATE_OPTIONS\)/);
 });

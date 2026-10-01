@@ -14,10 +14,11 @@ import {
   MinusCircle,
 } from "lucide-react";
 
-import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppPath } from "@/lib/student-apps";
+import { dateKeyInTimeZone, daysBetweenDateKeys, formatDateKey } from "@/lib/viewer-time-zone";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { ApplicationDocumentChecklist } from "./ApplicationDocumentChecklist";
 import { ApplicationStageTimeline } from "./ApplicationStageTimeline";
 import { CourierInfoCard } from "./CourierInfoCard";
@@ -72,16 +73,17 @@ const DUE_DATE_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
 
-function getDueMeta(dueDate: string | null, status: string) {
+// 截止日是一个日历日期（不带时区），“今天”按用户电脑的时区算，两者按日期相减。
+function getDueMeta(dueDate: string | null, status: string, timeZone: string) {
   if (!dueDate || status === "completed" || status === "not_needed") return null;
-  const due = new Date(`${dueDate}T00:00:00+09:00`);
-  if (Number.isNaN(due.getTime())) return null;
-  const diffDays = Math.ceil((due.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  const dueKey = dueDate.slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dueKey)) return null;
+  const diffDays = daysBetweenDateKeys(dateKeyInTimeZone(new Date(), timeZone), dueKey);
   if (diffDays < 0) return { label: `已逾期 ${Math.abs(diffDays)} 天`, color: "var(--destructive)", soft: "var(--surface-soft)" };
   if (diffDays === 0) return { label: "今天截止", color: "var(--status-warning)", soft: "var(--status-warning-surface)" };
   if (diffDays <= 3) return { label: `剩余 ${diffDays} 天`, color: "var(--status-warning)", soft: "var(--status-warning-surface)" };
   return {
-    label: <>截止 <LocalDateTime value={due} options={DUE_DATE_OPTIONS} /></>,
+    label: <>截止 {formatDateKey(dueKey, DUE_DATE_OPTIONS)}</>,
     color: "var(--foreground-muted)",
     soft: "var(--surface-soft)",
   };
@@ -94,6 +96,7 @@ export default async function DocumentsPage({
 }) {
   const { target: selectedTargetId } = await searchParams;
   const { supabase, user, tenant } = await requireActiveUser();
+  const timeZone = await getViewerTimeZone();
   const documentsPath = tenant?.slug
     ? getStudentAppPath(tenant.slug, "study-abroad", "documents")
     : scopeDashboardPath(
@@ -140,7 +143,7 @@ export default async function DocumentsPage({
 
   const documentsWithDueMeta = documents.map((document) => ({
     ...document,
-    dueMeta: getDueMeta(document.due_date, document.status),
+    dueMeta: getDueMeta(document.due_date, document.status, timeZone),
   }));
   const documentsByCategory = new Map<string, typeof documentsWithDueMeta>();
   for (const document of documentsWithDueMeta) {

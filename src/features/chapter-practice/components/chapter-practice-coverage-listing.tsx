@@ -11,6 +11,8 @@ import {
   ManagementNotice,
 } from "@/components/layout/management-page";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { formatInTimeZone } from "@/lib/viewer-time-zone";
+import { getViewerTimeZone } from "@/lib/viewer-time-zone.server";
 import { cn } from "@/lib/utils";
 import { getChapterPracticeCoverage } from "../api/service";
 import {
@@ -39,15 +41,14 @@ const practiceStatusLabels: Record<ChapterPracticeUnitStatus, string> = {
   disabled: "已停用",
 };
 
-const dateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
+};
 
 type StatusTone = "success" | "warning" | "muted";
 
@@ -152,7 +153,7 @@ function PracticeDetails({ row }: { row: ChapterPracticeCoverageRow }) {
   );
 }
 
-function SyncDetails({ row }: { row: ChapterPracticeCoverageRow }) {
+function SyncDetails({ row, timeZone }: { row: ChapterPracticeCoverageRow; timeZone: string }) {
   if (!row.practice.isGenerated || !row.practice.lastSyncedAt) {
     return (
       <div className="grid gap-1">
@@ -170,7 +171,7 @@ function SyncDetails({ row }: { row: ChapterPracticeCoverageRow }) {
         dateTime={row.practice.lastSyncedAt}
         className="text-[11px] tabular-nums text-[var(--foreground-secondary)]"
       >
-        {dateTimeFormatter.format(new Date(row.practice.lastSyncedAt))}
+        {formatInTimeZone(row.practice.lastSyncedAt, timeZone, DATE_TIME_OPTIONS)}
       </time>
       <StatusMark
         label={row.practice.needsUpdate ? "需更新" : "无需更新"}
@@ -233,7 +234,7 @@ function ChapterAction({
   );
 }
 
-function CoverageCard({ row, space }: { row: ChapterPracticeCoverageRow; space: string }) {
+function CoverageCard({ row, space, timeZone }: { row: ChapterPracticeCoverageRow; space: string; timeZone: string }) {
   return (
     <article className="space-y-4 p-4" aria-labelledby={`coverage-${row.id}`}>
       <div>
@@ -292,7 +293,7 @@ function CoverageCard({ row, space }: { row: ChapterPracticeCoverageRow; space: 
           <dt className="mb-1.5 text-[11px] font-medium text-[var(--foreground-muted)]">
             同步与更新
           </dt>
-          <dd><SyncDetails row={row} /></dd>
+          <dd><SyncDetails row={row} timeZone={timeZone} /></dd>
         </div>
       </dl>
       <div className="border-t pt-4">
@@ -310,6 +311,7 @@ export default async function ChapterPracticeCoverageListing({
   studentAppId: string;
 }) {
   const result = await getChapterPracticeCoverage(studentAppId);
+  const timeZone = await getViewerTimeZone();
 
   return (
     <div className="space-y-6">
@@ -347,7 +349,7 @@ export default async function ChapterPracticeCoverageListing({
           <>
             <div className="divide-y 2xl:hidden">
               {result.rows.map((row) => (
-                <CoverageCard key={row.id} row={row} space={space} />
+                <CoverageCard key={row.id} row={row} space={space} timeZone={timeZone} />
               ))}
             </div>
 
@@ -400,7 +402,7 @@ export default async function ChapterPracticeCoverageListing({
                           <PracticeStatusMark status={row.practice.status} />
                         </div>
                       </td>
-                      <td className="px-3 py-2"><SyncDetails row={row} /></td>
+                      <td className="px-3 py-2"><SyncDetails row={row} timeZone={timeZone} /></td>
                       <td className="px-3 py-2"><ChapterAction row={row} space={space} /></td>
                     </tr>
                   ))}
