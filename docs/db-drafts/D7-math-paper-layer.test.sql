@@ -28,7 +28,7 @@ declare
   v_cat uuid := '20000000-0000-4000-8000-0000000000e7';
   v_course uuid := '21000000-0000-4000-8000-0000000000e7';
   v_lesson uuid := '22000000-0000-4000-8000-0000000000e7';
-  v_test uuid; v_paper uuid; v_hw uuid; v_dup uuid; v_asg uuid; v_sub uuid; v_ans_expr uuid; v_ans_num uuid; v_ans_choice uuid;
+  v_test uuid; v_paper uuid; v_hw uuid; v_dup uuid; v_nospec uuid; v_ret uuid; v_exam_asg uuid; v_policy uuid; v_eval uuid; v_del uuid; v_asg uuid; v_sub uuid; v_ans_expr uuid; v_ans_num uuid; v_ans_choice uuid;
   r text; n int;
   v_questions text := $q$[
     {"type":"math.expression","prompt":"化简 2(x+1)","points":5,"explanation":"展开","difficulty":"medium","mathSpec":{"expected":"2x+2","variables":[{"name":"x","min":-5,"max":5}],"seed":7}},
@@ -144,6 +144,59 @@ begin
 
   -- 5 数学应用的作业类型试卷不再被“六项齐全”卡住；韩语仍然被卡（见韩语回归探针）
   insert into t(name, got, expected) values ('5a 数学作业类型试卷发布校验无问题', coalesce(array_to_string(private.assessment_paper_release_issues(v_hw), ' | '), 'NULL'), '');
+
+  -- 6 完整性：数学题缺少规格时不能发布 / 布置；已发布试卷不能新增规格；删除草稿试卷级联删除规格
+  perform pg_temp.as_user(v_owner, 'authenticated'); set local role authenticated;
+  v_nospec := public.create_math_paper('缺规格试卷', '', 'exam', v_test, 30, 60, false, v_questions::jsonb);
+  reset role;
+  delete from public.math_paper_question_specs where paper_question_id = (select id from public.assessment_paper_questions where paper_id = v_nospec and question_type = 'math.numeric');
+  insert into t(name, got, expected) values ('6a 缺规格的试卷校验问题', coalesce(array_to_string(private.assessment_paper_release_issues(v_nospec), ' | '), 'NULL'), '有 1 道数学题缺少判题规格');
+  perform pg_temp.as_user(v_owner, 'authenticated'); set local role authenticated;
+  perform public.change_assessment_paper_status(v_nospec, 'published');
+  reset role;
+  insert into t(name, got, expected) values ('6b 缺规格的试卷不能布置',
+    pg_temp.try(v_admin, 'authenticated', format($f$select public.create_learning_assignment_from_paper_with_unlock(%L, %L, 'all_students', null, now(), now() + interval '2 days', '', false)$f$, v_nospec, v_course)), 'denied: 标准试卷中有数学题缺少判题规格');
+  insert into t(name, got, expected) values ('6c 已发布试卷不能新增规格',
+    pg_temp.try(null, 'postgres', format($f$insert into public.math_paper_question_specs (paper_question_id, grader_key, spec, updated_by) select id, 'math.numeric', '{"expected":1,"tolerance":{"abs":0,"rel":0}}', %L from public.assessment_paper_questions where paper_id = %L and question_type = 'math.numeric'$f$, v_owner, v_nospec)), 'denied: 已发布或已停止提供的试卷的判题规格不可修改，请复制为新草稿');
+  perform pg_temp.as_user(v_owner, 'authenticated'); set local role authenticated;
+  v_del := public.create_math_paper('待删草稿', '', 'exam', v_test, 30, 60, false, v_questions::jsonb);
+  reset role;
+  insert into t(name, got, expected) values ('6d 删除草稿试卷题（级联）不被规格触发器拦截',
+    pg_temp.try(null, 'postgres', format($f$delete from public.assessment_paper_questions where paper_id = %L$f$, v_del)), 'ok');
+  select count(*) into n from public.math_paper_question_specs where paper_question_id not in (select id from public.assessment_paper_questions);
+  insert into t(name, got, expected) values ('6e 无孤立规格', n::text, '0');
+  insert into t(name, got, expected) values ('6f 删除整份草稿试卷（级联）',
+    pg_temp.try(null, 'postgres', format($f$delete from public.assessment_papers where id = %L$f$, v_del)), 'ok');
+
+  -- 7 补考端到端：已发布的数学考试 → 结课资格记录标记未通过 → 配置补考 → 补考题带判题规格
+  perform pg_temp.as_user(v_owner, 'authenticated'); set local role authenticated;
+  v_ret := public.create_math_paper('数学补考卷', '', 'exam', v_test, 30, 60, false, v_questions::jsonb);
+  perform public.change_assessment_paper_status(v_ret, 'published');
+  reset role;
+  perform pg_temp.as_user(v_admin, 'authenticated'); set local role authenticated;
+  v_exam_asg := public.create_learning_assignment_from_paper_with_unlock(v_paper, v_course, 'all_students', null, now() - interval '1 minute', now() + interval '2 days', '', false);
+  reset role;
+  perform pg_temp.as_user(v_owner, 'authenticated');
+  insert into public.course_completion_policies (student_app_id, course_id, policy_code, version, title, created_by)
+  values (v_app, v_course, 'MATH-D7-POLICY', 1, 'D7 测试策略', v_owner) returning id into v_policy;
+  insert into public.student_course_completion_evaluations (
+    tenant_id, student_id, student_app_id, course_id, policy_id, policy_version, status, eligible,
+    requirements_snapshot, evidence_snapshot, missing_requirements, evaluation_version, evaluation_fingerprint)
+  values ('10000000-0000-4000-8000-000000000001', v_student, v_app, v_course, v_policy, 1, 'not_eligible', false,
+    '{}', '{}', jsonb_build_array(jsonb_build_object('key', 'final', 'category', 'final_exam', 'title', '期末考试', 'status', 'failed',
+      'reason', '未通过', 'sourceId', v_exam_asg::text)), 'v1', repeat('a', 32)) returning id into v_eval;
+  perform pg_temp.as_user(v_admin, 'authenticated'); set local role authenticated;
+  begin
+    perform public.configure_learning_assignment_retake(v_eval, v_exam_asg, v_ret, now() + interval '3 days', now() + interval '5 days', 'highest', null);
+    reset role; r := 'ok';
+  exception when others then reset role; r := 'error: ' || sqlerrm; end;
+  insert into t(name, got, expected) values ('7a 配置补考成功', r, 'ok');
+  select count(*) into n from public.learning_assignment_questions q join public.math_question_specs s on s.question_id = q.id
+  where q.assignment_id = v_exam_asg and q.delivery_paper_id = v_ret;
+  insert into t(name, got, expected) values ('7b 补考题带 2 条判题规格', n::text, '2');
+  select string_agg(question_type || ':' || auto_graded::text, ',' order by sort_order) into r
+  from public.learning_assignment_questions where assignment_id = v_exam_asg and delivery_paper_id = v_ret;
+  insert into t(name, got, expected) values ('7c 补考题题型与自动判分', r, 'math.expression:false,math.numeric:false,single_choice:true');
 end $$;
 select seq, name, got, expected, case when got = expected then 'PASS' else 'FAIL' end as result from t order by seq;
 rollback;

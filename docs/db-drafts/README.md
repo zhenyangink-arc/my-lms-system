@@ -8,9 +8,9 @@
 |---|---|---|---|
 | D1 | `D1-capture-toolbox-review-item.{up,down,test}.sql` | 删除专项练习错题收集触发器中“找不到练习时兜底到韩语应用”的代码（练习的应用归属非空、题目以外键挂在练习上，该兜底不可达） | 执行前、执行后、回滚后三次测试结果一致（英语、韩语错题各归属本应用）；回滚后函数定义逐字一致。验证库中保留执行状态 |
 | D2 | `D2-app-course-access-policy.{up,down,test}.sql` | 新增 `private.student_app_course_access_policies`（每个应用可学全部课时的会员档位，收费已决定与韩语相同，韩语、英语、数学均为 vip2/vip3）与 `private.student_app_full_course_allowed()`；课时进度触发器按课程所属应用查策略，教职人员判断改用 `current_profile_role()` | 10 种身份与课时组合中只有 2 处变化：vip2 学生可写入英语正式课时进度（预期）；“资料角色误设为老师、实际为普通会员的学生”不再能绕过档位（修复）。其余 8 种（含全部韩语情况）不变；回滚后触发器定义与测试结果逐字一致。验证库中**未保留**执行状态 |
-| D5 | `D5-math-grading-storage.{up,down,test}.sql` | 数学判题存储层：`question_type` 约束新增 `math.expression`、`math.numeric`；`math_question_specs`（判题规格，仅有“管理内容”能力的教职人员可读）；`learning_submission_machine_grades`（机器判题结果，只增不改，重判新增修订号留痕，仅有“管理测评”能力的教职人员可读，学生不可读）；判题规格带结构校验 `private.math_spec_is_valid()`（表达式：expected / seed / variables；数值：expected + tolerance；容差非负）；`set_math_question_spec()`（教职人员设置规格，已有作答后禁止修改）；`record_learning_machine_grade()`（仅 service_role，校验题型、判题器、得分范围、提交处于待批改阶段） | 39 项检查全部符合预期（含 10 种畸形规格被拒；题型约束、权限正反例、重判留痕、状态限制、规格冻结）；回滚后约束定义与对象全部还原，up / down 可重复执行。验证库中**未保留**执行状态 |
+| D5 | `D5-math-grading-storage.{up,down,test}.sql` | 数学判题存储层：`question_type` 约束新增 `math.expression`、`math.numeric`；`math_question_specs`（判题规格，仅有“管理内容”能力的教职人员可读）；`learning_submission_machine_grades`（机器判题结果，只增不改，重判新增修订号留痕，仅有“管理测评”能力的教职人员可读，学生不可读）；判题规格带结构校验 `private.math_spec_is_valid()`（表达式：expected / seed / variables；数值：expected + tolerance；容差非负）；规格不提供改写函数（只由 D7 试卷层复制而来），已有学生作答后触发器冻结规格；`record_learning_machine_grade()`（仅 service_role，校验题型、判题器、得分范围、提交处于待批改阶段） | 42 项检查全部符合预期（含 10 种畸形规格被拒、浏览器角色直接写规格被拒、级联删除不被拦截；题型约束、权限正反例、重判留痕、状态限制、规格冻结）；回滚后约束定义与对象全部还原，up / down 可重复执行。验证库中**未保留**执行状态 |
 | ~~D6~~ | `superseded/D6-create-assignment-math-questions.*` | **已作废**：针对 `create_learning_assignment`，但应用代码从不调用它（见下文）。文件保留作参考 | 当时预演通过，但对实际出题路径没有价值 |
-| D7 | `D7-math-paper-layer.{up,down,test}.sql`、`D7-korean-regression.{probe.sql,baseline.txt}` | 依赖 D5。数学试卷层（方案 E，平台负责人出题，见 `../math-question-bank-options.md` §6）：试卷题题型约束；`private.assessment_paper_uses_language_skills()`；`math_paper_question_specs`（试卷题判题规格，发布后不可改）；`create_math_paper()`（仅平台负责人 / 标准题库管理员，创建草稿，发布仍走 `change_assessment_paper_status`）。**替换 5 个既有函数**，每处只改指定位置：发布校验问题清单与发布校验（数学试卷题 skill 不要求属于六项，作业类型的“六项齐全”等检查对数学不适用）、`create_learning_assignment_from_paper` 与 `configure_learning_assignment_retake`（复制判题规格到作业题）、`duplicate_assessment_paper`（复制判题规格） | **数学**：28 项检查全部 PASS（创建 → 发布 → 复制 → 机构布置 → 学生提交 → 机器判题 → 教师批改，权限与 9 类畸形输入的负向用例）。**韩语回归**：探针走“题库 → 试卷 → 发布校验 → 复制 → 布置作业”，D7 执行前、执行后、回滚后三份输出逐行一致（含“作业类型两项技能试卷仍被拒”“skill 为空仍被报出”）；5 个被替换函数的定义与原定义的差异仅为注释所列位置，回滚后 5 个函数与原定义逐字一致（授权不变）。验证库中**未保留**执行状态 |
+| D7 | `D7-math-paper-layer.{up,down,test}.sql`、`D7-korean-regression.{probe.sql,baseline.txt}` | 依赖 D5。数学试卷层（方案 E，平台负责人出题，见 `../math-question-bank-options.md` §6）：试卷题题型约束；`private.assessment_paper_uses_language_skills()`；`math_paper_question_specs`（试卷题判题规格，发布后不可改）；`create_math_paper()`（仅平台负责人 / 标准题库管理员，创建草稿，发布仍走 `change_assessment_paper_status`）。**替换 5 个既有函数**，每处只改指定位置：发布校验问题清单与发布校验（数学试卷题 skill 不要求属于六项，作业类型的“六项齐全”等检查对数学不适用；新增“数学题缺少判题规格”问题 / 拒绝）、`create_learning_assignment_from_paper` 与 `configure_learning_assignment_retake`（复制判题规格到作业题）、`duplicate_assessment_paper`（复制判题规格） | **数学**：37 项检查全部 PASS（创建 → 发布 → 复制 → 机构布置 → 学生提交 → 机器判题 → 教师批改；**补考端到端**；缺规格不能发布 / 布置、已发布试卷不能新增规格、草稿试卷级联删除；权限与 9 类畸形输入的负向用例）。**韩语回归**：探针走“题库 → 试卷 → 发布校验 → 复制 → 布置作业”，D7 执行前、执行后、回滚后三份输出逐行一致（含“作业类型两项技能试卷仍被拒”“skill 为空仍被报出”）；5 个被替换函数的定义与原定义的差异仅为注释所列位置，回滚后 5 个函数与原定义逐字一致（授权不变）。验证库中**未保留**执行状态 |
 
 ## 预演中的发现
 
@@ -48,3 +48,16 @@
 - 核对应用代码后发现：`src` 里**没有任何地方调用** `create_learning_assignment`（自由出题的旧入口）。应用实际的出题路径是 **标准题库 → 标准试卷 → `create_learning_assignment_from_paper_with_unlock`**（`paper-actions.ts`）。所以 D6 改的是一个没人用的函数，我之前没有先核对调用方就起草，这是我的疏漏。
 - 数学题要进入作业，必须走“题库 → 试卷 → 作业”这条路，也就是 **D4（数学题组与标准试卷的关系）**，取决于数学题库设计，尚未决定。D5（题型约束、判题规格、机器判题结果）不受影响，仍然有效；但 D5 的 `set_math_question_spec()` 要等 D4 确定后，才知道由谁在什么入口调用。
 - 附带发现：`create_learning_assignment` 的权限是机构级（不按应用），且这个函数可能是可删除的遗留代码；是否清理，与 D4 一起决定。
+
+## Gate 自审发现并已修正的问题（2026-10-01）
+
+1. **D5 的 `set_math_question_spec()` 权限过大**：它让机构教职人员能改平台试卷定义的标准答案规格（现有流程里机构教职人员对作业答案键没有写权限）。已移除；规格只由 D7 的试卷层复制而来，D5 测试改为直接写入的正反例。
+2. **规格冻结逻辑只在被移除的函数里**：改为表上的触发器（已有学生作答后不能改 / 删规格），试卷规格在试卷非草稿后不能新增、修改、删除。
+3. **触发器会拦截级联删除**：规格触发器最初会阻止“删除草稿试卷 / 删除题目”这类外键级联删除；已修正为题目或试卷已不存在时放行，并有测试覆盖。
+4. **数学题可以没有规格就发布**：现在发布问题清单与发布校验都会报“数学题缺少判题规格”，布置作业前也会被拒。
+5. **补考路径原先未经端到端验证**：已补（结课资格记录 → 配置补考 → 补考题带规格）。
+
+## 前端影响（只读核对，未改代码）
+
+- 学生作答表单（`AssignmentSubmissionForm.tsx`）对未知题型退化为文本输入，且占位提示写死“填写韩语答案”；题型标签 `QUESTION_TYPE_LABELS` 没有数学题型，会显示为空。数学作业面向真实学生前，至少要补标签与提示（黄区，与设计文档 §11 步骤 1 一起）。
+- 教师批改界面没有机器判题预填，教师需要自己打分（功能可用，只是没有建议分）。

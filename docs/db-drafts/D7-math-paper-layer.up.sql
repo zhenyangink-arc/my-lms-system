@@ -1,8 +1,8 @@
 -- D7：数学试卷层（草稿；依赖 D5。方案 E，见 docs/math-question-bank-options.md §6）
 -- 新增：试卷题题型约束、private.assessment_paper_uses_language_skills()、math_paper_question_specs、create_math_paper()。
 -- 替换 6 个既有函数，每处只改下列位置，其余逐字不变：
---   private.assessment_paper_release_issues_with_temporary_notice：数学试卷题 skill 不要求属于六项；作业类型的“六项齐全”检查对数学不适用
---   private.validate_assessment_paper_release：同上（作业类型的“六项齐全”“听力材料”“作业计划题量”检查对数学不适用）
+--   private.assessment_paper_release_issues_with_temporary_notice：数学试卷题 skill 不要求属于六项；作业类型的“六项齐全”检查对数学不适用；新增“数学题缺少判题规格”问题
+--   private.validate_assessment_paper_release：同上（作业类型的“六项齐全”“听力材料”“作业计划题量”检查对数学不适用）；新增“数学题缺少判题规格”则拒绝
 --   public.create_learning_assignment_from_paper：布置时把试卷题的判题规格复制到作业题（math_question_specs）
 --   public.configure_learning_assignment_retake：补考试卷同样复制判题规格
 --   public.duplicate_assessment_paper：复制试卷时一并复制判题规格
@@ -46,7 +46,9 @@ begin
   select q.question_type, p.status into v_type, v_status
   from public.assessment_paper_questions q join public.assessment_papers p on p.id = q.paper_id
   where q.id = coalesce(new.paper_question_id, old.paper_question_id);
-  if tg_op in ('UPDATE', 'DELETE') and v_status is distinct from 'draft' then
+  -- 试卷题或试卷本身被删除时（外键级联）规格随之删除，不拦截
+  if tg_op = 'DELETE' and not found then return old; end if;
+  if v_status is distinct from 'draft' then
     raise exception '已发布或已停止提供的试卷的判题规格不可修改，请复制为新草稿';
   end if;
   if tg_op = 'DELETE' then return old; end if;
@@ -280,6 +282,17 @@ begin
   if v_invalid_count > 0 then
     v_issues := array_append(v_issues,
       format('有 %s 道题包含完全重复的选项', v_invalid_count));
+  end if;
+
+  select count(*) into v_invalid_count
+  from public.assessment_paper_questions as question
+  left join public.math_paper_question_specs as spec on spec.paper_question_id = question.id
+  where question.paper_id = p_paper_id
+    and question.question_type in ('math.expression', 'math.numeric')
+    and spec.paper_question_id is null;
+  if v_invalid_count > 0 then
+    v_issues := array_append(v_issues,
+      format('有 %s 道数学题缺少判题规格', v_invalid_count));
   end if;
 
   if (
@@ -557,6 +570,17 @@ begin
       and nullif(btrim(coalesce(answer_key.correct_answer, '')), '') is null
   ) then
     raise exception '标准试卷中有客观题缺少正确答案';
+  end if;
+
+  if exists (
+    select 1
+    from public.assessment_paper_questions as question
+    left join public.math_paper_question_specs as spec on spec.paper_question_id = question.id
+    where question.paper_id = p_paper_id
+      and question.question_type in ('math.expression', 'math.numeric')
+      and spec.paper_question_id is null
+  ) then
+    raise exception '标准试卷中有数学题缺少判题规格';
   end if;
 
   if v_paper.paper_type = 'homework'

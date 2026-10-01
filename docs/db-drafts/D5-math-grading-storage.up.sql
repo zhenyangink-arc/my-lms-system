@@ -3,7 +3,7 @@
 --    （auto_graded 由现有触发器按题型计算，两种新题型落在“非自动判分”，提交后进入待人工批改，状态机不变）
 -- 2) public.math_question_specs：数学题的判题规格（只有有“管理内容”能力的教职人员可读，学生不可读）
 -- 3) public.learning_submission_machine_grades：机器判题结果（只增不改，重判新增一行并留痕）
--- 4) set_math_question_spec()：教职人员设置判题规格（提交开始后禁止修改，保证判定可复核）
+-- 4)（已移除）曾有 set_math_question_spec()：机构教职人员改标准答案规格的权限过大。规格只由 D7 的试卷层复制而来，不提供改写入口
 -- 5) record_learning_machine_grade()：只允许服务端（service_role）写入机器判题结果
 -- 不包含：出题入口 create_learning_assignment 的题型白名单（另批，需改写该大函数）；判题任务表与后台进程。
 begin;
@@ -67,6 +67,21 @@ create function private.check_math_question_spec_type()
 returns trigger language plpgsql security definer set search_path = '' as $$
 declare v_type text;
 begin
+  -- 题目本身被删除时（外键级联）规格随之删除，不拦截
+  if tg_op = 'DELETE' and not exists (
+    select 1 from public.learning_assignment_questions
+    where id = old.question_id and tenant_id = old.tenant_id
+  ) then
+    return old;
+  end if;
+  -- 已有学生作答后规格冻结（保证判定可复核）
+  if tg_op in ('UPDATE', 'DELETE') and exists (
+    select 1 from public.learning_submission_answers
+    where question_id = old.question_id and tenant_id = old.tenant_id
+  ) then
+    raise exception '该题已有学生作答，不能修改判题规格';
+  end if;
+  if tg_op = 'DELETE' then return old; end if;
   select question_type into v_type
   from public.learning_assignment_questions
   where id = new.question_id and tenant_id = new.tenant_id;
@@ -78,7 +93,7 @@ begin
   return new;
 end $$;
 create trigger math_question_specs_check_type
-  before insert or update on public.math_question_specs
+  before insert or update or delete on public.math_question_specs
   for each row execute function private.check_math_question_spec_type();
 create trigger math_question_specs_tenant_scope
   before insert or update on public.math_question_specs
@@ -141,32 +156,6 @@ create policy "staff read machine grades" on public.learning_submission_machine_
         or private.current_teacher_has_student_app_access(assignment.tenant_id, submission.student_id, assignment.student_app_id)
       )
   ));
-
-create function public.set_math_question_spec(p_question_id uuid, p_grader_key text, p_spec jsonb)
-returns void language plpgsql security definer set search_path = '' as $$
-declare v_q public.learning_assignment_questions%rowtype; v_app uuid;
-begin
-  select q.* into v_q
-  from public.learning_assignment_questions q
-  where q.id = p_question_id and q.tenant_id = private.current_tenant_id();
-  select a.student_app_id into v_app
-  from public.learning_assignments a
-  where a.tenant_id = v_q.tenant_id and a.id = v_q.assignment_id;
-  if v_q.id is null
-     or not private.current_staff_has_app_capability(v_q.tenant_id, v_app, 'manage_content') then
-    raise exception '题目不存在或当前账号没有该应用的内容管理权限';
-  end if;
-  if exists (select 1 from public.learning_submission_answers where tenant_id = v_q.tenant_id and question_id = v_q.id) then
-    raise exception '该题已有学生作答，不能修改判题规格';
-  end if;
-  insert into public.math_question_specs (question_id, tenant_id, grader_key, spec, updated_by)
-  values (v_q.id, v_q.tenant_id, p_grader_key, p_spec, (select auth.uid()))
-  on conflict (question_id) do update
-    set grader_key = excluded.grader_key, spec = excluded.spec,
-        updated_by = excluded.updated_by, updated_at = now();
-end $$;
-revoke all on function public.set_math_question_spec(uuid, text, jsonb) from public, anon;
-grant execute on function public.set_math_question_spec(uuid, text, jsonb) to authenticated;
 
 create function public.record_learning_machine_grade(
   p_answer_id uuid, p_grader_key text, p_grader_version text, p_verdict text,

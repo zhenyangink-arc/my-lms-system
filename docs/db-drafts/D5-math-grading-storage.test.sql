@@ -22,6 +22,14 @@ begin
 end $$;
 grant execute on function pg_temp.try(uuid, text, text) to public;
 
+-- 以调用者的权限写入判题规格（D5 不再提供写入函数；浏览器角色直接写必须被拒）
+create function pg_temp.set_spec(p_question uuid, p_grader text, p_spec jsonb, p_by uuid) returns void language sql as $$
+  insert into public.math_question_specs (question_id, tenant_id, grader_key, spec, updated_by)
+  select q.id, q.tenant_id, p_grader, p_spec, p_by from public.learning_assignment_questions q where q.id = p_question
+  on conflict (question_id) do update set grader_key = excluded.grader_key, spec = excluded.spec;
+$$;
+grant execute on function pg_temp.set_spec(uuid, text, jsonb, uuid) to public;
+
 do $$
 declare
   v_t uuid := '10000000-0000-4000-8000-000000000001';
@@ -52,20 +60,22 @@ begin
     format($f$insert into public.learning_assignment_questions (tenant_id, assignment_id, question_type, prompt, points, sort_order) values (%L, %L, 'math.foo', 'x', 1, 99)$f$, v_t, v_assign));
 
   -- 2 判题规格
-  r := pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.expression-equivalence', '{"expected":"2x+2","variables":[{"name":"x","min":-5,"max":5}],"seed":7}'::jsonb)$f$, q_expr));
-  insert into d5_result(name, outcome) values ('2a 管理员设置规格', r);
-  insert into d5_result(name, outcome) values ('2b 判题器与题型不匹配被拒',
-    pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb)$f$, q_expr)));
+  r := pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.expression-equivalence', '{"expected":"2x+2","variables":[{"name":"x","min":-5,"max":5}],"seed":7}'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_expr));
+  insert into d5_result(name, outcome) values ('2a 合法规格可写入（postgres 角色）', r);
+  insert into d5_result(name, outcome) values ('2b 判题器与题型不匹配被拒（postgres 角色）',
+    pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_expr)));
   insert into d5_result(name, outcome) values ('2c 非对象规格被拒',
-    pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.expression-equivalence', '[]'::jsonb)$f$, q_expr)));
-  insert into d5_result(name, outcome) values ('2d 老师（无数学应用权限）被拒',
-    pg_temp.try(v_teacher, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb)$f$, q_num)));
-  insert into d5_result(name, outcome) values ('2e 学生被拒',
-    pg_temp.try(v_student, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb)$f$, q_num)));
+    pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.expression-equivalence', '[]'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_expr)));
+  insert into d5_result(name, outcome) values ('2d 老师直接写规格被拒（浏览器角色无写权限）',
+    pg_temp.try(v_teacher, 'authenticated', format($f$select pg_temp.set_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_num)));
+  insert into d5_result(name, outcome) values ('2e 学生直接写规格被拒',
+    pg_temp.try(v_student, 'authenticated', format($f$select pg_temp.set_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_num)));
+  insert into d5_result(name, outcome) values ('2d2 机构管理员直接写规格被拒',
+    pg_temp.try(v_admin, 'authenticated', format($f$select pg_temp.set_spec(%L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}'::jsonb, %L)$f$, q_num, v_admin)));
   insert into d5_result(name, outcome) values ('2f 浏览器角色不能直接写规格表',
     pg_temp.try(v_admin, 'authenticated', format($f$insert into public.math_question_specs (question_id, tenant_id, grader_key, spec, updated_by) values (%L, %L, 'math.numeric', '{"expected":1,"tolerance":{"abs":0.001,"rel":0}}', %L)$f$, q_num, v_t, v_admin)));
   insert into d5_result(name, outcome) values ('2g 超大规格被拒',
-    pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.expression-equivalence', jsonb_build_object('expected', repeat('x', 5000)))$f$, q_expr)));
+    pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.expression-equivalence', jsonb_build_object('expected', repeat('x', 5000)), '10000000-0000-4000-8000-000000000101')$f$, q_expr)));
   for r in select unnest(array[
       '{"seed":1,"variables":[{"name":"x","min":0,"max":1}]}',
       '{"expected":"x","seed":1.5,"variables":[{"name":"x","min":0,"max":1}]}',
@@ -75,7 +85,7 @@ begin
       '{"expected":5,"seed":1,"variables":[{"name":"x","min":0,"max":1}]}'
     ]) loop
     insert into d5_result(name, outcome) values ('2j 畸形表达式规格被拒：' || left(r, 40),
-      pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.expression-equivalence', %L::jsonb)$f$, q_expr, r)));
+      pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.expression-equivalence', %L::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_expr, r)));
   end loop;
   for r in select unnest(array[
       '{"expected":1}',
@@ -84,7 +94,7 @@ begin
       '{"expected":1,"tolerance":{"abs":0}}'
     ]) loop
     insert into d5_result(name, outcome) values ('2k 畸形数值规格被拒：' || left(r, 40),
-      pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.numeric', %L::jsonb)$f$, q_num, r)));
+      pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.numeric', %L::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_num, r)));
   end loop;
   perform set_config('request.jwt.claims', json_build_object('sub', v_admin, 'role', 'authenticated')::text, true);
   perform set_config('request.jwt.claim.sub', v_admin::text, true);
@@ -150,8 +160,12 @@ begin
   update public.learning_submissions set submission_state = 'grading_completed', grading_completed_at = now() where id = v_sub;
   insert into d5_result(name, outcome) values ('5a 提交已批改完成后不能写机器判题',
     pg_temp.try(null, 'service_role', format($f$select public.record_learning_machine_grade(%L, 'math.expression-equivalence', '1.0.0', 'correct', 5, 'x', '{}'::jsonb)$f$, a_expr)));
-  insert into d5_result(name, outcome) values ('5b 已有作答后不能改规格',
-    pg_temp.try(v_admin, 'authenticated', format($f$select public.set_math_question_spec(%L, 'math.expression-equivalence', '{"expected":"x","variables":[{"name":"x","min":0,"max":1}],"seed":1}'::jsonb)$f$, q_expr)));
+  insert into d5_result(name, outcome) values ('5b 已有作答后不能改规格（postgres 角色）',
+    pg_temp.try(v_admin, 'postgres', format($f$select pg_temp.set_spec(%L, 'math.expression-equivalence', '{"expected":"x","variables":[{"name":"x","min":0,"max":1}],"seed":1}'::jsonb, '10000000-0000-4000-8000-000000000101')$f$, q_expr)));
+  insert into d5_result(name, outcome) values ('5c 删除带作答与规格的数学题（级联）不被规格触发器拦截',
+    pg_temp.try(null, 'postgres', format($f$delete from public.learning_assignment_questions where id = %L$f$, q_expr)));
+  select count(*) into v_n from public.math_question_specs where question_id = q_expr;
+  insert into d5_result(name, outcome) values ('5d 规格随题目级联删除（应为 0）', v_n::text);
 end $$;
 select seq, name, outcome from d5_result order by seq;
 rollback;
