@@ -2,6 +2,7 @@
 
 > 这是**草稿**，放在 `docs/codex-task-drafts/` 而不是 `.codex/tasks/active/`：`.codex/**` 是 Codex 的受保护区域，本分支不写入。Supervisor 认可后自行复制到 `.codex/tasks/active/`。
 > 来源：作者自审 Gate 报告 `docs/db-drafts/GATE-REPORT-D5-D7-D8.md`（结论：ALLOW 有条件；**非独立**）。本任务的目的就是补上独立性。
+> **追加范围（2026-10-01）**：`D9`（大学课程专业可见范围，自审报告 `docs/db-drafts/GATE-REPORT-D9.md`，同样非独立）。D9 与 D5/D7/D8 互不依赖，可以由同一次 Gate 一并评审，也可以拆成第二个任务；D9 的重点评审项是“可见范围只在应用层过滤、没有下沉 RLS”这一取舍，以及 `tools/rehearse-d9.sh` 的指纹比对是否足以证明没有改动既有对象。
 
 ## Identity
 
