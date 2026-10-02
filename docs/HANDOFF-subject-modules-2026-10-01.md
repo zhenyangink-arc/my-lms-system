@@ -1,7 +1,25 @@
 # 交接总结：学科模块 + 数学（2026-10-01）
 
-> 分支 `feat/subject-slots`（工作树 `../my-lms-system-subjects`），比 `main` 多 91 个提交、293 个文件（+17076 / −1832，含这份文档所在的提交）。**全部只在本地，没有推送，没有合并，没有改过任何真实库。**
+> 分支 `feat/subject-slots`（工作树 `../my-lms-system-subjects`）。以下“全部只在本地，没有推送，没有合并”是 2026-10-01 写成时的状态，**已过时，现状见下面的“状态更新（2026-10-02）”**。**没有改过任何真实库**这一条仍然成立。
 > 本文只是入口；细节在各文档里。待你们决定的事见 [decisions-pending-2026-10-01.md](./decisions-pending-2026-10-01.md)。
+
+## 状态更新（2026-10-02）
+
+**已合并并已推送。** `main` 已快进到 `bcfa177`（与 `feat/subject-slots` 相同，没有合并提交），并推送到 `origin/main`（`d43564f..bcfa177`，共 104 个提交）。推送前检查：远端无新提交；待推送内容里没有 `.env` 或密钥类文件、没有超过 2MB 的文件，历史与文档里没有密钥特征。
+
+**推送会触发部署。** 推送后 GitHub 上该提交出现两个构建：Vercel（“Vercel is deploying your app”）和 Cloudflare 的 “Workers Builds: lmssystem”（开始于 2026-10-02 00:42:07 UTC）。部署记录显示此前推送 `main`（2026-09-29、2026-09-30）都产生过 Production 部署，所以以后每次推送 `main` 都应当按“会上线”对待，文档类提交也尽量攒成一次推送。写本节时两个构建都还没有结果，结果以 GitHub 提交状态为准。
+
+**本次上线的内容与保护。**
+- 数学、英语、大学课程三个应用在 `src/lib/student-apps.ts` 中仍是 `coming_soon`，学生进不去；数据库没有变，D1–D11 都没有应用。
+- 缺 D9 时，大学课程的专业范围读取（`major-scope.server.ts`）会抛错，不会放行；缺 D5 / D7 时，数学出题界面会说明原因。
+- 共用页面的行为变化仍然生效，且**没有拿 `main` 做过浏览器对照**：机构布置面板对韩语也出现；时间跟随用户电脑时区；旧的学生分配模块已删除。
+- 这次一并带入 `main` 的还有 `842c83c`：大学课程首页“继续学习”与门户摘要按专业范围过滤（此前会显示其他专业的课），以及 D10 / D11（时区数据库草案）与 D9 的 Gate 补充。D10 / D11 同样**未应用**。
+
+**Codex 源码指纹锁已经对不上。** `docs/evidence/teaching-agent-stage-1f-r7c-b/b3a-candidate-source-lock.json`（1344 个文件）里，有 153 个文件与当前代码不一致（135 个被改动、18 个被删除），其中包括 `package.json`、`package-lock.json` 和 `eslint.config.mjs`，**没有红区文件**。另有 27 个文件在合并前就已不一致（26 个是红区，是 Codex 自己在做锁之后改的）。锁由 `b3a-build.py`、`preflight.py` 读取，Codex 下次构建会校验失败，需要 Codex 重新生成。`.codex/tasks/active/` 里 7 个 SESSION 任务仍在进行。这条原本的前提是“Codex 收尾后再合并”，实际顺序相反，**需要与 Codex 协调**。
+
+**边界规则已机械化。** `eslint.config.mjs` 新增 `no-restricted-imports`：共享层（`src/lib`、`src/components`）不得引用 `features/subjects`；平台功能与 app 路由只能通过 `@/features/subjects` 和根目录公共契约调用学科能力；学科模块不得引用其他学科或 app 层；学科自己的应用路由（`src/app/*/apps/<slug>/**`）可引用本学科模块。全仓库 1403 个文件命中 0 处；用故意违规的 9 段代码验证都能被拦住，5 种合法写法都放行。
+
+**仍然成立、仍未做：** 独立 Gate；D1 / D2 / D5 / D7 / D8 / D9 / D10 / D11 整理成正式迁移并应用；与 Codex 协调源码锁；第 5 步韩语迁入 `subjects/korean`；Codex 账本第 24–32 行的处理。**在独立 Gate 与迁移完成前，不要对任何机构开放数学或大学课程。**
 
 ## 1. 先看哪里
 

@@ -113,6 +113,12 @@ app → features（平台 / subjects） → shared
 - `shared`（`src/lib`）不得引用 `subjects`；一个学科不得深链另一个学科的内部文件；学科只通过 `index.ts` 对外。
 - 共享代码不再新增 `if (slug === "...")`；需要差异时加入学科清单。
 - 由测试强制：`tests/subject-registry.test.mjs`（清单合法性、韩语清单与改造前一致、依赖方向、已改文件不再固定韩语）、`tests/subject-write-boundaries.test.mjs`（写入边界与权限核对顺序）。
+- 由 ESLint 强制（2026-10-02，`eslint.config.mjs` 的 `no-restricted-imports`，`npx eslint` 即可检查）：
+  - `src/lib`、`src/components` 不得引用 `features/subjects`（别名与相对路径都拦）；
+  - `src/features/**`（学科目录除外）与 `src/app/**` 只能引用 `@/features/subjects` 根入口和根目录公共契约，不得引用任何学科的入口或内部文件；
+  - 学科自己的应用路由 `src/app/*/apps/<slug>/**` 可以引用本学科模块，不能引用其他学科；
+  - `src/features/subjects/<slug>/**` 不得引用其他学科，也不得引用 `@/app`。
+  - 新增学科时在 `eslint.config.mjs` 的 `SUBJECT_SLUGS` 里加上它的 slug。
 
 ### 5.1 与教学 Agent（Codex 线）的隔离
 
