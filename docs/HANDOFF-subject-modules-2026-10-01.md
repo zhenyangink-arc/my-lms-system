@@ -7,7 +7,7 @@
 
 **已合并并已推送。** `main` 已快进到 `bcfa177`（与 `feat/subject-slots` 相同，没有合并提交），并推送到 `origin/main`（`d43564f..bcfa177`，共 104 个提交）。推送前检查：远端无新提交；待推送内容里没有 `.env` 或密钥类文件、没有超过 2MB 的文件，历史与文档里没有密钥特征。
 
-**推送会触发部署。** 推送后 GitHub 上该提交出现两个构建：Vercel（“Vercel is deploying your app”）和 Cloudflare 的 “Workers Builds: lmssystem”（开始于 2026-10-02 00:42:07 UTC）。部署记录显示此前推送 `main`（2026-09-29、2026-09-30）都产生过 Production 部署，所以以后每次推送 `main` 都应当按“会上线”对待，文档类提交也尽量攒成一次推送。写本节时两个构建都还没有结果，结果以 GitHub 提交状态为准。
+**推送会触发构建。** 推送后 GitHub 上该提交出现两个构建：Vercel（“Vercel is deploying your app”）和 Cloudflare 的 “Workers Builds: lmssystem”（开始于 2026-10-02 00:42:07 UTC）。**此前两次推送 `main`（`8cf9726`，2026-09-29；`d43564f`，2026-09-30）在两边的构建都失败了**：Workers Builds 以 failure 结束，Vercel 状态为 “Deployment has failed”。GitHub 上虽有对应的 Production 部署记录，但那只是部署尝试，不代表上线成功。本次推送的两个构建在 2026-10-02 01:08 UTC（已运行 26 分钟以上）仍未出结果，与之前的“立即失败”不同。哪一个构建对应真正面向用户的环境、此前失败的原因，**都没有核实**（需要登录 Vercel / Cloudflare 后台查看日志）。因此推送 `main` 应当按“可能触发构建与上线”对待，文档类提交也尽量攒成一次推送；不要把“已推送”当成“已上线”。
 
 **本次上线的内容与保护。**
 - 数学、英语、大学课程三个应用在 `src/lib/student-apps.ts` 中仍是 `coming_soon`，学生进不去；数据库没有变，D1–D11 都没有应用。
