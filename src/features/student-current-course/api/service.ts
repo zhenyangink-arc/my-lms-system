@@ -3,7 +3,9 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
+import { loadVisibleSubcategoryIds } from "@/features/subjects/course-scope.server";
 import { isCourseUnlocked, isLessonUnlocked } from "@/lib/course-unlocks";
+import { restrictToVisibleSubcategories } from "../scope";
 
 type CategoryRow = {
   id: string;
@@ -125,7 +127,11 @@ export async function loadStudentCurrentCourse({
     .order("sort_order", { ascending: true });
   throwReadError("分类", subcategoryError);
 
-  const subcategories = (subcategoryData ?? []) as CategoryRow[];
+  // 学科可以限制学生可见的二级分类（大学课程按专业），不在范围内的课程不能成为“当前课程”
+  const subcategories = restrictToVisibleSubcategories(
+    (subcategoryData ?? []) as CategoryRow[],
+    await loadVisibleSubcategoryIds(appSlug),
+  );
   if (subcategories.length === 0) return null;
   const subcategoryById = new Map(
     subcategories.map((subcategory) => [subcategory.id, subcategory]),
