@@ -15,6 +15,12 @@ Worker 是实际项目执行者。模型档位不同，但权限规则完全相�
 7. 制定最小修改方案。
 8. 再开始修改。
 
+## 1.1 工作区身份与写入目标
+
+执行 `AGENTS.md` §5「主项目源码与发布边界」，在写入前记录 `pwd -P`、`git rev-parse --show-toplevel`、解析为真实路径的 `git rev-parse --git-common-dir`、branch、HEAD、`git status --short` 的 dirty baseline 及 Task 声明的源码/worktree。使用 linked worktree 时核对 canonical 主仓库与 `git worktree list --porcelain` 中的身份；同名目录不足以证明同仓库。
+
+逐一核对计划写入文件及脚本 cwd/绝对路径的 realpath、符号链接目标；尚不存在的文件先解析现有父目录，并在写入前确认最终路径仍在 Scope 且不指向发布副本。身份、路径或授权不符立即停止并报告，不读取秘密或无关未跟踪内容。源码工作区的本地开发/测试预览按 AGENTS 的发布目录定义区分。发布授权为 NO 时只交付源码变更；部署须遵守独立声明的部署 Scope。
+
 # 2. 权限边界
 
 Worker 只能修改 Task 的 Writable Scope。
@@ -186,6 +192,13 @@ OBJECTIVE:
 
 ACTUAL SCOPE:
 ...
+
+SOURCE IDENTITY:
+物理源码路径 / worktree、branch、基线与最终 commit、未提交变更摘要、dirty baseline、写入目标核对证据
+
+DEPLOYMENT:
+NOT_DEPLOYED | DEPLOYED
+若已部署：授权/部署 Scope、已验证主项目 commit、构建产物身份、目标、回滚与实际证据；未部署不得宣称上线完成
 
 CHANGES:
 - ...

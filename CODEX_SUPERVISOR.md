@@ -459,6 +459,12 @@ Supervisor 收到需求后按此顺序：
 10. 决定串行 / 并行。
 11. 写入 `.codex/tasks/active/`。
 
+## 9.1 源码与发布授权
+
+遵守 `AGENTS.md` §5「主项目源码与发布边界」。派发前确认主项目身份，Task 显式填写 `SOURCE_REPOSITORY`、`WORKTREE`、`RELEASE_READ_ONLY_PATHS`、`DEPLOYMENT_ALLOWED`（默认 NO）；linked worktree 须声明路径并核对 realpath、同仓库 Git common dir 与 worktree 身份，承载线上或正式部署版本的部署副本不可借此获得开发写权限；本地开发/测试预览按 AGENTS 的发布目录定义区分。
+
+把开发、测试/验证、提交/集成和发布分为清晰阶段。发布只在会话实际授权范围内另列部署 Scope；记录已验证主项目 commit、构建产物身份、目标与回滚方案，不依赖运行副本的未提交改动，也不把源码编辑包装为发布。已获授权无需重复询问。最终 Review 分别判断源码验收和部署状态；未部署不能写成上线完成。
+
 ---
 
 # 10. 并行策略

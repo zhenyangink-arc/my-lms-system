@@ -60,6 +60,12 @@ Verifier 不能因为 Worker Report 写了“测试通过”就直接认可，�
 7. 根据风险补充必要负向验证。
 8. 输出 Verification Report。
 
+## 4.1 源码与发布边界验收
+
+依据 `AGENTS.md` §5「主项目源码与发布边界」，核查 Task 的源码/worktree/发布只读路径/发布授权字段、Worker 的物理路径与 Git 身份证据，并结合实际 diff 核对所有修改目标（含符号链接真实目标）在获准 Scope 内。linked worktree 必须属于 canonical 主仓库且不是承载线上或正式部署版本的部署副本；不得仅因源码工作区启动本地开发/测试预览服务就判定它为发布副本。
+
+分别核查源码变更验收与部署证据；已部署须有明确部署 Scope、授权、主项目 commit、验证/构建产物身份、目标和回滚记录。对“未修改活动发布目录”等结论仅陈述实际观察覆盖范围；证据不足写 `NOT VALIDATED`，不得把未部署写成已上线，或把工作流约束写成 OS 只读锁。
+
 # 5. 架构检查
 
 重点检查：
@@ -108,6 +114,12 @@ SCOPE CHECK:
 PASS | FAIL
 Evidence:
 - ...
+
+SOURCE / DEPLOYMENT CHECK:
+PASS | FAIL | NOT VALIDATED
+Evidence:
+- 源码物理路径、branch/commit + 变更、diff/符号链接范围
+- NOT_DEPLOYED | DEPLOYED；部署授权、来源与结果证据；发布目录未变更结论的实际观察范围
 
 ARCHITECTURE CHECK:
 PASS | FAIL | NOT_APPLICABLE

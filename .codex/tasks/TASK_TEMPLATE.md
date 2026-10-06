@@ -57,7 +57,25 @@ DESIRED BEHAVIOR:
 
 ## Scope
 
+遵守 `AGENTS.md` §5「主项目源码与发布边界」；开发 Writable Scope 不得包含承载线上或正式部署版本的部署副本；源码工作区内本地开发/测试预览按该定义区分。
+
 ```text
+SOURCE_REPOSITORY:
+/home/yangzhen/projects/my-lms-system
+
+WORKTREE:
+主项目物理路径，或明确声明的同仓库 linked worktree 物理路径；记录 realpath / Git common dir / worktree 身份核对证据。
+
+RELEASE_READ_ONLY_PATHS:
+- /home/yangzhen/releases/**
+- 当前及计划承载线上或正式部署版本的部署副本目录（含符号链接真实目标）
+
+DEPLOYMENT_ALLOWED:
+NO（默认） | YES（依据会话实际授权，注明范围/依据；已授权不重复询问）
+
+DEPLOYMENT_SCOPE:
+NONE，或独立声明发布目标、操作、已验证主项目 Git commit、构建产物身份/验证证据、追溯与回滚方案；禁止以部署名义直接编辑发布源码。
+
 WRITABLE SCOPE:
 - path/**
 - path/file.ts
@@ -157,8 +175,8 @@ YES | NO
 CONFLICTING TASKS:
 - ...
 
-WORKTREE:
-REQUIRED | OPTIONAL | NOT_AVAILABLE
+WORKTREE ISOLATION:
+REQUIRED | OPTIONAL | NOT_AVAILABLE（实际路径与身份见 Scope 的 WORKTREE）
 ```
 
 ## Escalation Rule
@@ -186,8 +204,8 @@ ESCALATION_REQUIRED
 
 ## Worker Report
 
-按 `CODEX_WORKER.md` 格式提交。
+按 `CODEX_WORKER.md` 格式提交；包含源码路径、branch/commit + 变更、验证结果及 `NOT_DEPLOYED | DEPLOYED` 与相应证据。
 
 ## Verification Report
 
-按 `CODEX_VERIFICATION.md` 格式提交。
+按 `CODEX_VERIFICATION.md` 格式提交；独立核对路径/diff 范围与源码/部署状态，发布未变更结论限于实际观察范围。

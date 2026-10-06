@@ -190,6 +190,15 @@ GPT-6 Astra / max
   - `agent-core` 公共 API
 - 机械性关联修改只有在 Task 明确允许时才能跨文件同步执行。
 
+### 主项目源码与发布边界
+
+- 唯一源码仓库为 `/home/yangzhen/projects/my-lms-system`。开发只在此主项目进行；例外仅限 Task 明确声明、经 `realpath`、Git common dir 和 worktree 身份核对属于同一仓库的 linked worktree。它是主项目分支，不能是发布副本；用户后续要求仅限字面主目录时优先遵从。
+- `/home/yangzhen/releases/**`（含当前 8443 的 `/home/yangzhen/releases/uply-first-enable-20260910/source`）及未来发布目录均不得成为开发 Writable Scope，即使它属于 linked worktree。这里的发布目录指承载线上或正式部署版本的部署副本；已核实的源码工作区内启动本地开发服务器、测试或临时预览，不会仅因此成为发布副本。端口/URL 只是访问入口；查看 8443 不授权编辑文件或写真实数据。
+- 普通开发不得在运行中的发布副本直接改源码、打临时补丁、选择性拷回/反向同步、临时重建应用或重启服务，也不得通过脚本 cwd、绝对路径或符号链接间接写入发布目录。
+- 开工前记录物理 cwd、仓库根、Git common dir、branch、HEAD、dirty baseline 及声明的源码/worktree；核对所有计划写入目标的 `realpath`（含符号链接目标）处于获准 Scope 且不落入发布副本。不符时写入前停止并报告，不遍历秘密或无关未跟踪内容。
+- Task 必须声明源码仓库、worktree、发布只读路径及发布授权（默认 NO）。开发、验证、提交/集成、发布分阶段；获授权的发布另列 Scope，源自已识别且验证的主项目 Git commit 与构建产物，记录追溯与回滚，不依赖活动发布目录的未提交编辑。会话已授权的发布无需重复询问。
+- 报告必须区分源码变更完成与已部署/未部署。以上是 Agent/工作流约束，不代表操作系统已锁定发布目录只读；技术权限加固须另立任务。
+
 ## 6. 数据库 / Auth / RLS / 架构门禁
 
 以下改动默认属于高风险：
