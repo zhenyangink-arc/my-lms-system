@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { hasVideoPilotMarker } from "@/features/learning-agent-script-studio/video-pilot-authoring";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
@@ -34,6 +35,13 @@ export default async function TeachingScriptPreviewPage({
   const parsedModuleIndex = Number(resolvedSearchParams.moduleIndex);
   const startModuleIndex = Number.isInteger(parsedModuleIndex) && parsedModuleIndex >= 0 ? parsedModuleIndex : undefined;
   const admin = createAdminClient();
+  const allNodes = await admin.from("learning_agent_script_nodes").select("id,configuration", { count: "exact" })
+    .eq("script_version_id", parsedScriptVersionId.data);
+  const incompleteNodes = allNodes.error || !Array.isArray(allNodes.data) || !allNodes.data.length || allNodes.count !== allNodes.data.length;
+  if (incompleteNodes || allNodes.data?.some((node) => hasVideoPilotMarker(node.configuration))) {
+    return <div role="status" className="p-8 text-sm">{incompleteNodes
+      ? "无法完整读取脚本，暂不开放预览。" : "视频暂停题草稿尚待正式接入，完整流程预览暂不可用。请在草稿编辑器使用素材试看。"}</div>;
+  }
   let previewOpeningNodeQuery = admin
     .from("learning_agent_script_nodes")
     .select("id,configuration")

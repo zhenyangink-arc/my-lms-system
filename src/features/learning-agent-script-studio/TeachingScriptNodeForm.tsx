@@ -2,8 +2,10 @@
 import { normalizeTeachingVideo, teachingScriptSegments, teachingVideoIssues, type VideoTurnSlot } from "@/lib/teaching-video";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { TeacherVideoPicker } from "./TeacherVideoPicker";
+import { TeachingVideoPilotEditor } from "./TeachingVideoPilotEditor";
+import { readVideoPilotDraft } from "./video-pilot-authoring";
 
-import { type KeyboardEvent as ReactKeyboardEvent, type SyntheticEvent as ReactSyntheticEvent, useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { type KeyboardEvent as ReactKeyboardEvent, type SyntheticEvent as ReactSyntheticEvent, useActionState, useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { AlertTriangle, ArrowDown, ArrowUp, BookOpenText, CheckCircle2, Link2, LoaderCircle, MessageCircleQuestion, Pause, Play, Plus, RotateCcw, Route, ScrollText, Trash2, Volume2, VolumeX } from "lucide-react";
 
 import {
@@ -666,7 +668,36 @@ function teachingActivityLabel(type: string) {
   return "互动活动";
 }
 
-export function TeachingScriptNodeForm({
+export function TeachingScriptNodeForm(props: Parameters<typeof LegacyTeachingScriptNodeForm>[0]) {
+  const [enabling, setEnabling] = useState(false);
+  const [legacyDirty, setLegacyDirty] = useState(false);
+  const [legacyPending, setLegacyPending] = useState(false);
+  const onDirtyChange = props.onDirtyChange;
+  const onPendingChange = props.onPendingChange;
+  const trackLegacyDirty = useCallback((dirty: boolean) => { setLegacyDirty(dirty); onDirtyChange(dirty); }, [onDirtyChange]);
+  const trackLegacyPending = useCallback((pending: boolean) => { setLegacyPending(pending); onPendingChange(pending); }, [onPendingChange]);
+  const stored = readVideoPilotDraft(props.node.configuration);
+  if (stored.kind === "invalid") return <section role="alert" className="space-y-2 rounded-xl border border-[var(--status-danger)] p-4 text-sm">
+    <CardTitleWithHint headingLevel={3} title="视频草稿配置不受支持" description="此小节已经保存视频草稿标记，不能退回旧呈现方式。请核对草稿版本；完整流程预览和发布仍不可用。" />
+    <p>{stored.issues[0]?.message}</p>
+  </section>;
+  if (stored.kind === "pilot" || enabling) return <TeachingVideoPilotEditor node={props.node} activities={props.activities} editable={props.editable}
+    formId={props.formId} returnTo={props.returnTo} onDirtyChange={props.onDirtyChange} onPendingChange={props.onPendingChange}
+    onCancel={stored.kind === "absent" ? () => setEnabling(false) : undefined} />;
+  const interaction = objectConfiguration(props.node, "interaction");
+  const task = objectConfiguration(props.node, "studentTask");
+  const eligible = props.editable && !props.node.interactionSecret && (!interaction.kind || interaction.kind === "none") && (!task.kind || task.kind === "none");
+  return <div className="space-y-4">
+    {eligible && <section className="space-y-2 rounded-xl border border-[var(--border)] p-4 text-sm">
+      <CardTitleWithHint headingLevel={3} title="视频暂停题" description="明确启用后编辑一个视频素材、暂停时间和本步骤单选题。保存后原台词与画面作为草稿历史保留，完整流程预览和发布待接入。" />
+      <button type="button" disabled={legacyDirty || legacyPending} className="min-h-11 rounded-lg border border-[var(--border)] px-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-60" onClick={() => setEnabling(true)}>启用视频暂停题草稿</button>
+      {(legacyDirty || legacyPending) && <p className="text-[var(--muted-foreground)]">请先保存当前小节，再启用视频暂停题草稿。</p>}
+    </section>}
+    <LegacyTeachingScriptNodeForm {...props} onDirtyChange={trackLegacyDirty} onPendingChange={trackLegacyPending} />
+  </div>;
+}
+
+function LegacyTeachingScriptNodeForm({
   formId,
   node,
   allNodes,

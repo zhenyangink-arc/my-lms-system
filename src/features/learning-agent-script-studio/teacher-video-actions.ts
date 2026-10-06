@@ -1,6 +1,8 @@
 "use server";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { getSelectedVideoAssetInfo } from "./selected-video-asset.server";
+import { readVideoPilotDraft } from "./video-pilot-authoring";
 import { checkR2ObjectExists, listR2Objects } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isTeacherVideoKey, teacherVideoBindings, TEACHER_VIDEO_PREFIX } from "@/lib/teaching-video";
@@ -10,11 +12,17 @@ export async function listTeacherVideosAction() {
   try {
     const [{ objects, isTruncated }, { data, error }] = await Promise.all([
       listR2Objects(TEACHER_VIDEO_PREFIX),
-      createAdminClient().from("learning_agent_script_nodes").select("node_key,configuration").not("configuration->teacherVideo", "is", null).limit(2000),
+      createAdminClient().from("learning_agent_script_nodes").select("node_key,configuration").or("configuration->teacherVideo.not.is.null,configuration->videoPilot.not.is.null").limit(2000),
     ]);
     if (error) throw error;
     const uses = new Map<string, Set<string>>();
     for (const node of data ?? []) {
+      const pilot = readVideoPilotDraft(node.configuration);
+      if (pilot.kind === "pilot" && pilot.draft.media?.kind === "r2-library") {
+        const keys = uses.get(pilot.draft.media.objectKey) ?? new Set<string>();
+        keys.add(node.node_key); uses.set(pilot.draft.media.objectKey, keys);
+      }
+      if (pilot.kind !== "absent") continue;
       for (const binding of teacherVideoBindings(node.configuration?.teacherVideo)) {
         const keys = uses.get(binding.objectKey) ?? new Set<string>();
         keys.add(node.node_key);
@@ -25,6 +33,11 @@ export async function listTeacherVideosAction() {
   } catch {
     return { ok: false as const, message: "暂时无法读取教师视频库，请检查 R2 连接后重试。" };
   }
+}
+
+export async function inspectSelectedVideoAssetAction() {
+  try { return { ok: true as const, asset: await getSelectedVideoAssetInfo() }; }
+  catch { return { ok: false as const, message: "所选视频素材暂不可用，或当前账号无权查看。" }; }
 }
 
 export async function verifyTeacherVideoAction(key: string) {

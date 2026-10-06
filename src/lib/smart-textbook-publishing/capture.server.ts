@@ -48,3 +48,10 @@ export async function captureNativePublication(admin:SupabaseClient,actor:string
   const { projectNativePublicationCapture }=await import('./native-publication.server.ts');
   return projectNativePublicationCapture(r.data,scope);
 }
+
+export async function captureNativeVideoPublication(admin:SupabaseClient,actor:string,scope:PublicationScope){
+  const r=await admin.rpc('capture_runtime_publication_v1',{p_actor:actor,p_scope:scope});
+  if(r.error)throw Error('PUBLICATION_CAPTURE_UNAVAILABLE');
+  const { projectNativeVideoPublicationCapture }=await import('./native-video-publication.server.ts');
+  return projectNativeVideoPublicationCapture(r.data,scope);
+}

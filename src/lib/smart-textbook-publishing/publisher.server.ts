@@ -1,7 +1,7 @@
 import 'server-only';
 import { requireActiveUser } from '../auth';
 import { createAdminClient } from '../supabase/admin';
-import { captureChapterOnePublication, captureNativePublication } from './capture.server.ts';
+import { captureChapterOnePublication, captureNativePublication, captureNativeVideoPublication } from './capture.server.ts';
 import { withMediaPublicationPolicy } from './media-policy.server.ts';
 import { chapterOnePublicationScope } from './loader.server.ts';
 import { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server.ts';
@@ -11,6 +11,9 @@ import identities from './assets/v1/chapter-one-identities.server.ts';
 import history from './assets/v1/chapter-one-service-identities.server.ts';
 import { packageNativePublication } from './native-publication.server.ts';
 import { digest } from '../smart-textbook-legacy-adapter/identity.server.ts';
+
+import { packageNativeVideoPublication } from './native-video-publication.server.ts';
+import { readFixedSelectedVideoSnapshot } from './fixed-selected-media.server.ts';
 
 async function owner(){const auth=await requireActiveUser();if(auth.profile?.global_role!=='platform_owner')throw Error('PUBLICATION_OWNER_ONLY');return auth.user.id;}
 /** No Server Action / browser entry point. All operations reauthorize; compilation
@@ -40,5 +43,18 @@ export async function compileNativePublication(scope:PublicationScope){
 export async function publishNativePublication(scope:PublicationScope,expected:PublicationPointer|null){
   const actor=await owner(),admin=createAdminClient();
   const bundle=packageNativePublication(await captureNativePublication(admin,actor,scope),scope);
+  return publicationRepository(admin).publish(actor,bundle,expected);
+}
+
+/** Fixed bytes and the single DB capture are both mandatory; no draft promotion. */
+export async function compileNativeVideoPublication(scope:PublicationScope){
+  const actor=await owner(),admin=createAdminClient();
+  await readFixedSelectedVideoSnapshot();
+  return packageNativeVideoPublication(await captureNativeVideoPublication(admin,actor,scope),scope);
+}
+export async function publishNativeVideoPublication(scope:PublicationScope,expected:PublicationPointer|null){
+  const actor=await owner(),admin=createAdminClient();
+  await readFixedSelectedVideoSnapshot();
+  const bundle=packageNativeVideoPublication(await captureNativeVideoPublication(admin,actor,scope),scope);
   return publicationRepository(admin).publish(actor,bundle,expected);
 }

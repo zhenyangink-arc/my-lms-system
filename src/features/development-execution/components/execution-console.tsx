@@ -8,10 +8,10 @@ const unavailable=async()=>{throw Error('B3_NON_NATIVE_PATH_FORBIDDEN');};
 export function ExecutionConsole({allowed}:{allowed:boolean}){
  const [dispatched,setDispatched]=useState(false);
  const [data,setData]=useState<Awaited<ReturnType<typeof activateB3Execution>>|null>(null),[message,setMessage]=useState(''),[key,setKey]=useState(0);const started=useRef(false);
- const services=useMemo<RuntimeServices|null>(()=>data?{context:data.context,initialState:data.state,learning:unavailable,submit:unavailable,teacher:{turn:unavailable,cancel:async()=>{}},nativeExecution:{
+ const services=useMemo<RuntimeServices|null>(()=>data?{context:data.context,initialState:data.state,learning:unavailable,submit:unavailable,teacher:{turn:unavailable,cancel:async()=>{}},nativeExecution:{completionMode:'legacy',
  mediaSource:()=>'/platform/dashboard/admin/development-execution/runtime/media',
  restore:r=>b3ExecutionRequest({operation:'restore',request:r,pending:sessionStorage.getItem('b3-cue-waiting')==='1'}),checkpoint:r=>{sessionStorage.setItem('b3-cue-waiting','1');return b3ExecutionRequest({operation:'checkpoint',request:r});},readback:r=>b3ExecutionRequest({operation:'readback',request:r}),
- submit:async(r,o)=>await b3ExecutionRequest({operation:'submit',request:r,optionId:o}) as Awaited<ReturnType<NonNullable<RuntimeServices['nativeExecution']>['submit']>>,
+ submit:async(r,o)=>await b3ExecutionRequest({operation:'submit',request:r,optionId:o}) as Awaited<ReturnType<import('@/features/smart-textbook-runtime/core/execution-contracts').NativeExecutionServices['submit']>>,
  }}:null,[data]);
  async function activate(){if(started.current)return;started.current=true;setDispatched(true);try{setData(await activateB3Execution());}catch{setMessage('已停止，请独立核查，不要重复激活。');}}
  async function restart(){try{await b3ExecutionRequest({operation:'restart'});setKey(k=>k+1);}catch{setMessage('重启结果未知，请停止并独立核查。');}}

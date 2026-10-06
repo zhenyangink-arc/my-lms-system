@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasVideoPilotMarker } from "@/features/learning-agent-script-studio/video-pilot-authoring";
 import { normalizeTeachingVideo, teacherVideoForTurn } from "@/lib/teaching-video";
 import { z } from "zod";
 
@@ -78,12 +79,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "没有找到要预览的教学脚本版本。" }, { status: 404 });
   }
 
-  const { data: scriptNodeData } = await admin
+  const { data: scriptNodeData, error: scriptNodeError, count: scriptNodeCount } = await admin
     .from("learning_agent_script_nodes")
-    .select("id,script_version_id,node_key,node_type,sort_order,teacher_script,configuration,reference_activity_id,action_type,next_node_key,remediation_node_key")
+    .select("id,script_version_id,node_key,node_type,sort_order,teacher_script,configuration,reference_activity_id,action_type,next_node_key,remediation_node_key", { count: "exact" })
     .eq("script_version_id", input.scriptVersionId)
     .order("sort_order");
   const scriptNodes = (scriptNodeData ?? []) as ScriptNodeRow[];
+  if (scriptNodeError || !Array.isArray(scriptNodeData) || scriptNodeCount !== scriptNodeData.length) return NextResponse.json({ error: "无法完整读取脚本，暂不开放预览。" }, { status: 409 });
+  if (scriptNodes.some((node) => hasVideoPilotMarker(node.configuration))) {
+    return NextResponse.json({ error: "视频暂停题草稿尚待正式接入，完整流程预览暂不可用。" }, { status: 409 });
+  }
   if (!scriptNodes.length) {
     return NextResponse.json({ error: "这个版本还没有教学小节，无法预览。" }, { status: 404 });
   }

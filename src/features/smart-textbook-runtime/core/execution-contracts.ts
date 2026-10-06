@@ -2,6 +2,8 @@ import { z } from 'zod';
 import type { LessonManifestV1, RuntimeContextV1 } from '../../../lib/smart-textbook-runtime-v1/contracts.ts';
 import type { TimelineCue } from '../../../lib/smart-textbook-runtime-v1/execution.ts';
 import type { ActivityResult } from './services.ts';
+import type { NativePublishedExecutionServices } from './native-published-media-contracts.ts';
+import type { PublishedNativeExecutionServices } from './published-media-contracts.ts';
 const text=z.string().min(1).max(200);
 export const executionBindingSchema=z.strictObject({sessionId:text,snapshotId:text,snapshotDigest:z.string().regex(/^sha256:[a-f0-9]{64}$/),stepId:text,sourceBlockId:text,mediaRevision:text,cueId:text,blockId:text,activityRef:text});
 export type ExecutionBinding=z.infer<typeof executionBindingSchema>;
@@ -22,14 +24,20 @@ export type ActivityCompletionReceipt=z.infer<typeof completionReceiptSchema>;
 export function completionSequence(r:ActivityCompletionReceipt){return r.contract==='activity-completion/2'?r.evidence.attemptSequence:r.evidence.stateRevision;}
 export const restoreSchema=z.strictObject({binding:executionBindingSchema,requestId:text,generation:z.number().int().nonnegative(),pending:z.boolean(),receipt:completionReceiptSchema});
 export type ExecutionRestore=z.infer<typeof restoreSchema>;
-export type NativeExecutionServices={
+export type NativeExecutionCommonServices={
   onFactsPort?(port:ReturnType<typeof import('./runtime-facts.ts').createRuntimeFactsReadPort>|null):void;
   mediaSource(mediaRef:string,revision:string):string;
+};
+export type LegacyNativeExecutionServices=NativeExecutionCommonServices&{
+  completionMode?:'legacy';
   restore(request:CompletionRequest,signal:AbortSignal):Promise<unknown>;
   checkpoint(request:CompletionRequest,signal:AbortSignal):Promise<unknown>;
   submit(request:CompletionRequest,optionId:string,signal:AbortSignal):Promise<{receipt:unknown;result:ActivityResult}>;
   readback(request:CompletionRequest,signal:AbortSignal):Promise<unknown>;
 };
+export type NativeExecutionMode='legacy'|'published/3'|'native-published/4';
+export type NativeExecutionServices<Mode extends NativeExecutionMode='legacy'>=Mode extends 'native-published/4'?NativePublishedExecutionServices:Mode extends 'published/3'?PublishedNativeExecutionServices:LegacyNativeExecutionServices;
+export type AnyNativeExecutionServices=NativeExecutionServices<NativeExecutionMode>;
 export function executionBinding(m:LessonManifestV1,context:RuntimeContextV1,c:TimelineCue):ExecutionBinding{
   const b=m.blocks.find(b=>b.id===c.targetBlockId);if(b?.type!=='multiple_choice'||context.snapshotId!==m.snapshot.id)throw Error('EXECUTION_BINDING');
   return {sessionId:context.runtimeSessionId,snapshotId:m.snapshot.id,snapshotDigest:m.snapshot.contentDigest,stepId:c.stepId,sourceBlockId:c.sourceBlockId,mediaRevision:c.mediaRevision,cueId:c.id,blockId:c.targetBlockId,activityRef:b.props.activityRef};

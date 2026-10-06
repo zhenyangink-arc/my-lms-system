@@ -31,6 +31,12 @@ type SubmissionContext = {
   tenantId: string | null;
   canSubmit: boolean;
   preview: boolean;
+  nativeAtomic?: {
+    requireAtomic: true;
+    expected: {activityId:string;nodeId:string;versionId:string};
+    persist(input:{activityId:string;nodeId:string;versionId:string;response:number;isCorrect:boolean;score:number}):
+      Promise<{data:unknown;error:{message:string;code?:string}|null}>;
+  };
 };
 
 type GradeResult =
@@ -792,6 +798,22 @@ async function submitActivityInDomain(
     );
   }
 
+  // Only the admitted server adapter can bind a newly promoted native Activity.
+  // Query failure is unavailable, never evidence that the Activity is historical.
+  const sources = await context.admin.from('learning_agent_script_nodes')
+    .select('id,reference_activity_id,configuration,learning_agent_script_versions!inner(status,learning_agent_lessons!inner(module_id,status))')
+    .eq('reference_activity_id', activity.id)
+    .eq('configuration->videoPilotPublication->>contract', 'video-pilot-publication-source/1');
+  if (sources.error || !Array.isArray(sources.data)) return failure('练习发布关系暂时无法核验。', context.preview);
+  const nativeSource = sources.data.some(source => {
+    const script = asObject(source.learning_agent_script_versions);
+    const lesson = asObject(script.learning_agent_lessons);
+    return source.reference_activity_id === activity.id && script.status === 'published'
+      && lesson.status === 'published' && lesson.module_id === node.module_id;
+  });
+  if ((nativeSource && !context.nativeAtomic) || (context.nativeAtomic && (!nativeSource || context.preview || !context.tenantId)))
+    return failure('此练习需要有效的视频学习会话。', context.preview);
+
   const result = gradeSmartTextbookActivity(
     secret.answer_key,
     parsed.data.response,
@@ -842,6 +864,25 @@ async function submitActivityInDomain(
   const nestedChapter = asObject(nestedModules.digital_textbook_chapters);
   const versionId = String(nestedChapter.version_id ?? "");
   if (!versionId) return failure("教材版本关系不完整。", false);
+
+  if (context.nativeAtomic) {
+    const expected = context.nativeAtomic.expected;
+    if (context.nativeAtomic.requireAtomic !== true || domain || activity.activity_type !== 'single_choice'
+      || expected.activityId !== activity.id || expected.nodeId !== activity.node_id || expected.versionId !== versionId
+      || !isIntegerInRange(parsed.data.response, asArray(activity.options).length) || typeof parsed.data.response !== 'number'
+      || typeof result.correct !== 'boolean' || typeof result.score !== 'number')
+      return failure('视频练习绑定不一致。', false);
+    // Native errors have no legacy RPC/direct-insert fallback, including PGRST202.
+    try {
+      const persisted = await context.nativeAtomic.persist({activityId:String(activity.id),nodeId:String(activity.node_id),versionId,
+        response:parsed.data.response,isCorrect:result.correct,score:result.score});
+      const record = z.object({attempt_number:z.number().int().positive().max(20),node_completed:z.boolean(),
+        completion_percent:z.number().min(0).max(100),mastery_score:z.number(),node_attempt_count:z.number().int().nonnegative()}).safeParse(persisted.data);
+      if (persisted.error || !record.success) return failure('作答或学习进度暂时没有保存，请核对完成状态。', false);
+      return {ok:true,correct:result.correct,score:result.score,explanation:localizedFeedback(secret.explanation,parsed.data.locale,record.data.attempt_number,result.correct),
+        attemptNumber:record.data.attempt_number,preview:false,nodeId:String(activity.node_id),nodeCompleted:record.data.node_completed,completionPercent:record.data.completion_percent};
+    } catch { return failure('作答或学习进度暂时没有保存，请核对完成状态。', false); }
+  }
 
   let v2Record: any = null;
   if (domain?.domain === 'v2') {

@@ -10,7 +10,7 @@ const data=await fetch('/data').then(r=>r.json());
 const hintKey=`r7c-wait:${data.context.runtimeSessionId}:${data.manifest.snapshot.contentDigest}`;
 async function post(path:string,request:CompletionRequest,signal:AbortSignal,optionId?:string){const r=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({request,...(optionId?{optionId}:{})}),signal});if(!r.ok)throw Error('FIXTURE_TRANSPORT_UNAVAILABLE');return r.json();}
 const unavailable=async()=>{throw Error('NON_NATIVE_PATH_FORBIDDEN');};
-const services:RuntimeServices={context:data.context,initialState:data.state,learning:unavailable,submit:unavailable,teacher:{turn:unavailable,cancel:async()=>{}},nativeExecution:{
+const services:RuntimeServices={context:data.context,initialState:data.state,learning:unavailable,submit:unavailable,teacher:{turn:unavailable,cancel:async()=>{}},nativeExecution:{completionMode:'legacy',
  onFactsPort:port=>Object.assign(window,{r7bFacts:port?.read}),
  mediaSource:(ref,revision)=>{if(!data.manifest.mediaRefs.some((m:{id:string;revision:string})=>m.id===ref&&m.revision===revision))throw Error('MEDIA_BINDING');return '/media';},
  restore:(r,s)=>post('/restore',r,s,sessionStorage.getItem(hintKey)==='waiting'?'waiting':undefined),

@@ -1,4 +1,6 @@
 "use server";
+import { getNativeVideoPromotionSelection } from "@/lib/smart-textbook-publishing/course-release-selection.server";
+import { hasVideoPilotMarker } from "./video-pilot-authoring";
 
 import { z } from "zod";
 import { requirePlatformOwner } from "@/lib/admin";
@@ -48,6 +50,21 @@ export async function inspectChapterRelease(input: { appId: string; chapterId: s
     const modules = data.modules.filter(module => module.chapterId === input.chapterId);
     if (!modules.length) return { checkedAt, checks: [{ label: "教材版本", state: "blocked", detail: "当前章节不是工作台支持的教材版本，或没有可编排模块。" }] };
     const first = modules[0];
+    if (modules.some((module) => module.versions.some((version) => ["draft", "published"].includes(version.status)
+      && version.nodes.some((node) => hasVideoPilotMarker(node.configuration))))) {
+      checks.push({ label: "视频暂停题接入", state: "blocked", detail: "本章存在视频暂停题草稿或配置，需通过当前视频小节的独立发布检查，不能据此认定学生入口已就绪。" });
+    }
+    for (const lessonModule of modules) for (const version of lessonModule.versions) for (const node of version.nodes) {
+      if (!hasVideoPilotMarker(node.configuration)) continue;
+      const selection = getNativeVideoPromotionSelection(node.id,version.id);
+      if (!selection) { checks.push({label:"独立视频版本",state:"blocked",detail:"尚未安装本小节的待发布配置和旧教材版本固定配置。"});continue; }
+      if (selection.phase === "active") {checks.push({label:"独立视频入口",state:"unknown",detail:"入口已选择独立版本；本检查不替代真实学生会话、视频读取和暂停题验证。"});continue;}
+      const {supabase} = await requirePlatformOwner();
+      const snapshot = await supabase.rpc("teaching_script_publish_snapshot",{p_version_id:version.id});
+      const {inspectNativeVideoPromotion} = await import("./video-pilot-publication.server");
+      const report = snapshot.error ? null : await inspectNativeVideoPromotion({sourceNodeId:node.id,sourceScriptVersionId:version.id,expectedToken:snapshot.data?.token,changeNote:""});
+      checks.push({label:"独立视频发布条件",state:report?.state === "ready" ? "ready" : "blocked",detail:report?.message ?? "无法读取已保存草稿。"});
+    }
     add("教材发布", first.textbookStatus === "published" && first.chapterStatus === "published" && first.textbookVersion.status === "published", `教材版本 ${first.textbookVersion.number}，教材、版本和章节均需发布。`);
     const published = modules.map(module => module.versions.find(version => version.status === "published"));
     add("正式脚本", published.every(version => Boolean(version?.nodes.length)), `${published.filter(version => version?.nodes.length).length}/${modules.length} 个模块有正式脚本。`);
@@ -58,6 +75,7 @@ export async function inspectChapterRelease(input: { appId: string; chapterId: s
     let videoNodes = 0;
     let configurationIssues = 0;
     for (const version of published) for (const node of version?.nodes ?? []) {
+      if (hasVideoPilotMarker(node.configuration)) continue;
       if (normalizeTeachingVideo(node.configuration.teacherVideo).mode !== "video") continue;
       videoNodes++;
       const task = node.configuration.studentTask as { kind?: string } | undefined;

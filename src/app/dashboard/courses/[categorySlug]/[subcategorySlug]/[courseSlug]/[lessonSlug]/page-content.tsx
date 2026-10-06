@@ -1,3 +1,5 @@
+import { loadKoreanNativeVideoEntry, getKoreanNativeProgressVersion } from "@/features/subjects/native-video-entry.server";
+import { NativeCourseRuntime } from "@/features/smart-textbook-runtime/components/native-course-runtime";
 import Link from "next/link";
 import { loadStudentTeachingLessonSlot, loadStudentTeachingSlots } from "@/features/teaching-agent/server/page-projection/lesson-slots";
 import { notFound, redirect } from "next/navigation";
@@ -438,6 +440,7 @@ export default async function LessonDetailPage({
         const overviewProgress = await loadSmartDigitalTextbookChapterProgress({
             textbookSlug: "korean-level-one-smart",
             chapterNumber: 0,
+            versionId: getKoreanNativeProgressVersion(lesson.id, 0),
             userId: user.id,
             tenantId: tenant?.id ?? null,
             trackingDisabled: isPlatformAudit,
@@ -611,6 +614,22 @@ export default async function LessonDetailPage({
         );
         redirect(
             `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}${firstUnlockedChapter ? `?chapter=${encodeURIComponent(firstUnlockedChapter.slug)}` : ""}`
+        );
+    }
+    if (isKoreanLevelOne && hasLessonAccess) {
+        const chapterNumber = Number(requestedChapter?.match(/-(\d{2})$/)?.[1] ?? 0);
+        const chapterSlug = requestedChapter ?? currentChapters.find(chapter => chapter.slug.endsWith(`-${String(chapterNumber).padStart(2, "0")}`))?.slug ?? "";
+        const entry = await loadKoreanNativeVideoEntry({lessonId: lesson.id, chapterNumber, chapterSlug, audit: isPlatformAudit});
+        if (entry.kind !== "legacy") return (
+            <LessonActivityBoundary lessonId={lesson.id}>
+                {entry.kind === "native" ? <NativeCourseRuntime bootstrap={entry.bootstrap} backHref={courseDirectoryHref} /> : (
+                    <main className="mx-auto max-w-xl space-y-5 p-6">
+                        <h1 className="text-2xl font-semibold">视频课程暂不可用</h1>
+                        <p role="status">{entry.message}</p>
+                        <Link className="inline-flex min-h-11 items-center underline" href={courseDirectoryHref}>返回课程</Link>
+                    </main>
+                )}
+            </LessonActivityBoundary>
         );
     }
     let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;

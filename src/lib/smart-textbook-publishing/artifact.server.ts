@@ -14,6 +14,8 @@ import { dependencyCaptureSchema, type DependencyCapture } from './capture.serve
 
 import { certifyNativePublication, type NativePublicationBundle } from './native-publication.server.ts';
 
+import { certifyNativeVideoPublication, type NativeVideoPublicationBundle } from './native-video-publication.server.ts';
+
 export const foundationRevision = 'publish-foundation/1';
 export const identityAsset = { revision: identities.revision, digest: digest(identities), serviceRevision: history.schemaVersion, serviceDigest: digest(history) };
 export const targetSemanticRevision = 'chapter-one-target-semantics/4a12';
@@ -29,10 +31,15 @@ export type LegacyPublicationBundle = {
   pins: ReturnType<typeof dependencyPins>; seal: string;
 };
 
-export type PublicationBundle = LegacyPublicationBundle | NativePublicationBundle;
+export type PublicationBundle = LegacyPublicationBundle | NativePublicationBundle | NativeVideoPublicationBundle;
 export function requireLegacyPublication(bundle:PublicationBundle):LegacyPublicationBundle {
   if(bundle.revision!==foundationRevision)throw Error('PUBLICATION_LEGACY_CONSUMER_ONLY');
   return bundle;
+}
+
+export function requireNativeVideoPublication(bundle:PublicationBundle):NativeVideoPublicationBundle {
+  if(bundle.revision!=='publish-foundation/3')throw Error('PUBLICATION_NATIVE_VIDEO_CONSUMER_ONLY');
+  return certifyNativeVideoPublication(bundle);
 }
 
 /** Same set ordering as the certified compiler. No allocation or compilation. */
@@ -101,6 +108,7 @@ export function validateSnapshotBundle(input:unknown):PublicationBundle {
   const value=input as {revision?:unknown;publicationKind?:unknown};
   if(value.revision===foundationRevision && !('publicationKind' in value))return validateLegacySnapshotBundle(input);
   if(value.revision==='publish-foundation/2' && value.publicationKind==='canonical-native')return certifyNativePublication(input);
+  if(value.revision==='publish-foundation/3' && value.publicationKind==='canonical-native-video')return certifyNativeVideoPublication(input);
   throw Error('PUBLICATION_VERSION_UNSUPPORTED');
 }
 
@@ -110,6 +118,7 @@ export function validateSnapshotBundle(input:unknown):PublicationBundle {
 export function assertPublishableSnapshot(input:unknown):PublicationBundle {
   const b=validateSnapshotBundle(input);
   if(b.revision==='publish-foundation/2')return b;
+  if(b.revision==='publish-foundation/3')return b;
   const bindings=b.privatePayload.result.bindings;
   const validation=validateLessonManifestV1(b.manifest,{published:true,resolveBinding:(kind,ref,owner)=>{
     if(kind==='teaching-cue')return bindings.teaching.some(t=>t.ref===owner&&t.entryCueId===ref);
@@ -123,5 +132,6 @@ export function assertPublishableSnapshot(input:unknown):PublicationBundle {
 /** Copy-on-write proposal: detached source only; never updates stored artifacts. */
 export function draftFromSnapshot(bundle: PublicationBundle) {
   const b=validateSnapshotBundle(bundle);
+  if(b.revision==='publish-foundation/3')throw Error('NATIVE_VIDEO_RELEASE_REQUIRES_NEW_VERSION');
   return {kind:'authoring-draft' as const,basedOn:b.snapshotId,source:structuredClone(b.privatePayload.source)};
 }

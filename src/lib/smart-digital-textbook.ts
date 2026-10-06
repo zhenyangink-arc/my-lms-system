@@ -1,3 +1,4 @@
+import { getLegacyVersionPin } from "./smart-textbook-publishing/course-release-selection.server";
 import "server-only";
 import { BUFFER_CANDIDATE_COLUMNS, selectBufferSpeechIds, type BufferCandidate } from "@/lib/learning-agent-buffer-selection.server";
 
@@ -167,7 +168,7 @@ export type LoadSmartDigitalTextbookOptions = {
 type LoadSmartDigitalChapterProgressOptions = Pick<
   LoadSmartDigitalTextbookOptions,
   "textbookSlug" | "chapterNumber" | "userId" | "tenantId" | "trackingDisabled"
->;
+> & { /** Server-resolved only; never a URL parameter. */ versionId?: string };
 
 /**
  * 返回某个智能教材章节的持久化完成度。课程目录用它判断无章节测试的
@@ -187,14 +188,11 @@ export async function loadSmartDigitalTextbookChapterProgress(
     .maybeSingle();
   if (!textbook) return 0;
 
-  const { data: version } = await admin
-    .from("digital_textbook_versions")
-    .select("id")
-    .eq("textbook_id", textbook.id)
-    .eq("status", "published")
-    .order("version_number", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  let versionQuery = admin.from("digital_textbook_versions").select("id")
+    .eq("textbook_id", textbook.id).eq("status", "published");
+  const selectedVersionId = options.versionId ?? getLegacyVersionPin(textbook.id);
+  if (selectedVersionId) versionQuery = versionQuery.eq("id", selectedVersionId);
+  const { data: version } = await versionQuery.order("version_number", { ascending: false }).limit(1).maybeSingle();
   if (!version) return 0;
 
   const { data: chapter } = await admin
@@ -279,9 +277,10 @@ export async function loadSmartDigitalTextbook(
   let versionQuery = admin
     .from("digital_textbook_versions")
     .select("id")
-    .eq("textbook_id", textbook.id)
-    .order("version_number", { ascending: false })
-    .limit(1);
+    .eq("textbook_id", textbook.id);
+  const legacyVersionId = getLegacyVersionPin(textbook.id);
+  if (legacyVersionId) versionQuery = versionQuery.eq("id", legacyVersionId);
+  versionQuery = versionQuery.order("version_number", { ascending: false }).limit(1);
   versionQuery = options.trackingDisabled
     ? versionQuery.in("status", ["draft", "published"])
     : versionQuery.eq("status", "published");

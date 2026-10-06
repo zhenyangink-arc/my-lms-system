@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { hasVideoPilotMarker } from "@/features/learning-agent-script-studio/video-pilot-authoring";
+import { getSelectedVideoAssetInfo } from "@/features/learning-agent-script-studio/selected-video-asset.server";
+import { saveVideoPilotNode } from "@/features/learning-agent-script-studio/video-pilot-save.server";
 import { learningAgentBufferPreset, LEARNING_AGENT_BUFFER_PRESET_NONE_ID } from "@/lib/learning-agent-buffer-presets";
 import { CLASSROOM_SHOT_MODES } from "@/lib/learning-agent-classroom-director";
 import { normalizeTeachingVideo, activeTeacherVideoBindings, teachingScriptSegments, teachingVideoIssues } from "@/lib/teaching-video";
@@ -339,6 +342,14 @@ export async function saveTeachingScriptNodeAction(
 ): Promise<TeachingScriptActionState> {
   try {
     const { user, supabase } = await requirePlatformOwner();
+    const pilotResult = await saveVideoPilotNode(formData, {
+      db: createAdminClient(), inspectLocal: getSelectedVideoAssetInfo, checkR2: checkR2ObjectExists,
+      saveAtomic: async (args) => await supabase.rpc("save_teaching_script_node_atomic", args),
+    });
+    if (pilotResult) {
+      if (pilotResult.status === "success") refreshStudio(returnPath(formData));
+      return pilotResult;
+    }
     const scriptRows = formData.getAll("script_zh").map(String);
     const scriptPoses = formData.getAll("script_pose").map(String);
     const scriptVoices = formData.getAll("script_voice").map(String);
@@ -499,6 +510,7 @@ export async function saveTeachingScriptNodeAction(
     const existingConfiguration = current.configuration && typeof current.configuration === "object"
       ? current.configuration as Record<string, unknown>
       : {};
+    if (hasVideoPilotMarker(existingConfiguration)) return { status: "error", message: "此小节已启用视频草稿，请刷新后使用视频草稿编辑器。" };
     const configuration: Record<string, unknown> = { ...existingConfiguration };
     configuration.scriptSegments = { "zh-CN": nonEmptyScriptIndexes.map((index) => scriptRows[index].trim()) };
     if (input.teacherVideoJson !== undefined) {
@@ -905,6 +917,8 @@ export async function publishTeachingScriptAction(formData: FormData): Promise<{
   const videoKeys = new Set<string>();
   const videoNodes = snapshot?.nodes as Array<{ node_key: string; teacher_script: unknown; configuration: Record<string, unknown>; reference_activity_id: string | null }> | undefined;
   if (!snapshot?.token || !Array.isArray(videoNodes)) return { ok: false, message: "无法读取发布快照，请重试。" };
+  const pilotNode = videoNodes.find((node) => hasVideoPilotMarker(node.configuration) || Object.hasOwn(node.configuration ?? {}, "videoPilotPublication"));
+  if (pilotNode) return { ok: false, nodeKey: pilotNode.node_key, message: "视频暂停题必须通过当前小节的独立发布操作检查，不能发布整份脚本。" };
   for (const node of videoNodes) {
     const video = normalizeTeachingVideo(node.configuration?.teacherVideo);
     if (video.mode !== "video") continue;
@@ -932,4 +946,19 @@ export async function publishTeachingScriptAction(formData: FormData): Promise<{
   if (error) return { ok: false, message: error.message };
   refreshStudio(returnPath(formData));
   return { ok: true };
+}
+
+/** Explicit one-node video publication, never the legacy whole-script action. */
+export async function inspectNativeVideoPromotionAction(input: {sourceNodeId:string;sourceScriptVersionId:string;changeNote:string}) {
+  const {supabase} = await requirePlatformOwner();
+  const checked = z.strictObject({sourceNodeId:uuid,sourceScriptVersionId:uuid,changeNote:z.string().max(500)}).parse(input);
+  const {data,error} = await supabase.rpc("teaching_script_publish_snapshot",{p_version_id:checked.sourceScriptVersionId});
+  if (error || typeof data?.token !== "string") return {state:"blocked" as const,message:"无法读取已保存草稿，请刷新后重试。"};
+  const {inspectNativeVideoPromotion} = await import("@/features/learning-agent-script-studio/video-pilot-publication.server");
+  return inspectNativeVideoPromotion({...checked,expectedToken:data.token});
+}
+export async function publishNativeVideoPromotionAction(input: {sourceNodeId:string;sourceScriptVersionId:string;expectedToken:string;changeNote:string}) {
+  await requirePlatformOwner();
+  const {promoteAndPublishNativeVideoRelease} = await import("@/features/learning-agent-script-studio/video-pilot-publication.server");
+  return promoteAndPublishNativeVideoRelease(input);
 }

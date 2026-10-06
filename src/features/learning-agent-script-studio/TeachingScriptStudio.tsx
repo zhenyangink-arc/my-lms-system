@@ -3,6 +3,7 @@ import { normalizeTeachingVideo, teachingScriptSegments, teachingVideoIssues } f
 import { ChapterReleaseCheckPanel } from "./ChapterReleaseCheckPanel";
 import { ScriptSourceReviewPanel } from "./ScriptSourceReviewPanel";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { hasVideoPilotMarker, inspectVideoPilotDraft, readVideoPilotDraft } from "./video-pilot-authoring";
 
 import { type ButtonHTMLAttributes, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -17,6 +18,8 @@ import {
   deleteTeachingScriptVersionAction,
   moveTeachingScriptNodeAction,
   publishTeachingScriptAction,
+  inspectNativeVideoPromotionAction,
+  publishNativeVideoPromotionAction,
 } from "@/app/dashboard/admin/teaching-scripts/actions";
 import {
   AlertDialog,
@@ -30,6 +33,33 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TeachingScriptNodeForm, type TeachingScriptEditorSection } from "./TeachingScriptNodeForm";
 import type { TeachingScriptActivity, TeachingScriptModule, TeachingScriptNode, TeachingScriptStudioData, TeachingScriptVersion } from "./types";
+
+function NativeVideoPublishPanel({node,version,disabled}:{node:TeachingScriptNode;version:TeachingScriptVersion;disabled:boolean}) {
+  const [note,setNote] = useState("");
+  const [busy,setBusy] = useState(false);
+  const [report,setReport] = useState<{state:string;message:string;expectedToken?:string}|null>(null);
+  const run = async(publish:boolean) => {
+    setBusy(true);
+    try {
+      const input = {sourceNodeId:node.id,sourceScriptVersionId:version.id,changeNote:note};
+      const result = publish && report?.expectedToken
+        ? await publishNativeVideoPromotionAction({...input,expectedToken:report.expectedToken})
+        : await inspectNativeVideoPromotionAction(input);
+      setReport(result);
+    } catch {setReport({state:"blocked",message:"检查或发布未能确认，请重新检查后重试。"});}
+    finally {setBusy(false);}
+  };
+  return <details className="w-full rounded-xl border p-4">
+    <summary className="min-h-11 cursor-pointer font-semibold">发布当前视频小节</summary>
+    <p className="my-3 text-sm text-[var(--muted-foreground)]">先保存暂停时间与关联单选题，再检查并创建独立版本。原脚本草稿保留；学生入口需要单独启用。</p>
+    <label className="block space-y-2 text-sm"><span>修改说明</span><input className="app-input min-h-11 w-full" value={note} maxLength={500} onChange={event=>{setNote(event.target.value);setReport(null);}} /></label>
+    {report && <p className="mt-3 text-sm" role="status" aria-live="polite">{report.message}</p>}
+    <div className="mt-3 flex flex-wrap gap-3">
+      <button type="button" className="min-h-11 rounded-lg border px-4 disabled:opacity-50" disabled={disabled||busy} onClick={()=>void run(false)}>检查已保存小节</button>
+      <button type="button" className="min-h-11 rounded-lg bg-[var(--primary)] px-4 text-[var(--primary-foreground)] disabled:opacity-50" disabled={disabled||busy||report?.state!=="ready"||!report.expectedToken} onClick={()=>void run(true)}>{busy?"正在处理…":"创建并发布独立版本"}</button>
+    </div>
+  </details>;
+}
 
 const moduleLabels: Record<string, string> = {
   orientation: "课前导航",
@@ -57,16 +87,18 @@ function preferredVersion(lessonModule?: TeachingScriptModule) {
 function scriptVersionSummary(version?: TeachingScriptVersion) {
   const nodes = version?.nodes ?? [];
   const interactionNodes = nodes.filter((node) => {
+    const pilot = readVideoPilotDraft(node.configuration);
+    if (pilot.kind !== "absent") return pilot.kind === "pilot" && Boolean(pilot.draft.cue?.activityId);
     const interaction = node.configuration.interaction;
     const studentTask = node.configuration.studentTask;
     return Boolean(node.referenceActivityId)
       || Boolean(interaction && typeof interaction === "object" && !Array.isArray(interaction))
       || Boolean(studentTask && typeof studentTask === "object" && !Array.isArray(studentTask));
   }).length;
-  const readySpeechAssets = nodes.reduce((total, node) => total + node.speechAssets.filter((asset) => asset.productionStatus === "ready").length, 0);
-  const incompleteNodes = nodes.filter((node) => !node.title["zh-CN"].trim() || !node.script["zh-CN"].trim()).length;
+  const readySpeechAssets = nodes.filter((node) => !hasVideoPilotMarker(node.configuration)).reduce((total, node) => total + node.speechAssets.filter((asset) => asset.productionStatus === "ready").length, 0);
+  const incompleteNodes = nodes.filter((node) => !hasVideoPilotMarker(node.configuration) && (!node.title["zh-CN"].trim() || !node.script["zh-CN"].trim())).length;
   const hasEnding = nodes.some((node) => node.configuration.terminal === true);
-  const videoNodes = nodes.filter((node) => normalizeTeachingVideo(node.configuration.teacherVideo).mode === "video");
+  const videoNodes = nodes.filter((node) => !hasVideoPilotMarker(node.configuration) && normalizeTeachingVideo(node.configuration.teacherVideo).mode === "video");
   const videoIssueCount = videoNodes.reduce((total, node) => total + teachingVideoIssues({
     video: node.configuration.teacherVideo,
     lines: teachingScriptSegments(node.script, node.configuration),
@@ -107,6 +139,7 @@ function localizedConfigurationText(configuration: Record<string, unknown>, key:
 }
 
 function orchestrationCell(node: TeachingScriptNode, trackId: OrchestrationTrackId, allNodes: TeachingScriptNode[], activities: TeachingScriptActivity[]) {
+  if (hasVideoPilotMarker(node.configuration)) return { configured: false, label: "视频暂停题草稿" };
   if (trackId === "script") {
     const lineCount = teachingScriptSegments(node.script, node.configuration).length;
     const video = normalizeTeachingVideo(node.configuration.teacherVideo);
@@ -199,6 +232,9 @@ function orchestrationCell(node: TeachingScriptNode, trackId: OrchestrationTrack
 }
 
 function orchestrationNodeIssueCount(node: TeachingScriptNode, allNodes: TeachingScriptNode[]) {
+  const pilot = readVideoPilotDraft(node.configuration);
+  if (pilot.kind === "invalid") return pilot.issues.length;
+  if (pilot.kind === "pilot") return inspectVideoPilotDraft(pilot.draft).issues.length;
   return Number(!node.title["zh-CN"].trim())
     + Number(!node.script["zh-CN"].trim())
     + teachingVideoIssues({
@@ -323,6 +359,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
   const preferred = preferredVersion(selectedModule);
   const [versionId, setVersionId] = useState(preferred?.id ?? "");
   const selectedVersion = selectedModule?.versions.find((item) => item.id === versionId) ?? preferred;
+  const versionHasPilot = Boolean(selectedVersion?.nodes.some((node) => hasVideoPilotMarker(node.configuration)));
   const [nodeId, setNodeId] = useState(selectedVersion?.nodes[0]?.id ?? "");
   const [editorSection, setEditorSection] = useState<TeachingScriptEditorSection>("script");
   const [selectedOrchestrationTrackId, setSelectedOrchestrationTrackId] = useState<OrchestrationTrackId>("script");
@@ -330,7 +367,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
   const selectedNode = selectedVersion?.nodes.find((item) => item.id === nodeId) ?? selectedVersion?.nodes[0];
   const previewLessonSupported = selectedModule?.chapterNumber === 1;
   const previewModuleIndex = selectedModule ? selectedModule.order - 1 : 0;
-  const previewUrl = previewLessonSupported && selectedVersion
+  const previewUrl = previewLessonSupported && selectedVersion && !versionHasPilot
     ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&moduleIndex=${previewModuleIndex}`
     : "";
   const navigationMemoryKey = `${pathname}:teaching-script-navigation:v1`;
@@ -611,7 +648,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted-foreground)]" aria-label="当前学习步骤检查概览">
               <span>{selectedVersionSummary.nodeCount} 个教学小节</span>
               <span>{selectedVersionSummary.interactionNodes} 个学生互动</span>
-              <span>{selectedVersionSummary.videoNodeCount > 0 ? `${selectedVersionSummary.videoNodeCount} 个视频小节 · ${selectedVersionSummary.videoIssueCount} 项视频待配置` : `${selectedVersionSummary.readySpeechAssets} 条正式语音就绪`}</span>
+              <span>{versionHasPilot ? "视频暂停题草稿" : selectedVersionSummary.videoNodeCount > 0 ? `${selectedVersionSummary.videoNodeCount} 个视频小节 · ${selectedVersionSummary.videoIssueCount} 项视频待配置` : `${selectedVersionSummary.readySpeechAssets} 条正式语音就绪`}</span>
               <span className={selectedVersionSummary.reviewIssues > 0 ? "font-semibold text-[var(--status-warning)]" : "font-semibold text-[var(--status-success)]"}>
                 {selectedVersionSummary.reviewIssues > 0 ? `待检查 ${selectedVersionSummary.reviewIssues} 项` : "基础配置已填写，发布前仍需校验"}
               </span>
@@ -658,7 +695,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
             </AlertDialog>
           )}
           {selectedVersion && (
-            previewLessonSupported ? (
+            versionHasPilot ? <span role="status" className="inline-flex min-h-11 items-center px-3 text-sm text-[var(--status-warning)]">视频课程需先检查独立发布条件</span> : previewLessonSupported ? (
               <a
                 href={previewUrl}
                 target="_blank"
@@ -677,7 +714,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
           )}
           {editable && selectedNode && selectedNodeFormId && (
             <span className={`text-xs font-medium ${nodeSavePending ? "text-[var(--muted-foreground)]" : hasUnsavedChanges ? "text-[var(--status-warning)]" : "text-[var(--status-success)]"}`} role="status" aria-live="polite">
-              {nodeSavePending ? "正在保存" : hasUnsavedChanges ? "等待自动保存" : "草稿已保存"}
+              {nodeSavePending ? "正在保存" : hasUnsavedChanges ? "草稿待保存" : "草稿已保存"}
             </span>
           )}
           {editable && selectedNode && selectedNodeFormId && (
@@ -692,7 +729,10 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
               {nodeSavePending ? "正在保存…" : "保存当前小节"}
             </button>
           )}
-          {editable && selectedVersion && (
+          {editable && selectedVersion && selectedNode && hasVideoPilotMarker(selectedNode.configuration) && (
+            <NativeVideoPublishPanel key={`${selectedNode.id}:${selectedNode.updatedAt}:${hasUnsavedChanges}:${nodeSavePending}`} node={selectedNode} version={selectedVersion} disabled={hasUnsavedChanges||nodeSavePending} />
+          )}
+          {editable && selectedVersion && !versionHasPilot && (
             <details className="group relative">
               <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 border border-[var(--border)] bg-[var(--muted)] px-4 text-sm font-semibold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
                 <Send size={15} aria-hidden="true" />发布学习步骤
@@ -921,7 +961,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
                           );
                         })}
                       </div>
-{orchestrationTracks.filter((track) => track.id !== "content" || selectedVersion.nodes.some((node) => normalizeTeachingVideo(node.configuration.teacherVideo).mode !== "video")).map((track) => {
+{orchestrationTracks.filter((track) => track.id !== "content" || selectedVersion.nodes.some((node) => !hasVideoPilotMarker(node.configuration) && normalizeTeachingVideo(node.configuration.teacherVideo).mode !== "video")).map((track) => {
                         const TrackIcon = track.icon;
                         return (
                           <div key={track.id} className="grid border-b border-[var(--border)] last:border-b-0" style={orchestrationGridStyle}>
