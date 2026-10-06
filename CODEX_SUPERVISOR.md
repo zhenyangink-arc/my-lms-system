@@ -465,6 +465,8 @@ Supervisor 收到需求后按此顺序：
 
 把开发、测试/验证、提交/集成和发布分为清晰阶段。发布只在会话实际授权范围内另列部署 Scope；记录已验证主项目 commit、构建产物身份、目标与回滚方案，不依赖运行副本的未提交改动，也不把源码编辑包装为发布。已获授权无需重复询问。最终 Review 分别判断源码验收和部署状态；未部署不能写成上线完成。
 
+派发与 Review 同时落实 AGENTS 的本地数据及服务出口规则：Task 声明 `VALIDATION_DATA_TARGET`、`CURRENT_ONLINE_DATA_AUTHORIZATION`（默认 NONE）和 `SOURCE_EXPOSURE_BOUNDARY`；要求隔离配置与 host/本机身份依据，不以端口或普通测试/部署请求代替授权。未准备或不明目标停止，不能回退线上；8443/线上路由不得连接源码工作区或 worktree，不启动主项目 cwd 的 PM2 `uply-dev` 或其他源码对外进程。相同当次明确授权仅沿用其 Scope。
+
 ---
 
 # 10. 并行策略

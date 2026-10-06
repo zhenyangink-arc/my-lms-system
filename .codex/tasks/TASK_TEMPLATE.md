@@ -76,6 +76,15 @@ NO（默认） | YES（依据会话实际授权，注明范围/依据；已授�
 DEPLOYMENT_SCOPE:
 NONE，或独立声明发布目标、操作、已验证主项目 Git commit、构建产物身份/验证证据、追溯与回滚方案；禁止以部署名义直接编辑发布源码。
 
+VALIDATION_DATA_TARGET:
+NONE（无需数据操作），或已确认的本机数据库（543xx / lms-verify 56321）；注明 host、本机实例身份依据、隔离配置来源（不含凭据），排除主项目 .env.local 自动加载/线上环境继承；目标不明/本机未准备则停止，不回退线上。
+
+CURRENT_ONLINE_DATA_AUTHORIZATION:
+NONE（默认），或用户对当次的明确授权依据、目标与操作 Scope；同次同 Scope 不重复询问，普通继续/测试/部署不构成线上数据授权。
+
+SOURCE_EXPOSURE_BOUNDARY:
+仅隔离本地开发/测试/临时预览；8443/任何线上入口不得直接或经代理/Tailscale/转发连接源码工作区（含 worktree）；不启动/重启主项目 cwd 的 PM2 uply-dev 或其他源码对外进程，loopback 不等于允许代理对外；线上运行使用可追溯发布副本。
+
 WRITABLE SCOPE:
 - path/**
 - path/file.ts
