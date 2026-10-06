@@ -12,7 +12,7 @@ export function processResult(command, args, input = '') {
     child.stdin.on('error', () => {}); child.stdin.end(input);
   });
 }
-export async function isolatedRecordingPostgres(secret, { existingPgcrypto = true, beforeV2 } = {}) {
+export async function isolatedRecordingPostgres(secret, { existingPgcrypto = true, beforeV2, installV2 = true } = {}) {
   // No host database URL, no env-file, network, published port or volume mount.
   const name = `uply-recording-4a5-${randomUUID()}`;
   const start = await processResult('docker', ['run','--pull=never','--detach','--rm','--network','none',
@@ -42,9 +42,11 @@ export async function isolatedRecordingPostgres(secret, { existingPgcrypto = tru
     if (!metadataDdl) throw new Error('Missing historical metadata DDL');
     await query(metadataDdl);
     if (beforeV2) await beforeV2({ id, raw, query });
+    if (installV2) {
     await query(read('supabase/migrations/202609090001_recording_evidence_atomic_v2.sql'));
     // Synthetic random test key only; never logged or read from production env.
     await query(`insert into recording_private.proof_keys(id,secret) values('isolated',decode('${secret.toString('hex')}','hex'));`);
+    }
     return { id, raw, query, stop };
   } catch (error) { await stop(); throw error; }
 }

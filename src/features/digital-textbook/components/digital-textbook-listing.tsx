@@ -1,28 +1,27 @@
-import Link from "next/link";
 import { CreateTeachingContentEntry } from "./create-teaching-content-entry";
-
-import {
-  ManagementMetricStrip,
-  ManagementNotice,
-} from "@/components/layout/management-page";
+import { ManagementNotice } from "@/components/layout/management-page";
 import { getDigitalTextbookManagementData } from "../api/service";
-import { DigitalTextbookTable } from "./digital-textbook-table";
 import type { DigitalTextbookDisplayRow } from "./digital-textbook-table/columns";
+import { TextbookStudio } from "./textbook-studio";
 
 export default async function DigitalTextbookListing({
   studentAppId,
   chapterId,
   courseStructureRoute,
+  workbenchHref,
 }: {
   studentAppId: string;
   chapterId?: string;
   courseStructureRoute?: string;
+  workbenchHref?: string;
 }) {
   const result = await getDigitalTextbookManagementData(studentAppId);
+  // A failed query is unknown inventory, not a confirmed empty chapter.
+  if (result.hasError) return <ManagementNotice tone="warning">教材内容读取不完整，暂不显示数量或开放编辑。请刷新重试。</ManagementNotice>;
   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) =>
       lesson.textbooks.flatMap((textbook) =>
-        textbook.chapters.filter(chapter => !chapterId || chapter.id === chapterId).map((chapter) => ({
+        textbook.chapters.map((chapter) => ({
           id: chapter.id,
           courseId: course.id,
           courseTitle: course.title,
@@ -36,6 +35,7 @@ export default async function DigitalTextbookListing({
           versionNumber: chapter.versionNumber,
           versionStatus: chapter.versionStatus,
           chapterId: chapter.id,
+          chapterTitle: chapter.title,
           chapterNumber: chapter.number,
           chapterSlug: chapter.slug,
           chapterStatus: chapter.status,
@@ -50,7 +50,7 @@ export default async function DigitalTextbookListing({
             0,
           ),
           grammarCount: chapter.grammarNodes.reduce(
-            (sum, node) => sum + node.items.length,
+            (sum, node) => sum + node.items.length + (node.cards?.length ?? 0),
             0,
           ),
           vocabularyNodes: chapter.nodes,
@@ -59,58 +59,11 @@ export default async function DigitalTextbookListing({
       ),
     ),
   );
-  const textbookCount = new Set(rows.map((row) => row.textbookId)).size;
-  const versionCount = new Set(rows.map((row) => row.versionId)).size;
-  const moduleCount = rows.reduce((sum, row) => sum + row.moduleCount, 0);
-  const grammarCount = rows.reduce((sum, row) => sum + row.grammarCount, 0);
-
-  return (
-    <div className="space-y-6">
-      {result.canPublishChapters && !chapterId && <CreateTeachingContentEntry studentAppId={studentAppId} />}
-      <ManagementNotice tone="warning">
-        发布章节会同时发布关联章节测试，不会发布教学脚本。视频课堂还需在教学脚本中完成预览与发布；独立练习库不会随教材修改自动同步。
-      </ManagementNotice>
-      {result.hasError && (
-        <ManagementNotice tone="warning">
-          部分教材层级或内容数据暂时无法完整读取，请稍后刷新重试。
-        </ManagementNotice>
-      )}
-
-      <ManagementMetricStrip
-        label="教材制作概况"
-        items={[
-          { label: "教材", value: textbookCount },
-          { label: "版本", value: versionCount },
-          { label: "章节", value: rows.length },
-          { label: "内容模块", value: moduleCount },
-          { label: "词汇", value: rows.reduce((sum, row) => sum + row.vocabularyCount, 0) },
-          { label: "语法", value: grammarCount },
-        ]}
-      />
-
-      <section className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-[var(--foreground)]">
-              教材章节
-            </h2>
-            <p className="mt-1 text-xs text-[var(--foreground-muted)]">
-              每一行对应课程结构中的一个教学位置；在这里维护教材版本、内容模块并发布教材。
-              {!result.canManage && " 当前账号为只读查看。"}
-            </p>
-          </div>
-          {courseStructureRoute && (
-            <Link href={chapterId ? `${courseStructureRoute}?chapter=${encodeURIComponent(chapterId)}` : courseStructureRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
-              返回课程结构
-            </Link>
-          )}
-        </div>
-        <DigitalTextbookTable
-          data={rows}
-          canManage={result.canManage}
-          canPublishChapters={result.canPublishChapters}
-        />
-      </section>
-    </div>
-  );
+  return <div className="space-y-4">
+    {result.canPublishChapters && !chapterId && <CreateTeachingContentEntry studentAppId={studentAppId} />}
+    {result.hasError && <ManagementNotice tone="warning">教材内容读取不完整，请刷新后再编辑。</ManagementNotice>}
+    <TextbookStudio key={chapterId ?? 'default'} rows={rows} initialChapterId={chapterId}
+      canManage={result.canManage && !result.hasError} canPublish={result.canPublishChapters && !result.hasError}
+      workbenchHref={workbenchHref} courseStructureRoute={courseStructureRoute} />
+  </div>;
 }

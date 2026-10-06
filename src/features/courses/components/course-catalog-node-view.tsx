@@ -93,10 +93,11 @@ function ReadonlyField({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
+export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps & { compact?: boolean }) {
   if (props.kind === "lesson") {
     return (
       <CourseLessonView
+        compact={props.compact}
         lesson={props.node}
         resources={props.resources}
         resourceErrorMessage={props.resourceErrorMessage}
@@ -137,9 +138,10 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-5 border-y border-[var(--border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <NodeCover kind={kind} node={node} />
+      <section className={`grid gap-5 border-y border-[var(--border)] py-5 ${props.compact ? "" : "lg:grid-cols-[320px_minmax(0,1fr)]"}`}>
+        {(!props.compact || node.cover_object_key) && <div className={props.compact ? "max-w-sm" : undefined}><NodeCover kind={kind} node={node} /></div>}
         <div className="min-w-0">
+          {!props.compact && <>
           <p className="text-xs font-medium text-[var(--foreground-muted)]">
             {nodeLabel}预览
           </p>
@@ -149,6 +151,7 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
           <p className="mt-1 font-mono text-[11px] text-[var(--foreground-muted)]">
             {node.slug}
           </p>
+          </>}
           <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
             <div className="bg-[var(--card)] px-3 py-2">
               <dt className="text-[10px] text-[var(--foreground-muted)]">类型</dt>

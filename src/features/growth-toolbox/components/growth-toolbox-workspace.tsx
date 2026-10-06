@@ -39,7 +39,7 @@ export function GrowthToolboxWorkspace({ chapter, library, settings }: {
   chapter: ReactNode; library: ReactNode; settings: ReactNode;
 }) {
   return <WorkspaceTabs label="练习工具工作区" items={[
-    { key: "chapter", title: "章节练习", content: chapter },
+    { key: "chapter", title: "章节材料引用", content: chapter },
     { key: "library", title: "独立练习库", content: library },
     { key: "settings", title: "工具设置", content: settings },
   ]} />;

@@ -250,12 +250,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /可横向滚动的教学编排轴/);
   assert.match(studio, /showSectionNavigation=\{!showOrchestrationAxis\}/);
   assert.match(studio, /selectedVersion\.nodes\.map/);
-  assert.match(studio, /发布学习步骤/);
+  assert.match(studio, /发布当前步骤脚本/);
   assert.match(studio, /form=\{selectedNodeFormId\}/);
   assert.match(studio, /nodeSavePending \? "正在保存…" : "保存当前小节"/);
   assert.match(studio, /editable && selectedNode && selectedNodeFormId/);
   assert.match(studio, /summary className="inline-flex min-h-11[^"]*border border-\[var\(--border\)\] bg-\[var\(--muted\)\]/);
-  assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布学习步骤"));
+  assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布当前步骤脚本"));
   assert.match(studio, /小节 · \{selectedNode\.title\["zh-CN"\] \|\| "未命名小节"\}/);
   assert.match(studio, /aria-label="选择教学小节"/);
   assert.match(studio, /sticky top-0 z-30/);

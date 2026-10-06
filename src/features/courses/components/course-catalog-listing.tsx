@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ChevronRight, Folders } from "lucide-react";
 
 import {
-  ManagementMetricStrip,
   ManagementNotice,
 } from "@/components/layout/management-page";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
@@ -14,7 +13,7 @@ import type {
   CourseCatalogLesson,
   CourseCategory,
 } from "../api/types";
-import { CourseCatalogFolderTable } from "./course-catalog-tree";
+import { CourseStructureDirectory, CourseStructureItems } from "./course-structure-directory";
 import type { CourseCatalogFolderRow } from "./course-catalog-tree/columns";
 import { KIND_DEFAULT_ICON } from "./course-catalog-tree/course-catalog-visuals";
 import {
@@ -115,7 +114,7 @@ function parseFolderParam(value?: string): FolderRef | null {
 }
 
 function folderHref(catalogRoute: string, ref: FolderRef | null) {
-  return ref ? `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${ref.kind}:${ref.id}` : catalogRoute;
+  return ref ? `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${encodeURIComponent(`${ref.kind}:${ref.id}`)}` : catalogRoute;
 }
 
 function categoryRow(
@@ -316,9 +315,13 @@ function buildBreadcrumb(
   catalogRoute: string,
 ): BreadcrumbEntry[] {
   const trail: FolderRef[] = [];
+  const visited = new Set<string>();
   let cursor: FolderRef | null = ref;
   while (cursor) {
     const node: FolderRef = cursor;
+    const key = `${node.kind}:${node.id}`;
+    if (visited.has(key)) break;
+    visited.add(key);
     trail.unshift(node);
     if (node.kind === "category") {
       const category = data.categories.find((item) => item.id === node.id);
@@ -371,10 +374,15 @@ export default async function CourseCatalogListing({
 }) {
   const selection = await searchParams;
   const result = await getCourseManagementData(selection, studentAppId);
-  const catalogRoute = routeBasePath ?? scopeDashboardPath(
+  const baseRoute = routeBasePath ?? scopeDashboardPath(
     "/dashboard/admin/courses",
     result.dashboardBasePath,
   );
+  // An incoming textbook chapter locates the initial lesson. Directory navigation
+  // then owns its location; retaining chapter would reselect that lesson at root.
+  const directoryUrl = new URL(baseRoute, "https://internal.invalid");
+  directoryUrl.searchParams.delete("chapter");
+  const catalogRoute = `${directoryUrl.pathname}${directoryUrl.search}`;
 
   const requestedFolder = parseFolderParam(selection.folder);
   const currentFolderNode = !requestedFolder
@@ -432,18 +440,17 @@ export default async function CourseCatalogListing({
           当前账号可以查看平台课程，但只有平台负责人和平台管理员可以修改。
         </ManagementNotice>
       )}
-      <ManagementMetricStrip
-        label="课程结构概况"
-        items={[
-          {
-            label: "顶级分类",
-            value: result.categories.filter((item) => !item.parent_id).length,
-          },
-          { label: "课程", value: result.courses.length },
-          { label: "课时", value: result.lessons.length },
-          { label: "章节", value: result.chapters.length },
-        ]}
-      />
+      <header className="flex flex-wrap items-center justify-between gap-3 pb-2">
+        <h1 className="text-xl font-semibold">课程结构</h1>
+        <p className="text-sm text-[var(--foreground-muted)]">{result.courses.length} 门课程 · {result.lessons.length} 个课时 · {result.chapters.length} 个章节</p>
+      </header>
+      {selection.folder && !currentFolderNode && <ManagementNotice tone="warning">当前目录不存在或不可访问。请从左侧重新选择。</ManagementNotice>}
+      <div className="space-y-5">
+      <CourseStructureDirectory rootHref={catalogRoute} rootActive={!folderRef} entries={[
+        ...sortBySortOrder(result.categories).map(category => ({ key: `category:${category.id}`, title: category.title, context: category.parent_id ? `分类 · ${result.categories.find(parent => parent.id === category.parent_id)?.title ?? "上级不可用"}` : "顶级分类", href: folderHref(catalogRoute, { kind: "category", id: category.id }), active: folderRef?.kind === "category" && folderRef.id === category.id })),
+        ...sortBySortOrder(result.courses).map(course => ({ key: `course:${course.id}`, title: course.title, context: `${result.categories.find(category => category.id === course.category_id)?.title ?? "未分类"} · ${result.lessons.filter(lesson => lesson.course_id === course.id).length} 个课时`, href: folderHref(catalogRoute, { kind: "course", id: course.id }), active: (folderRef?.kind === "course" && folderRef.id === course.id) || (folderRef?.kind === "lesson" && result.lessons.some(lesson => lesson.id === folderRef.id && lesson.course_id === course.id)) })),
+      ]} />
+      <div className="min-w-0 space-y-5">
       <section className="space-y-3">
         <nav aria-label="当前目录位置" className="flex flex-wrap items-center gap-1 text-xs text-[var(--foreground-muted)]">
           {breadcrumb.map((crumb, index) => {
@@ -480,21 +487,11 @@ export default async function CourseCatalogListing({
               </span>
             </div>
             <p className="mt-1 text-xs text-[var(--foreground-muted)]">
-              {folderRef
-                ? "点击下级内容进入下一层，或使用面包屑返回上一层。"
-                : "先建立课程层级与开放规则，再进入教材制作填写学生真正学习的内容。"}
+              {folderRef ? "管理当前目录的下级内容与开放规则。" : "管理分类、课程、课时与章节；教学内容请进入教材制作。"}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {textbookRoute && (
-              <Link
-                href={textbookRoute}
-                className="management-secondary-button inline-flex h-9 items-center border px-4 text-xs font-semibold"
-              >
-                进入教材制作
-              </Link>
-            )}
-            {result.canManage && folderRef && (
+          <div className="flex flex-wrap items-center gap-2 [&>*]:shrink-0">
+            {result.canManage && !result.catalogErrorMessage && folderRef && (
               <CourseCatalogEditDialog
                 node={currentFolderNode!}
                 options={{
@@ -507,7 +504,7 @@ export default async function CourseCatalogListing({
                 }}
               />
             )}
-            {result.canManage && createTarget && (
+            {result.canManage && !result.catalogErrorMessage && createTarget && !Boolean(selection.folder && !currentFolderNode) && (
               <CourseCatalogCreateDialog
                 primary
                 studentAppId={studentAppId}
@@ -516,48 +513,44 @@ export default async function CourseCatalogListing({
             )}
           </div>
         </div>
-        <CourseCatalogFolderTable
+      </section>
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(260px,320px)_minmax(0,1fr)]">
+        <CourseStructureItems
+          key={folderRef ? `${folderRef.kind}:${folderRef.id}` : "root"}
           rows={folderRows}
-          canManage={result.canManage}
-          options={{
-            categories: result.categories,
-            courses: result.courses,
-            lessons: result.lessons,
-            chapters: result.chapters,
-            studentAppId,
-            subcategoryLabel,
-          }}
-          dashboardBasePath={result.dashboardBasePath}
-          routeBasePath={catalogRoute}
+          selectedKey={selectedKind && selectedNode ? `${selectedKind}:${selectedNode.id}` : undefined}
           catalogRoute={catalogRoute}
           folderParam={folderRef ? `${folderRef.kind}:${folderRef.id}` : undefined}
         />
-      </section>
-
-      {selectedKind && selectedNode && (
-        <section id="course-content" className="scroll-mt-20 space-y-4 border-t border-[var(--border)] pt-5">
+      {selectedKind && selectedNode ? (
+        <section id="course-content" className="min-w-0 scroll-mt-5 space-y-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-base font-semibold text-[var(--foreground)]">
-                结构与资料详情
+                {selectedNode.title}
               </h2>
               <p className="mt-1 text-xs text-[var(--foreground-muted)]">
                 查看当前节点的基础资料、顺序、开放状态和关联资源。
               </p>
             </div>
+            <div className="flex flex-wrap items-center gap-2">
+            {selectedKind !== "chapter" && <Link href={folderHref(catalogRoute, { kind: selectedKind, id: selectedNode.id })} className="inline-flex min-h-11 items-center rounded-lg bg-[var(--primary)] px-4 text-sm font-semibold text-white">{selectedKind === "lesson" ? "管理章节" : selectedKind === "course" ? "管理课时" : "管理下级内容"}</Link>}
+            {result.canManage && !result.catalogErrorMessage && <CourseCatalogEditDialog node={selectedNode} options={{categories:result.categories,courses:result.courses,lessons:result.lessons,chapters:result.chapters,studentAppId,subcategoryLabel}} />}
             <Link
               href={folderHref(catalogRoute, folderRef)}
               className="management-secondary-button inline-flex h-9 items-center border px-4 text-xs font-semibold"
             >
               收起详情
             </Link>
+            </div>
           </div>
           {selectedKind === "category" ? (
-            <CourseCatalogNodeView kind="category" node={selectedNode as CourseCategory} subcategoryLabel={subcategoryLabel} />
+            <CourseCatalogNodeView compact kind="category" node={selectedNode as CourseCategory} subcategoryLabel={subcategoryLabel} />
           ) : selectedKind === "course" ? (
-            <CourseCatalogNodeView kind="course" node={selectedNode as CourseCatalogCourse} />
+            <CourseCatalogNodeView compact kind="course" node={selectedNode as CourseCatalogCourse} />
           ) : selectedKind === "lesson" ? (
             <CourseCatalogNodeView
+              compact
               kind="lesson"
               node={selectedNode as CourseCatalogLesson}
               resources={result.resources}
@@ -567,10 +560,19 @@ export default async function CourseCatalogListing({
               textbookHref={textbookRoute}
             />
           ) : (
-            <CourseCatalogNodeView kind="chapter" node={selectedNode as CourseCatalogChapter} />
+            <CourseCatalogNodeView compact kind="chapter" node={selectedNode as CourseCatalogChapter} />
           )}
         </section>
-      )}
+      ) : <section id="course-content" className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8">
+        <h2 className="text-lg font-semibold">{selection.node ? "未找到所选内容" : "选择内容，开始管理"}</h2>
+        <p className="mt-3 max-w-lg text-sm leading-7 text-[var(--foreground-muted)]">{selection.node ? "该内容不存在或不在可查看范围内，请重新选择。" : "在目录中选择一项，在这里查看资料、编辑基础信息或管理下级内容。教学活动仍在教材制作中维护。"}</p>
+        <ol className="mt-7 grid gap-4 border-t border-[var(--border)] pt-6 text-sm sm:grid-cols-3">
+          {['选择分类或课程','查看课时与章节','编辑资料与开放规则'].map((label,index)=><li key={label}><span className="mb-2 block text-xs text-[var(--foreground-muted)]">{index+1}</span>{label}</li>)}
+        </ol>
+      </section>}
+      </div>
+      </div>
+      </div>
     </div>
   );
 }

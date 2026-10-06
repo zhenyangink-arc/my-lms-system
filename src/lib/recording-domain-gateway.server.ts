@@ -139,16 +139,27 @@ export function createRecordingGateway(admin: SupabaseClient, request: Recording
     async restore(query: URLSearchParams) {
       let q = ownerQuery();
       const practiceKey = query.get('practiceKey'), sceneId = query.get('sceneId');
+      let recordingKind: 'independent-output' | 'guided-repeat-line' | 'full-recall' | 'roleplay-turn';
       if (practiceKey) {
         const coords = z.object({ practiceKey: z.enum(['repeat-line','full-recall']), trackIndex: z.number().int().min(0).max(8), segmentIndex: z.number().int().min(0).max(100) })
           .parse({ practiceKey, trackIndex: Number(query.get('trackIndex')), segmentIndex: Number(query.get('segmentIndex')) });
         q = q.contains('metadata', coords);
+        recordingKind = coords.practiceKey === 'repeat-line' ? 'guided-repeat-line' : 'full-recall';
       } else if (sceneId) {
         const coords = z.object({ sceneId: z.string().min(1).max(80), roleSide: z.enum(['left','right']), turnIndex: z.number().int().min(0).max(999) })
           .parse({ sceneId, roleSide: query.get('roleSide'), turnIndex: Number(query.get('turnIndex')) });
         q = q.contains('metadata', coords);
+        recordingKind = 'roleplay-turn';
       } else if (activity.public_config?.presentation !== 'independent_output') throw new RecordingDomainError('invalid');
-      else if(runtime)q=q.is('metadata->>practiceKey',null).is('metadata->>sceneId',null);
+      else {
+        recordingKind = 'independent-output';
+        if(runtime)q=q.is('metadata->>practiceKey',null).is('metadata->>sceneId',null);
+      }
+      // Historical evidence remains available to the legacy route, but a
+      // published Runtime restore must select only evidence minted for this
+      // immutable snapshot/revision. An unbound or older row is absence, not a
+      // fatal conflict that prevents the entire textbook from opening.
+      if(runtime)q=q.contains('metadata',{runtimeBinding:{...runtime,versionId,recordingKind}});
       const { data, error } = await q.order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (error) throw new RecordingDomainError('unavailable');
       if (!data) return null;

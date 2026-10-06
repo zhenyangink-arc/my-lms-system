@@ -455,6 +455,7 @@ async function loadGrammarNode(
     .eq("id", nodeId)
     .maybeSingle();
   if (nodeError || !node) return { error: "找不到语法节点" };
+  if (Object.hasOwn(node.content ?? {}, 'grammarCards')) return { error: '本章使用语法卡，请在第一章工作台修改；旧语法编辑器不能覆盖或另写一套内容。' };
   return { nodeId, content: (node.content ?? {}) as Record<string, unknown> };
 }
 

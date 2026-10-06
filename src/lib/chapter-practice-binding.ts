@@ -14,7 +14,7 @@ export function chapterPracticeSnapshot(courses: DigitalTextbookCourse[], chapte
     if (book.status !== "published" || chapter.status !== "published" || chapter.versionStatus !== "published") return null;
     const groups = [
       ...chapter.nodes.map(node => ({ nodeId: node.id, kind: "vocabulary" as const, values: node.vocabulary })),
-      ...chapter.grammarNodes.map(node => ({ nodeId: node.id, kind: "grammar" as const, values: node.items })),
+      ...chapter.grammarNodes.map(node => ({ nodeId: node.id, kind: "grammar" as const, values: [...node.items, ...(node.cards ?? [])] })),
     ].sort((a, b) => a.nodeId.localeCompare(b.nodeId) || a.kind.localeCompare(b.kind));
     return groups.flatMap(group => group.values.map(value => ({ nodeId: group.nodeId, kind: group.kind, value: structuredClone(value) as unknown as Record<string, unknown> })));
   }

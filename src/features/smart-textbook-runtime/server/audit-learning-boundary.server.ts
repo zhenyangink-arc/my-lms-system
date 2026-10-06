@@ -27,7 +27,10 @@ const resolver={async resolve(input:unknown){
 }};
 const boundary=createLearningBoundary(resolver,async a=>{
   const sessionId=a.sessionId.slice('learning-session-'.length),base={sessionId,snapshotId:a.snapshotId};
-  const local=(capsuleRef:string)=>({...base,capsuleRef,locale:a.locale});
+  // These four existing actions accept the opaque audit session, capsule and
+  // locale only. Snapshot authority is resolved from that server session;
+  // don't widen their strict request schemas with an extra client field.
+  const local=(capsuleRef:string)=>({sessionId,capsuleRef,locale:a.locale});
   const flow=(capsuleRef:string,request:object)=>auditFlow({...base,capsuleRef,...request});
   const record=async<T>(input:object,signal:AbortSignal,blob?:Blob)=>await auditRecording({...base,...input},signal,blob) as T;
   const recording:RecordingRuntimeServices={load:(c,s)=>record({op:'load',capsuleRef:c},s),restore:(c,activityRef,s)=>record({op:'restore',capsuleRef:c,activityRef},s),

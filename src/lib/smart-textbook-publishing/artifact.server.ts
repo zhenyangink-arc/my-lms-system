@@ -8,6 +8,7 @@ import { validatePrivateBindings } from '../smart-textbook-legacy-adapter/bindin
 import { validateLessonManifestV1 } from '../smart-textbook-runtime-v1/validator.ts';
 import type { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server.ts';
 import identities from './assets/v1/chapter-one-identities.server.ts';
+import { publicationIdentities } from './grammar-identities.server';
 import history from './assets/v1/chapter-one-service-identities.server.ts';
 import { verifyMediaPublicationPolicy } from './media-policy.server.ts';
 import { dependencyCaptureSchema, type DependencyCapture } from './capture.server.ts';
@@ -56,7 +57,7 @@ export function dependencyPins(p: SnapshotPrivate) {
     source: Object.fromEntries(Object.entries(s).map(([key,value])=>[key,digest(value)])),
     serviceEvidenceDigest: digest(p.evidence), mediaRefsDigest: digest(m.mediaRefs),
     teachingRevisions: s.teachingVersions.map(v=>({id:v.id,number:v.version_number})),
-    sourceRevision: digest({source:s,profile,identityMap:identities}) };
+    sourceRevision: digest({source:s,profile,identityMap:publicationIdentities(p.dependencies?.digital_textbook_nodes ?? [])}) };
 }
 
 /** Server compiler output envelope; not a second Manifest or authoring schema.

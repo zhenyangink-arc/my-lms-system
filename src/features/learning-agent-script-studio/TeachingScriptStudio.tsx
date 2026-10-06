@@ -735,7 +735,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
           {editable && selectedVersion && !versionHasPilot && (
             <details className="group relative">
               <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 border border-[var(--border)] bg-[var(--muted)] px-4 text-sm font-semibold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-                <Send size={15} aria-hidden="true" />发布学习步骤
+                <Send size={15} aria-hidden="true" />发布当前步骤脚本
               </summary>
               <div className="absolute right-0 top-full z-40 mt-2 w-[min(23rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
                 <h3 className="text-sm font-bold text-[var(--foreground)]">发布当前步骤的脚本</h3>
@@ -754,7 +754,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
                     <span className="block">修改说明</span>
                     <input name="change_note" maxLength={500} placeholder="说明本次调整内容" className="app-input h-11 w-full border px-3" />
                   </label>
-                  <FormSubmitButton pendingLabel="正在校验并发布…" className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">校验并发布</FormSubmitButton>
+                  <FormSubmitButton pendingLabel="正在校验并发布脚本…" className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">校验并发布脚本</FormSubmitButton>
                 </form>
               </div>
             </details>

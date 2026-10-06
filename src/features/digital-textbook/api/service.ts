@@ -1,4 +1,5 @@
 import "server-only";
+import { readTextbookGrammarCards } from '@/lib/textbook-grammar-content';
 import { cache } from "react";
 
 import { redirect } from "next/navigation";
@@ -35,6 +36,7 @@ type VersionRow = {
 };
 type ChapterRow = {
   id: string;
+  title?: unknown;
   version_id: string;
   slug: string;
   chapter_number: number;
@@ -122,10 +124,9 @@ async function loadDigitalTextbookManagementData(
   studentAppId: string,
 ): Promise<DigitalTextbookManagementResult> {
   const auth = await requireActiveUser();
-  const { supabase: userSupabase } = auth;
   const canPublishChapters =
     auth.platformProfile?.global_role === "platform_owner" && !auth.tenant;
-  const { data: canManage } = await userSupabase.rpc(
+  const { data: canManage } = await auth.supabase.rpc(
     "current_user_can_manage_standard_question_bank",
   );
   if (!studentAppId) redirect("/dashboard/admin/apps");
@@ -143,13 +144,9 @@ async function loadDigitalTextbookManagementData(
   let textbookQuery = supabase
     .from("digital_textbooks")
     .select(
-      "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
+      "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,title,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
     )
-    .eq("student_app_id", studentAppId)
-    .in(
-      "digital_textbook_versions.digital_textbook_chapters.digital_textbook_modules.module_code",
-      ["vocabulary", "grammar"],
-    );
+    .eq("student_app_id", studentAppId);
   if (!canManage && !canPublishChapters) {
     textbookQuery = textbookQuery.eq("status", "published");
   }
@@ -324,6 +321,7 @@ async function loadDigitalTextbookManagementData(
     textbookEntry.chapters.push({
       id: chapter.id,
       number: chapter.chapter_number,
+      title: chapter.title ? localizedTitle(chapter.title) : undefined,
       slug: chapter.slug,
       status: chapter.status,
       versionId: version.id,
@@ -341,7 +339,7 @@ async function loadDigitalTextbookManagementData(
             0,
           ),
           grammarCount: moduleNodes.reduce(
-            (sum, node) => sum + grammarOf(node.content).length,
+            (sum, node) => sum + grammarOf(node.content).length + readTextbookGrammarCards(node.content).length,
             0,
           ),
         };
@@ -353,6 +351,7 @@ async function loadDigitalTextbookManagementData(
       grammarNodes: grammarNodes.map((node) => ({
         id: node.id,
         items: grammarOf(node.content),
+        cards: readTextbookGrammarCards(node.content),
       })),
     });
   }

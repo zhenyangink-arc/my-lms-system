@@ -53,6 +53,8 @@ export function projectLearningContent(bindings:PrivateBindings,ref:string,local
       default: { const impossible:never=section; throw Error(`Unmapped section ${String(impossible)}`); }
     }
   }
-  if(capsule.activities.some(a=>!a.activityKey.startsWith('orientation-')))unsupported.push('复杂活动、听说录音及页进度执行尚待完成；本投影仅显示教学内容。');
+  // This projector describes content, not executable service readiness. The
+  // Runtime registry/admission and executors enforce capabilities separately.
+  // Activity keys cannot establish that an already implemented executor is absent.
   return {revision:capsule.revision,capsuleRef:ref,stepId:capsule.stepId,cards,unsupported,panels:learningPanels(capsule,locale)};
 }

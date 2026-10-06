@@ -34,17 +34,19 @@ const COLUMN_LABELS: Record<string, string> = {
   versionNumber: "当前版本",
   chapterNumber: "教材章节",
   contentSummary: "内容概况",
-  publishing: "发布状态",
+  publishing: "教材与章节状态",
 };
 
 export function DigitalTextbookTable({
   data,
   canManage,
   canPublishChapters,
+  workbenchHref,
 }: {
   data: DigitalTextbookDisplayRow[];
   canManage: boolean;
   canPublishChapters: boolean;
+  workbenchHref?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "hierarchy", desc: false },
@@ -56,8 +58,8 @@ export function DigitalTextbookTable({
     INITIAL_DIGITAL_TEXTBOOK_FILTERS,
   );
   const columns = useMemo(
-    () => getDigitalTextbookColumns(canManage, canPublishChapters),
-    [canManage, canPublishChapters],
+    () => getDigitalTextbookColumns(canManage, canPublishChapters, workbenchHref),
+    [canManage, canPublishChapters, workbenchHref],
   );
 
   const filteredData = useMemo(() => {

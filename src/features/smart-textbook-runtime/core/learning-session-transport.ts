@@ -9,6 +9,7 @@ export function withLearningSession(base:RuntimeServices,m:LessonManifestV1,sess
   enter:(input:{sessionRef:string;generation:number;target:string},signal:AbortSignal)=>Promise<{generation:number}>,continuation?:{generation:number;activeStepId:string}):RuntimeServices{
   if(continuation&&(!Number.isSafeInteger(continuation.generation)||continuation.generation<0||!m.steps.some(s=>s.id===continuation.activeStepId)))throw Error('SESSION_CONTINUATION');
   let generation=continuation?.generation??0,activeStep=continuation?.activeStepId??m.navigation.entryStep,serial=Promise.resolve();
+  const contentReads=new Map<string,Promise<unknown>>();
   const root=(c:string)=>{const b=m.blocks.find(b=>b.type==='compat.learning.v1'&&b.props.capsuleRef===c);const t=m.runtimeTargets.find(t=>t.blockId===b?.id&&!t.partId);if(!b||!t)throw Error('SESSION_CAPSULE');return t;};
   const capsule=(ref:string)=>{const native=m.blocks.find(b=>b.type==='multiple_choice'&&b.props.activityRef===ref);const b=m.blocks.find(b=>b.type==='compat.learning.v1'&&(b.props.activityRefs.includes(ref)||b.stepId===native?.stepId));if(!b||b.type!=='compat.learning.v1')throw Error('SESSION_ACTIVITY');return b.props.capsuleRef;};
   const token=(ref:string)=>{const row=catalog.find(x=>x.runtimeRef===ref);if(!row||!/^activity-ref-[0-9a-f]{32}$/.test(row.serviceRef))throw Error('SESSION_ACTIVITY_TOKEN');return row.serviceRef;};
@@ -22,7 +23,15 @@ export function withLearningSession(base:RuntimeServices,m:LessonManifestV1,sess
       const next=await enter({sessionRef,generation,target:r.id},AbortSignal.timeout(15000));generation=next.generation;activeStep=r.stepId;
     }s.throwIfAborted();});
     serial=prepare.catch(()=>{});await prepare;const g=generation;
-    const value=await send({sessionRef,generation:g,target:address,request},s,blob);s.throwIfAborted();if(g!==generation)throw Error('STALE_GENERATION');return value as T;
+    const envelope={sessionRef,generation:g,target:address,request};
+    // Orientation mounts the native activity group and compatibility content
+    // beside each other. They request the same immutable capsule projection;
+    // share that in-flight read instead of opening duplicate publication leases.
+    const contentRead=!blob&&'op'in request&&request.op==='content';
+    const key=contentRead?`${g}:${address}`:'';
+    let pending=contentRead?contentReads.get(key):undefined;
+    if(!pending){pending=send(envelope,s,blob);if(contentRead){contentReads.set(key,pending);void pending.finally(()=>{if(contentReads.get(key)===pending)contentReads.delete(key);}).catch(()=>{});}}
+    const value=await pending;s.throwIfAborted();if(g!==generation)throw Error('STALE_GENERATION');return value as T;
   }
   const first=()=>{const b=m.blocks.find(b=>b.stepId===activeStep&&b.type==='compat.learning.v1');if(!b||b.type!=='compat.learning.v1')throw Error('SESSION_STEP');return b.props.capsuleRef;};
   return {...base,

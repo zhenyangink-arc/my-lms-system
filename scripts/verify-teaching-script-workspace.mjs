@@ -66,7 +66,7 @@ try {
   const page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
   const errors=[];
   page.on('pageerror',e=>{errors.push(e.message);console.error('Isolated browser error:',e.message);});
-  await page.route('**/*',route=>new URL(route.request().url()).hostname==='127.0.0.1'?route.continue():route.abort());
+  await page.route('**/*',route=>new URL(route.request().url()).origin==='http://127.0.0.1:'+server.address().port?route.continue():route.abort());
   await page.goto('http://127.0.0.1:'+server.address().port);
   await page.getByRole('heading',{name:'教学脚本',exact:true}).waitFor();
   assert.equal(await page.getByRole('region',{name:'可横向滚动的教学编排轴'}).count(),0);
@@ -122,12 +122,12 @@ try {
   await page.getByRole('button',{name:'读取复核内容',exact:true}).click();
   await page.getByText('隔离复核提示',{exact:true}).waitFor();
   await page.locator('summary').filter({hasText:'复核与发布检查'}).click();
-  await page.locator('summary').filter({hasText:'发布学习步骤'}).click();
+  await page.locator('summary').filter({hasText:'发布当前步骤脚本'}).click();
   await page.getByText(/已发布教材快照的更新仍需在教材工作台完成/).waitFor();
-  await page.getByRole('button',{name:'校验并发布',exact:true}).click();
+  await page.getByRole('button',{name:'校验并发布脚本',exact:true}).click();
   await page.waitForFunction(()=>window.actionCalls.some(x=>x.name==='publishTeachingScriptAction'));
   checks.push('review/check/publish still use original Action contracts');
-  await page.locator('summary').filter({hasText:'发布学习步骤'}).click();
+  await page.locator('summary').filter({hasText:'发布当前步骤脚本'}).click();
   for(const width of [375,768,1440]) {
     await page.setViewportSize({width,height:950});
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), 'horizontal overflow at '+width);

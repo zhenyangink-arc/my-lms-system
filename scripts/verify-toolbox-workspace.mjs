@@ -28,7 +28,7 @@ createRoot(document.getElementById('root')).render(<main data-dashboard-ui="mana
     a.path==='@/lib/auth'?'export const requireActiveUser=async()=>({supabase:{from(){const q={select(){return q},eq(){return q},maybeSingle:async()=>({data:null,error:null})};return q}}});':
     a.path.includes('chapter-practice-actions')?'export async function reviewChapterPracticeAction(input){window.calls.push(input);return {ok:true,message:"隔离保存成功"}}':
     a.path.endsWith('/actions')?actionNames.map(n=>`export async function ${n}(){return {status:'error',message:'本测试不保存独立资源'}}`).join('\n'):
-    a.path.includes('digital-textbook')?`export async function getDigitalTextbookManagementData(){return ${JSON.stringify({hasError:false,courses})}}`:
+    a.path.includes('digital-textbook')?`export async function getDigitalTextbookManagementData(){return {...${JSON.stringify({hasError:false,courses})},canPublishChapters:!new URLSearchParams(location.search).has('readonly')}}`:
     `export async function getGrowthToolboxManagementData(){const d=${JSON.stringify(data)};if(new URLSearchParams(location.search).has('readonly'))d.canManage=false;return d;}`
   }));
 }}]});
@@ -50,7 +50,7 @@ try {
   assert.equal(await confirm.isDisabled(),true);
   await page.getByRole('checkbox',{name:'我已核对完整内容，确认用于本章练习。'}).check();
   await page.getByRole('tab',{name:'独立练习库',exact:true}).click();
-  await page.getByRole('tab',{name:'章节练习',exact:true}).click();
+  await page.getByRole('tab',{name:'章节材料引用',exact:true}).click();
   assert.equal(await confirm.isEnabled(),true);
   await confirm.click();
   await page.getByText('隔离保存成功').waitFor();
@@ -61,7 +61,7 @@ try {
   await page.getByRole('tab',{name:'独立练习库',exact:true}).click();
   await page.getByRole('cell',{name:'你好',exact:true}).waitFor();
   assert.equal(await page.getByRole('heading',{name:'教材原文'}).isVisible(),false);
-  await page.getByText('从教材添加 · 所选章节',{exact:true}).click();
+  await page.getByText('从教材复制到独立库 · 所选章节',{exact:true}).click();
   await page.getByRole('heading',{name:'教材原文'}).waitFor();
   await page.getByRole('tab',{name:'语法',exact:true}).click();
   await page.getByRole('heading',{name:'独立语法库',exact:true}).waitFor();
@@ -72,12 +72,12 @@ try {
   await page.getByRole('cell',{name:'隔离测试课程',exact:true}).waitFor();
   const search=page.getByRole('textbox',{name:'搜索工具入口'});
   await search.fill('不存在');await page.getByText('没有符合条件的工具入口').waitFor();
-  await page.getByRole('tab',{name:'章节练习',exact:true}).click();
+  await page.getByRole('tab',{name:'章节材料引用',exact:true}).click();
   await page.getByRole('tab',{name:'工具设置'}).click();assert.equal(await search.inputValue(),'不存在');
   await search.fill('');
   await page.screenshot({path:path.join(dir,'settings.png'),fullPage:true});
   await page.getByRole('tab',{name:'工具设置'}).focus();await page.keyboard.press('Home');
-  assert.equal(await page.getByRole('tab',{name:'章节练习',exact:true}).getAttribute('aria-selected'),'true');
+  assert.equal(await page.getByRole('tab',{name:'章节材料引用',exact:true}).getAttribute('aria-selected'),'true');
   checks.push('技术列默认隐藏；搜索状态保留；键盘 Home 切换');
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:path.join(dir,'mobile.png'),fullPage:true});
@@ -86,7 +86,7 @@ try {
   await page.screenshot({path:path.join(dir,'dark.png'),fullPage:true});
   checks.push('手机默认页无横向溢出；深色截图');
   await page.goto(url+'?noChapter');await page.getByText('在上方选择章节与教材版本后，可核对并关联本章教材练习。').waitFor();
-  await page.goto(url+'?readonly');await page.getByText('当前权限仅可查看独立练习库和工具设置，不能管理章节练习关联。').waitFor();
+  await page.goto(url+'?readonly');await page.getByText('仅平台负责人可以管理教材练习关联；独立练习库和工具设置沿用各自权限。').waitFor();
   assert.equal(await page.getByRole('button',{name:'确认关联到练习'}).count(),0);
   checks.push('未选章节与只读权限明确提示，不暴露关联操作');
   assert.deepEqual(errors,[]);

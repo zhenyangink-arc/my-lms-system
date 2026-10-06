@@ -36,7 +36,7 @@ export function productionLearningPorts(resolveSession:(userId:string,tenantId:s
   const flow=createLearningFlow(async():Promise<FlowAuthority>=>{
     const a=await authorize();return {...a,ownerId:a.scope.actorId,sessionScope:a.sessionId,preview:false,
       check:checkSmartTextbookActivityPageAction,
-      history:async c=>{const result=await reader(new AbortController().signal);const restored=result.capsules.find(x=>x.capsuleRef===c);if(!restored)throw Error('HISTORY_CAPSULE');return restored;},
+      history:async c=>{const result=await reader(new AbortController().signal,c);const restored=result.capsules[0];if(!restored||restored.capsuleRef!==c)throw Error('HISTORY_CAPSULE');return restored;},
       submit:async(activityId,response)=>{const binding=a.bindings.activities.find(x=>x.activityId===activityId&&x.versionId===a.manifest.version.id);const capsule=a.bindings.capsules.find(c=>c.kind==='learning'&&c.activities.some(x=>x.activityId===activityId));const item=capsule?.kind==='learning'?capsule.activities.find(x=>x.activityId===activityId):null;if(!binding||!item||item.activityKey==='speaking-introduction'||item.activityKey==='dialogue-roleplay')throw Error('USE_RECORDING_DOMAIN');return submitSmartTextbookActivityForContext({activityId,response,locale:a.locale},{admin:a.admin,supabase:a.db,userId:a.scope.actorId,tenantId:a.scope.tenantId,canSubmit:true,preview:false});},
     };
   },store);
@@ -62,14 +62,14 @@ export function productionLearningPorts(resolveSession:(userId:string,tenantId:s
       if(!block||!binding||index<0)throw Error('NATIVE_ACTIVITY_SCOPE');
       return submitSmartTextbookActivityForContext({activityId:binding.activityId,response:index,locale:a.locale},{admin:a.admin,supabase:a.db,userId:a.scope.actorId,tenantId:a.scope.tenantId,canSubmit:true,preview:false});
     }),
-    refresh:signal=>scoped(signal,async()=>(await reader(signal)).server),
+    refresh:signal=>scoped(signal,async()=>(await reader(signal,null)).server),
     learningFlow:{restore:(c,s)=>scoped(s,()=>flow.restore(c)),revealPage:(c,p,s)=>scoped(s,()=>flow.revealPage(c,p)),finishPages:(c,a,s)=>scoped(s,()=>flow.finishPages(c,a)),finishPattern:(c,a,r,s)=>scoped(s,()=>flow.finishPattern(c,a,r))},
     activities:{load:(c,s)=>scoped(s,async()=>{const a=await authorize();const rows=activityExecutions(a.manifest,a.bindings,c,a.locale);rows.forEach(r=>refs.set(r.ref,c));return rows;}),submit:(id,r:ActivityResponse,s)=>scoped(s,async()=>{const c=refs.get(id);if(!c)throw Error('ACTIVITY_NOT_LOADED');return flow.submit(c,id,r);})},
     pages:{load:(c,s)=>scoped(s,async()=>{const a=await authorize();return activityPages(a.bindings,a.services,c,a.locale);}),check:(c,p,r,s)=>scoped(s,()=>flow.pageCheck(c,p,r)),audio:(c,p,s)=>scoped(s,async()=>(await listening(c,p,'audio',s)).blob()),transcript:(c,p,s)=>scoped(s,async()=>z.strictObject({transcript:z.string().min(1)}).parse(await (await listening(c,p,'transcript',s)).json()).transcript)},
     patterns:{load:(c,s)=>scoped(s,async()=>{const a=await authorize();return patternExecutions(a.manifest,a.bindings,c,a.locale);}),check:(c,id,r,s)=>scoped(s,()=>flow.patternCheck(c,id,r)),audio:(c,turn,s)=>scoped(s,async()=>{const a=await authorize();return patternAudioBytes(a.manifest,a.bindings,c,turn,s);})},
     guidedRepeat:{load:(c,s)=>scoped(s,async()=>{const a=await authorize(),lesson=repeatLesson(a.manifest,a.bindings,a.services,c,a.locale);return lesson?{lesson,state:await readGuidedRepeatHistory(a.db,a.services,a.scope,lesson)}:null;}),mark:(c,track,segment,s)=>scoped(s,async()=>{const a=await authorize(),lesson=repeatLesson(a.manifest,a.bindings,a.services,c,a.locale);if(!lesson)throw Error('REPEAT_SCOPE');await saveBoundGuidedRepeat(a.services,a.scope,lesson,track,segment,saveGuidedRepeatProgressAction);return readGuidedRepeatHistory(a.db,a.services,a.scope,lesson);})},
     learningTools:{load:(c,s)=>scoped(s,async()=>{const a=await authorize();return learningTools(a.manifest,a.bindings,a.services,c,a.nodes);}),open:(c,target,s)=>scoped(s,async()=>{
-      const a=await authorize(),history=await reader(s),navigation=a.services.navigation[0];if(!navigation)throw Error('NAVIGATION_SCOPE');
+      const a=await authorize(),history=await reader(s,null),navigation=a.services.navigation[0];if(!navigation)throw Error('NAVIGATION_SCOPE');
       const {data,error}=await a.db.from('course_ebook_progress').select('progress_percent,reading_seconds,completion_source').eq('tenant_id',a.scope.tenantId).eq('student_id',a.scope.actorId).eq('test_slug',navigation.slug).eq('student_app_id',a.manifest.textbook.appId).maybeSingle();
       if(error)throw Error('NAVIGATION_HISTORY_UNAVAILABLE');
       return openLearningDestination(a.manifest,a.bindings,a.services,a.scope,c,target,history.server,!!data&&isKoreanChapterLearningCompleted({progressPercent:data.progress_percent,readingSeconds:data.reading_seconds,completionSource:data.completion_source}),a.nodes);

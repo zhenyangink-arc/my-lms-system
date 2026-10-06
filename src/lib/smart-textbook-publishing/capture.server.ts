@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { readChapterOneLegacySource } from '../smart-textbook-legacy-adapter/reader.server.ts';
 import { readChapterOneServiceEvidence } from '../smart-textbook-legacy-adapter/service-reader.server.ts';
+import { profile } from '../smart-textbook-legacy-adapter/profile.server';
 import type { PublicationScope } from './artifact.server.ts';
 
 export const dependencyTables = ['digital_textbooks','digital_textbook_versions','digital_textbook_chapters','digital_textbook_modules','digital_textbook_nodes','digital_textbook_activities','digital_textbook_activity_secrets','digital_textbook_media_assets','digital_textbook_listening_tracks','learning_agent_lessons','learning_agent_profiles','learning_agent_profile_secrets','learning_agent_script_versions','learning_agent_script_nodes','learning_agent_node_interaction_secrets','learning_agent_script_audio_assets','chapter_tests'] as const;
@@ -10,6 +11,12 @@ export const dependencyTables = ['digital_textbooks','digital_textbook_versions'
 const row=z.record(z.string(),z.json());
 export const dependencyCaptureSchema=z.record(z.enum(dependencyTables),z.array(row));
 export type DependencyCapture=z.infer<typeof dependencyCaptureSchema>;
+
+/** Authoring display follows the same frozen title projection as compilation.
+ * Keep Adapter internals behind this server-only publication DAL. */
+export function chapterOneStepTitle(moduleId:string,fallback:string):string {
+  return Object.values(profile).find(p=>p.moduleId===moduleId)?.title['zh-CN']??fallback;
+}
 
 /** Replay the EXISTING SELECT projection against ONE captured SQL snapshot.
  * No second database read can tear compilation across authoring revisions. */
@@ -31,7 +38,11 @@ export async function projectPublicationCapture(input:unknown){
     return q;
   }} as unknown as SupabaseClient;
   const source=await readChapterOneLegacySource(transport),evidence=await readChapterOneServiceEvidence(transport,source);
-  if(source.activities.some(a=>dependencies.digital_textbook_activity_secrets.filter(s=>s.activity_id===a.id).length!==1))throw Error('CAPTURE_GRADER_SECRET_REQUIRED');
+  // Dialogue roleplay is completed by the atomic recording-evidence service,
+  // not by the answer-key grader. Every activity that reaches the grader must
+  // still have exactly one frozen private secret in the publication capture.
+  const graderActivities=source.activities.filter(a=>!(a.activity_key==='dialogue-roleplay'&&a.activity_type==='speaking'));
+  if(graderActivities.some(a=>dependencies.digital_textbook_activity_secrets.filter(s=>s.activity_id===a.id).length!==1))throw Error('CAPTURE_GRADER_SECRET_REQUIRED');
   if(source.teachingNodes.some(n=>n.reference_activity_id&&!source.activities.some(a=>a.id===n.reference_activity_id)))throw Error('CAPTURE_EXTERNAL_ACTIVITY_UNSUPPORTED');
   return {source,evidence,dependencies};
 }

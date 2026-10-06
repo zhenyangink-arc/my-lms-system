@@ -3,6 +3,7 @@ import { canonical, digest } from '../smart-textbook-legacy-adapter/identity.ser
 import type { LegacyChapterOneSource } from '../smart-textbook-legacy-adapter/source.server';
 import type { finalizeChapterOneNonUiReadiness } from '../smart-textbook-legacy-adapter/final-readiness.server';
 import audit from './assets/v1/chapter-one-media-audit.server';
+import { unchangedGrammarMedia } from './grammar-media-proof.server';
 
 type Result = ReturnType<typeof finalizeChapterOneNonUiReadiness>;
 /** All 75 references remain. Source readiness and stable learning IDs remain.
@@ -19,7 +20,7 @@ export function mediaPublicationAudit(source: LegacyChapterOneSource, result: Re
     // actual resource identity, not an unrelated chapter title/compiler revision.
     const {revision:_,...resource}=binding;
     if (!proof || proof.readiness !== ref.readiness || digest(asset ?? resource) !== proof.resourceDigest ||
-      (node ? digest(node.content) : null) !== proof.nodeDigest) throw Error(`PUBLICATION_MEDIA_REAUDIT_REQUIRED:${ref.id}`);
+      ((node ? digest(node.content) : null) !== proof.nodeDigest && !(node&&unchangedGrammarMedia(node,proof.nodeDigest)))) throw Error(`PUBLICATION_MEDIA_REAUDIT_REQUIRED:${ref.id}`);
     return {...proof, ...(proof.rule === 'required-ready' ? {} : { admission: {
       revision:'chapter-one-media/1' as const, rule:proof.rule, evidenceDigest:digest(proof),
     }})};

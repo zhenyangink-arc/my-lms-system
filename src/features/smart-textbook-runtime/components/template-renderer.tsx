@@ -4,7 +4,7 @@ import type { LayoutV1 } from '../../../lib/smart-textbook-runtime-v1/contracts'
 import { RevealBoundary } from './reveal-boundary';
 import {RuntimeToolbar} from './runtime-toolbar';
 
-export function TemplateRenderer({layout,teaching,interaction,navigation,activeStepId,chapter,presentation}:{presentation?:'split'|'learning';layout:LayoutV1;teaching:ReactNode;interaction:ReactNode;navigation:ReactNode;activeStepId?:string;chapter?:{title:string;position:number;total:number;locale:'zh-CN'|'ko-KR';backHref?:string}}){
+export function TemplateRenderer({layout,teaching,interaction,navigation,activeStepId,chapter,presentation}:{presentation?:'split'|'learning';layout:LayoutV1;teaching:ReactNode;interaction:ReactNode;navigation:ReactNode;activeStepId?:string;chapter?:{title:string;position:number;total:number;locale:'zh-CN'|'ko-KR';backHref?:string;onLocaleChange?:(locale:'zh-CN'|'ko-KR')=>Promise<void>}}){
   const [collapsed,setCollapsed]=useState(false);
   const container=useRef<HTMLDivElement>(null);
   const reveal=useCallback(()=>setCollapsed(false),[]);

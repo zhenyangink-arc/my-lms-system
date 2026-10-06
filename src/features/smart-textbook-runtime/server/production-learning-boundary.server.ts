@@ -13,8 +13,11 @@ import {readSceneImage} from './scene-image-storage.server';
 /** Concrete composition, NOT a deployed route. Request headers come from the
  * trusted server transport, never a client-supplied Request/identity envelope.
  * Recording writes retain the existing gateway's disabled-v2 fail-closed gate. */
-export function createProductionLearningBoundary(request:()=>Promise<Request>){
-  const resolver=createRuntimeLearningSessionResolver();
+export function createProductionLearningBoundary(request:()=>Promise<Request>,guard:()=>Promise<unknown>=async()=>{}){
+  const original=createRuntimeLearningSessionResolver();
+  // Application admission dependencies and LIVE chapter access are rechecked
+  // at the existing resolver boundary, including each installed domain callback.
+  const resolver={...original,issue:async()=>{await guard();return original.issue();},resolve:async(input:unknown)=>{await guard();return original.resolve(input);}};
   const boundary=createLearningBoundary(resolver,async initial=>{
     const expected={sessionId:initial.sessionId,snapshotId:initial.snapshotId};
     const current=()=>resolver.resolve({sessionRef:initial.sessionId});

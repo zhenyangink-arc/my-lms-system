@@ -124,7 +124,8 @@ test('unmounted production adapter executes real authorized Reader, rejects scop
     const {productionLearningPorts}=await serverModule('src/features/smart-textbook-runtime/server/production-learning.server.ts',overrides);
     let authorizationCount=0;const a={...h.authority,admin:h.authority.db,expiresAt:Date.now()+60000,request:new Request('http://isolated.test/runtime')};
     const ports=productionLearningPorts(async(user,tenant)=>{assert.equal(user,scope.actorId);assert.equal(tenant,scope.tenantId);authorizationCount++;return a;},{sessionId:'trusted',snapshotId:manifest.snapshot.id}),signal=new AbortController().signal;
-    const projected=await ports.refresh(signal);assert.equal(projected.completedStepIds.length,0);assert.equal(projected.guidedRepeat[0].segmentIds.length,14);
+    const projected=await ports.refresh(signal);assert.equal(projected.completedStepIds.length,0);assert.deepEqual(projected.guidedRepeat,[]);
+    const restored=await ports.learningFlow.restore(capsule('listen_speak').id,signal);assert.equal(restored.capsuleRef,capsule('listen_speak').id);
     const c=capsule('listen_speak');for(const p of pages('listen_speak'))assert.equal((await ports.pages.audio(c.id,p.pageId,signal)).size,3);assert.deepEqual(mediaCalls.map(c=>c.input.page),['0','1']);
     await assert.rejects(()=>ports.pages.transcript(c.id,pages('listen_speak')[0].pageId,signal),/REQUIRES_CHECK/);
     for(const [key,value]of [['sessionId','wrong'],['snapshotId','wrong'],['expiresAt',0]]){const before=a[key];a[key]=value;await assert.rejects(()=>ports.refresh(signal),/SESSION_SCOPE/);a[key]=before;}

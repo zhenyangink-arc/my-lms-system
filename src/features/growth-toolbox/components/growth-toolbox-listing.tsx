@@ -30,7 +30,7 @@ export default async function GrowthToolboxListing({
   const result = await getGrowthToolboxManagementData(studentAppId);
   const textbookResult = await getDigitalTextbookManagementData(studentAppId);
   const { supabase } = await requireActiveUser();
-  const bindingResult = chapterId && result.canManage ? await supabase.from("chapter_practice_bindings")
+  const bindingResult = chapterId && textbookResult.canPublishChapters ? await supabase.from("chapter_practice_bindings")
     .select("id,chapter_id,version_id,revision,is_enabled,snapshot,reviewed_at")
     .eq("student_app_id", studentAppId).eq("chapter_id", chapterId).maybeSingle() : null;
   const currentSnapshot = chapterId && !textbookResult.hasError ? chapterPracticeSnapshot(textbookResult.courses, chapterId) : null;
@@ -72,19 +72,19 @@ export default async function GrowthToolboxListing({
         />
       </ReadOnlySection>
       } chapter={<div className="space-y-4">
-      {chapterId && result.canManage && <ChapterPracticeBindingPanel
+      {chapterId && textbookResult.canPublishChapters && <ChapterPracticeBindingPanel
         key={`${chapterId}:${binding?.revision ?? 0}:${JSON.stringify(currentSnapshot)}`}
         appId={studentAppId} chapterId={chapterId} current={currentSnapshot}
         binding={binding} available={Boolean(bindingResult && !bindingResult.error && !textbookResult.hasError && !result.hasError)}
       />}
-      {!chapterId && result.canManage && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
-      {!result.canManage && <ManagementNotice>当前权限仅可查看独立练习库和工具设置，不能管理章节练习关联。</ManagementNotice>}
+      {!chapterId && textbookResult.canPublishChapters && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
+      {!textbookResult.canPublishChapters && <ManagementNotice>仅平台负责人可以管理教材练习关联；独立练习库和工具设置沿用各自权限。</ManagementNotice>}
       </div>} library={<div className="space-y-5">
       <CardTitleWithHint title="独立练习库" headingLevel={2}
         description={`这里展示当前应用的全部独立资源，不随上方章节筛选，也不代表已关联到本章。${practiceSourceNotice}`}
         hintLabel="独立练习库的范围与保存规则" />
       <details className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-        <summary className="cursor-pointer text-sm font-medium">从教材添加 · {chapterId ? "所选章节" : "全部章节"}</summary>
+        <summary className="cursor-pointer text-sm font-medium">从教材复制到独立库 · {chapterId ? "所选章节" : "全部章节"}</summary>
         <div className="mt-4">
       {textbookResult.hasError ? (
         <ManagementNotice tone="warning">教材来源未能完整读取，暂不提供复制入口。现有练习库仍可查看。</ManagementNotice>

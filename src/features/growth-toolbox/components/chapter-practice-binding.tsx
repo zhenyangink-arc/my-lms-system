@@ -10,6 +10,7 @@ const fieldNames: Record<string, string> = {
   ko: "韩语", zh: "中文", pos: "词性", collocation: "搭配", transcription: "音标",
   title: "语法", meaning: "含义", cases: "收音情况", batchim: "收音", conjugation: "变化",
   rows: "形态", form: "形式", combination: "组合", audio: "音频", examples: "例句", caution: "注意事项",
+  function: "功能说明", rules: "规则", source: "来源", comparison: "对比说明", 'zh-CN': "中文", 'ko-KR': "韩文", audioId: "音频引用", audioStatus: "音频状态",
 };
 function showValue(value: unknown): string {
   if (Array.isArray(value)) return value.map(showValue).join("\n");

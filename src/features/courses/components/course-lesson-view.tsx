@@ -37,6 +37,7 @@ export function CourseLessonView({
   canManage,
   canPermanentlyDeleteResources,
   textbookHref,
+  compact = false,
 }: {
   lesson: CourseCatalogLesson;
   resources: CourseLessonResource[];
@@ -44,12 +45,14 @@ export function CourseLessonView({
   canManage: boolean;
   canPermanentlyDeleteResources: boolean;
   textbookHref?: string;
+  compact?: boolean;
 }) {
   return (
     <div className="space-y-6">
-      <section className="grid gap-5 border-y border-[var(--border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
-        <LessonCover lesson={lesson} />
+      <section className={`grid gap-5 border-y border-[var(--border)] py-5 ${compact ? "" : "lg:grid-cols-[320px_minmax(0,1fr)]"}`}>
+        {(!compact || lesson.cover_object_key) && <div className={compact ? "max-w-sm" : undefined}><LessonCover lesson={lesson} /></div>}
         <div className="min-w-0">
+          {!compact && <>
           <p className="text-xs font-medium text-[var(--foreground-muted)]">课时结构预览</p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--foreground)]">
             {lesson.title}
@@ -57,6 +60,7 @@ export function CourseLessonView({
           <p className="mt-1 font-mono text-[11px] text-[var(--foreground-muted)]">
             {lesson.slug}
           </p>
+          </>}
           <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[var(--foreground-secondary)]">
             {lesson.description || "暂无课时简介"}
           </p>
@@ -87,7 +91,7 @@ export function CourseLessonView({
         </div>
       </section>
 
-      {textbookHref && (
+      {textbookHref && !compact && (
         <section className="flex flex-wrap items-center justify-between gap-4 border-y border-[var(--border)] py-4">
           <div>
             <h3 className="text-sm font-semibold text-[var(--foreground)]">教学内容由教材制作统一管理</h3>

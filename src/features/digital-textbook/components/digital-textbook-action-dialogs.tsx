@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GrammarCardContent } from './grammar-card-content';
 import { useRouter } from "next/navigation";
 import { LoaderCircle, Pencil, Plus, Trash2, Upload, Volume2 } from "lucide-react";
 
@@ -76,7 +77,11 @@ export function DigitalTextbookContentDialog({
           {panel === "vocabulary" ? (
             <VocabularyEditor row={row} />
           ) : (
-            <GrammarEditor row={row} />
+            row.grammarNodes.some(n => n.cards?.length) ? <div className="space-y-4">
+              <p role="status" className="text-sm text-muted-foreground">这是学生正在使用的语法卡。第一章文字修改请进入第一章工作台；例句媒体与其他章节本轮仅查看，不会写入旧语法字段。</p>
+              {row.grammarNodes.flatMap(n => (n.cards ?? []).map((card,i)=><GrammarCardContent key={`${n.id}:${i}`} card={card}/>))}
+              {row.grammarNodes.some(n=>n.items.length>0)&&<p role="alert">本章同时存在旧格式语法，请先核对来源；当前不允许合并或覆盖。</p>}
+            </div> : <GrammarEditor row={row} />
           )}
         </div>
       </DialogContent>

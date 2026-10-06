@@ -1,4 +1,5 @@
 import DigitalTextbookAdminPage from "@/app/dashboard/admin/digital-textbook/page-content";
+import { requireActiveUser } from '@/lib/auth';
 import {
   firstSectionParam,
   type SectionSearchParams,
@@ -15,6 +16,7 @@ export default async function ManagementAppTextbooksRoute({
 }) {
   const { space, appSlug } = await params;
   const chapterId = firstSectionParam((await searchParams).chapter);
+  const auth = await requireActiveUser();
   const context = await requireManagementApplicationSection(
     space,
     appSlug,
@@ -26,6 +28,8 @@ export default async function ManagementAppTextbooksRoute({
       <DigitalTextbookAdminPage
         chapterId={chapterId} studentAppId={context.access.appId}
         courseStructureRoute={`${context.access.appPath}/content`}
+        workbenchHref={appSlug === 'korean' && auth.profile?.global_role === 'platform_owner'
+          ? `${context.access.appPath}/textbooks/workbench` : undefined}
       />
     </ManagementApplicationSectionFrame>
   );

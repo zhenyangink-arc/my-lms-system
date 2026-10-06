@@ -48,6 +48,11 @@ export async function publishedChapterFixture(){
         else await db.query(`insert into public.${ident(table)}(${Object.keys(row).map(ident)}) values(${Object.values(row).map(value)})`);
       }
     }
+    // Mirror production: dialogue-roleplay is completed by the atomic
+    // recording-evidence RPC and intentionally has no answer-key secret.
+    const roleplay=source.activities.find(a=>a.activity_key==='dialogue-roleplay'&&a.activity_type==='speaking');
+    if(!roleplay)throw Error('ROLEPLAY_FIXTURE_REQUIRED');
+    await db.query(`delete from public.digital_textbook_activity_secrets where activity_id=${q(roleplay.id)}`);
     await db.query(`create table public.profiles(id uuid primary key,global_role text,status text);
       insert into public.profiles values(${q(original.student)},'platform_owner','active');
       create table public.learning_agent_profile_secrets(agent_profile_id uuid,system_prompt text,model text);
@@ -61,6 +66,9 @@ export async function publishedChapterFixture(){
     await db.query(await text('202608180027_restore_objective_activity_recording.sql'));
     await db.query(await text('202609100001_runtime_publish_foundation.sql'));
     await db.query(await text('202609100002_runtime_publication_dependency_fence.sql'));
+    await db.query(await text('202609100004_runtime_single_version_authoring.sql'));
+    await db.query(await text('202609110001_allow_evidence_graded_roleplay_publication.sql'));
+    await db.query(await text('202609110002_restore_single_version_publish_wrapper.sql'));
     // Isolated coordinator rehearsal ONLY. No host environment/deployment change.
     await db.query(await text('202609090002_recording_domain_coordination.sql'));
     await db.query(`insert into recording_private.domain_instances values('publication-isolated',1);
@@ -82,7 +90,12 @@ export async function publishedChapterFixture(){
       if(table.startsWith('learning_agent_')&&!['learning_agent_profiles','learning_agent_lessons','learning_agent_script_versions','learning_agent_script_nodes','learning_agent_script_audio_assets'].includes(table))return original.admin.from(table);
       if(table==='digital_textbook_speaking_evidence')return rpc.from(table);
       ident(table);let predicates=[],orders=[],limit='',head=false,signal,columns='';
-      const b={select(c,options={}){columns=c;head=!!options.head;return b;},eq(k,v){predicates.push(`${ident(k)}=${value(v)}`);return b;},in(k,vs){predicates.push(vs.length?`${ident(k)} in (${vs.map(value)})`:'false');return b;},
+      const b={select(c,options={}){columns=c;head=!!options.head;return b;},eq(k,v){predicates.push(`${ident(k)}=${value(v)}`);return b;},is(k,v){if(v!==null)throw Error('IS transport');predicates.push(`${ident(k)} is null`);return b;},in(k,vs){predicates.push(vs.length?`${ident(k)} in (${vs.map(value)})`:'false');return b;},
+        async upsert(row,options){
+          if(table!=='digital_textbook_preferences'||options.onConflict!=='tenant_id,student_id,textbook_id')throw Error('Unexpected preference upsert');
+          const result=await db.raw(service(`insert into public.digital_textbook_preferences(${Object.keys(row).map(ident)}) values(${Object.values(row).map(value)}) on conflict(tenant_id,student_id,textbook_id) do update set interface_locale=excluded.interface_locale,support_mode=excluded.support_mode,updated_at=excluded.updated_at`));
+          return {data:null,error:result.code?{message:result.stderr}:null};
+        },
         order(k,{ascending=true}={}){orders.push(`${ident(k)} ${ascending?'asc':'desc'}`);return b;},limit(n){if(!Number.isInteger(n))throw Error('limit');limit=` limit ${n}`;return b;},abortSignal(s){signal=s;return b;},
         or(expression){const m=/^created_at\.(lt|gt)\.([^,]+),and\(created_at.eq.([^,]+),id\.(lte|gt)\.([a-f0-9-]+)\)$/.exec(expression);if(!m||m[2]!==m[3])throw Error('SQL cursor');predicates.push(`(created_at ${m[1]==='lt'?'<':'>'} ${q(m[2])} or (created_at=${q(m[3])} and id ${m[4]==='lte'?'<=':'>'} ${q(m[5])}))`);return b;},
         async maybeSingle(){const r=await finish();return {...r,data:r.data?.[0]??null};},async single(){return b.maybeSingle();},then(resolve,reject){return finish().then(resolve,reject);}};

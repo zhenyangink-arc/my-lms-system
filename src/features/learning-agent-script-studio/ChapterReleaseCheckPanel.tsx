@@ -28,7 +28,7 @@ export function ChapterReleaseCheckPanel({ appId, chapterId, disabled }: { appId
     });
   }
   return <section className="space-y-3 rounded-lg border border-[var(--border)] p-4">
-    <CardTitleWithHint headingLevel={2} title="章节发布条件检查" description="检查正式教材、脚本、复核状态、视频文件与练习引用。可另选学生核对开放条件，不会登录该账号。此检查不发布教材，实际画面与播放效果请使用脚本预览。" />
+    <CardTitleWithHint headingLevel={2} title="教学依赖检查（不发布）" description="检查正式教材、脚本、复核状态、视频文件与练习引用。可另选学生核对开放条件，不会登录该账号。此检查不发布教材，实际画面与播放效果请使用脚本预览。" />
     <details className="rounded-lg border border-[var(--border)]">
       <summary className="min-h-11 cursor-pointer px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">指定学生核对开放条件（可选）{studentKey ? " · 已选择" : ""}</summary>
     <div className="flex flex-wrap items-end gap-3 border-t p-3">

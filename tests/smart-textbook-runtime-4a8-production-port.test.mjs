@@ -73,3 +73,15 @@ test('4A8 actual domain gateway checks new Runtime binding; wrong binding/unboun
     const legacy=structuredClone(row);delete legacy.metadata.runtimeBinding;await assert.rejects(g.consumable(legacy));assert.equal(heads,1);
   }finally{delete globalThis.__runtimeHead;}
 });
+
+test('4A8 published restore filters historical evidence by exact Runtime binding instead of failing textbook bootstrap',async()=>{
+  const gateway=await serverModule('src/lib/recording-domain-gateway.server.ts',{'@/lib/r2':'export function checkR2ObjectExists(){throw Error("No HEAD");} export function createR2SignedObjectUrl(){throw Error("No network");} export function createR2SignedUploadUrl(){throw Error("No network");} export function deleteR2Object(){throw Error("No network");}'});
+  const owner={tenantId:randomUUID(),studentId:randomUUID()},versionId=randomUUID(),activityId=randomUUID();
+  const runtime={snapshot:'snapshot-current',sourceRevision:'revision-current',activityRef:'activity-current'};
+  const filters=[];
+  const builder={select(){return builder;},eq(){return builder;},is(){return builder;},contains(column,value){filters.push([column,value]);return builder;},order(){return builder;},limit(){return builder;},async maybeSingle(){return {data:null,error:null};}};
+  const admin={from(table){assert.equal(table,'digital_textbook_speaking_evidence');return builder;}};
+  const g=gateway.createRecordingGateway(admin,{owner},{activity:{id:activityId,public_config:{presentation:'independent_output'}},versionId,sourceRevision:'legacy-domain'},runtime);
+  assert.equal(await g.restore(new URLSearchParams()),null);
+  assert.deepEqual(filters.find(([,value])=>value?.runtimeBinding),['metadata',{runtimeBinding:{...runtime,versionId,recordingKind:'independent-output'}}]);
+});

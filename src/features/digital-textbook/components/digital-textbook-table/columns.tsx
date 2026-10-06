@@ -8,6 +8,7 @@ import type {
   DigitalTextbookVocabularyNode,
 } from "../../api/types";
 import { DigitalTextbookCellAction } from "./cell-action";
+import { chapterWorkbenchHref, textbookModuleLabel } from '../textbook-navigation';
 
 export type DigitalTextbookDisplayRow = {
   id: string;
@@ -23,6 +24,7 @@ export type DigitalTextbookDisplayRow = {
   versionNumber: number;
   versionStatus: string;
   chapterId: string;
+  chapterTitle?: string;
   chapterNumber: number;
   chapterSlug: string;
   chapterStatus: string;
@@ -95,18 +97,12 @@ function PublishingSummary({ row }: { row: DigitalTextbookDisplayRow }) {
   );
 }
 
-function moduleLabel(code: string) {
-  if (code === "vocabulary") return "词汇模块";
-  if (code === "grammar") return "语法模块";
-  return "其他模块";
-}
-
 function ContentSummary({ row }: { row: DigitalTextbookDisplayRow }) {
   return (
     <div className="min-w-52">
       <p className="text-[10px] font-medium text-[var(--foreground-secondary)]">
         {row.moduleCodes.length > 0
-          ? row.moduleCodes.map((code) => moduleLabel(code)).join(" · ")
+          ? row.moduleCodes.map(textbookModuleLabel).join(" · ")
           : "暂无模块"}
       </p>
       <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">
@@ -144,6 +140,7 @@ function HierarchyCell({
 export function getDigitalTextbookColumns(
   canManage: boolean,
   canPublishChapters: boolean,
+  workbenchHref?: string,
 ): ColumnDef<DigitalTextbookDisplayRow>[] {
   return [
   {
@@ -195,7 +192,7 @@ export function getDigitalTextbookColumns(
   {
     id: "publishing",
     accessorFn: (row) => `${row.textbookStatus} ${row.versionStatus} ${row.chapterStatus}`,
-    header: sortableHeader("发布状态"),
+    header: sortableHeader("教材与章节状态"),
     cell: ({ row }) => <PublishingSummary row={row.original} />,
   },
   {
@@ -210,6 +207,7 @@ export function getDigitalTextbookColumns(
             row={row.original}
             canManage={canManage}
             canPublishChapter={canPublishChapters}
+            workbenchHref={canManage ? chapterWorkbenchHref(row.original.chapterId, workbenchHref) : undefined}
           />
         ) : (
           <span className="text-[11px] text-[var(--foreground-muted)]">只读</span>

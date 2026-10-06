@@ -47,6 +47,7 @@ export function CardTitleWithHint({
   const Heading =
     headingLevel === 4 ? "h4" : headingLevel === 3 ? "h3" : headingLevel === 2 ? "h2" : "h1";
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const pointerStartOpenRef = useRef<boolean | null>(null);
   const tooltipId = useId();
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState<TooltipPosition | null>(null);
@@ -76,8 +77,8 @@ export function CardTitleWithHint({
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setIsOpen(false);
         triggerRef.current?.focus();
+        setIsOpen(false);
       }
     };
     const closeOnOutsidePointer = (event: PointerEvent) => {
@@ -112,12 +113,29 @@ export function CardTitleWithHint({
             aria-label={hintLabel}
             aria-describedby={isOpen ? tooltipId : undefined}
             aria-expanded={isOpen}
-            onMouseEnter={openHint}
-            onMouseLeave={() => setIsOpen(false)}
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse") openHint();
+            }}
+            onPointerLeave={(event) => {
+              if (event.pointerType === "mouse") setIsOpen(false);
+            }}
             onFocus={openHint}
-            onBlur={() => setIsOpen(false)}
-            onClick={() => {
-              if (isOpen) {
+            onBlur={() => {
+              pointerStartOpenRef.current = null;
+              setIsOpen(false);
+            }}
+            onPointerDown={() => {
+              pointerStartOpenRef.current = isOpen;
+            }}
+            onPointerCancel={() => {
+              pointerStartOpenRef.current = null;
+            }}
+            onClick={(event) => {
+              // Focus may open the hint between touch-down and click. Toggle
+              // from the gesture's initial state, not that intermediate state.
+              const wasOpen = event.detail === 0 ? isOpen : pointerStartOpenRef.current ?? isOpen;
+              pointerStartOpenRef.current = null;
+              if (wasOpen) {
                 setIsOpen(false);
               } else {
                 openHint();

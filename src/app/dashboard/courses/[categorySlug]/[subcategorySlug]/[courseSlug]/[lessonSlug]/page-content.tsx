@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { runtimePageDecision } from "@/features/smart-textbook-runtime/server/application-admission.server";
+import { PublishedRuntimeEntry } from "@/features/smart-textbook-runtime/components/published-runtime-entry";
 import { LiveClassEntryBanner } from "@/app/dashboard/live/LiveClassEntryBanner";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import {
@@ -774,6 +776,19 @@ export default async function LessonDetailPage({
 
     if (isKoreanLevelOne && hasLessonAccess) {
         const requestedChapterNumber = requestedChapter?.match(/-(\d{2})$/)?.[1];
+        // Runs only after the existing lesson/sequence/chapter access checks.
+        // Default-off, exact Chapter 1; non-cohort and other chapters keep Shell.
+        const runtimeAdmission = await runtimePageDecision({
+            chapterNumber: requestedChapterNumber ? Number(requestedChapterNumber) : 0,
+            platformAudit: isPlatformAudit,
+        });
+        if (runtimeAdmission !== "legacy") {
+            return <LessonActivityBoundary lessonId={lesson.id}>
+                {liveClassBanner}
+                {runtimeAdmission === "runtime" ? <PublishedRuntimeEntry backHref={courseDirectoryHref} />
+                    : <p role="alert">教材运行服务暂不可用，请返回课程后重试。</p>}
+            </LessonActivityBoundary>;
+        }
         const smartTextbook = await loadSmartDigitalTextbook({
             textbookSlug: "korean-level-one-smart",
             chapterNumber: Math.max(

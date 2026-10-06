@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {build} from 'esbuild';
 import {chromium} from '@playwright/test';
+import {mkdir} from 'node:fs/promises';
 import {compiled,manifest,source,context,state,content,gradePreview} from './fixtures/runtime-4a.mjs';
 import {capsule,flowFixture} from './fixtures/runtime-4a9.mjs';
 import {executions,serverModule} from './fixtures/runtime-4a2.server.mjs';
@@ -51,6 +52,25 @@ test('4A9 Chromium scoped learning flows + actual grader/checker + synthetic tra
     const module=()=>page.getByRole('region',{name:'本步骤练习流程',exact:true});
     const choose=async n=>{const button=module().getByRole('group',{name:'子活动',exact:true}).getByRole('button').nth(n);await button.click();await page.waitForFunction(n=>document.querySelector('[aria-label="子活动"]')?.querySelectorAll('button')[n]?.getAttribute('aria-pressed')==='true',n);};
     const answer=async form=>{for(const field of await form.locator('fieldset fieldset').all()){const radios=field.locator('input[type=radio]');if(await radios.count())await radios.first().check();else await field.locator('input').fill('학습');}};
+    await t.test('eight Step desktop/narrow visual geometry: no page overflow, navigation remains reachable',async()=>{
+      const output=process.env.UPLY_UI_SCREENSHOTS;if(output)await mkdir(output,{recursive:true});
+      for(const width of [1440,375]){
+        await page.setViewportSize({width,height:900});
+        for(const step of manifest.steps){
+          await enter(step.key);await page.waitForLoadState('networkidle');
+          const active=page.locator('nav button[aria-current="step"]');await page.mouse.move(0,0);await page.waitForTimeout(180);
+          const background=await active.evaluate(e=>getComputedStyle(e).backgroundColor);
+          await active.hover();await page.waitForTimeout(180);
+          assert.equal(await active.evaluate(e=>getComputedStyle(e).backgroundColor),background,'selected Step hover must retain selected contrast');
+          await page.mouse.move(0,0);
+          assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${step.key}/${width}: page overflow`);
+          const nav=await page.locator('nav').boundingBox();assert(nav&&nav.width<=width,`${step.key}/${width}: navigation width`);
+          assert.equal(await page.locator('.runtime-chapter-location span').innerText(),`${manifest.steps.indexOf(step)+1} / 8`);
+          if(output)await page.screenshot({path:`${output}/${width}-${step.key}.png`,fullPage:true});
+        }
+      }
+      await page.setViewportSize({width:1440,height:900});await enter('orientation');
+    });
     await t.test('eight steps and orientation three retain layout/navigation',async()=>{for(const s of manifest.steps)assert.equal(await page.locator('nav').getByRole('button',{name:s.title['zh-CN'],exact:true}).count(),1);await page.locator('form').first().waitFor();assert.equal(await page.locator('form').count(),3);for(const key of manifest.steps.map(s=>s.key)){await enter(key);assert.equal(await page.locator('nav').count(),1);}});
     await t.test('vocabulary per-item input → original submit → reload responses, not completion',async()=>{
       await enter('vocabulary');const form=module().locator('form');await form.waitFor();for(const button of await form.getByRole('group',{name:'题目定位'}).getByRole('button').all()){await button.click();await form.locator('input[type=radio]').first().check();}

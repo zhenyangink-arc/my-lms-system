@@ -1,3 +1,4 @@
+import type { TextbookGrammarCard } from '@/lib/textbook-grammar-content';
 export type DigitalTextbookVocabularyWord = {
   ko: string;
   zh: string;
@@ -40,6 +41,7 @@ export type DigitalTextbookVocabularyNode = {
 export type DigitalTextbookGrammarNode = {
   id: string;
   items: DigitalTextbookGrammarItem[];
+  cards?: TextbookGrammarCard[];
 };
 
 export type DigitalTextbookModule = {
@@ -52,6 +54,7 @@ export type DigitalTextbookModule = {
 
 export type DigitalTextbookChapter = {
   id: string;
+  title?: string;
   number: number;
   slug: string;
   status: string;

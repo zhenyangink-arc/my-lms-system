@@ -46,8 +46,12 @@ test('PF-2/PF-3 actual publisher, fenced PostgreSQL, actual published Loader and
     const {publicationRepository}=await serverModule('src/lib/smart-textbook-publishing/repository.server.ts');
     const repo=publicationRepository(f.admin),before=await publisher.compileChapterOnePublication();
     const activity=source.activities.find(a=>a.activity_key==='orientation-greeting')??source.activities.find(a=>a.node_id===source.nodes.find(n=>n.content.dialogueGroups)?.id);
-    await t.test('consistent capture covers 19 grader secrets and all v23 teaching dependencies; concurrent authoring invalidates stale compile',async()=>{
-      assert.equal(before.privatePayload.dependencies.digital_textbook_activity_secrets.length,19);
+    await t.test('consistent capture covers every grader secret while roleplay remains evidence-graded; concurrent authoring invalidates stale compile',async()=>{
+      const secrets=before.privatePayload.dependencies.digital_textbook_activity_secrets;
+      assert.equal(secrets.length,18);
+      const roleplay=source.activities.find(a=>a.activity_key==='dialogue-roleplay'&&a.activity_type==='speaking');
+      assert(roleplay);assert.equal(secrets.some(s=>s.activity_id===roleplay.id),false);
+      assert(source.activities.filter(a=>a.id!==roleplay.id).every(a=>secrets.filter(s=>s.activity_id===a.id).length===1));
       assert.equal(before.privatePayload.dependencies.learning_agent_script_nodes.length,8);
       assert.equal(before.privatePayload.dependencies.learning_agent_script_audio_assets.length,44);
       const editing=db.raw(`begin;update public.digital_textbook_activity_secrets set answer_key='{"kind":"index","value":1}' where activity_id=${q(activity.id)};select pg_sleep(.8);commit;`);
